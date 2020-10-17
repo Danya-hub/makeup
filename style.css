@@ -391,7 +391,7 @@ header * {
     display: flex;
     align-items: center;
     position: relative;
-    font: 100 16px 'Podkova-Regular';
+    font: 100 15px 'Podkova-Regular';
     text-align: center;
     height: 100%;
 }
@@ -576,7 +576,7 @@ header * {
 }
 
 .headerAddition-txtContent-txt {
-    font: 100 16px 'FuturaPT-MediumObl';
+    font: 100 17px 'FuturaPT-MediumObl';
     line-height: 1.5em;
     letter-spacing: 4px;
     text-align: center;
@@ -593,7 +593,7 @@ header * {
 
 .mainInfo p {
     font: 600 16px 'FuturaPT-Light';
-    line-height: 29px;
+    line-height: 22px;
 }
 
 .mainInfo h2,
