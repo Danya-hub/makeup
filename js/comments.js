@@ -15,7 +15,18 @@ const comments = () => {
     меня на процедурах.`, `Процедура ламинирование и
     ботокс ресниц для клиентки с ресницами очень
     плотным и растущими вниз. Такие реснички
-    будут вас радовать на протяжении 1-1,5 месяца.`, `dddddddddd`, `ffff`, `dgggg`, `eee`];
+    будут вас радовать на протяжении 1-1,5 месяца.`, `Долговременная укладкабровей. Что входит в эту процедуру?
+    <ul class="bigImageWindow-listProcedures">
+        <li class="bigImageWindow-listProcedures-item">
+            <span class="bigImageWindow-listProcedures-item-span">Укладка составами</span>
+        </li>
+        <li class="bigImageWindow-listProcedures-item">
+            <span class="bigImageWindow-listProcedures-item-span">Коррекция бровей</span>
+        </li>
+        <li class="bigImageWindow-listProcedures-item">
+            <span class="bigImageWindow-listProcedures-item-span">Окрашивание краской</span>
+        </li>
+    </ul>`, `ffff`, `dgggg`, `eee`];
 
     const commentUnderImage = () => {
         for (let i = 0; i < sliderImg.length; i++) {

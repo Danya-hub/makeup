@@ -120,7 +120,7 @@ p {
     background: transparent;
     transition: .3s background, .3s box-shadow, transform .3s;
     color: #ffff;
-    font-size: 20px;
+    font-size: 18px;
     text-align: center;
     padding: 10.5px 0px;
     border-radius: 10px;
@@ -305,7 +305,7 @@ header * {
 }
 
 .header-logoSite-txt {
-    font: 100 20px 'Philosopher-Regular';
+    font: 100 16px 'Philosopher-Regular';
 }
 
 .header-list {
@@ -576,14 +576,14 @@ header * {
 }
 
 .headerAddition-txtContent-txt {
-    font: 100 20px 'FuturaPT-MediumObl';
+    font: 100 16px 'FuturaPT-MediumObl';
     line-height: 1.5em;
     letter-spacing: 4px;
     text-align: center;
 }
 
 .headerAddition-infoContent span {
-    font: 100 18px 'FuturaPT-MediumObl';
+    font: 100 14px 'FuturaPT-MediumObl';
     border-bottom: 2px solid;
     margin: 20px auto 0px;
     width: fit-content;
@@ -592,7 +592,7 @@ header * {
 /* --------======== mainInfo ========--------  */
 
 .mainInfo p {
-    font: 600 20px 'FuturaPT-Light';
+    font: 600 16px 'FuturaPT-Light';
     line-height: 29px;
 }
 
@@ -603,11 +603,11 @@ header * {
 }
 
 .mainInfo h2 {
-    font-size: 30px;
+    font-size: 22px;
 }
 
 .mainInfo h3 {
-    font-size: 22px;
+    font-size: 18px;
     margin-bottom: 5px;
 }
 
@@ -851,7 +851,6 @@ header * {
 }
 
 .bigImageWindow-content-textWrapper::-webkit-scrollbar {
-    background: #c7c7c7;
     box-shadow: unset;
     width: 10px;
 }
@@ -866,7 +865,12 @@ header * {
 
 .bigImageWindow--textWrapper-txt {
     line-height: 22px;
-    font: 600 17px 'FuturaPT-Light';
+    font: 600 16px 'FuturaPT-Light';
+}
+
+.bigImageWindow-listProcedures-item {
+    list-style: decimal;
+    margin-left: 25px;
 }
 
 /* --------======== prices ========--------  */
@@ -887,7 +891,7 @@ header * {
 
 .prices-table td span {
     display: unset;
-    font: 600 20px 'FuturaPT-Light';
+    font: 600 16px 'FuturaPT-Light';
     letter-spacing: 1px;
 }
 
@@ -914,7 +918,7 @@ header * {
     }
 
     .header-logoSite-txt {
-        font-size: 27px;
+        font-size: 24px;
     }
 
     .activeBurgerMenu span:nth-child(1) {
@@ -941,10 +945,6 @@ header * {
     .bigImageWindow-content-textWrapper {
         width: 45%;
         padding: 40px 15px;
-    }
-
-    .bigImageWindow-content-textWrapper::-webkit-scrollbar {
-        display: none;
     }
 }
 
