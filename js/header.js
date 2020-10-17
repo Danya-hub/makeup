@@ -1,0 +1,75 @@
+// --------- function header ---------
+
+const header = () => {
+
+    // --------- create variables ---------
+
+    const burgerMenuButton = document.querySelector('.burgerMenuButton'); //button
+    const windowNav = document.querySelector('.windowNav'); //div
+    const blackout = document.querySelector('.blackout'); //div
+    const body = document.querySelector('body'); //body
+    const closeBurgerMenuButton = document.querySelector('.closeButton'); //button
+    const windowNavListItemLinks = document.querySelectorAll('.windowNav-listItem-links'); //a && span
+    const windowNavListServices = document.querySelector('.windowNav-listServices'); //ul
+
+    // --------- listener for button ---------
+
+    burgerMenuButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        burgerMenuButton.classList.add('activated');
+        if (burgerMenuButton.classList.contains('activated')) {
+            windowNav.style.transform = 'translateX(0%)';
+            closeBurgerMenuButton.classList.add('activeCloseButton');
+            blackout.classList.add('activeBlackout');
+            body.style.cssText = `
+                overflow-y: hidden;
+                overflow-x: unset;
+            `;
+
+            if (closeBurgerMenuButton.classList.contains('activeCloseButton')) {
+                closeBurgerMenuButton.addEventListener('click', () => {
+                    e.preventDefault();
+                    closeBurgerMenuButton.classList.remove('activeCloseButton');
+                    windowNav.style.transform = 'translateX(101%)';
+                    blackout.classList.remove('activeBlackout');
+                    burgerMenuButton.classList.remove('activated');
+                    body.style.cssText = `
+                        overflow-y: unset;
+                        overflow-x: hidden;
+                    `;
+                })
+                blackout.addEventListener('click', () => {
+                    e.preventDefault();
+                    closeBurgerMenuButton.classList.remove('activeCloseButton');
+                    windowNav.style.transform = 'translateX(101%)';
+                    blackout.classList.remove('activeBlackout');
+                    burgerMenuButton.classList.remove('activated');
+                    body.style.cssText = `
+                        overflow-y: unset;
+                        overflow-x: hidden;
+                    `;
+                })
+            } else {
+                closeBurgerMenuButton.classList.remove('activeCloseButton');
+            }
+        }
+    })
+
+    // --------- arrow animate in the link ---------
+
+    for (let i = 0; i < windowNavListItemLinks.length; i++) {
+        windowNavListItemLinks[1].addEventListener('click', (e) => {
+            e.preventDefault();
+            windowNavListItemLinks[1].classList.toggle('rotateArrow');
+            windowNavListServices.classList.toggle('activationListServices');
+        })
+    }
+}
+
+// --------- end function header ---------
+
+// --------- export header ---------
+
+export default header;
+
+// --------- The End ---------

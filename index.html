@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+        integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="fonts.css">
+    <title>painter</title>
+</head>
+
+<body>
+    <div class="blackout"></div>
+    <button class="buttonScrollTop">
+        <img src="./assets/svg/up-arrow.svg" alt="картинка" class="buttonScrollTop-arrowImg">
+    </button>
+
+    <!-- ------------ bigImageWindow ------------ -->
+    <div class="bigImageWindow">
+        <button class="bigImageWindow-closeButton">
+            <img src="./assets/svg/crossed.svg" alt="картинка" class="bigImageWindow-closeButton-img">
+        </button>
+        <div class="bigImageWindow-content">
+            <div class="bigImageWindow-content-imgProcedure">
+                <img src="#" alt="картинка" class="bigImageWindow--imgProcedure-img">
+            </div>
+            <div class="bigImageWindow-content-textWrapper">
+                <p class="bigImageWindow--textWrapper-txt">
+                    <!-- comment -->
+                </p>
+            </div>
+        </div>
+    </div>
+    <!-- ------------ end bigImageWindow ------------ -->
+
+    <!-- ------------ pageContent ------------ -->
+    <div class="page-content">
+        <div class="socialNetWorks">
+            <nav>
+                <ul class="socialNetWorks-listItem">
+                    <li class="socialNetWorks-listItem-itemLinks">
+                        <a href="#" class="socialNetWorks-listItem-itemLinks-links">
+                            <i class="fa fa-facebook" aria-hidden="true"></i>
+                        </a>
+                    </li>
+                    <li class="socialNetWorks-listItem-itemLinks">
+                        <a href="#" class="socialNetWorks-listItem-itemLinks-links">
+                            <i class="fa fa-instagram" aria-hidden="true"></i>
+                        </a>
+                    </li>
+                    <li class="socialNetWorks-listItem-itemLinks">
+                        <a href="#" class="socialNetWorks-listItem-itemLinks-links">
+                            <i class="fa fa-twitter" aria-hidden="true"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <header>
+
+            <!-- ------------ windowNav ------------ -->
+            <div class="windowNav">
+                <div>
+                    <button class="closeButton">
+                        <span></span>
+                        <span></span>
+                    </button>
+                    <nav class="windowNav-nav">
+                        <ul class="windowNav-list">
+                            <li class="windowNav-listItem">
+                                <a href="/" class="windowNav-listItem-links">O услугах</a>
+                            </li>
+                            <li class="windowNav-listItem">
+                                <button class="windowNav-listItem-links">Услуги</button>
+                                <ul class="windowNav-listServices">
+                                    <li class="windowNav-listServicesItem">
+                                        <a href="#" class="windowNav-listServicesItem-links">Ламинирование ресниц</a>
+                                    </li>
+                                    <li class="windowNav-listServicesItem">
+                                        <a href="#" class="windowNav-listServicesItem-links">Моделирование бровей</a>
+                                    </li>
+                                    <li class="windowNav-listServicesItem">
+                                        <a href="#" class="windowNav-listServicesItem-links">Долговременная укладка
+                                            бровей</a>
+                                    </li>
+                                    <li class="windowNav-listServicesItem">
+                                        <a href="#" class="windowNav-listServicesItem-links">Окрашивание ресниц</a>
+                                    </li>
+                                    <li class="windowNav-listServicesItem">
+                                        <a href="#" class="windowNav-listServicesItem-links">Комплексы</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="windowNav-listItem">
+                                <a href="/" class="windowNav-listItem-links">Галерея</a>
+                            </li>
+                            <li class="windowNav-listItem">
+                                <a href="/" class="windowNav-listItem-links">Цены</a>
+                            </li>
+                            <li class="windowNav-listItem">
+                                <a href="/" class="windowNav-listItem-links">Контакты</a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <div class="windowNav-socialNetWorks">
+                        <h2 class="windowNav-socialNetWorks-title">Социальные сети:</h2>
+                        <ul class="windowNav-socialNetWorks-list">
+                            <li class="windowNav-socialNetWorks-listItem">
+                                <a href="#" class="windowNav-socialNetWorks-listItem-links">
+                                    <img src="./assets/logo/facebook.svg" alt="картинка"
+                                        class="windowNav-socialNetWorks-listItem-linksLogoImg">
+                                </a>
+                            </li>
+                            <li class="windowNav-socialNetWorks-listItem">
+                                <a href="#" class="windowNav-socialNetWorks-listItem-links">
+                                    <img src="./assets/logo/instagram-sketched.svg" alt="картинка"
+                                        class="windowNav-socialNetWorks-listItem-linksLogoImg">
+                                </a>
+                            </li>
+                            <li class="windowNav-socialNetWorks-listItem">
+                                <a href="#" class="windowNav-socialNetWorks-listItem-links">
+                                    <img src="./assets/logo/twitter.svg" alt="картинка"
+                                        class="windowNav-socialNetWorks-listItem-linksLogoImg">
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- ------------ endl windowNav ------------ -->
+
+            <!-- ------------ header ------------ -->
+            <div>
+                <section class="header" id="header">
+                    <div class="header-logoSite">
+                        <a href="/" class="header-logoSite-link">
+                            <img src="./assets/logo/logo.png" alt="картинка" class="header-logoSite-img">
+                        </a>
+                        <div>
+                            <span class="header-logoSite-txt">face magic</span>
+                        </div>
+                    </div>
+                    <nav class="navigation">
+                        <ul class="header-list">
+                            <li class="header-listItem">
+                                <a href="/" class="header-listItem-links">O услугах</a>
+                            </li>
+                            <li class="header-listItem">
+                                <span class="header-listItem-links">Услуги</span>
+                                <ul class="header-listServices">
+                                    <li class="header-listServicesItem">
+                                        <a href="#" class="header-listServicesItem-links">Ламинирование ресниц</a>
+                                    </li>
+                                    <li class="header-listServicesItem">
+                                        <a href="#" class="header-listServicesItem-links">Моделирование бровей</a>
+                                    </li>
+                                    <li class="header-listServicesItem">
+                                        <a href="#" class="header-listServicesItem-links">Долговременная укладка
+                                            бровей</a>
+                                    </li>
+                                    <li class="header-listServicesItem">
+                                        <a href="#" class="header-listServicesItem-links">Окрашивание ресниц</a>
+                                    </li>
+                                    <li class="header-listServicesItem">
+                                        <a href="#" class="header-listServicesItem-links">Комплексы</a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="header-listItem">
+                                <a href="/" class="header-listItem-links">Галерея</a>
+                            </li>
+                            <li class="header-listItem">
+                                <a href="/" class="header-listItem-links">Цены</a>
+                            </li>
+                            <li class="header-listItem">
+                                <a href="/" class="header-listItem-links">Контакты</a>
+                            </li>
+                        </ul>
+                    </nav>
+                    <button class="burgerMenuButton">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </section>
+            </div>
+            <!-- ------------ end header ------------ -->
+
+            <!-- ------------ headerAddition ------------ -->
+            <div>
+                <section class="headerAddition">
+                    <div>
+                        <blockquote class="headerAddition-infoContent">
+                            <p class="headerAddition-txtContent-txt">
+                                «Красота женщины должна быть видна в ее глазах, это дверь в ее сердце,
+                                то место, где живет любовь»
+                            </p>
+                            <span>Одри Хепбёрн</span>
+                        </blockquote>
+                    </div>
+                    <div>
+                        <img src="./assets/img/vl84snjp6zm1.jpg" alt="картинка" class="headerAddition-imgAudreyHepburn">
+                    </div>
+                </section>
+                <div class="wave-svg">
+                    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"
+                        preserveAspectRatio="none">
+                        <path
+                            d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"
+                            opacity=".25" class="shape-fill"></path>
+                        <path
+                            d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z"
+                            opacity=".5" class="shape-fill"></path>
+                        <path
+                            d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z"
+                            class="shape-fill"></path>
+                    </svg>
+                </div>
+            </div>
+            <!-- ------------ end headerAddition ------------ -->
+
+        </header>
+        <main>
+
+            <!-- ------------ mainInfo ------------ -->
+            <div>
+                <section class="mainInfo">
+                    <ul class="mainInfo-listInfo">
+                        <li class="mainInfo-listInfoItem">
+                            <div>
+                                <h2 class="mainInfo-listInfoItem-title">Ламинирование ресниц</h2>
+                                <div class="mainInfo-listInfoItem-txtContent">
+                                    <div class="mainInfo--txtContent-txt">
+                                        <p class="mainInfo--txtContent-txtDescription"><strong>Ламинирование
+                                                ресниц</strong>
+                                            –
+                                            это
+                                            утолщение, а также удлинение натуральных ресниц с помощью
+                                            нанесения специальных составов с минералами и различными полезными
+                                            компонентами.
+                                            После этой процедуры на 2 месяца можно отказаться от туши.</p>
+                                    </div>
+                                    <div class="mainInfo--txtContent-txt">
+                                        <h3 class="mainInfo--txtContent-title">Ламинирование ресниц наиболее подойдет
+                                            тем, у
+                                            кого:</h3>
+                                        <ul class="mainInfo--txtContent-list">
+                                            <li class="mainInfo--txtContent-listItem">
+                                                <p class="mainInfo--txtContent-listItem-txt">Реснички
+                                                    растущие прямо;
+                                                </p>
+                                            </li>
+                                            <li class="mainInfo--txtContent-listItem">
+                                                <p class="mainInfo--txtContent-listItem-txt">
+                                                    Редкие, тонкие реснички, которым не хватает густоты;
+                                                </p>
+                                            </li>
+                                            <li class="mainInfo--txtContent-listItem">
+                                                <p class="mainInfo--txtContent-listItem-txt">
+                                                    Слишком светлые волоски, нуждающиеся в постоянном окрашивании;
+                                                </p>
+                                            </li>
+                                            <li class="mainInfo--txtContent-listItem">
+                                                <p class="mainInfo--txtContent-listItem-txt">
+                                                    Слишком короткие ресницы;
+                                                </p>
+                                            </li>
+                                            <li class="mainInfo--txtContent-listItem">
+                                                <p class="mainInfo--txtContent-listItem-txt">
+                                                    Намечается отпуск и хочется отдохнуть от косметики.</p>
+                                                </p>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="mainInfo--txtContent-txt">
+                                        <p class="mainInfo--txtContent-txtDescription">
+                                            Для девушек, которые любят нормально умываться не боясь
+                                            повредить ресницы как после процедуры наращивание ресниц,
+                                            а так же можно свободно тереть глаза. Соблюдать ограничения нужно только в
+                                            первые
+                                            сутки
+                                            после
+                                            процедуры. Затем никакие умывания и косметика волоскам не страшны.
+                                        </p>
+                                    </div>
+                                    <div class="mainInfo--txtContent-txt">
+                                        <p class="mainInfo--txtContent-txtDescription">
+                                            Так же эта процедура удобна тем девушкам которые не любят ходить на
+                                            коррекцию
+                                            ресничек
+                                            как после процедуры наращивание ресниц. Эффект после процедуры сходит плавно
+                                            вплоть
+                                            до полного обновления ресничек.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="mainInfo-listInfoItem-img"></div>
+                                <div class="mainInfo-listInfoItem-socailNetWorks">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="mainInfo-listInfoItem">
+                            <div>
+                                <h2 class="mainInfo-listInfoItem-title">Lorem ipsum dolor sit.</h2>
+                                <div class="mainInfo-listInfoItem-txtContent">
+                                    <div class="mainInfo--txtContent-txt">
+                                        <p class="mainInfo--txtContent-txtDescription">
+                                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas nostrum
+                                            necessitatibus nam ullam reprehenderit illo reiciendis porro atque quam,
+                                            sapiente laboriosam impedit modi molestias officiis quasi velit fuga,
+                                            accusantium placeat cumque eos explicabo tempora quisquam ex facilis!
+                                            Reprehenderit repellendus eum dignissimos esse consequuntur debitis
+                                            doloribus quasi nulla aspernatur. Culpa quae necessitatibus nisi possimus a
+                                            facere voluptates debitis rerum, facilis labore quod quam molestiae
+                                            obcaecati aspernatur ad iusto eius reiciendis libero at repudiandae,
+                                            recusandae enim maxime dolor placeat? Mollitia eaque totam possimus
+                                            quibusdam ipsum a magnam nam, vitae quod saepe, dicta ea earum ex, explicabo
+                                            obcaecati distinctio? Suscipit expedita nam reprehenderit ipsum commodi
+                                            quasi? Perferendis, ex sunt illum eaque laboriosam aliquam veniam nobis
+                                            fugiat quis, veritatis quisquam fugit? Harum error blanditiis beatae
+                                            pariatur cupiditate officia eius ipsum quas nulla, consectetur mollitia
+                                            earum, nisi facilis quibusdam. Ipsum, nihil unde in suscipit culpa harum,
+                                            libero earum tenetur vero sapiente quasi officia assumenda perspiciatis.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="mainInfo-listInfoItem-img"></div>
+                                <div class="mainInfo-listInfoItem-socailNetWorks">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="mainInfo-listInfoItem">
+                            <div>
+                                <h2 class="mainInfo-listInfoItem-title">Долговременная укладка бровей</h2>
+                                <div class="mainInfo-listInfoItem-txtContent">
+                                    <div class="mainInfo--txtContent-txt">
+                                        <p class="mainInfo--txtContent-txtDescription">
+                                            <strong>Долговременная укладка бровей</strong> – это ламинирование волосков
+                                            и их
+                                            закрепление в нужном
+                                            направлении. Процедура обеспечивает глубокий уход, восстановление и
+                                            мгновенное
+                                            преображение бровей.</p>
+                                    </div>
+                                    <div class="mainInfo--txtContent-txt">
+                                        <h3 class="mainInfo--txtContent-title">Как долго держится результат?</h3>
+                                        <p class="mainInfo--txtContent-txtDescription">
+                                            Красивые и уложенные брови будут радовать тебя на протяжении 2-3 месяцев.
+                                            Длительность эффекта зависит от того, как ты будешь ухаживать за
+                                            своими бровями после салонной процедуры, не прибегай к
+                                            пиллингам и скрабам в области бровей. Повторять процедуру
+                                            можно каждые 1,5-2 месяца.</p>
+                                    </div>
+                                    <div class="mainInfo--txtContent-txt">
+                                        <h3 class="mainInfo--txtContent-title">Показания и противопоказания</h3>
+                                        <p class="mainInfo--txtContent-txtDescription">
+                                            Долговременная фиксация больше всего подойдет обладательницам густых
+                                            непослушных
+                                            бровей
+                                            с
+                                            жесткими волосками, которые трудно укладываются.
+                                            Также эта процедуры подойдет девушкам с нормальными,
+                                            редкими, невыразительными бровями или бровям с татуажем.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="mainInfo-listInfoItem-img"></div>
+                                <div class="mainInfo-listInfoItem-socailNetWorks">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="mainInfo-listInfoItem">
+                            <div>
+                                <h2 class="mainInfo-listInfoItem-title">Lorem ipsum dolor sit.</h2>
+                                <div class="mainInfo-listInfoItem-txtContent">
+                                    <div class="mainInfo--txtContent-txt">
+                                        <p class="mainInfo--txtContent-txtDescription">
+                                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas nostrum
+                                            necessitatibus nam ullam reprehenderit illo reiciendis porro atque quam,
+                                            sapiente laboriosam impedit modi molestias officiis quasi velit fuga,
+                                            accusantium placeat cumque eos explicabo tempora quisquam ex facilis!
+                                            Reprehenderit repellendus eum dignissimos esse consequuntur debitis
+                                            doloribus quasi nulla aspernatur. Culpa quae necessitatibus nisi possimus a
+                                            facere voluptates debitis rerum, facilis labore quod quam molestiae
+                                            obcaecati aspernatur ad iusto eius reiciendis libero at repudiandae,
+                                            recusandae enim maxime dolor placeat? Mollitia eaque totam possimus
+                                            quibusdam ipsum a magnam nam, vitae quod saepe, dicta ea earum ex, explicabo
+                                            obcaecati distinctio? Suscipit expedita nam reprehenderit ipsum commodi
+                                            quasi? Perferendis, ex sunt illum eaque laboriosam aliquam veniam nobis
+                                            fugiat quis, veritatis quisquam fugit? Harum error blanditiis beatae
+                                            pariatur cupiditate officia eius ipsum quas nulla, consectetur mollitia
+                                            earum, nisi facilis quibusdam. Ipsum, nihil unde in suscipit culpa harum,
+                                            libero earum tenetur vero sapiente quasi officia assumenda perspiciatis.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="mainInfo-listInfoItem-img"></div>
+                                <div class="mainInfo-listInfoItem-socailNetWorks">
+                                    <div></div>
+                                    <div></div>
+                                    <div></div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </section>
+            </div>
+            <!-- ------------ end mainInfo ------------ -->
+
+            <!-- ------------ slider ------------ -->
+            <div>
+                <div class="wave-svg">
+                    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"
+                        preserveAspectRatio="none">
+                        <path
+                            d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"
+                            opacity=".25" class="shape-fill"></path>
+                        <path
+                            d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z"
+                            opacity=".5" class="shape-fill"></path>
+                        <path
+                            d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z"
+                            class="shape-fill"></path>
+                    </svg>
+                </div>
+                <section class="slider">
+                    <div class="slider-wrapperImg">
+                        <img src="http://127.0.0.1:5500/assets/img/0-02-05-10e4906ee4be65ac4065c7f1c34e4b05f82bfee4ed02f75c5a98a0f5224f0b5e_b255908d.jpg"
+                            alt="картинка" class="slider-img"></img>
+                    </div>
+                    <div class="slider-wrapperImg">
+                        <img src="http://127.0.0.1:5500/assets/img/0-02-05-fd01fa11407040c7bc36259657e5e451887310de480c732ad9e8b8e68d96ff61_35401a05.jpg" alt="картинка" class="slider-img"></img>
+                    </div>
+                    <div class="slider-wrapperImg">
+                        <img src="./assets/img/0-02-05-e619510659a35244a7741aa3cf530f0330482433d168635d2ee11ad759b5b048_ff9a8a76.jpg" alt="картинка" class="slider-img"></img>
+                    </div>
+                    <div class="slider-wrapperImg">
+                        <img src="#" alt="картинка" class="slider-img"></img>
+                    </div>
+                    <div class="slider-wrapperImg">
+                        <img src="#" alt="картинка" class="slider-img"></img>
+                    </div>
+                    <div class="slider-wrapperImg">
+                        <img src="#" alt="картинка" class="slider-img"></img>
+                    </div>
+                    <div class="slider-wrapperImg">
+                        <img src="#" alt="картинка" class="slider-img"></img>
+                    </div>
+                    <div class="slider-wrapperImg">
+                        <img src="#" alt="картинка" class="slider-img"></img>
+                    </div>
+                    <div class="slider-wrapperImg">
+                        <img src="#" alt="картинка" class="slider-img"></img>
+                    </div>
+                    <div class="slider-wrapperImg">
+                        <img src="#" alt="картинка" class="slider-img"></img>
+                    </div>
+                </section>
+                <div class="wave-svg">
+                    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"
+                        preserveAspectRatio="none">
+                        <path
+                            d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"
+                            opacity=".25" class="shape-fill"></path>
+                        <path
+                            d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z"
+                            opacity=".5" class="shape-fill"></path>
+                        <path
+                            d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z"
+                            class="shape-fill"></path>
+                    </svg>
+                </div>
+            </div>
+            <!-- ------------ end slider ------------ -->
+
+            <!-- ------------ prices ------------ -->
+            <section class="prices">
+                <table class="prices-table">
+                    <tr>
+                        <td>
+                            <span class="prices-table-title">Процедуры</span>
+                        </td>
+                        <td>
+                            <span class="prices-table-title">Цены</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="prices-table-procedure">
+                                <span class="prices-table-procedureNumbers">1.</span> Ламинирование ресниц +
+                                ботокс + окрашивание + спец.
+                                состав</span>
+                        </td>
+                        <td>
+                            <span>400грн.</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="prices-table-procedure">
+                                <span class="prices-table-procedureNumbers">2.</span> Долговременная укладка бровей (без
+                                окр. и коррекции)</span>
+                        </td>
+                        <td>
+                            <span class="prices-table-price">200-240грн.</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="prices-table-procedure">
+                                <span class="prices-table-procedureNumbers">3.</span> Моделирование и покраска
+                                бровей краской</span>
+                        </td>
+                        <td>
+                            <span class="prices-table-price">200грн.</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="prices-table-procedure">
+                                <span class="prices-table-procedureNumbers">4.</span> Долговременная укладка
+                                бровей (ламинирование +
+                                моделирование + окрашивание
+                                краской + спец. состав).</span>
+                        </td>
+                        <td>
+                            <span class="prices-table-price">400грн.</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="prices-table-procedure">
+                                <span class="prices-table-procedureNumbers">5.</span> Моделирование бровей без
+                                окрашивания</span>
+                        </td>
+                        <td>
+                            <span class="prices-table-price">100грн.</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="prices-table-procedure">
+                                <span class="prices-table-procedureNumbers">6.</span> Ламинирование ресниц (без окр. и
+                                ботокса)</span>
+                        </td>
+                        <td>
+                            <span class="prices-table-price">250грн.</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="prices-table-procedure">
+                                <span class="prices-table-procedureNumbers">7.</span> Окрашивание ресниц краской</span>
+                        </td>
+                        <td>
+                            <span class="prices-table-price">80грн.</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="prices-table-procedure"><span class="prices-table-procedureNumbers">Комплекс
+                                    1</span>: ламинирование
+                                ресниц + ботокс +
+                                моделирование и окрашивание
+                                бровей краской (xной)</span>
+                        </td>
+                        <td>
+                            <span class="prices-table-price">500грн.</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="prices-table-procedure"><span class="prices-table-procedureNumbers">Комплекс
+                                    2</span>: ламинирование
+                                ресниц + ботокс +
+                                долговременная укладка бровей
+                                + модел + окр. бровей</span>
+                        </td>
+                        <td>
+                            <span class="prices-table-price">700грн</span>
+                        </td>
+                    </tr>
+                </table>
+            </section>
+            <!-- ------------ end prices ------------ -->
+
+        </main>
+        <footer></footer>
+    </div>
+    <!-- ------------ end pageContent ------------ -->
+
+    <!-- ------------ <script> ------------ -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vivus/0.4.5/vivus.min.js"></script>
+    <script type="module" src="./index.js"></script>
+    <!-- ------------ end <script> ------------ -->
+</body>
+
+</html>

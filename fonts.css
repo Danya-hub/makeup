@@ -1,0 +1,24 @@
+@font-face {
+    src: url(./fonts/Podkova-Regular.ttf);
+    font-family: 'Podkova-Regular';
+}
+
+@font-face {
+    src: url(./fonts/Philosopher-Regular.ttf);
+    font-family: 'Philosopher-Regular';
+}
+
+@font-face {
+    src: url(./fonts/FuturaPT-Medium.ttf);
+    font-family: 'FuturaPT-Medium';
+}
+
+@font-face {
+    src: url(./fonts/FuturaPT-MediumObl.ttf);
+    font-family: 'FuturaPT-MediumObl';
+}
+
+@font-face {
+    src: url(./fonts/FuturaPT-Light.ttf);
+    font-family: 'FuturaPT-Light';
+}
