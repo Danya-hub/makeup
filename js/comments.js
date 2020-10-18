@@ -34,14 +34,14 @@ const comments = () => {
         }
     };
 
-    commentUnderImage();      
+    commentUnderImage();
 
     for (let i = 0; i < sliderImg.length; i++) {
         sliderImg[i].addEventListener('click', (e) => {
             if (!(bigImageWindow.classList.contains('bigImageWindowActive'))) {
                 bigImageWindow.classList.add('bigImageWindowActive');
                 blackout.classList.add('activeBlackout');
-                
+
                 body.style.cssText = `
                     overflow-y: hidden; 
                     overflow-x: unset;
@@ -52,8 +52,17 @@ const comments = () => {
             }
         })
     }
-    
+
     closeButton.addEventListener('click', () => {
+        bigImageWindow.classList.remove('bigImageWindowActive');
+        blackout.classList.remove('activeBlackout');
+        body.style.cssText = `
+            overflow-y: unset; 
+            overflow-x: hidden;
+        `;
+    })
+
+    blackout.addEventListener('click', () => {
         bigImageWindow.classList.remove('bigImageWindowActive');
         blackout.classList.remove('activeBlackout');
         body.style.cssText = `

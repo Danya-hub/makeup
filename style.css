@@ -373,7 +373,7 @@ header * {
 }
 
 .header-listServicesItem-links {
-    font: 100 16px 'Podkova-Regular';
+    font: 100 15px 'Podkova-Regular';
     color: #000;
 }
 
@@ -813,7 +813,7 @@ header * {
     visibility: hidden;
     opacity: 0;
     z-index: 995;
-    overflow-y: hidden;
+    overflow: hidden;
 }
 
 .bigImageWindow-closeButtonWrapper {
