@@ -1,3 +1,5 @@
+// --------- function of slider ---------
+
 function slider() {
     $(document).ready(function () {
         $('.slider').slick({
@@ -14,24 +16,30 @@ function slider() {
             touchMove: true,
             waitForAnimate: false,
             rows: 2,
-            responsive: [
+            responsive: [ //media (max-width)
                 {
-                breakpoint: 1024,
-                settings: {
-                    slidesToShow: 2,
-                    slidesToScroll: 2
-                } 
-            },
-            {
-                breakpoint: 768,
-                settings: {
-                    slidesToScroll: 1,
-                    slidesToShow: 1
-                } 
-            }
-        ]
+                    breakpoint: 1024,
+                    settings: {
+                        slidesToShow: 2,
+                        slidesToScroll: 2
+                    }
+                },
+                {
+                    breakpoint: 768,
+                    settings: {
+                        slidesToScroll: 1,
+                        slidesToShow: 1
+                    }
+                }
+            ]
         });
     })
 }
 
+// --------- end function of slider ---------
+
+// --------- export function of slider ---------
+
 export default slider;
+
+// --------- The End ---------

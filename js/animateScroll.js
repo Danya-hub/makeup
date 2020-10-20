@@ -1,9 +1,9 @@
-// --------- function for scroll animate ---------
+// --------- function of scroll animate ---------
 
-function animateScroll () {
-    $(document).ready(function() {
+function animateScroll() {
+    $(document).ready(function () {
         const header = $('#header');
-        $('.buttonScrollTop').click(function() {
+        $('.buttonScrollTop').click(function () {
             $('html, body').animate({
                 scrollTop: $(header).offset().top
             }, 300)
@@ -11,9 +11,9 @@ function animateScroll () {
     });
 }
 
-// --------- end function for scroll animate ---------
+// --------- end function of scroll animate ---------
 
-// --------- export scroll animate ---------
+// --------- export function of scroll animate ---------
 
 export default animateScroll;
 

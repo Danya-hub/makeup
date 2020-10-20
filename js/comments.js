@@ -1,4 +1,9 @@
+// --------- function of comments ---------
+
 const comments = () => {
+
+    // --------- create variables ---------
+
     const sliderImg = document.querySelectorAll('.slider-img');
     const bigImageWindow = document.querySelector('.bigImageWindow');
     const blackout = document.querySelector('.blackout');
@@ -6,6 +11,8 @@ const comments = () => {
     const bigImage = document.querySelector('.bigImageWindow--imgProcedure-img');
     const bigImageComment = document.querySelector('.bigImageWindow--textWrapper-txt');
     const body = document.querySelector('body');
+
+    // --------- array comments ---------
 
     const comment = [`Ламинирование ресниц + ботокс
     + окрашивание ресниц краской + моделирование
@@ -19,14 +26,16 @@ const comments = () => {
     <ul class="bigImageWindow-listProcedures">
         <li class="bigImageWindow-listProcedures-item">
             <span class="bigImageWindow-listProcedures-item-span">Укладка составами</span>
-        </li>
+            </li>
         <li class="bigImageWindow-listProcedures-item">
             <span class="bigImageWindow-listProcedures-item-span">Коррекция бровей</span>
-        </li>
-        <li class="bigImageWindow-listProcedures-item">
+            </li>
+            <li class="bigImageWindow-listProcedures-item">
             <span class="bigImageWindow-listProcedures-item-span">Окрашивание краской</span>
         </li>
-    </ul>`, `ffff`, `dgggg`, `eee`];
+        </ul>`, `ffff`, `dgggg`, `eee`];
+
+    // --------- index for image ---------
 
     const commentUnderImage = () => {
         for (let i = 0; i < sliderImg.length; i++) {
@@ -34,7 +43,11 @@ const comments = () => {
         }
     };
 
+    // --------- call of function ---------
+
     commentUnderImage();
+
+    // --------- window of image ---------
 
     for (let i = 0; i < sliderImg.length; i++) {
         sliderImg[i].addEventListener('click', (e) => {
@@ -43,9 +56,9 @@ const comments = () => {
                 blackout.classList.add('activeBlackout');
 
                 body.style.cssText = `
-                    overflow-y: hidden; 
+                overflow-y: hidden; 
                     overflow-x: unset;
-                `;
+                    `;
 
                 bigImage.src = e.target.src;
                 bigImageComment.innerHTML = comment.find((arr, i) => i === Number(e.target.getAttribute('x')) ? arr : undefined);
@@ -53,13 +66,15 @@ const comments = () => {
         })
     }
 
+    // --------- closing of window ---------
+
     closeButton.addEventListener('click', () => {
         bigImageWindow.classList.remove('bigImageWindowActive');
         blackout.classList.remove('activeBlackout');
         body.style.cssText = `
-            overflow-y: unset; 
+        overflow-y: unset; 
             overflow-x: hidden;
-        `;
+            `;
     })
 
     blackout.addEventListener('click', () => {
@@ -72,4 +87,10 @@ const comments = () => {
     })
 }
 
+// --------- end function of comments ---------
+
+// --------- export function of comments ---------
+
 export default comments;
+
+// --------- The End ---------

@@ -1,10 +1,10 @@
-// --------- function header ---------
+// --------- function of header ---------
 
 const header = () => {
 
     // --------- create variables ---------
 
-    const burgerMenuButton = document.querySelector('.burgerMenuButton'); //button
+    const burgerMenuButton = document.querySelectorAll('.burgerMenuButton'); //button
     const windowNav = document.querySelector('.windowNav'); //div
     const blackout = document.querySelector('.blackout'); //div
     const body = document.querySelector('body'); //body
@@ -12,48 +12,50 @@ const header = () => {
     const windowNavListItemLinks = document.querySelectorAll('.windowNav-listItem-links'); //a && span
     const windowNavListServices = document.querySelector('.windowNav-listServices'); //ul
 
-    // --------- listener for button ---------
+    // --------- listener of button ---------
 
-    burgerMenuButton.addEventListener('click', (e) => {
-        e.preventDefault();
-        burgerMenuButton.classList.add('activated');
-        if (burgerMenuButton.classList.contains('activated')) {
-            windowNav.style.transform = 'translateX(0%)';
-            closeBurgerMenuButton.classList.add('activeCloseButton');
-            blackout.classList.add('activeBlackout');
-            body.style.cssText = `
+    for (let i = 0; i < burgerMenuButton.length; i++) {
+        burgerMenuButton[i].addEventListener('click', (e) => {
+            e.preventDefault();
+            burgerMenuButton[i].classList.add('activated');
+            if (burgerMenuButton[i].classList.contains('activated')) {
+                windowNav.style.transform = 'translateX(0%)';
+                closeBurgerMenuButton.classList.add('activeCloseButton');
+                blackout.classList.add('activeBlackout');
+                body.style.cssText = `
                 overflow-y: hidden;
                 overflow-x: unset;
             `;
 
-            if (closeBurgerMenuButton.classList.contains('activeCloseButton')) {
-                closeBurgerMenuButton.addEventListener('click', () => {
-                    e.preventDefault();
-                    closeBurgerMenuButton.classList.remove('activeCloseButton');
-                    windowNav.style.transform = 'translateX(101%)';
-                    blackout.classList.remove('activeBlackout');
-                    burgerMenuButton.classList.remove('activated');
-                    body.style.cssText = `
+                if (closeBurgerMenuButton.classList.contains('activeCloseButton')) {
+                    closeBurgerMenuButton.addEventListener('click', () => {
+                        e.preventDefault();
+                        closeBurgerMenuButton.classList.remove('activeCloseButton');
+                        windowNav.style.transform = 'translateX(101%)';
+                        blackout.classList.remove('activeBlackout');
+                        burgerMenuButton[i].classList.remove('activated');
+                        body.style.cssText = `
                         overflow-y: unset;
                         overflow-x: hidden;
                     `;
-                })
-                blackout.addEventListener('click', () => {
-                    e.preventDefault();
-                    closeBurgerMenuButton.classList.remove('activeCloseButton');
-                    windowNav.style.transform = 'translateX(101%)';
-                    blackout.classList.remove('activeBlackout');
-                    burgerMenuButton.classList.remove('activated');
-                    body.style.cssText = `
+                    })
+                    blackout.addEventListener('click', () => {
+                        e.preventDefault();
+                        closeBurgerMenuButton.classList.remove('activeCloseButton');
+                        windowNav.style.transform = 'translateX(101%)';
+                        blackout.classList.remove('activeBlackout');
+                        burgerMenuButton[i].classList.remove('activated');
+                        body.style.cssText = `
                         overflow-y: unset;
                         overflow-x: hidden;
                     `;
-                })
-            } else {
-                closeBurgerMenuButton.classList.remove('activeCloseButton');
+                    })
+                } else {
+                    closeBurgerMenuButton.classList.remove('activeCloseButton');
+                }
             }
-        }
-    })
+        })
+    }
 
     // --------- arrow animate in the link ---------
 
@@ -66,9 +68,9 @@ const header = () => {
     }
 }
 
-// --------- end function header ---------
+// --------- end function of header ---------
 
-// --------- export header ---------
+// --------- export function of header ---------
 
 export default header;
 

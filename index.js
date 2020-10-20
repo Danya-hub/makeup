@@ -1,6 +1,6 @@
 'use strict';
 
-// --------- import ---------
+// --------- import of function ---------
 
 import header from "./js/header.js";
 import animateScroll from "./js/animateScroll.js";
@@ -14,15 +14,25 @@ animateScroll();
 slider();
 comments();
 
-// --------- buttonScrollTop ---------
+// --------- create variables ---------
 
 const buttonScrollTop = document.querySelector('.buttonScrollTop');
+const mainHeader = document.querySelector('header');
+const copyHeader = document.querySelector('.copyHeader');
+
+// --------- button for scroll to top ---------
 
 window.addEventListener('scroll', () => {
     if (window.pageYOffset !== 0) {
         buttonScrollTop.classList.add('activeButton')
     } else {
         buttonScrollTop.classList.remove('activeButton')
+    }
+
+    if (window.pageYOffset >= mainHeader.offsetHeight) {
+        copyHeader.classList.add('copyHeaderActive');
+    } else {
+        copyHeader.classList.remove('copyHeaderActive');
     }
 })
 
