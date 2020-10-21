@@ -350,10 +350,10 @@ header * {
     justify-content: space-between;
     align-items: center;
     background: #ffff;
-    box-shadow: 0px 0px 40px rgba(100, 100, 100, 0.7);
+    box-shadow: 0px 0px 40px rgba(100, 100, 100, 0.5);
     text-transform: uppercase;
     width: 100vw;
-    height: 110px;
+    height: 100px;
     padding: 0 20px;
     transition: transform .4s, visibility .4s;
     transform: translateY(-150%);
@@ -372,14 +372,13 @@ header * {
     color: #000;
 }
 
-.copyHeader-logoSite,
-.header-logoSite {
+.copyHeader-logoSiteLink,
+.header-logoSiteLink {
     display: flex;
     align-items: center;
-    pointer-events: none;
 }
 
-.header-logoSite-link {
+.header-logoSiteLink-logo {
     position: relative;
     margin-right: 10px;
     background: #ffff;
@@ -388,15 +387,15 @@ header * {
     height: 100px;
 }
 
-.copyHeader-logoSite-link {
+.copyHeader-logoSiteLink-logo {
     position: relative;
     margin-right: 10px;
     width: 100px;
     height: 100px;
 }
 
-.copyHeader-logoSite-img,
-.header-logoSite-img {
+.copyHeader-logoSiteLink-logoImg,
+.header-logoSiteLink-logoImg {
     position: absolute;
     width: 75%;
     height: auto;
@@ -411,8 +410,13 @@ header * {
 }
 
 .copyHeader-logoSite-txt,
-.header-logoSite-txt {
+.header-logoSiteLink-txt {
     font: 100 18px 'Philosopher-Regular';
+}
+
+.navigation {
+    height: 100%;
+    width: fit-content;
 }
 
 .copyHeader-list,
@@ -420,11 +424,7 @@ header * {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 110px;
-}
-
-.header-list {
-    height: 150px;
+    height: 100%;
 }
 
 .copyHeader-listItem:nth-child(2),
@@ -542,11 +542,12 @@ header * {
     width: 100%;
     height: 2px;
     left: 0;
-    bottom: 0;
+    bottom: -2px;
 }
 
 .copyHeader-listItem-links::after {
     background: #000;
+    bottom: 0px;
 }
 
 .copyHeader-listItem-links:hover::after,
@@ -982,7 +983,7 @@ header * {
     }
 
     .copyHeader-logoSite-txt,
-    .header-logoSite-txt {
+    .header-logoSiteLinkLink-txt {
         font-size: 24px;
     }
 
