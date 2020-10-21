@@ -786,7 +786,7 @@ header * {
     height: 240px;
     margin: 10px;
     user-select: none;
-    cursor: pointer;
+    cursor: zoom-in;
 }
 
 .slider img:hover {
