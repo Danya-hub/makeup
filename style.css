@@ -409,7 +409,7 @@ header * {
     cursor: pointer;
 }
 
-.copyHeader-logoSite-txt,
+.copyHeader-logoSiteLink-txt,
 .header-logoSiteLink-txt {
     font: 100 18px 'Philosopher-Regular';
 }
@@ -695,33 +695,17 @@ header * {
 }
 
 .mainInfo-listInfoItem>div:nth-child(2) {
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 1.5s;
+    border-radius: 10px;
     width: 250px;
     height: 260px;
     margin: 30px 10px;
-}
-
-.mainInfo-listInfoItem>div:nth-child(2) div {
-    position: absolute;
-    border-radius: 10px;
-    width: 100%;
-    height: 100%;
-}
-
-.mainInfo-listInfoItem>div:nth-child(2):hover {
-    transform: rotateY(180deg);
+    overflow: hidden;
 }
 
 .mainInfo-listInfoItem-img {
     background: silver;
-}
-
-.mainInfo-listInfoItem-socailNetWorks {
-    background: #ffff;
-    border: 2px solid #000;
-    transform: rotateY(180deg);
+    width: 100%;
+    height: 100%;
 }
 
 /* --------======== slider ========--------  */
@@ -757,6 +741,11 @@ header * {
 .slider-wrapperImg {
     display: flex !important;
     justify-content: center;
+    max-width: 220px;
+    height: 210px;
+    margin: 15px auto;
+    user-select: none;
+    cursor: zoom-in;
 }
 
 .slick-disabled {
@@ -781,11 +770,8 @@ header * {
     box-shadow: 0px 0px 10px #000;
     transition: transform .4s;
     border-radius: 10px;
-    max-width: 220px;
-    height: 210px;
-    margin: 10px;
-    user-select: none;
-    cursor: zoom-in;
+    width: 100%;
+    height: 100%;
 }
 
 .slider img:hover {
@@ -900,7 +886,7 @@ header * {
     background: #000;
     border: 2px solid #000;
     width: 100%;
-    height: 100%;
+    height: 350px;
 }
 
 .bigImageWindow-content-textWrapper {
@@ -936,10 +922,11 @@ header * {
 /* --------======== prices ========--------  */
 
 .prices-table {
-    background: #eeeeee;
-    box-shadow: 0px 0px 10px #000;
+    background: #ffff;
+    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.2), 
+                inset 0px 0px 15px rgba(0, 0, 0, 0.1);
     border-radius: 22px;
-    max-width: 800px;
+    max-width: 1000px;
     margin: 20px auto;
     border-collapse: collapse;
     overflow: hidden;
@@ -956,15 +943,35 @@ header * {
 }
 
 .prices-table tr:first-child {
-    text-align: center;
+    text-align: center; 
+}
+
+.prices-table tr:first-child span {
+    font: 600 16px 'FuturaPT-Book';
 }
 
 .prices-table,
 .prices-table td {
-    border: 2px solid #000;
+    border: 2px solid #cacaca;
 }
 
 /* --------======== media ========--------  */
+
+
+@media (min-width: 575px) {
+    .bigImageWindow-content {
+        flex-direction: row;
+    }
+
+    .bigImageWindow-content-textWrapper {
+        width: 45%;
+        padding: 40px 15px;
+    }
+
+    .bigImageWindow-content-imgProcedure {
+        height: 100%;
+    }
+}
 
 @media (min-width: 768px) {
 
@@ -994,22 +1001,13 @@ header * {
         transform: translateY(-16px) rotate(-45deg);
     }
 
-    .slider img {
+    .slider-wrapperImg {
         max-width: 270px;
         height: 260px;
     }
 
-    .bigImageWindow-content {
-        flex-direction: row;
-    }
-
     .bigImageWindow {
         border-radius: 0px 20px 20px 0px;
-    }
-
-    .bigImageWindow-content-textWrapper {
-        width: 45%;
-        padding: 40px 15px;
     }
 }
 

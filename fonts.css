@@ -22,3 +22,8 @@
     src: url(./fonts/FuturaPT-Light.ttf);
     font-family: 'FuturaPT-Light';
 }
+
+@font-face {
+    src: url(./fonts/FuturaPT-Book.ttf);
+    font-family: 'FuturaPT-Book';
+}

@@ -39,6 +39,7 @@ const header = () => {
                         overflow-x: hidden;
                     `;
                     })
+
                     blackout.addEventListener('click', () => {
                         e.preventDefault();
                         closeBurgerMenuButton.classList.remove('activeCloseButton');
@@ -50,8 +51,6 @@ const header = () => {
                         overflow-x: hidden;
                     `;
                     })
-                } else {
-                    closeBurgerMenuButton.classList.remove('activeCloseButton');
                 }
             }
         })
