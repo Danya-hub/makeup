@@ -1,0 +1,17 @@
+.popup img {
+	display: block;
+}
+
+.content {
+	overflow-y: scroll;
+}
+
+.popup form {
+	margin-right: 10px;
+}
+
+#close {
+	margin-left: auto;
+	width: 20px;
+	height: 20px;
+}

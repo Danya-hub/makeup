@@ -1,0 +1,90 @@
+#auth {
+	display: flex;
+	min-height: 100vh;
+}
+
+#auth h2 {
+	text-transform: uppercase;
+	margin-bottom: 20px;
+}
+
+#auth :where(#auth aside, #form form) > * {
+	padding-bottom: 10px;
+	padding-top: 10px;
+}
+
+#auth > * {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 0 3%;
+}
+
+#auth aside {
+	background: rgb(var(--lightBrown));
+	box-shadow: inset -10px 0 20px -16px rgba(var(--brown), 0.5);
+}
+
+#form {
+	width: 100%;
+}
+
+#form .wrapper {
+	width: fit-content;
+	margin: 0 auto;
+}
+
+#form img {
+	width: 26px;
+	height: 26px;
+}
+
+#form input {
+	box-shadow: inset 0 0 0 var(--scale) rgba(var(--lineColor), var(--opacity));
+}
+
+#or {
+	position: relative;
+	width: 100%;
+	padding: 35px 0;
+}
+
+#or span {
+	position: absolute;
+	background: rgb(var(--white));
+	transform: translate(-50%, -50%);
+	font-weight: 600;
+	padding: 0 5px;
+	left: 50%;
+	top: 50%;
+	z-index: 1;
+}
+
+#or::before {
+	content: "";
+	position: absolute;
+	background: rgb(var(--brown));
+	width: 100%;
+	height: 1px;
+	transform: translateY(-50%);
+	left: 0;
+	top: 50%;
+}
+
+#other {
+	display: flex;
+	justify-content: center;
+}
+
+:where(#form form, #auth aside) button {
+	margin-top: 20px;
+}
+
+:where(#form form, #auth aside) button:hover {
+	--back: rgba(var(--brown), 0.6);
+}
+
+#form h2 {
+	color: rgb(var(--brown));
+	font-size: var(--step-1);
+}

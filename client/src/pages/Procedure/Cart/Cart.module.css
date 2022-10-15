@@ -1,0 +1,21 @@
+.cart {
+	position: absolute;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	border-radius: var(--def-radius);
+	box-shadow: 0 0 1 rgba(var(--black), 0.2);
+	width: 100%;
+	transition: unset;
+	height: fit-content;
+	right: 0;
+	overflow: hidden;
+}
+
+.cart span {
+	display: block;
+}
+
+.cart :where(p, span) {
+	margin: 6px;
+	user-select: none;
+}

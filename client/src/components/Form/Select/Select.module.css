@@ -1,0 +1,60 @@
+.select {
+	position: relative;
+}
+
+.select span {
+	display: block;
+	padding: 6px 0;
+	user-select: none;
+}
+
+.options {
+	display: none;
+	position: absolute;
+	background: rgb(var(--white));
+	box-shadow: 0 2px 10px rgba(var(--black), 0.3);
+	border-radius: var(--def-radius);
+	max-height: 100px;
+	overflow-y: scroll;
+	z-index: 998;
+}
+
+.options span:hover {
+	--back: rgba(var(--gray), 0.6);
+}
+
+.options span {
+	--back: rgb(var(--white));
+
+	background: var(--back);
+	padding-left: 10px;
+	padding-right: 10px;
+	cursor: pointer;
+}
+
+.options .selected {
+	--back: rgb(var(--darkGray));
+}
+
+.arrow {
+	--rotate: 0deg;
+
+	transform: rotateX(var(--rotate));
+	margin-left: var(--step-0);
+	width: 10px;
+	height: 10px;
+}
+
+.select.open .arrow {
+	--rotate: 180deg;
+}
+
+.select.open .options {
+	display: block;
+}
+
+.activeEl {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+}

@@ -1,0 +1,12 @@
+.current {
+	box-shadow: inset 0 0 0 1px rgb(var(--brown));
+}
+
+.hover {
+	background: rgba(var(--brown), 0.2);
+}
+
+td:not(.empty) {
+	border-radius: 50%;
+	cursor: pointer;
+}

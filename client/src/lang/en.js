@@ -1,0 +1,30 @@
+const en = {
+	translation: {
+		weekdayNames: ["mon", "tue", "wen", "thu", "fri", "sut", "sun"],
+		designation: "Designation",
+		pending: "Waiting for work to start",
+		inProcess: "In a process",
+		finished: "Finished",
+		availableTime: "Available time",
+		procedure: "Procedure name",
+		fullname: "Name, surname",
+		password: "Password",
+		telephone: "Telephone",
+		save: "Save",
+		takenProcedureTime: "This time is already taken. Choose another!",
+		elapsedDay: "The day in question has already elapsed. Choose another",
+		crossingElapsedTime: "You have crossed a time that has already passed",
+		time: "Time",
+		status: "Status",
+		procedureName: "Name of procedure",
+		welcome: "Welcome!",
+		signupAccount: "Create your account",
+		signinAccount: "Sign in your account",
+		makeAppointment: "To make an appointment, you need to sign up or sign in into your account!",
+		signIn: "Sign in",
+		signUp: "Sign up",
+		or: "or",
+	},
+};
+
+export { en as default };

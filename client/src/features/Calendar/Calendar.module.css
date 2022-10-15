@@ -1,0 +1,26 @@
+.calendar {
+	align-self: center;
+	border: none;
+	width: fit-content;
+}
+
+.calendar :where(td, th) {
+	position: relative;
+	padding: 14px;
+}
+
+.calendar span {
+	position: absolute;
+	letter-spacing: 0;
+	line-height: 0;
+	transform: translate(-50%, -50%);
+	font-size: calc(var(--step-0) * 0.75);
+	left: 50%;
+	top: 50%;
+	user-select: none;
+}
+
+.calendar th {
+	background: rgba(var(--lightGray), 0.6);
+	text-transform: uppercase;
+}

@@ -1,0 +1,35 @@
+.topPanel {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.switchMonth {
+	--opacity: 0.5;
+
+	width: 30px;
+	height: 30px;
+	opacity: var(--opacity);
+}
+
+.switchMonth:hover {
+	--opacity: 1;
+}
+
+.nameMonth {
+	text-transform: capitalize;
+	font-size: var(--step-0);
+	white-space: nowrap;
+}
+
+.arrow {
+	--o: 0.6;
+
+	opacity: var(--o);
+}
+
+.arrow:hover {
+	--o: 1;
+}

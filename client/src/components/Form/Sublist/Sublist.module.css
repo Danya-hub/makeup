@@ -1,0 +1,42 @@
+.sublist {
+	height: fit-content;
+	overflow-y: scroll;
+}
+
+.title {
+	display: flex;
+	align-items: center;
+	padding: 10px 0;
+	user-select: none;
+	cursor: pointer;
+}
+
+.sublist .list {
+	display: none;
+}
+
+.sublist li {
+	display: flex;
+	padding: 4px 2px;
+}
+
+.sublist p {
+	font-size: calc(var(--step-0) * 0.8);
+}
+
+.arrow {
+	--rotate: 0deg;
+
+	transform: rotateX(var(--rotate));
+	margin-left: var(--step-0);
+	width: 10px;
+	height: 10px;
+}
+
+.sublist.open .arrow {
+	--rotate: 180deg;
+}
+
+.sublist.open .list {
+	display: block;
+}
