@@ -47,10 +47,10 @@ function Signin() {
 		<div id={style.auth}>
 			<aside>
 				<h2>{t("welcome")}</h2>
-				<p>{state?.purpose}</p>
+				<p>{t(state?.purpose)}</p>
 				<button
 					type="button"
-					className="button"
+					className="button border"
 					onClick={() => {
 						dispatch(actions.clearError());
 						navigate("/signup", {
@@ -85,7 +85,7 @@ function Signin() {
 						</label>
 						<button
 							type="submit"
-							className="button"
+							className="button border"
 						>
 							{t("signIn")}
 						</button>

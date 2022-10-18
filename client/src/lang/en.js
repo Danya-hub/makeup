@@ -20,10 +20,19 @@ const en = {
 		welcome: "Welcome!",
 		signupAccount: "Create your account",
 		signinAccount: "Sign in your account",
-		makeAppointment: "To make an appointment, you need to sign up or sign in into your account!",
+		warningAuthToMakeAppointment:
+			"To make an appointment, you need to sign up or sign in into your account!",
+		adviceForAuth:
+			"To continue using our site, we advise you to sign up or sign in to your account.",
 		signIn: "Sign in",
 		signUp: "Sign up",
 		or: "or",
+		book: {
+			long: "Book now",
+			short: "Book",
+		},
+		changePassword: "Change a password",
+		noAccessToPage: "Before going to a page, you need to sign up or sign in!",
 	},
 };
 

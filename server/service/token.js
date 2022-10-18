@@ -14,13 +14,13 @@ class TokenService {
         const accessToken = jsonwebtoken.sign(
                 paylaod,
                 process.env.ACCESS_TOKEN_SECRET_KEY, {
-                    expiresIn: "10s",
+                    expiresIn: "30m",
                 },
             ),
             refreshToken = jsonwebtoken.sign(
                 paylaod,
                 process.env.REFRESH_TOKEN_SECRET_KEY, {
-                    expiresIn: "60s",
+                    expiresIn: "7d",
                 },
             );
 

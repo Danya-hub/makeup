@@ -3,7 +3,7 @@ import types from "prop-types";
 
 import FormatDate from "@/utils/formatDate.js";
 
-import Calendar from "@/features/Calendar/Calendar.jsx";
+import Calendar from "@/components/Calendar/Calendar.jsx";
 import WidthInput from "@/components/Form/WidthInput/WidthInput.jsx";
 
 import style from "./TimeInput.module.css";
@@ -12,7 +12,7 @@ TimeInput.propTypes = {
 	newProcedure: types.object,
 	warning: types.object,
 	changeValue: types.func,
-	isOpenCalendar: types.array,
+	openCalendarState: types.array,
 	setUnitForDate: types.func,
 	onTouchCart: types.func,
 	onElapsedDay: types.func,
@@ -23,7 +23,7 @@ function TimeInput({
 	newProcedure,
 	warning,
 	changeValue,
-	isOpenCalendar,
+	openCalendarState,
 	setUnitForDate,
 	onTouchCart,
 	onElapsedDay,
@@ -34,7 +34,7 @@ function TimeInput({
 	const { warnings, hasWarning: hasWarningFunc } = warning;
 	const [, hasWarning] = hasWarningFunc();
 
-	const [_isOpenCalendar, setOpenCalendar] = isOpenCalendar;
+	const [isOpenCalendar, setOpenCalendar] = openCalendarState;
 
 	function setStartAndFinishTimes(finalValue) {
 		const time = FormatDate.numericTimeFromChar(finalValue);
@@ -72,10 +72,10 @@ function TimeInput({
 					onClick={() => setOpenCalendar(true)}
 					value={FormatDate.weekdayAndMonth(newProcedure.startProcTime, currLng)}
 				/>
-				{_isOpenCalendar && (
+				{isOpenCalendar && (
 					<Calendar
 						id={style.dayAndMonthCalendar}
-						date={newProcedure.startProcTime}
+						propDate={newProcedure.startProcTime}
 						onChange={(date) => {
 							changeValue(
 								setUnitForDate(["Month", "Date"], ["startProcTime", "finishProcTime"], date)

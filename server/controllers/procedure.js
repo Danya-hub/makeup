@@ -102,7 +102,7 @@ const ProcedureController = {
                 async (req, res, next) => {
                     try {
                         const errors = validationResult(req);
-
+                        console.log(errors);
                         if (!errors.isEmpty()) {
                             ApiError.badRequest(errors.array());
                         }
@@ -134,7 +134,7 @@ const ProcedureController = {
                         }
 
                         res.status(200).json({
-                            msg: "Procedure was delete",
+                            msg: "AllProcedures was delete",
                             deletedProcId: req.params.id,
                         });
                         next();

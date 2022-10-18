@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import types from "prop-types";
 
-import _onOutside from "@/hooks/outside.js";
+import onOutside from "@/hooks/outside.js";
 import { default as CloseSrc } from "@/assets/image/close.svg";
 
 import style from "./Popup.module.css";
@@ -12,11 +12,19 @@ Popup.propTypes = {
 	onOpen: types.func,
 	onClose: types.func,
 	styleAttr: types.object,
-	onOutside: types.object,
-	children: types.array,
+	eventsOnOutside: types.object,
+	children: types.oneOfType([types.array, types.object]),
 };
 
-function Popup({ id = "", strictSwitch, onOpen, onClose, styleAttr = {}, onOutside, ...props }) {
+function Popup({
+	id = "",
+	strictSwitch,
+	onOpen,
+	onClose,
+	styleAttr = {},
+	eventsOnOutside,
+	...props
+}) {
 	const [isActive, setActive] = strictSwitch || useState(false);
 
 	useEffect(() => {
@@ -33,10 +41,11 @@ function Popup({ id = "", strictSwitch, onOpen, onClose, styleAttr = {}, onOutsi
 				display: isActive ? "unset" : "none",
 			}}
 			className={style.popup}
-			{...(onOutside ? _onOutside(onOutside) : {})}
+			{...(eventsOnOutside ? onOutside(eventsOnOutside) : {})}
 		>
 			<button
 				id={style.close}
+				className="button"
 				onClick={() => {
 					setActive(false);
 					onClose();

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import GoogleSignin from "@/features/GoogleSignin/GoogleSignin.jsx";
+import GoogleSignin from "@/components/GoogleSignin/GoogleSignin.jsx";
 
 import { signup, actions } from "@/service/redusers/user.js";
 
@@ -46,10 +46,10 @@ function Signup() {
 		<div id={style.auth}>
 			<aside>
 				<h2>{t("welcome")}</h2>
-				<p>{state?.purpose}</p>
+				<p>{t(state?.purpose)}</p>
 				<button
 					type="button"
-					className="button"
+					className="button border"
 					onClick={() => {
 						dispatch(actions.clearError());
 						navigate("/signin", {
@@ -89,7 +89,7 @@ function Signup() {
 						</label>
 						<button
 							type="submit"
-							className="button"
+							className="button border"
 						>
 							{t("signUp")}
 						</button>

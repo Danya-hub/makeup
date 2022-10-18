@@ -1,5 +1,5 @@
 function setUser(state, action) {
-	state.user = action.payload.data;
+	state.info = action.payload;
 }
 
 function clearError(state) {

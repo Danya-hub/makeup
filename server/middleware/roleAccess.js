@@ -8,7 +8,7 @@ dotenv.config();
 function roleAccess(roles) {
     return async function (req, res, next) {
         try {
-            const [, token] = req.headers.Authorization.split(/\s/);
+            const [, token] = req.headers.authorization.split(/\s/);
             const decoded = jsonwebtoken.verify(
                 token,
                 process.env.ACCESS_TOKEN_SECRET_KEY

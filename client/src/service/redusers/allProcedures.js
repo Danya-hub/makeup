@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import axios from "@/http/axios.js";
-import * as reducers from "@/service/actions/procedure.js";
+import * as reducers from "@/service/actions/allProcedures.js";
 import parseValueToDate from "@/utils/parseValueToDate.js";
 import FormatDate from "@/utils/formatDate.js";
 
@@ -20,11 +20,11 @@ const getProcedureByDay = createAsyncThunk(
 	"procedure/getProcedureByDay",
 	async (date, { dispatch, rejectWithValue }) => {
 		try {
-			const procedures = await axios
+			const userProcedures = await axios
 				.get(`/procedure/byDay/${date}`)
 				.then((res) => res.data.map(parseValueToDate));
 
-			dispatch(actions.putNewValue(["carts", procedures]));
+			dispatch(actions.putNewValue(["carts", userProcedures]));
 		} catch (error) {
 			return rejectWithValue(error.message);
 		}

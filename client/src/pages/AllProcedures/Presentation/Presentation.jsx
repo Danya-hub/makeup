@@ -1,5 +1,6 @@
-import { useDispatch } from "react-redux";
-import { useState, useRef, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useState, useRef, useLayoutEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import types from "prop-types";
 
@@ -7,20 +8,20 @@ import { actions as navigateDateActions } from "@/service/redusers/navigateDate.
 import FormatDate from "@/utils/formatDate.js";
 import getWidthByChar from "@/helpers/widthByChar.js";
 
-import Cart from "@/pages/Procedure/Cart/Cart.jsx";
-import Loader from "@/features/Loader/Loader.jsx";
+import Cart from "@/pages/AllProcedures/Cart/Cart.jsx";
+import Loader from "@/components/Loader/Loader.jsx";
 
 import style from "./Presentation.module.css";
 
 const columnsName = ["time", "status", "procedureName"];
 
 Presentation.propTypes = {
-	newProcedure: types.array,
+	newProcedureState: types.array,
 	warning: types.object,
 	carts: types.array,
 	locale: types.object,
-	view: types.array,
-	isVisiblePopup: types.array,
+	viewState: types.array,
+	visiblePopupState: types.array,
 	isElapsedDay: types.func,
 	formatViewDateByDay: types.func,
 	numericHoursFromDay: types.array,
@@ -35,12 +36,12 @@ Presentation.propTypes = {
 };
 
 function Presentation({
-	newProcedure,
+	newProcedureState,
 	warning,
 	carts,
 	locale,
-	view,
-	isVisiblePopup,
+	viewState,
+	visiblePopupState,
 	isElapsedDay,
 	formatViewDateByDay,
 	numericHoursFromDay,
@@ -54,11 +55,13 @@ function Presentation({
 	isCurrentTime,
 }) {
 	const dispatch = useDispatch();
+	const { info: userInfo } = useSelector((state) => state.user);
+	const navigate = useNavigate();
 	const { t } = useTranslation();
 
 	const isElapsed = isElapsedDay();
-	const [_view, setViewDate] = view;
-	const [_newProcedure, setNewProcedure] = newProcedure;
+	const [view, setViewDate] = viewState;
+	const [newProcedure, setNewProcedure] = newProcedureState;
 	const { hasWarning, setWarning } = warning;
 
 	const [innerY, setInnerY] = useState(0);
@@ -66,7 +69,7 @@ function Presentation({
 	const [isMouseDown, setMouseDown] = useState(false);
 	const parentRef = useRef(null);
 
-	const [_isVisiblePopup, setVisiblePopup] = isVisiblePopup;
+	const [isVisiblePopup, setVisiblePopup] = visiblePopupState;
 	const widthCharTime = Math.max(...numericHoursFromDay.map((hour) => getWidthByChar(hour)));
 
 	function setNumericTimeByGrabbing(e, y = 0) {
@@ -82,12 +85,12 @@ function Presentation({
 
 	function setStartAndFinishTimes(minutes) {
 		const startProcMinutes = minutes || selectTime * 60,
-			finishProcTime = startProcMinutes + _newProcedure.type.durationProc * 60;
+			finishProcTime = startProcMinutes + newProcedure.type.durationProc * 60;
 
 		setNewProcedure((prev) => ({
 			...prev,
-			startProcTime: FormatDate.minutesInDate(startProcMinutes, _newProcedure.startProcTime, false),
-			finishProcTime: FormatDate.minutesInDate(finishProcTime, _newProcedure.startProcTime, false),
+			startProcTime: FormatDate.minutesInDate(startProcMinutes, newProcedure.startProcTime, false),
+			finishProcTime: FormatDate.minutesInDate(finishProcTime, newProcedure.startProcTime, false),
 		}));
 
 		onTouchCart(startProcMinutes, finishProcTime);
@@ -103,7 +106,7 @@ function Presentation({
 		const grabbingInnerY = e.pageY - topToRootEl - topToCart;
 
 		const rez =
-			_newProcedure.type.durationProc * 60 < grabbingInnerY || 0 > grabbingInnerY
+			newProcedure.type.durationProc * 60 < grabbingInnerY || 0 > grabbingInnerY
 				? innerY
 				: grabbingInnerY;
 
@@ -128,6 +131,15 @@ function Presentation({
 	}
 
 	function onMouseDown(e) {
+		if (!userInfo) {
+			return navigate("/signup", {
+				replace: true,
+				state: {
+					purpose: "warningAuthToMakeAppointment",
+				},
+			});
+		}
+
 		const grabbingInnerY = onGrabbingCart(e);
 		const minutesByClicking = setNumericTimeByGrabbing(e, -grabbingInnerY) * 60;
 
@@ -141,9 +153,9 @@ function Presentation({
 		}
 	}
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		const updateTime = setInterval(() => {
-			const [newDay, isCurrent] = formatViewDateByDay(_view);
+			const [newDay, isCurrent] = formatViewDateByDay(view);
 
 			dispatch(navigateDateActions.setNavigateDate([newDay, isCurrent]));
 			setViewDate(newDay);
@@ -158,7 +170,7 @@ function Presentation({
 		<Loader></Loader>
 	) : (
 		<div
-			className={_isVisiblePopup ? style.noActiveGrabbing : isMouseDown ? style.activeGrabbing : ""}
+			className={isVisiblePopup ? style.noActiveGrabbing : isMouseDown ? style.activeGrabbing : ""}
 			id={style.presentation}
 		>
 			<div className={style.nameColumns}>
@@ -209,12 +221,12 @@ function Presentation({
 						>
 							{isCurrentTime && <div id={style.current}></div>}
 						</div>
-						{(_isVisiblePopup || isMouseDown) && (
+						{(isVisiblePopup || isMouseDown) && (
 							<Cart
 								id={style.newProcedure}
-								procedure={_newProcedure}
+								procedure={newProcedure}
 								styleAttr={{
-									height: `${_newProcedure.type.durationProc * hourHeightInPx}px`,
+									height: `${newProcedure.type.durationProc * hourHeightInPx}px`,
 									top: `${selectTime * hourHeightInPx}px`,
 								}}
 							></Cart>

@@ -18,15 +18,11 @@ class ApiError extends Error {
     }
 
     static unauthorized() {
-        throw new ApiError(401, [{
-            msg: "This user is unauthorized",
-        }]);
+        throw new ApiError(401, "This user is unauthorized");
     }
 
     static noAccess() {
-        throw new ApiError(403, [{
-            msg: errors.noAccess(),
-        }]);
+        throw new ApiError(403, errors.noAccess());
     }
 
     static badRequest(errors) {

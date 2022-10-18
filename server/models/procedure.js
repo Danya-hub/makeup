@@ -30,8 +30,9 @@ ProcedureSchema.statics.isEquilDate = async function (date, hiddenProp) {
         });
 }
 
-const model = mongoose.model("Procedure", ProcedureSchema);
+const model = mongoose.model("AllProcedures", ProcedureSchema);
 
 export {
-    model as default,
+    model as
+    default,
 };

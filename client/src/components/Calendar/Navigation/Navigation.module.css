@@ -7,11 +7,9 @@
 }
 
 .switchMonth {
-	--opacity: 0.5;
-
 	width: 30px;
 	height: 30px;
-	opacity: var(--opacity);
+	padding: 0;
 }
 
 .switchMonth:hover {

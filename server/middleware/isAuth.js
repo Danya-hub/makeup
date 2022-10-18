@@ -10,12 +10,12 @@ config();
 
 function isAuth(req, res, next) {
     try {
-        const [, token] = req.headers.Authorization.split(/\s/);
-
+        const [, token] = req.headers.authorization.split(/\s/);
+        
         if (!token) {
             ApiError.unauthorized();
         }
-
+        
         const decoded = TokenService.checkOnValidAccessToken(token);
 
         if (!decoded) {

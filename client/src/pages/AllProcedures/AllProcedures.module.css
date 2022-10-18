@@ -1,9 +1,9 @@
-#procedure {
+#allProcedures {
 	display: flex;
 	min-height: 100vh;
 }
 
-#procedure aside {
+#allProcedures aside {
 	position: sticky;
 	box-shadow: 0 0 20px rgba(var(--brown), 0.1);
 	padding: 16px 2.5%;
@@ -11,6 +11,6 @@
 	top: 0;
 }
 
-#procedure aside > * {
+#allProcedures aside > * {
 	padding: 10px 0;
 }

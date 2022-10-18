@@ -1,0 +1,57 @@
+.aside {
+	position: fixed;
+	left: 0;
+	top: 0;
+	height: 100vh;
+	z-index: 999;
+}
+
+.aside.popup {
+	width: 100%;
+}
+
+.content {
+	width: fit-content;
+	height: inherit;
+	padding: 20px 0;
+}
+
+.aside.popup .content {
+	position: absolute;
+	background: rgb(var(--white));
+	box-shadow: 0 0 20px rgba(var(--black), 0.6);
+	right: 0;
+	top: inherit;
+	z-index: 1;
+}
+
+.content :where(li a, button) {
+	width: 100%;
+	padding: 10px 20px;
+}
+
+.content > *:not(:where(:first-child, :last-child)) {
+	--border: 2px solid rgb(var(--lightGray));
+
+	border-bottom: var(--border);
+}
+
+.content button {
+	width: 100%;
+}
+
+#close {
+	margin-left: auto;
+	margin-right: 20px;
+	padding: 0;
+	width: 20px;
+	height: 20px;
+}
+
+.background {
+	position: absolute;
+	width: inherit;
+	height: inherit;
+	left: inherit;
+	top: inherit;
+}

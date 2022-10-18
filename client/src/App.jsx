@@ -1,17 +1,21 @@
-import { Route, Routes } from "react-router-dom";
+// import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { Fragment, Suspense, useLayoutEffect } from "react";
+import { Fragment, useLayoutEffect, useState } from "react";
 
 import Header from "@/components/Header/Header.jsx";
-import Loader from "@/features/Loader/Loader.jsx";
+import Main from "@/components/Main/Main.jsx";
 
-import { refresh } from "./service/redusers/user.js";
-import routes from "@/routes/index.js";
+import { refresh } from "@/service/redusers/user.js";
+// import routes from "./routes/index.js"; //!
 
 import "@/styles/main.css";
 
 function App() {
 	const dispatch = useDispatch();
+	// const location = useLocation();
+
+	const openCabinetState = useState(false);
+	// const currentPath = routes.find((route) => route.path === location.pathname); //!
 
 	function __init__() {
 		dispatch(refresh());
@@ -23,20 +27,11 @@ function App() {
 
 	return (
 		<Fragment>
-			<Header></Header>
-			<main>
-				<Suspense fallback={<Loader />}>
-					<Routes>
-						{routes.map((route) => (
-							<Route
-								key={route.path}
-								path={route.path}
-								element={route.elem}
-							></Route>
-						))}
-					</Routes>
-				</Suspense>
-			</main>
+			<Header
+				openCabinetState={openCabinetState}
+				isDisplay={true}
+			></Header>
+			<Main openCabinetState={openCabinetState}></Main>
 		</Fragment>
 	);
 }

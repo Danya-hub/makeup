@@ -8,7 +8,7 @@ const axiosOptions = {
 const api = axios.create(axiosOptions);
 
 api.interceptors.request.use((config) => {
-	config.headers.Authorization = `Barear ${localStorage.getItem("token")}`;
+	config.headers.authorization = `Barear ${localStorage.getItem("token")}`;
 
 	return config;
 });

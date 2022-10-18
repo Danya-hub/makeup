@@ -6,6 +6,6 @@ export default {
     notExist: (field) => `This ${field} does not exist`,
     alreadyExist: (field) => `This ${field} already exist`,
     unrecognizedSignin: () => `Unrecognized name or password`,
-    unauth: () => `You are not Authorization!`,
+    unauth: () => `You are not unauthorized!`,
     noAccess: () => `You do not have access`,
 }

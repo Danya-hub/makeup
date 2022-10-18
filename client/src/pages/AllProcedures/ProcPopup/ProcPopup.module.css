@@ -9,7 +9,7 @@
 	max-height: 70%;
 	left: 50%;
 	top: 50%;
-	z-index: 999;
+	z-index: 998;
 }
 
 #popupNewProc input {
@@ -70,4 +70,8 @@
 .warning i {
 	font-size: var(--step-1);
 	color: rgb(var(--red));
+}
+
+#popupNewProc button {
+	text-transform: uppercase;
 }

@@ -2,16 +2,16 @@ function onOutside(events) {
 	let obj = {};
 
 	Object.entries(events).forEach((arr) => {
-		const [eventName, handlersObj] = arr;
+		const [eventName, eventsObj] = arr;
 
 		obj[eventName] = (e) => {
-			Object.keys(handlersObj).forEach((nameEl) => {
+			Object.keys(eventsObj).forEach((nameEl) => {
 				const el = document.getElementById(nameEl);
-				if (!el || el.contains(e.target) || !handlersObj[nameEl]) {
+				if (!el || el.contains(e.target) || !eventsObj[nameEl]) {
 					return;
 				}
 
-				handlersObj[nameEl](this);
+				eventsObj[nameEl](this);
 			});
 		};
 	});

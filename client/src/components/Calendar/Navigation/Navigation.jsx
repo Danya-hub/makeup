@@ -8,33 +8,30 @@ import style from "./Navigation.module.css";
 
 Navigation.propTypes = {
 	locale: types.object,
-	month: types.array,
 };
 
-function Navigation({ locale, month }) {
-	const [_month, setMonth] = month;
+function Navigation({ locale }) {
+	const { propDate, monthState, onChange } = locale;
+	const [month, setMonth] = monthState;
 	const lng = useSelector((state) => state.langs.currLng);
 
 	function setPrevMonth() {
-		const prevMonth = _month - 1;
-		setMonth(prevMonth);
+		setMonth(month - 1);
 
-		locale.setFullYear(locale.getFullYear() - (!(prevMonth % 12) ? 1 : 0));
-		locale.setMonth((locale.getMonth() || 12) - 1);
+		onChange(propDate);
 	}
 
 	function setNextMonth() {
-		const nextMonth = _month + 1;
-		setMonth(nextMonth);
+		setMonth(month + 1);
 
-		locale.setMonth(locale.getMonth() + 1);
+		onChange(propDate);
 	}
 
 	return (
 		<div className={style.topPanel}>
 			<button
 				type="button"
-				className={style.switchMonth}
+				className={`button ${style.switchMonth}`}
 				id="prev"
 				onClick={setPrevMonth}
 			>
@@ -45,14 +42,14 @@ function Navigation({ locale, month }) {
 				/>
 			</button>
 			<h2 className={style.nameMonth}>
-				{locale.toLocaleString(lng, {
+				{propDate.toLocaleString(lng, {
 					month: "long",
 				})}{" "}
-				{locale.getFullYear()}
+				{propDate.getFullYear()}
 			</h2>
 			<button
 				type="button"
-				className={style.switchMonth}
+				className={`button ${style.switchMonth}`}
 				id="next"
 				onClick={setNextMonth}
 			>

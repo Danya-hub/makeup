@@ -4,14 +4,14 @@ import axios from "@/http/axios.js";
 import * as reducers from "@/service/actions/user.js";
 
 const initialState = {
-	user: null,
+	info: null,
 	error: "",
 };
 
 const refresh = createAsyncThunk("user/refresh", async (_, { dispatch, rejectWithValue }) => {
 	try {
 		const user = await axios.get("/auth/refresh");
-		dispatch(actions.setUser(user));
+		dispatch(actions.setUser(user.data));
 
 		return user;
 	} catch (error) {
@@ -33,9 +33,20 @@ const signin = createAsyncThunk("user/signin", async (value, { dispatch, rejectW
 	try {
 		const finedUser = await axios.post("/auth/signin", value);
 
-		dispatch(actions.setUser(finedUser));
+		dispatch(actions.setUser(finedUser.data));
 
 		return finedUser;
+	} catch (error) {
+		return rejectWithValue(error.response.data);
+	}
+});
+
+const logout = createAsyncThunk("user/logout", async (value, { dispatch, rejectWithValue }) => {
+	try {
+		await axios.post("/auth/logout");
+
+		localStorage.removeItem("token");
+		dispatch(actions.setUser(null));
 	} catch (error) {
 		return rejectWithValue(error.response.data);
 	}
@@ -44,7 +55,7 @@ const signin = createAsyncThunk("user/signin", async (value, { dispatch, rejectW
 const google = createAsyncThunk("user/google", async (_, { dispatch, rejectWithValue }) => {
 	try {
 		const user = await axios.get("/auth/google");
-		dispatch(actions.setUser(user));
+		dispatch(actions.setUser(user.data));
 
 		return user;
 	} catch (error) {
@@ -72,4 +83,4 @@ const { reducer, actions } = createSlice({
 	},
 });
 
-export { reducer as default, actions, signup, signin, google, refresh };
+export { reducer as default, actions, signup, signin, google, refresh, logout };

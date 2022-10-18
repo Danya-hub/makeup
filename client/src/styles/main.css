@@ -26,7 +26,9 @@ a,
 h3,
 input,
 button {
-	font-size: calc(var(--step-0) - 3px);
+	--size: calc(var(--step-0) - 3px);
+
+	font-size: var(--size);
 	letter-spacing: 1px;
 }
 
@@ -48,19 +50,33 @@ h3 {
 	letter-spacing: 1.5px;
 }
 
+body {
+	position: relative;
+	min-height: 100vh;
+}
+
 .button {
-	--op: 0.6;
-	--back: rgba(var(--gray), var(--op));
+	--back: var(--transp);
+	--o: 0;
 
 	display: block;
-	background: var(--back);
-	box-shadow: 0 0 0 1px rgb(var(--black));
-	border-radius: var(--def-radius);
-	padding: 12px 34px;
+	background: rgba(var(--back), var(--o));
+	padding: 12px 0;
 	font-weight: 700;
-	text-transform: uppercase;
 	cursor: pointer;
 	width: fit-content;
+}
+
+.button.border {
+	box-shadow: 0 0 0 1px rgb(var(--black));
+	border-radius: var(--def-radius);
+	padding-left: 20px;
+	padding-right: 20px;
+}
+
+.button.border:hover {
+	--back: var(--gray);
+	--o: 0.6;
 }
 
 img {
@@ -81,6 +97,10 @@ p {
 }
 
 label {
+	display: block;
+}
+
+a {
 	display: block;
 }
 

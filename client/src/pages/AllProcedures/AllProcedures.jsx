@@ -9,14 +9,14 @@ import {
 	getAllStates,
 	getAllTypes,
 	getDefaultProcValue,
-} from "@/service/redusers/procedure.js";
+} from "@/service/redusers/allProcedures.js";
 import FormatDate from "@/utils/formatDate.js";
 
 import ProcPopup from "./ProcPopup/ProcPopup.jsx";
-import Aside from "./Aside/Aside.jsx";
+import ControlPanel from "./ControlPanel/ControlPanel.jsx";
 import Presentation from "./Presentation/Presentation.jsx";
 
-import style from "./Procedure.module.css";
+import style from "./AllProcedures.module.css";
 
 const warningsList = {
 	takenProcedureTime: "",
@@ -24,12 +24,12 @@ const warningsList = {
 	crossingElapsedTime: "",
 };
 
-function Procedure() {
-	const { navigateDate, langs, procedure } = useSelector((state) => state);
+function AllProcedures() {
+	const { navigateDate, langs, allProcedures } = useSelector((state) => state);
 	const dispatch = useDispatch();
 	const { t } = useTranslation();
 	const [warnings, setWarning, { hasWarning }] = useWarning(warningsList);
-	const [{ noChangeDate }] = useDate(new Date(navigateDate.date));
+	const [{ _date }] = useDate(new Date(navigateDate.date));
 	const [newProcedure, setNewProcedure] = useState({});
 	const [view, setViewDate] = useState(new Date());
 	const [isVisibleProcedurePopup, setVisibleProcedurePopup] = useState(false);
@@ -43,10 +43,10 @@ function Procedure() {
 		};
 
 		constructor() {
-			this.newProcedure = [newProcedure, setNewProcedure];
+			this.newProcedureState = [newProcedure, setNewProcedure];
 			this.locale = new Date(navigateDate.date);
 			this.isCurrentTime = navigateDate.isCurrentDate;
-			this.view = [view, setViewDate];
+			this.viewState = [view, setViewDate];
 			this.hourHeightInPx = window.screen.height / 12;
 
 			this.numericHoursFromDay = FormatDate.hoursByFormat({
@@ -107,7 +107,7 @@ function Procedure() {
 			this.onTouchCart = (newProcStartMinutes, newProcFinishMinutes) => {
 				let isTouchCart = false;
 
-				procedure.carts.forEach((cart) => {
+				allProcedures.carts.forEach((cart) => {
 					if (isTouchCart) {
 						return;
 					}
@@ -155,14 +155,16 @@ function Procedure() {
 			isCurrent ? [new Date(), true] : [commonProps[isMaxDate ? "maxDate" : "minDate"](date), false]
 		);
 
-		return callback(date, noChangeDate);
+		return callback(date, _date);
 	}
 
-	function __init__() {
+	async function __init__() {
 		dispatch(getAllStates());
 		dispatch(getAllTypes());
 
-		defaultValueProcedure.current = dispatch(getDefaultProcValue()).then((res) => res.payload);
+		defaultValueProcedure.current = await dispatch(getDefaultProcValue()).then(
+			(res) => res.payload
+		);
 
 		setNewProcedure((prev) => ({
 			...prev,
@@ -179,18 +181,18 @@ function Procedure() {
 	}, [isVisibleProcedurePopup]);
 
 	return (
-		<div id={style.procedure}>
+		<div id={style.allProcedures}>
 			<ProcPopup
 				defaultValueProcedure={defaultValueProcedure}
-				isVisible={[isVisibleProcedurePopup, setVisibleProcedurePopup]}
+				visibleState={[isVisibleProcedurePopup, setVisibleProcedurePopup]}
 				{...events}
 				{...commonProps}
 			></ProcPopup>
-			<Aside {...commonProps}></Aside>
+			<ControlPanel {...commonProps}></ControlPanel>
 			<Presentation
-				carts={procedure.carts}
-				isVisiblePopup={[isVisibleProcedurePopup, setVisibleProcedurePopup]}
-				isLoadingContent={procedure.isLoading.procedure}
+				carts={allProcedures.carts}
+				visiblePopupState={[isVisibleProcedurePopup, setVisibleProcedurePopup]}
+				isLoadingContent={allProcedures.isLoading.procedure}
 				formatViewDateByDay={formatViewDateByDay}
 				{...events}
 				{...commonProps}
@@ -199,4 +201,4 @@ function Procedure() {
 	);
 }
 
-export { Procedure as default };
+export { AllProcedures as default };

@@ -1,7 +1,7 @@
-import UserModel from "../models/user.js";
-
 import validator from "express-validator";
-import ApiError from "../utils/apiError.js";
+
+import UserModel from "../models/user.js";
+import errors from "../constant/errors.js";
 
 const validation = {
     userBlocking: [
@@ -12,7 +12,7 @@ const validation = {
                 const finedUser = await UserModel.findById(id);
 
                 if (!finedUser) {
-                    ApiError.notExist("user");
+                    throw errors.notExist("user");
                 }
 
                 return Promise.resolve();

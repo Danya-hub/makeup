@@ -1,0 +1,37 @@
+#cabinet {
+	--space: 20px;
+}
+
+#info {
+	display: flex;
+	padding: 0 var(--space);
+}
+
+#userAvatar {
+	border-radius: 100vw;
+	width: 80px;
+	height: 80px;
+}
+
+.fields {
+	margin: 10px var(--space);
+}
+
+.fields > * {
+	display: block;
+	margin: 3px 0;
+}
+
+#name {
+	font-weight: 700;
+}
+
+#changePassword {
+	font-size: calc(var(--size) - 1px);
+	margin-top: 16px;
+}
+
+#logout {
+	text-align: left;
+	padding-left: var(--space);
+}

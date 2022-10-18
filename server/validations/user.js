@@ -64,9 +64,7 @@ const validation = {
                 });
 
                 if (!article) {
-                    ApiError.badRequest([{
-                        msg: errors.unrecognizedSignin()
-                    }]);
+                    throw errors.unrecognizedSignin();
                 }
 
                 const isValidPassword = bcrypt.compareSync(
@@ -75,9 +73,7 @@ const validation = {
                 );
 
                 if (!isValidPassword) {
-                    ApiError.badRequest([{
-                        msg: errors.unrecognizedSignin()
-                    }]);
+                    throw errors.unrecognizedSignin();
                 }
 
                 return Promise.resolve();

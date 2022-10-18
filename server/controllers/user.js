@@ -69,6 +69,26 @@ const AuthController = {
                 }
             ];
         },
+        logout() {
+            return [
+                (req, res, next) => {
+                    try {
+                        const {
+                            refreshToken
+                        } = req.cookies;
+                        res.clearCookie("refreshToken");
+
+                        res.json({
+                            msg: "The user is logout",
+                            token: refreshToken,
+                        });
+                        next();
+                    } catch (error) {
+                        next(error);
+                    }
+                }
+            ]
+        }
     },
     get: {
         google() {
@@ -141,7 +161,7 @@ const AuthController = {
                         const decoded = TokenService.checkOnValidRefreshToken(
                             req.cookies.refreshToken,
                         );
-                        
+
                         if (!decoded) {
                             ApiError.unauthorized();
                         }
@@ -174,7 +194,7 @@ const AuthController = {
                 }
             ]
         }
-    }
+    },
 };
 
 export {

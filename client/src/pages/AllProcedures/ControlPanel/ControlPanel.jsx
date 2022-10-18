@@ -4,25 +4,26 @@ import { useSelector } from "react-redux";
 import types from "prop-types";
 
 import Sublist from "@/components/Form/Sublist/Sublist.jsx";
-import Calendar from "@/features/Calendar/Calendar.jsx";
+import Calendar from "@/components/Calendar/Calendar.jsx";
+import Aside from "@/components/Aside/Aside.jsx";
 
-import style from "./Aside.module.css";
+import style from "./ControlPanel.module.css";
 
-Aside.propTypes = {
-	view: types.array,
+ControlPanel.propTypes = {
+	viewState: types.array,
 	switchDayOnOther: types.func,
 };
 
-function Aside({ view, switchDayOnOther }) {
+function ControlPanel({ viewState, switchDayOnOther }) {
 	const { t } = useTranslation();
-	const { states } = useSelector((state) => state.procedure);
+	const { states } = useSelector((state) => state.allProcedures);
 
-	const [viewDate] = view;
+	const [viewDate] = viewState;
 
 	return (
-		<aside>
+		<Aside>
 			<Calendar
-				date={viewDate}
+				propDate={viewDate}
 				onChange={switchDayOnOther}
 			></Calendar>
 			<Sublist
@@ -45,8 +46,8 @@ function Aside({ view, switchDayOnOther }) {
 					</Fragment>
 				)}
 			</Sublist>
-		</aside>
+		</Aside>
 	);
 }
 
-export { Aside as default };
+export { ControlPanel as default };

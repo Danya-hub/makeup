@@ -19,3 +19,7 @@ header > div > * {
 #langs span {
 	text-transform: uppercase;
 }
+
+#userInfo {
+	width: 40px;
+}
