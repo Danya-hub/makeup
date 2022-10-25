@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm run dev\" "
+    "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm run dev\" \"cross-env NODE_ENV=development\" "
   },
   "repository": {
     "type": "git",

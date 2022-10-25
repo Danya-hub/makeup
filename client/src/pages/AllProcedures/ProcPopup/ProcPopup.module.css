@@ -1,15 +1,6 @@
-#popupNewProc {
-	position: fixed;
-	box-shadow: 0 0 20px rgba(var(--black), 0.6);
-	border-radius: var(--def-radius);
-	transform: translate(-50%, -50%);
-	background: rgb(var(--white));
-	padding: 20px;
-	max-width: 448px;
-	max-height: 70%;
+#popupNewProc :global(.popupContent) {
 	left: 50%;
 	top: 50%;
-	z-index: 998;
 }
 
 #popupNewProc input {

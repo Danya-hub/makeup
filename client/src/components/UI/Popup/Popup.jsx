@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import types from "prop-types";
 
-import onOutside from "@/hooks/outside.js";
 import { default as CloseSrc } from "@/assets/image/close.svg";
 
 import style from "./Popup.module.css";
@@ -9,29 +8,32 @@ import style from "./Popup.module.css";
 Popup.propTypes = {
 	id: types.string,
 	strictSwitch: types.array,
-	onOpen: types.func,
 	onClose: types.func,
 	styleAttr: types.object,
-	eventsOnOutside: types.object,
 	children: types.oneOfType([types.array, types.object]),
 };
 
-function Popup({
-	id = "",
-	strictSwitch,
-	onOpen,
-	onClose,
-	styleAttr = {},
-	eventsOnOutside,
-	...props
-}) {
+function Popup({ id = "", strictSwitch, onClose, styleAttr = {}, ...props }) {
 	const [isActive, setActive] = strictSwitch || useState(false);
 
 	useEffect(() => {
-		if (isActive && onOpen) {
-			onOpen();
+		if (!isActive) {
+			return;
 		}
+
+		document.body.style.overflowY = "hidden";
 	}, [isActive]);
+
+	function handleClose(e) {
+		if (e.currentTarget !== e.target) {
+			return;
+		}
+
+		setActive(false);
+		onClose();
+
+		document.body.style.overflowY = "scroll";
+	}
 
 	return (
 		<div
@@ -39,24 +41,24 @@ function Popup({
 			style={{
 				...styleAttr,
 				display: isActive ? "unset" : "none",
+				pointerEvents: !strictSwitch ? "unset" : "none",
 			}}
 			className={style.popup}
-			{...(eventsOnOutside ? onOutside(eventsOnOutside) : {})}
+			onClick={!strictSwitch ? handleClose : null}
 		>
-			<button
-				id={style.close}
-				className="button"
-				onClick={() => {
-					setActive(false);
-					onClose();
-				}}
-			>
-				<img
-					src={CloseSrc}
-					alt="close"
-				/>
-			</button>
-			<div className={style.popup}>{props.children}</div>
+			<div className="popupContent">
+				<button
+					id={style.close}
+					className="button"
+					onClick={handleClose}
+				>
+					<img
+						src={CloseSrc}
+						alt="close"
+					/>
+				</button>
+				<div>{props.children}</div>
+			</div>
 		</div>
 	);
 }

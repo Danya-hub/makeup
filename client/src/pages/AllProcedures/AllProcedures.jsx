@@ -1,15 +1,13 @@
-import { useState, useEffect, useLayoutEffect, useRef } from "react";
+import { useState, useLayoutEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
 
-import useDate from "@/hooks/date.js";
-import useWarning from "@/hooks/warning.js";
 import {
 	getProcedureByDay,
 	getAllStates,
 	getAllTypes,
 	getDefaultProcValue,
 } from "@/service/redusers/allProcedures.js";
+import useCalendar from "@/hooks/useCalendar.js";
 import FormatDate from "@/utils/formatDate.js";
 
 import ProcPopup from "./ProcPopup/ProcPopup.jsx";
@@ -18,89 +16,21 @@ import Presentation from "./Presentation/Presentation.jsx";
 
 import style from "./AllProcedures.module.css";
 
-const warningsList = {
-	takenProcedureTime: "",
-	elapsedDay: "",
-	crossingElapsedTime: "",
-};
-
 function AllProcedures() {
-	const { navigateDate, langs, allProcedures } = useSelector((state) => state);
+	const { allProcedures } = useSelector((state) => state);
 	const dispatch = useDispatch();
-	const { t } = useTranslation();
-	const [warnings, setWarning, { hasWarning }] = useWarning(warningsList);
-	const [{ _date }] = useDate(new Date(navigateDate.date));
+	const calendar = new useCalendar();
+
 	const [newProcedure, setNewProcedure] = useState({});
-	const [view, setViewDate] = useState(new Date());
 	const [isVisibleProcedurePopup, setVisibleProcedurePopup] = useState(false);
 	const defaultValueProcedure = useRef(null);
-
-	class CommonProps {
-		warning = {
-			warnings,
-			setWarning,
-			hasWarning,
-		};
-
-		constructor() {
-			this.newProcedureState = [newProcedure, setNewProcedure];
-			this.locale = new Date(navigateDate.date);
-			this.isCurrentTime = navigateDate.isCurrentDate;
-			this.viewState = [view, setViewDate];
-			this.hourHeightInPx = window.screen.height / 12;
-
-			this.numericHoursFromDay = FormatDate.hoursByFormat({
-				hourFormat: langs.currLng,
-			});
-			this.currentTimeHeightInPx = FormatDate.minutesFromDate(view, this.hourHeightInPx);
-			this.minHour = this.currentTimeHeightInPx / this.hourHeightInPx;
-			this.maxHour =
-				(this.hourHeightInPx * (this.numericHoursFromDay.length - 1)) / this.hourHeightInPx;
-
-			this.minDate = (date) => {
-				return FormatDate.minutesInDate(0, date, false);
-			};
-
-			this.maxDate = (date) => {
-				return FormatDate.minutesInDate(this.maxHour * 60 - 1, date, false);
-			};
-
-			this.switchDayOnOther = (date) => {
-				const [newDay, isCurrent] = formatViewDateByDay(date);
-
-				setNewProcedure((prev) => ({
-					...prev,
-					...this.setUnitForDate(["Date"], ["startProcTime", "finishProcTime"], date),
-				}));
-
-				setViewDate(newDay);
-				dispatch(getProcedureByDay(newDay));
-
-				return [newDay, isCurrent];
-			};
-
-			this.setUnitForDate = (unitArr, fieldNameArr, date) => {
-				const rez = {};
-
-				fieldNameArr.forEach((name) => {
-					rez[name] = FormatDate.unitTimeFromOtherDate(unitArr, newProcedure[name], date);
-				});
-
-				return rez;
-			};
-
-			this.isElapsedDay = (minutes) =>
-				commonProps.maxHour ===
-				Math.floor(((minutes || commonProps.currentTimeHeightInPx) + 1) / 60);
-		}
-	}
 
 	class Event {
 		constructor() {
 			this.onCrossingElapsedTime = (minutes) => {
-				commonProps.warning.setWarning([
+				calendar.warning.setWarning([
 					"crossingElapsedTime",
-					commonProps.currentTimeHeightInPx > minutes ? t("crossingElapsedTime") : "",
+					calendar.currentTimeHeightInPx > minutes ? "crossingElapsedTime" : "",
 				]);
 			};
 
@@ -122,43 +52,19 @@ function AllProcedures() {
 						(startSegment < newProcStartMinutes && finishSegment > newProcFinishMinutes) ||
 						(newProcStartMinutes < startSegment && newProcFinishMinutes > finishSegment);
 
-					commonProps.warning.setWarning([
+					calendar.warning.setWarning([
 						"takenProcedureTime",
-						isTouchCart ? t("takenProcedureTime") : "",
+						isTouchCart ? "takenProcedureTime" : "",
 					]);
 				});
-			};
-
-			this.onElapsedDay = (date) => {
-				let selectMinutes = null;
-
-				if (date) {
-					const [newDay] = formatViewDateByDay(date);
-
-					selectMinutes = FormatDate.minutesFromDate(newDay, commonProps.hourHeightInPx);
-				}
-
-				const isEquil = commonProps.isElapsedDay(selectMinutes);
-
-				commonProps.warning.setWarning(["elapsedDay", isEquil ? t("elapsedDay") : ""]);
-
-				return isEquil;
 			};
 		}
 	}
 
-	const commonProps = new CommonProps();
 	const events = new Event();
 
-	function formatViewDateByDay(date) {
-		const callback = FormatDate.dayFormatFromCurrentTime(({ isCurrent, isMaxDate, date }) =>
-			isCurrent ? [new Date(), true] : [commonProps[isMaxDate ? "maxDate" : "minDate"](date), false]
-		);
-
-		return callback(date, _date);
-	}
-
 	async function __init__() {
+		dispatch(getProcedureByDay(calendar.viewState.locale));
 		dispatch(getAllStates());
 		dispatch(getAllTypes());
 
@@ -172,31 +78,56 @@ function AllProcedures() {
 		}));
 	}
 
+	function handleChangeDate(date) {
+		const { newDate, isElapsed } = calendar.switchDayOnOther(date);
+
+		dispatch(getProcedureByDay(newDate));
+
+		if (isElapsed) {
+			return;
+		}
+
+		setNewProcedure((prev) => ({
+			...prev,
+			...calendar.setUnitForDate(
+				["Time"],
+				{
+					startProcTime: newProcedure.startProcTime,
+					finishProcTime: newProcedure.finishProcTime,
+				},
+				newDate
+			),
+		}));
+	}
+
 	useLayoutEffect(() => {
 		return __init__;
 	}, []);
 
-	useEffect(() => {
-		document.body.style.overflowY = isVisibleProcedurePopup ? "hidden" : "scroll";
-	}, [isVisibleProcedurePopup]);
-
 	return (
 		<div id={style.allProcedures}>
+			<ControlPanel
+				newProcedureState={[newProcedure, setNewProcedure]}
+				handleChangeDate={handleChangeDate}
+				{...calendar}
+			></ControlPanel>
+			<Presentation
+				carts={allProcedures.carts}
+				isLoadingContent={allProcedures.isLoading.procedures}
+				visiblePopupState={[isVisibleProcedurePopup, setVisibleProcedurePopup]}
+				newProcedureState={[newProcedure, setNewProcedure]}
+				handleChangeDate={handleChangeDate}
+				{...events}
+				{...calendar}
+			></Presentation>
 			<ProcPopup
 				defaultValueProcedure={defaultValueProcedure}
 				visibleState={[isVisibleProcedurePopup, setVisibleProcedurePopup]}
+				newProcedureState={[newProcedure, setNewProcedure]}
+				handleChangeDate={handleChangeDate}
 				{...events}
-				{...commonProps}
+				{...calendar}
 			></ProcPopup>
-			<ControlPanel {...commonProps}></ControlPanel>
-			<Presentation
-				carts={allProcedures.carts}
-				visiblePopupState={[isVisibleProcedurePopup, setVisibleProcedurePopup]}
-				isLoadingContent={allProcedures.isLoading.procedure}
-				formatViewDateByDay={formatViewDateByDay}
-				{...events}
-				{...commonProps}
-			></Presentation>
 		</div>
 	);
 }

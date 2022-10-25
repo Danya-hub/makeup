@@ -11,8 +11,8 @@ import style from "@/pages/Auth/Auth.module.css";
 function Signup() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
-	const { error } = useSelector((state) => state.user);
 	const dispatch = useDispatch();
+	const { error } = useSelector((state) => state.user);
 	const { state } = useLocation();
 
 	const [newUser, setUser] = useState({});

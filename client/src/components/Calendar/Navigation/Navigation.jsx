@@ -8,23 +8,24 @@ import style from "./Navigation.module.css";
 
 Navigation.propTypes = {
 	locale: types.object,
+	monthState: types.array,
+	onChange: types.func,
 };
 
-function Navigation({ locale }) {
-	const { propDate, monthState, onChange } = locale;
+function Navigation({ locale, monthState, onChange }) {
 	const [month, setMonth] = monthState;
 	const lng = useSelector((state) => state.langs.currLng);
 
 	function setPrevMonth() {
 		setMonth(month - 1);
 
-		onChange(propDate);
+		onChange(locale);
 	}
 
 	function setNextMonth() {
 		setMonth(month + 1);
 
-		onChange(propDate);
+		onChange(locale);
 	}
 
 	return (
@@ -42,10 +43,10 @@ function Navigation({ locale }) {
 				/>
 			</button>
 			<h2 className={style.nameMonth}>
-				{propDate.toLocaleString(lng, {
+				{locale.toLocaleString(lng, {
 					month: "long",
 				})}{" "}
-				{propDate.getFullYear()}
+				{locale.getFullYear()}
 			</h2>
 			<button
 				type="button"

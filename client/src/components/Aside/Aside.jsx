@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import types from "prop-types";
 
 import { default as CloseSrc } from "@/assets/image/close.svg";
@@ -15,8 +15,18 @@ Aside.propTypes = {
 function Aside({ id = "", openState, ...props }) {
 	const [isOpen = true, setState] = openState || [];
 
+	useEffect(() => {
+		if (!isOpen || !openState) {
+			return;
+		}
+
+		document.body.style.overflowY = "hidden";
+	}, [isOpen]);
+
 	function handleClose() {
 		setState(false);
+
+		document.body.style.overflowY = "scroll";
 	}
 
 	return (

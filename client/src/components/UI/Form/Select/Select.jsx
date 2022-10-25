@@ -1,18 +1,11 @@
-import { useState, useEffect, memo } from "react";
-import types from "prop-types";
+/* eslint-disable react/prop-types */
+
+import { useState, useEffect, memo, forwardRef } from "react";
 
 import style from "./Select.module.css";
 import { default as ArrowSrc } from "@/assets/image/arrow.svg";
 
-Select.propTypes = {
-	id: types.string,
-	strictSwitch: types.array,
-	values: types.arrayOf(types.string),
-	onChange: types.func,
-	defaultValue: types.string,
-};
-
-function Select({ id = "", strictSwitch, values, onChange, defaultValue }) {
+function Select({ id, strictSwitch, values, onChange, defaultValue }, ref) {
 	const [selectValue, setSelectValue] = useState(defaultValue || values[0]);
 	const [isActive, setActive] = strictSwitch || useState(false);
 
@@ -27,6 +20,7 @@ function Select({ id = "", strictSwitch, values, onChange, defaultValue }) {
 	return (
 		<div
 			id={id}
+			ref={ref}
 			className={`${style.select} ${isActive ? style.open : ""}`}
 		>
 			<div
@@ -59,4 +53,4 @@ function Select({ id = "", strictSwitch, values, onChange, defaultValue }) {
 	);
 }
 
-export default memo(Select);
+export default memo(forwardRef(Select));

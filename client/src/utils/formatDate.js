@@ -48,7 +48,7 @@ const FormatDate = new (class FormatDate {
 
 		if (!withCurrent) {
 			date.setHours(0);
-			date.setMinutes(0);
+			date.setSeconds(0);
 		}
 
 		date.setMinutes((withCurrent ? date.getMinutes() : 0) + (value || 0));
@@ -92,35 +92,6 @@ const FormatDate = new (class FormatDate {
 		_date.setMinutes(/\d/.test(minutes) ? minutes : 0);
 
 		return _date;
-	}
-
-	dayFormatFromCurrentTime(callback) {
-		return function (date, noChangeDate) {
-			const selectDay = date.getDate(),
-				selectMonth = date.getMonth() + 1,
-				selectYear = date.getFullYear();
-
-			const isMinDate =
-				noChangeDate.current.year < selectYear ||
-				(noChangeDate.current.year <= selectYear && noChangeDate.current.month < selectMonth) ||
-				(noChangeDate.current.year <= selectYear &&
-					noChangeDate.current.month <= selectMonth &&
-					noChangeDate.current.day < selectDay);
-			const isMaxDate =
-				noChangeDate.current.year > selectYear ||
-				(noChangeDate.current.year >= selectYear && noChangeDate.current.month > selectMonth) ||
-				(noChangeDate.current.year >= selectYear &&
-					noChangeDate.current.month >= selectMonth &&
-					noChangeDate.current.day > selectDay);
-			const isCurrentTime = !(isMaxDate || isMinDate);
-
-			return callback({
-				isCurrent: isCurrentTime,
-				isMaxDate,
-				isMinDate,
-				date,
-			});
-		};
 	}
 
 	hoursByFormat({

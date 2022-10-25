@@ -1,10 +1,10 @@
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useState, useRef, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import types from "prop-types";
 
-import { actions as navigateDateActions } from "@/service/redusers/navigateDate.js";
+import { getProcedureByDay } from "@/service/redusers/allProcedures.js";
 import FormatDate from "@/utils/formatDate.js";
 import getWidthByChar from "@/helpers/widthByChar.js";
 
@@ -19,11 +19,10 @@ Presentation.propTypes = {
 	newProcedureState: types.array,
 	warning: types.object,
 	carts: types.array,
-	locale: types.object,
-	viewState: types.array,
+	viewState: types.object,
 	visiblePopupState: types.array,
 	isElapsedDay: types.func,
-	formatViewDateByDay: types.func,
+	switchDayOnOther: types.func,
 	numericHoursFromDay: types.array,
 	hourHeightInPx: types.number,
 	minHour: types.number,
@@ -39,11 +38,10 @@ function Presentation({
 	newProcedureState,
 	warning,
 	carts,
-	locale,
 	viewState,
 	visiblePopupState,
 	isElapsedDay,
-	formatViewDateByDay,
+	switchDayOnOther,
 	numericHoursFromDay,
 	hourHeightInPx,
 	minHour,
@@ -59,10 +57,10 @@ function Presentation({
 	const navigate = useNavigate();
 	const { t } = useTranslation();
 
-	const isElapsed = isElapsedDay();
-	const [view, setViewDate] = viewState;
+	const isElapsed = isElapsedDay(currentTimeHeightInPx);
 	const [newProcedure, setNewProcedure] = newProcedureState;
 	const { hasWarning, setWarning } = warning;
+	const { locale, currentTime } = viewState;
 
 	const [innerY, setInnerY] = useState(0);
 	const [selectTime, setSelectTime] = useState(0);
@@ -70,6 +68,7 @@ function Presentation({
 	const parentRef = useRef(null);
 
 	const [isVisiblePopup, setVisiblePopup] = visiblePopupState;
+
 	const widthCharTime = Math.max(...numericHoursFromDay.map((hour) => getWidthByChar(hour)));
 
 	function setNumericTimeByGrabbing(e, y = 0) {
@@ -155,10 +154,13 @@ function Presentation({
 
 	useLayoutEffect(() => {
 		const updateTime = setInterval(() => {
-			const [newDay, isCurrent] = formatViewDateByDay(view);
+			const { newDate } = switchDayOnOther(locale);
 
-			dispatch(navigateDateActions.setNavigateDate([newDay, isCurrent]));
-			setViewDate(newDay);
+			if (!currentTimeHeightInPx) {
+				console.log("123");
+				dispatch(getProcedureByDay(newDate));
+				currentTime.current.day = newDate.getDate();
+			}
 
 			onCrossingElapsedTime(selectTime * 60 - 1);
 		}, (60 - new Date().getSeconds()) * 1000);

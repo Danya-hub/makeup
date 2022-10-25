@@ -7,16 +7,18 @@ import { MAX_COUNT_WEEKDAYS, MAX_COUNT_WEEKS_IN_CALENDAR } from "@/constants/cal
 import style from "./Content.module.css";
 
 Content.propTypes = {
+	monthState: types.array,
+	dayState: types.array,
 	locale: types.object,
-	_date: types.object,
+	onChange: types.func,
+	currentTime: types.object,
 };
 
-function Content({ locale }) {
-	const { monthState, dayState, propDate, onChange, _date } = locale;
+function Content({ monthState, dayState, locale, onChange, currentTime }) {
 	const [day, setDay] = dayState;
 	const [month] = monthState;
 
-	const daysOfMonth = FormatDate.allDaysOnMonth(propDate);
+	const daysOfMonth = FormatDate.allDaysOnMonth(locale);
 
 	function handleClick(d) {
 		if (!d) {
@@ -24,7 +26,7 @@ function Content({ locale }) {
 		}
 
 		setDay(d);
-		onChange(propDate);
+		onChange(locale);
 	}
 
 	return (
@@ -36,7 +38,9 @@ function Content({ locale }) {
 							key={d + "/" + j}
 							className={
 								(!d ? style.empty : "") +
-								(_date.current.day === d && _date.current.month === month ? style.current : "") +
+								(currentTime.current.day === d && currentTime.current.month === month
+									? style.current
+									: "") +
 								(day === d ? ` ${style.hover}` : "")
 							}
 							onClick={() => handleClick(d)}

@@ -5,9 +5,9 @@ import { Link } from "react-router-dom";
 import types from "prop-types";
 
 import { actions as langActions } from "@/service/redusers/langs.js";
-import onOutside from "@/hooks/outside.js";
+import useOutsideEvent from "@/hooks/useOutsideEvent.js";
 
-import Select from "@/components/Form/Select/Select.jsx";
+import Select from "@/components/UI/Form/Select/Select.jsx";
 import Logo from "@/components/Logo/Logo.jsx";
 import { default as UserSrc } from "@/assets/image/user.svg";
 
@@ -22,6 +22,7 @@ function Header({ openCabinetState, isDisplay }) {
 	const dispatch = useDispatch();
 	const { langs, user } = useSelector((state) => state);
 	const { t } = useTranslation();
+	const ref = useOutsideEvent(onCloseSelect);
 
 	const allLangNames = Object.keys(langs.arrayLangs);
 	const [isOpenSelect, setOpenSelect] = useState(false);
@@ -33,11 +34,6 @@ function Header({ openCabinetState, isDisplay }) {
 
 	return (
 		<header
-			{...onOutside({
-				onClick: {
-					[style.langs]: isOpenSelect ? onCloseSelect : null,
-				},
-			})}
 			style={{
 				display: !isDisplay ? "none" : "flex",
 			}}
@@ -45,6 +41,7 @@ function Header({ openCabinetState, isDisplay }) {
 			<Logo></Logo>
 			<div>
 				<Select
+					ref={ref}
 					defaultValue={langs.currLng}
 					values={allLangNames}
 					strictSwitch={[isOpenSelect, setOpenSelect]}

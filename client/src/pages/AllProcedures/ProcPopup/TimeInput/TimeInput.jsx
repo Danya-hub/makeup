@@ -2,56 +2,63 @@ import { useSelector } from "react-redux";
 import types from "prop-types";
 
 import FormatDate from "@/utils/formatDate.js";
+import useOutsideEvent from "@/hooks/useOutsideEvent";
 
 import Calendar from "@/components/Calendar/Calendar.jsx";
-import WidthInput from "@/components/Form/WidthInput/WidthInput.jsx";
+import WidthInput from "@/components/UI/Form/WidthInput/WidthInput.jsx";
 
 import style from "./TimeInput.module.css";
 
 TimeInput.propTypes = {
-	newProcedure: types.object,
+	newProcedureState: types.array,
 	warning: types.object,
-	changeValue: types.func,
 	openCalendarState: types.array,
-	setUnitForDate: types.func,
 	onTouchCart: types.func,
-	onElapsedDay: types.func,
 	onCrossingElapsedTime: types.func,
+	onChange: types.func,
+	viewState: types.object,
 };
 
 function TimeInput({
-	newProcedure,
+	newProcedureState,
 	warning,
-	changeValue,
 	openCalendarState,
-	setUnitForDate,
+	onChange,
 	onTouchCart,
-	onElapsedDay,
 	onCrossingElapsedTime,
+	viewState,
 }) {
 	const { currLng } = useSelector((state) => state.langs);
+	const ref = useOutsideEvent(onCloseCalendar);
 
+	const [newProcedure, setNewProcedure] = newProcedureState;
+	const [isOpenCalendar, setOpenCalendar] = openCalendarState;
 	const { warnings, hasWarning: hasWarningFunc } = warning;
 	const [, hasWarning] = hasWarningFunc();
 
-	const [isOpenCalendar, setOpenCalendar] = openCalendarState;
+	function onCloseCalendar() {
+		setOpenCalendar(false);
+	}
 
 	function setStartAndFinishTimes(finalValue) {
 		const time = FormatDate.numericTimeFromChar(finalValue);
-		const startProcTime = time * 60,
-			finishProcMinutes = startProcTime + newProcedure.type.durationProc * 60;
+		const finishMinutes = time * 60 + newProcedure.type.durationProc * 60;
 
-		changeValue({
-			startProcTime: FormatDate.minutesInDate(startProcTime, newProcedure.startProcTime, false),
-			finishProcTime: FormatDate.minutesInDate(
-				finishProcMinutes,
-				newProcedure.finishProcTime,
-				false
-			),
-		});
+		const startProcTime = FormatDate.minutesInDate(time * 60, newProcedure.startProcTime, false);
+		const finishProcTime = FormatDate.minutesInDate(
+			finishMinutes,
+			newProcedure.finishProcTime,
+			false
+		);
+
+		setNewProcedure((prev) => ({
+			...prev,
+			startProcTime,
+			finishProcTime,
+		}));
 
 		onCrossingElapsedTime(startProcTime);
-		onTouchCart(startProcTime, finishProcMinutes);
+		onTouchCart(startProcTime, finishMinutes);
 	}
 
 	return (
@@ -75,14 +82,9 @@ function TimeInput({
 				{isOpenCalendar && (
 					<Calendar
 						id={style.dayAndMonthCalendar}
-						propDate={newProcedure.startProcTime}
-						onChange={(date) => {
-							changeValue(
-								setUnitForDate(["Month", "Date"], ["startProcTime", "finishProcTime"], date)
-							);
-
-							onElapsedDay(date);
-						}}
+						ref={ref}
+						options={viewState}
+						onChange={onChange}
 					></Calendar>
 				)}
 			</div>

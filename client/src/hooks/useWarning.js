@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 function useWarning(warnings) {
 	const [_warnings, setWarning] = useState(warnings);
+	const { t } = useTranslation();
 
 	function hasWarning(warnName) {
 		let rez = null;
@@ -25,7 +27,7 @@ function useWarning(warnings) {
 
 			setWarning((prev) => ({
 				...prev,
-				[name]: value,
+				[name]: t(value),
 			}));
 		},
 		{

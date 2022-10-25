@@ -102,7 +102,7 @@ const ProcedureController = {
                 async (req, res, next) => {
                     try {
                         const errors = validationResult(req);
-                        console.log(errors);
+                        
                         if (!errors.isEmpty()) {
                             ApiError.badRequest(errors.array());
                         }

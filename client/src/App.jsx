@@ -6,7 +6,7 @@ import Header from "@/components/Header/Header.jsx";
 import Main from "@/components/Main/Main.jsx";
 
 import { refresh } from "@/service/redusers/user.js";
-// import routes from "./routes/index.js"; //!
+// import routes from "./routes/index.js"; // !
 
 import "@/styles/main.css";
 
@@ -15,7 +15,7 @@ function App() {
 	// const location = useLocation();
 
 	const openCabinetState = useState(false);
-	// const currentPath = routes.find((route) => route.path === location.pathname); //!
+	// const currentPath = routes.find((route) => route.path === location.pathname); // !
 
 	function __init__() {
 		dispatch(refresh());

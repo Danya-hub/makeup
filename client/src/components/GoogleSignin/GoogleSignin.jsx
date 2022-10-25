@@ -10,7 +10,7 @@ function GoogleSignin({ onSuccess }) {
 	return (
 		<button
 			onClick={() => {
-				onSuccess(); //!
+				onSuccess();
 			}}
 			type="button"
 		>

@@ -8,38 +8,39 @@ import {
 	createNewProcedure,
 } from "@/service/redusers/allProcedures.js";
 import FormatDate from "@/utils/formatDate.js";
+import useOutsideEvent from "@/hooks/useOutsideEvent";
 
 import Popup from "@/components/UI/Popup/Popup.jsx";
-import Select from "@/components/Form/Select/Select.jsx";
+import Select from "@/components/UI/Form/Select/Select.jsx";
 import TimeInput from "@/pages/AllProcedures/ProcPopup/TimeInput/TimeInput.jsx";
 
-import style_popup from "./ProcPopup.module.css";
-import style_timeInput from "./TimeInput/TimeInput.module.css";
+import style from "./ProcPopup.module.css";
 
 ProcPopup.propTypes = {
 	warning: types.object,
 	visibleState: types.array,
+	viewState: types.object,
 	newProcedureState: types.array,
 	defaultValueProcedure: types.object,
 	onTouchCart: types.func,
-	onElapsedDay: types.func,
 	onCrossingElapsedTime: types.func,
-	setUnitForDate: types.func,
+	handleChangeDate: types.func,
 };
 
 function ProcPopup({
 	warning,
 	visibleState,
+	viewState,
 	newProcedureState,
 	defaultValueProcedure,
 	onTouchCart,
-	onElapsedDay,
 	onCrossingElapsedTime,
-	setUnitForDate,
+	handleChangeDate,
 }) {
 	const dispatch = useDispatch();
 	const { allProcedures } = useSelector((state) => state);
 	const { t } = useTranslation();
+	const ref = useOutsideEvent(onCloseSelectProcedure);
 
 	const { hasWarning } = warning;
 	const [newProcedure, setNewProcedure] = newProcedureState;
@@ -48,13 +49,6 @@ function ProcPopup({
 
 	const [isOpenSelectProcedure, setOpenSelectProcedure] = useState(false);
 	const [isOpenCalendar, setOpenCalendar] = useState(false);
-
-	function changeValue(object) {
-		setNewProcedure((prev) => ({
-			...prev,
-			...object,
-		}));
-	}
 
 	function handleSubmitForm(e) {
 		e.preventDefault();
@@ -69,25 +63,15 @@ function ProcPopup({
 		setVisible(false);
 	}
 
-	function onCloseCalendar() {
-		setOpenCalendar(false);
-	}
-
 	function onCloseSelectProcedure() {
 		setOpenSelectProcedure(false);
 	}
 
 	return (
 		<Popup
-			id={style_popup.popupNewProc}
+			id={style.popupNewProc}
 			onClose={() => setNewProcedure(defaultValueProcedure.current)}
 			closeMethod="visible"
-			eventsOnOutside={{
-				onClick: {
-					[style_timeInput.day]: isOpenCalendar ? onCloseCalendar : null,
-					procedureName: isOpenSelectProcedure ? onCloseSelectProcedure : null,
-				},
-			}}
 			strictSwitch={[
 				isVisible,
 				(bln) => {
@@ -96,7 +80,7 @@ function ProcPopup({
 			]}
 		>
 			{isFoundWarning && (
-				<div className={style_popup.warning}>
+				<div className={style.warning}>
 					<i
 						className="fa fa-exclamation-circle"
 						aria-hidden="true"
@@ -109,11 +93,12 @@ function ProcPopup({
 				onSubmit={handleSubmitForm}
 			>
 				<label
-					className={style_popup.input}
+					className={style.input}
 					id="procedureName"
 				>
 					<h3 className="title">{t("procedure")}</h3>
 					<Select
+						ref={ref}
 						defaultValue={newProcedure.type?.name}
 						values={allProcedures.types.map((obj) => obj["name"])}
 						onChange={(ind) => {
@@ -122,14 +107,15 @@ function ProcPopup({
 							const finishProcMinutes =
 								startProcMinutes + allProcedures.types[ind].durationProc * 60;
 
-							changeValue({
+							setNewProcedure((prev) => ({
+								...prev,
 								finishProcTime: FormatDate.minutesInDate(
 									finishProcMinutes,
 									newProcedure.finishProcTime,
 									false
 								),
 								type: allProcedures.types[ind],
-							});
+							}));
 
 							onTouchCart(startProcMinutes, finishProcMinutes);
 						}}
@@ -143,18 +129,17 @@ function ProcPopup({
 					></Select>
 				</label>
 				<TimeInput
-					newProcedure={newProcedure}
+					viewState={viewState}
+					newProcedureState={newProcedureState}
 					onTouchCart={onTouchCart}
-					onElapsedDay={onElapsedDay}
 					onCrossingElapsedTime={onCrossingElapsedTime}
-					setUnitForDate={setUnitForDate}
 					warning={warning}
-					changeValue={changeValue}
+					onChange={handleChangeDate}
 					openCalendarState={[isOpenCalendar, setOpenCalendar]}
 				></TimeInput>
 				<button
 					type="submit"
-					id={style_popup.makeProc}
+					id={style.makeProc}
 					className="button border"
 					disabled={isFoundWarning}
 				>

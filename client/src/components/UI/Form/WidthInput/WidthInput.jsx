@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import types from "prop-types";
 
 import getWidthByChar from "@/helpers/widthByChar.js";
-import LazyInput from "@/components/Form/LazyInput/LazyInput.jsx";
+import LazyInput from "@/components/UI/Form/LazyInput/LazyInput.jsx";
 
 WidthInput.propTypes = {
 	value: types.oneOfType([types.func, types.string]),

@@ -9,7 +9,7 @@ const initialState = {
 	carts: [],
 	newProcedure: {},
 	isLoading: {
-		procedure: false,
+		procedures: true,
 	},
 	states: [],
 	types: [],
@@ -95,13 +95,13 @@ const { actions, reducer } = createSlice({
 	reducers,
 	extraReducers: {
 		[getProcedureByDay.pending]: (state) => {
-			state.isLoading.procedure = true;
+			state.isLoading.procedures = true;
 		},
 		[getProcedureByDay.fulfilled]: (state) => {
-			state.isLoading.procedure = false;
+			state.isLoading.procedures = false;
 		},
 		[getProcedureByDay.rejected]: (state, action) => {
-			state.isLoading.procedure = false;
+			state.isLoading.procedures = false;
 			state.error = action.payload;
 		},
 		[createNewProcedure.rejected]: (state, action) => {

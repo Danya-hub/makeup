@@ -3,28 +3,26 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import types from "prop-types";
 
-import Sublist from "@/components/Form/Sublist/Sublist.jsx";
+import Sublist from "@/components/UI/Form/Sublist/Sublist.jsx";
 import Calendar from "@/components/Calendar/Calendar.jsx";
 import Aside from "@/components/Aside/Aside.jsx";
 
 import style from "./ControlPanel.module.css";
 
 ControlPanel.propTypes = {
-	viewState: types.array,
-	switchDayOnOther: types.func,
+	viewState: types.object,
+	handleChangeDate: types.func,
 };
 
-function ControlPanel({ viewState, switchDayOnOther }) {
+function ControlPanel({ viewState, handleChangeDate }) {
 	const { t } = useTranslation();
 	const { states } = useSelector((state) => state.allProcedures);
-
-	const [viewDate] = viewState;
 
 	return (
 		<Aside>
 			<Calendar
-				propDate={viewDate}
-				onChange={switchDayOnOther}
+				options={viewState}
+				onChange={handleChangeDate}
 			></Calendar>
 			<Sublist
 				id={style.designation}
