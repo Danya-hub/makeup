@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import types from "prop-types";
 
 import { default as CloseSrc } from "@/assets/image/close.svg";
@@ -7,46 +7,35 @@ import style from "./Popup.module.css";
 
 Popup.propTypes = {
 	id: types.string,
+	isSimple: types.bool,
 	strictSwitch: types.array,
 	onClose: types.func,
 	styleAttr: types.object,
 	children: types.oneOfType([types.array, types.object]),
 };
 
-function Popup({ id = "", strictSwitch, onClose, styleAttr = {}, ...props }) {
-	const [isActive, setActive] = strictSwitch || useState(false);
+function Popup({ id = "", isSimple = true, strictSwitch, onClose, styleAttr = {}, ...props }) {
+	const [isActive, setActive] = strictSwitch;
 
 	useEffect(() => {
-		if (!isActive) {
-			return;
-		}
-
-		document.body.style.overflowY = "hidden";
+		document.body.style.overflowY = isActive ? "hidden" : "scroll";
 	}, [isActive]);
 
-	function handleClose(e) {
-		if (e.currentTarget !== e.target) {
-			return;
-		}
-
+	function handleClose() {
 		setActive(false);
 		onClose();
-
-		document.body.style.overflowY = "scroll";
 	}
 
 	return (
 		<div
 			id={id}
+			className={style.popup}
 			style={{
 				...styleAttr,
 				display: isActive ? "unset" : "none",
-				pointerEvents: !strictSwitch ? "unset" : "none",
 			}}
-			className={style.popup}
-			onClick={!strictSwitch ? handleClose : null}
 		>
-			<div className="popupContent">
+			<div className={style.popupContent}>
 				<button
 					id={style.close}
 					className="button"
@@ -59,6 +48,13 @@ function Popup({ id = "", strictSwitch, onClose, styleAttr = {}, ...props }) {
 				</button>
 				<div>{props.children}</div>
 			</div>
+			<div
+				className={style.popupBackground}
+				style={{
+					pointerEvents: isSimple ? "unset" : "none",
+				}}
+				onClick={isSimple ? handleClose : null}
+			></div>
 		</div>
 	);
 }

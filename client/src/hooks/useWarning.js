@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
+import changePropertyValue from "@/helpers/changePropertyValue.js";
+
 function useWarning(warnings) {
 	const [_warnings, setWarning] = useState(warnings);
 	const { t } = useTranslation();
@@ -25,10 +27,9 @@ function useWarning(warnings) {
 		(newValue) => {
 			const [name, value] = newValue;
 
-			setWarning((prev) => ({
-				...prev,
+			changePropertyValue({
 				[name]: t(value),
-			}));
+			}, setWarning);
 		},
 		{
 			hasWarning,

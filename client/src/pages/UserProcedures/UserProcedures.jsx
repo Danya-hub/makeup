@@ -27,13 +27,15 @@ function UserProcedures() {
 	}
 
 	useLayoutEffect(() => {
-		__init__();
+		return __init__;
 	}, [user.info]);
 
 	return (
 		<div id={style.userProcedures}>
-			<Filters></Filters> //TODO: 1
-			<Presentation //TODO: 2
+			<Filters
+				cartsState={[carts, setCarts]}
+			></Filters>
+			<Presentation
 				carts={carts}
 				isLoadingContent={userProcedures.isLoading}
 			></Presentation>

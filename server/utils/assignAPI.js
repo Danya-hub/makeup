@@ -1,4 +1,4 @@
-function assignAPIActions(router, controller) {
+function assignAPI(router, controller) {
     Object.entries(controller).forEach(([method, objActions]) =>
         Object.keys(objActions).forEach((name) => {
             router[method](`/${name}`, ...objActions[name]());
@@ -7,4 +7,4 @@ function assignAPIActions(router, controller) {
     return router;
 }
 
-export default assignAPIActions;
+export default assignAPI;

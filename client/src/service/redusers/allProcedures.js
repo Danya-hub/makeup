@@ -1,8 +1,10 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+	createSlice,
+	createAsyncThunk
+} from "@reduxjs/toolkit";
 
 import axios from "@/http/axios.js";
 import * as reducers from "@/service/actions/allProcedures.js";
-import parseValueToDate from "@/utils/parseValueToDate.js";
 import FormatDate from "@/utils/formatDate.js";
 
 const initialState = {
@@ -18,56 +20,57 @@ const initialState = {
 
 const getProcedureByDay = createAsyncThunk(
 	"procedure/getProcedureByDay",
-	async (date, { dispatch, rejectWithValue }) => {
+	async (date, {
+		rejectWithValue
+	}) => {
 		try {
 			const userProcedures = await axios
-				.get(`/procedure/byDay/${date}`)
-				.then((res) => res.data.map(parseValueToDate));
+				.indGet(`/procedure/byDay/${date}`)
+				.then((res) => res.data.map(Date.toDate));
 
-			dispatch(actions.putNewValue(["carts", userProcedures]));
+			return userProcedures;
 		} catch (error) {
 			return rejectWithValue(error.message);
 		}
 	}
 );
 
-const getAllStates = createAsyncThunk(
-	"procedure/getAllStates",
-	async (_, { dispatch, rejectWithValue }) => {
+const getAllStates = createAsyncThunk("procedure/getAllStates",
+	async (_, {
+		rejectWithValue
+	}) => {
 		try {
-			const states = await axios.get("/procedure/allStates");
+			const states = await axios.indGet("/procedure/allStates");
 
-			dispatch(actions.putNewValue(["states", states.data]));
+			return states;
 		} catch (error) {
 			return rejectWithValue(error.message);
 		}
-	}
-);
+	});
 
-const getAllTypes = createAsyncThunk(
-	"procedure/getAllTypes",
-	async (_, { dispatch, rejectWithValue }) => {
-		try {
-			const states = await axios.get("/procedure/allTypes");
+const getAllTypes = createAsyncThunk("procedure/getAllTypes", async (_, {
+	rejectWithValue
+}) => {
+	try {
+		const types = await axios.indGet("/procedure/allTypes");
 
-			dispatch(actions.putNewValue(["types", states.data]));
-		} catch (error) {
-			return rejectWithValue(error.message);
-		}
+		return types;
+	} catch (error) {
+		return rejectWithValue(error.message);
 	}
-);
+});
 
 const getDefaultProcValue = createAsyncThunk(
 	"procedure/getDefaultProcValue",
-	async (_, { dispatch, rejectWithValue }) => {
+	async (_, {
+		rejectWithValue
+	}) => {
 		try {
-			const defaultValue = await axios.get("/procedure/defaultValue").then((res) => ({
+			const defaultValue = await axios.indGet("/procedure/defaultValue").then((res) => ({
 				...res.data,
 				startProcTime: new Date(),
 				finishProcTime: FormatDate.minutesInDate(res.data.type.durationProc * 60),
 			}));
-
-			dispatch(actions.putNewValue(["newProcedure", defaultValue]));
 
 			return defaultValue;
 		} catch (error) {
@@ -78,7 +81,9 @@ const getDefaultProcValue = createAsyncThunk(
 
 const createNewProcedure = createAsyncThunk(
 	"procedure/createNewProcedure",
-	async (value, { rejectWithValue }) => {
+	async (value, {
+		rejectWithValue
+	}) => {
 		try {
 			const createdProcedure = await axios.post("/procedure/create", value);
 
@@ -89,7 +94,10 @@ const createNewProcedure = createAsyncThunk(
 	}
 );
 
-const { actions, reducer } = createSlice({
+const {
+	actions,
+	reducer
+} = createSlice({
 	name: "procedure",
 	initialState,
 	reducers,
@@ -97,8 +105,9 @@ const { actions, reducer } = createSlice({
 		[getProcedureByDay.pending]: (state) => {
 			state.isLoading.procedures = true;
 		},
-		[getProcedureByDay.fulfilled]: (state) => {
+		[getProcedureByDay.fulfilled]: (state, action) => {
 			state.isLoading.procedures = false;
+			state.carts = action.payload;
 		},
 		[getProcedureByDay.rejected]: (state, action) => {
 			state.isLoading.procedures = false;
@@ -107,11 +116,21 @@ const { actions, reducer } = createSlice({
 		[createNewProcedure.rejected]: (state, action) => {
 			state.error = action.payload;
 		},
+		[getAllStates.fulfilled]: (state, action) => {
+			state.states = action.payload.data;
+		},
+		[getAllTypes.fulfilled]: (state, action) => {
+			state.types = action.payload.data;
+		},
+		[getDefaultProcValue.fulfilled]: (state, action) => {
+			state.newProcedure = action.payload;
+		},
 	},
 });
 
 export {
-	reducer as default,
+	reducer as
+	default,
 	getProcedureByDay,
 	getAllStates,
 	getAllTypes,

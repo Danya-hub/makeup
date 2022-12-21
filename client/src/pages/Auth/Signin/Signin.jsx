@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
 import { signin, actions } from "@/service/redusers/user.js";
+import changePropertyValue from "@/helpers/changePropertyValue";
+
 import { default as GoogleSrc } from "@/assets/image/google.svg";
 
 import style from "@/pages/Auth/Auth.module.css";
@@ -20,10 +22,9 @@ function Signin() {
 	function valueFromInput(e, callback) {
 		const t = e.target;
 
-		callback((prev) => ({
-			...prev,
+		changePropertyValue({
 			[t.name]: t.value,
-		}));
+		}, callback);
 	}
 
 	async function handleSubmitForm(e) {
@@ -32,10 +33,8 @@ function Signin() {
 		const res = await dispatch(signin(user));
 
 		if (res.meta.rejectedWithValue) {
-			return;
+			return Promise.reject();
 		}
-
-		localStorage.setItem("token", res.payload.data.accessToken);
 
 		dispatch(actions.clearError());
 		navigate("/appointment", {
@@ -72,6 +71,7 @@ function Signin() {
 						<label>
 							<h3 className="title">{t("telephone")}</h3>
 							<input
+								type="tel"
 								name="telephone"
 								onBlur={(e) => valueFromInput(e, setUser)}
 							></input>
@@ -79,6 +79,7 @@ function Signin() {
 						<label>
 							<h3 className="title">{t("password")}</h3>
 							<input
+								type="password"
 								name="password"
 								onBlur={(e) => valueFromInput(e, setUser)}
 							></input>

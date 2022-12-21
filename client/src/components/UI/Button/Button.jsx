@@ -1,6 +1,8 @@
 import { memo, useState } from "react";
 import types from "prop-types";
 
+import changePropertyValue from "@/helpers/changePropertyValue.js";
+
 import style from "./Button.module.css";
 
 Button.propTypes = {
@@ -33,10 +35,9 @@ function Button({ id = "", value, timeout = 0, ...props }) {
 		});
 
 		timer = setTimeout(() => {
-			setDotStyle((prev) => ({
-				...prev,
+			changePropertyValue({
 				animation: "",
-			}));
+			}, setDotStyle);
 		}, timeout * 1000);
 	}
 

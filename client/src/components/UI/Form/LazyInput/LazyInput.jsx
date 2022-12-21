@@ -2,26 +2,24 @@ import { useState } from "react";
 import types from "prop-types";
 
 LazyInput.propTypes = {
-	value: types.oneOfType([types.string, types.func]),
+	value: types.func,
 	styleAttr: types.object,
 	onChange: types.func,
 };
 
 function LazyInput({ value, styleAttr = {}, onChange, ...props }) {
 	const [isTyping, setTyping] = useState(false);
-	const [_value, setValue] = useState(typeof value === "function" ? value() : value);
-	const [finalValue, setFinalValue] = useState("");
+	const [_value, setValue] = useState(value);
 
 	return (
 		<input
 			{...props}
-			value={isTyping ? _value : typeof value === "function" ? value() : finalValue}
-			onBlur={() => {
+			value={isTyping ? _value : value()}
+			onBlur={(e) => {
 				setTyping(false);
-				setFinalValue(_value);
 
 				if (onChange) {
-					onChange(_value);
+					onChange(e, _value);
 				}
 			}}
 			onChange={(e) => {

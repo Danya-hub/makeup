@@ -9,6 +9,7 @@ import {
 } from "@/service/redusers/allProcedures.js";
 import FormatDate from "@/utils/formatDate.js";
 import useOutsideEvent from "@/hooks/useOutsideEvent";
+import changePropertyValue from "@/helpers/changePropertyValue.js";
 
 import Popup from "@/components/UI/Popup/Popup.jsx";
 import Select from "@/components/UI/Form/Select/Select.jsx";
@@ -50,6 +51,8 @@ function ProcPopup({
 	const [isOpenSelectProcedure, setOpenSelectProcedure] = useState(false);
 	const [isOpenCalendar, setOpenCalendar] = useState(false);
 
+	console.log(allProcedures);
+
 	function handleSubmitForm(e) {
 		e.preventDefault();
 
@@ -71,7 +74,7 @@ function ProcPopup({
 		<Popup
 			id={style.popupNewProc}
 			onClose={() => setNewProcedure(defaultValueProcedure.current)}
-			closeMethod="visible"
+			isSimple={false}
 			strictSwitch={[
 				isVisible,
 				(bln) => {
@@ -107,15 +110,14 @@ function ProcPopup({
 							const finishProcMinutes =
 								startProcMinutes + allProcedures.types[ind].durationProc * 60;
 
-							setNewProcedure((prev) => ({
-								...prev,
+							changePropertyValue({
 								finishProcTime: FormatDate.minutesInDate(
 									finishProcMinutes,
 									newProcedure.finishProcTime,
 									false
 								),
 								type: allProcedures.types[ind],
-							}));
+							}, setNewProcedure);
 
 							onTouchCart(startProcMinutes, finishProcMinutes);
 						}}

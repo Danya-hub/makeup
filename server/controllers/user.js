@@ -155,16 +155,13 @@ const AuthController = {
                 async (req, res, next) => {
                     try {
                         if (!req.cookies.refreshToken) {
-                            return null;
-                        }
-
-                        const decoded = TokenService.checkOnValidRefreshToken(
-                            req.cookies.refreshToken,
-                        );
-
-                        if (!decoded) {
                             ApiError.unauthorized();
                         }
+
+                        const decoded = TokenService.checkOnValidToken(
+                            req.cookies.refreshToken,
+                            process.env.REFRESH_TOKEN_SECRET_KEY,
+                        );
                         
                         const user = await UserModel.findById(decoded.id);
                         const tokens = TokenService.generateTokens({

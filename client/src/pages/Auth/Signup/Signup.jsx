@@ -2,9 +2,11 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
-import GoogleSignin from "@/components/GoogleSignin/GoogleSignin.jsx";
 
 import { signup, actions } from "@/service/redusers/user.js";
+import changePropertyValue from "@/helpers/changePropertyValue.js";
+
+import GoogleSignin from "@/components/UI/Form/GoogleSignin/GoogleSignin.jsx";
 
 import style from "@/pages/Auth/Auth.module.css";
 
@@ -20,10 +22,9 @@ function Signup() {
 	function valueFromInput(e, callback) {
 		const t = e.target;
 
-		callback((prev) => ({
-			...prev,
+		changePropertyValue({
 			[t.name]: t.value,
-		}));
+		}, callback);
 	}
 
 	async function onSignup() {
@@ -76,6 +77,7 @@ function Signup() {
 						<label>
 							<h3 className="title">{t("fullname")}</h3>
 							<input
+								type="text"
 								name="fullname"
 								onBlur={(e) => valueFromInput(e, setUser)}
 							></input>
@@ -83,6 +85,7 @@ function Signup() {
 						<label>
 							<h3 className="title">{t("telephone")}</h3>
 							<input
+								type="tel"
 								name="telephone"
 								onBlur={(e) => valueFromInput(e, setUser)}
 							></input>

@@ -1,0 +1,46 @@
+.range {
+	--r: 16px;
+
+	width: 100%;
+	height: fit-content;
+	margin: calc(var(--r) / 2) 0;
+}
+
+.rangeWrapper {
+	position: relative;
+	width: 100%;
+}
+
+.rangeWrapper input {
+	display: block;
+	background: rgb(183, 183, 183);
+	width: inherit;
+	height: calc(var(--r) / 2);
+	border-radius: 100vw;
+	cursor: pointer;
+}
+
+.rangeWrapper input::-webkit-slider-thumb {
+	visibility: hidden;
+}
+
+.track {
+	position: absolute;
+	height: 100%;
+	top: 0;
+	left: calc(var(--r) / 2);
+	right: calc(var(--r) / 2);
+	pointer-events: none;
+}
+
+.thumb {
+	position: absolute;
+	background: black;
+	border-radius: 100vw;
+	transition: unset;
+	width: var(--r);
+	height: var(--r);
+	transform: translate(-50%, -50%);
+	left: 0%;
+	top: 50%;
+}

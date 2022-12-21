@@ -30,29 +30,16 @@ class TokenService {
         };
     }
 
-    checkOnValidAccessToken(token) {
-        try {
-            const accessToken = jsonwebtoken.verify(
-                token,
-                process.env.ACCESS_TOKEN_SECRET_KEY
-            );
-
-            return accessToken;
-        } catch (_) {
-            return null;
-        }
-    }
-
-    checkOnValidRefreshToken(token) {
+    checkOnValidToken(token, secretKey) {
         try {
             const refreshToken = jsonwebtoken.verify(
                 token,
-                process.env.REFRESH_TOKEN_SECRET_KEY
+                secretKey
             );
 
             return refreshToken;
         } catch (_) {
-            return null;
+            throw ApiError.unauthorized();
         }
     }
 }

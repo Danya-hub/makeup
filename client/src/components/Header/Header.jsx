@@ -8,7 +8,7 @@ import { actions as langActions } from "@/service/redusers/langs.js";
 import useOutsideEvent from "@/hooks/useOutsideEvent.js";
 
 import Select from "@/components/UI/Form/Select/Select.jsx";
-import Logo from "@/components/Logo/Logo.jsx";
+import Logo from "@/components/UI/Logo/Logo.jsx";
 import { default as UserSrc } from "@/assets/image/user.svg";
 
 import style from "./Header.module.css";
@@ -22,13 +22,13 @@ function Header({ openCabinetState, isDisplay }) {
 	const dispatch = useDispatch();
 	const { langs, user } = useSelector((state) => state);
 	const { t } = useTranslation();
-	const ref = useOutsideEvent(onCloseSelect);
+	const ref = useOutsideEvent(handleCloseSelect);
 
 	const allLangNames = Object.keys(langs.arrayLangs);
 	const [isOpenSelect, setOpenSelect] = useState(false);
 	const [, setBoolOpenCabinet] = openCabinetState;
 
-	function onCloseSelect() {
+	function handleCloseSelect() {
 		setOpenSelect(false);
 	}
 

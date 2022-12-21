@@ -30,10 +30,10 @@ function Cabinet({ openCabinetState }) {
 				openState={openCabinetState}
 			>
 				<div id={style.info}>
-					<Avatar
+					{/* <Avatar
 						id={style.userAvatar}
 						userName={userInfo.fullname}
-					></Avatar>
+					></Avatar> */}
 					<div className={style.fields}>
 						<span id={style.name}>{userInfo.fullname}</span>
 						<span id="telephone">{userInfo.telephone}</span>
@@ -47,7 +47,7 @@ function Cabinet({ openCabinetState }) {
 				</div>
 				<ul>
 					<li>
-						<Link to="/myProcedures">Мои записи процедур</Link>
+						<Link to="/myprocedures">Мои записи процедур</Link>
 					</li>
 				</ul>
 				<button

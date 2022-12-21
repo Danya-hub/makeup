@@ -6,16 +6,12 @@ import style from "./Select.module.css";
 import { default as ArrowSrc } from "@/assets/image/arrow.svg";
 
 function Select({ id, strictSwitch, values, onChange, defaultValue }, ref) {
-	const [selectValue, setSelectValue] = useState(defaultValue || values[0]);
+	const [selectValue, setSelectValue] = useState();
 	const [isActive, setActive] = strictSwitch || useState(false);
 
 	useEffect(() => {
-		if (!defaultValue) {
-			return;
-		}
-
-		setSelectValue(defaultValue);
-	}, [defaultValue]);
+		setSelectValue(defaultValue || values[0]);
+	}, [values]);
 
 	return (
 		<div
@@ -41,7 +37,7 @@ function Select({ id, strictSwitch, values, onChange, defaultValue }, ref) {
 							setSelectValue(values[i]);
 							setActive(false);
 
-							onChange(i);
+							onChange(i, values[i]);
 						}}
 						key={value + "/" + i}
 					>

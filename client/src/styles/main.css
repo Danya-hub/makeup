@@ -114,17 +114,21 @@ a {
 	border-radius: 100vw;
 }
 
+input {
+	display: block;
+}
+
 input:disabled {
 	background: rgb(var(--transp));
 }
 
-input {
+input:where(:not([type="range"])) {
 	--lineColor: var(--brown);
 	--opacity: 0.4;
 	--scale: 1px;
 
 	border-radius: var(--def-radius);
-	padding: 8px 20px;
+	padding: 8px 0 8px 20px;
 	width: 100%;
 }
 

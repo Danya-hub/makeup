@@ -3,6 +3,8 @@ import { BrowserRouter } from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import { Provider as Redux } from "react-redux";
 
+import "@/utils/index.js";
+
 import store from "@/service/store/index.js";
 import App from "./App.jsx";
 

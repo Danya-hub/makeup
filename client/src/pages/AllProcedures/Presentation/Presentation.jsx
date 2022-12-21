@@ -6,7 +6,7 @@ import types from "prop-types";
 
 import { getProcedureByDay } from "@/service/redusers/allProcedures.js";
 import FormatDate from "@/utils/formatDate.js";
-import getWidthByChar from "@/helpers/widthByChar.js";
+import changePropertyValue from "@/helpers/changePropertyValue.js";
 
 import Cart from "@/pages/AllProcedures/Cart/Cart.jsx";
 import Loader from "@/components/Loader/Loader.jsx";
@@ -69,7 +69,7 @@ function Presentation({
 
 	const [isVisiblePopup, setVisiblePopup] = visiblePopupState;
 
-	const widthCharTime = Math.max(...numericHoursFromDay.map((hour) => getWidthByChar(hour)));
+	const widthCharTime = Math.max(...numericHoursFromDay.map((hour) => hour.getWidthByChar()));
 
 	function setNumericTimeByGrabbing(e, y = 0) {
 		const topToRootEl = parentRef.current.offsetTop;
@@ -86,11 +86,21 @@ function Presentation({
 		const startProcMinutes = minutes || selectTime * 60,
 			finishProcTime = startProcMinutes + newProcedure.type.durationProc * 60;
 
-		setNewProcedure((prev) => ({
-			...prev,
-			startProcTime: FormatDate.minutesInDate(startProcMinutes, newProcedure.startProcTime, false),
-			finishProcTime: FormatDate.minutesInDate(finishProcTime, newProcedure.startProcTime, false),
-		}));
+		changePropertyValue(
+			{
+				startProcTime: FormatDate.minutesInDate(
+					startProcMinutes,
+					newProcedure.startProcTime,
+					false,
+				),
+				finishProcTime: FormatDate.minutesInDate(
+					finishProcTime,
+					newProcedure.startProcTime,
+					false,
+				),
+			},
+			setNewProcedure,
+		);
 
 		onTouchCart(startProcMinutes, finishProcTime);
 
@@ -157,7 +167,6 @@ function Presentation({
 			const { newDate } = switchDayOnOther(locale);
 
 			if (!currentTimeHeightInPx) {
-				console.log("123");
 				dispatch(getProcedureByDay(newDate));
 				currentTime.current.day = newDate.getDate();
 			}

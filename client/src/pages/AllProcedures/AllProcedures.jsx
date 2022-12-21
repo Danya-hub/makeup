@@ -9,6 +9,7 @@ import {
 } from "@/service/redusers/allProcedures.js";
 import useCalendar from "@/hooks/useCalendar.js";
 import FormatDate from "@/utils/formatDate.js";
+import changePropertyValue from "@/helpers/changePropertyValue.js";
 
 import ProcPopup from "./ProcPopup/ProcPopup.jsx";
 import ControlPanel from "./ControlPanel/ControlPanel.jsx";
@@ -72,10 +73,10 @@ function AllProcedures() {
 			(res) => res.payload
 		);
 
-		setNewProcedure((prev) => ({
-			...prev,
-			...defaultValueProcedure.current,
-		}));
+		changePropertyValue(
+			defaultValueProcedure.current,
+			setNewProcedure,
+		);
 	}
 
 	function handleChangeDate(date) {
@@ -87,9 +88,8 @@ function AllProcedures() {
 			return;
 		}
 
-		setNewProcedure((prev) => ({
-			...prev,
-			...calendar.setUnitForDate(
+		changePropertyValue(
+			calendar.setUnitForDate(
 				["Time"],
 				{
 					startProcTime: newProcedure.startProcTime,
@@ -97,7 +97,8 @@ function AllProcedures() {
 				},
 				newDate
 			),
-		}));
+			setNewProcedure,
+		);
 	}
 
 	useLayoutEffect(() => {

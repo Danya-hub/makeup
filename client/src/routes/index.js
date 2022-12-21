@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import { Navigate } from "react-router-dom";
 
-const Main = lazy(() => import("@/pages/Main/Main.jsx"));
+const Base = lazy(() => import("@/pages/Base/Base.jsx"));
 const AllProcedures = lazy(() => import("@/pages/AllProcedures/AllProcedures.jsx"));
 const Error = lazy(() => import("@/pages/Error/Error.jsx"));
 const Signup = lazy(() => import("@/pages/Auth/Signup/Signup.jsx"));
@@ -11,7 +11,7 @@ const UserProcedures = lazy(() => import("@/pages/UserProcedures/UserProcedures.
 const routes = [
 	{
 		path: "/",
-		elem: () => <Main />,
+		elem: () => <Base />,
 		state: {
 			title: "Main",
 			header: true,
@@ -44,7 +44,7 @@ const routes = [
 		},
 	},
 	{
-		path: "/myProcedures",
+		path: "/myprocedures",
 		elem: (token, msg) => {
 			if (token) {
 				return <UserProcedures />;

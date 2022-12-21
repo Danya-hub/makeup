@@ -16,7 +16,10 @@ function isAuth(req, res, next) {
             ApiError.unauthorized();
         }
         
-        const decoded = TokenService.checkOnValidAccessToken(token);
+        const decoded = TokenService.checkOnValidToken(
+            token, 
+            process.env.ACCESS_TOKEN_SECRET_KEY,
+        );
 
         if (!decoded) {
             ApiError.unauthorized();

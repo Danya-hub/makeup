@@ -3,6 +3,7 @@ import types from "prop-types";
 
 import FormatDate from "@/utils/formatDate.js";
 import useOutsideEvent from "@/hooks/useOutsideEvent";
+import changePropertyValue from "@/helpers/changePropertyValue";
 
 import Calendar from "@/components/Calendar/Calendar.jsx";
 import WidthInput from "@/components/UI/Form/WidthInput/WidthInput.jsx";
@@ -40,7 +41,7 @@ function TimeInput({
 		setOpenCalendar(false);
 	}
 
-	function setStartAndFinishTimes(finalValue) {
+	function setStartAndFinishTimes(_, finalValue) {
 		const time = FormatDate.numericTimeFromChar(finalValue);
 		const finishMinutes = time * 60 + newProcedure.type.durationProc * 60;
 
@@ -51,11 +52,10 @@ function TimeInput({
 			false
 		);
 
-		setNewProcedure((prev) => ({
-			...prev,
+		changePropertyValue({
 			startProcTime,
 			finishProcTime,
-		}));
+		}, setNewProcedure);
 
 		onCrossingElapsedTime(startProcTime);
 		onTouchCart(startProcTime, finishMinutes);
@@ -77,7 +77,7 @@ function TimeInput({
 				<WidthInput
 					name="day"
 					onClick={() => setOpenCalendar(true)}
-					value={FormatDate.weekdayAndMonth(newProcedure.startProcTime, currLng)}
+					value={() => FormatDate.weekdayAndMonth(newProcedure.startProcTime, currLng)}
 				/>
 				{isOpenCalendar && (
 					<Calendar
@@ -92,14 +92,14 @@ function TimeInput({
 				<WidthInput
 					name="startProcTime"
 					id="startProcTime"
-					value={FormatDate.stringHourAndMin(newProcedure.startProcTime, currLng)}
+					value={() => FormatDate.stringHourAndMin(newProcedure.startProcTime, currLng)}
 					onChange={setStartAndFinishTimes}
 				/>
 				<span>—</span>
 				<WidthInput
 					name="finishProcTime"
 					id="finishProcTime"
-					value={FormatDate.stringHourAndMin(newProcedure.finishProcTime, currLng)}
+					value={() => FormatDate.stringHourAndMin(newProcedure.finishProcTime, currLng)}
 					disabled
 				/>
 			</div>

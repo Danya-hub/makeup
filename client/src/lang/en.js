@@ -33,6 +33,8 @@ const en = {
 		},
 		changePassword: "Change a password",
 		noAccessToPage: "Before going to a page, you need to sign up or sign in!",
+		toExpensive: "From cheap to expensive",
+		toCheap: "From expensive to cheap",
 	},
 };
 

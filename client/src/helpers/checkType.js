@@ -1,11 +1,17 @@
-function isObject(value) {
-	return typeof value === "object" && !Array.isArray(value);
+class Type {
+	isObject(value) {
+		return typeof value === "object" && !Array.isArray(value);
+	}
+
+	isDate(value) {
+		const date = new Date(value);
+
+		return this.isObject(date) && !isNaN(date.getTime()) && typeof value === "string" ? date : null;
+	}
+
+	isNumber(value) {
+		return /^(-|\+)?\d*(\.\d+)?$/.test(value);
+	}
 }
 
-function checkValueOnDate(value) {
-	const date = new Date(value);
-
-	return isObject(date) && !isNaN(date.getTime()) && typeof value === "string" ? date : null;
-}
-
-export { isObject, checkValueOnDate };
+export default new Type();

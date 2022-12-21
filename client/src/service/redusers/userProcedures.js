@@ -5,16 +5,15 @@ import axios from "@/http/axios.js";
 
 const initialState = {
 	carts: [],
-	isLoading: false,
+	isLoading: true,
 };
 
 const getProcedureByUserId = createAsyncThunk(
 	"procedure/getProcedureByUserId",
-	async (id, { dispatch, rejectWithValue }) => {
+	async (id, { rejectWithValue }) => {
 		try {
 			const userProcedures = await axios.get(`/procedure/byUser/${id}`);
 
-			dispatch(actions.setProcedures(userProcedures));
 			return userProcedures;
 		} catch (error) {
 			return rejectWithValue(error.message);
@@ -30,7 +29,8 @@ const { actions, reducer } = createSlice({
 		[getProcedureByUserId.pending]: (state) => {
 			state.isLoading = true;
 		},
-		[getProcedureByUserId.fulfilled]: (state) => {
+		[getProcedureByUserId.fulfilled]: (state, actions) => {
+			state.carts = actions.payload.data;
 			state.isLoading = false;
 		},
 		[getProcedureByUserId.rejected]: (state) => {
