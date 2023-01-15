@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap");
 @import url("./color.css");
 @import url("./fonts.css");
 
@@ -27,6 +26,7 @@ h3,
 input,
 button {
 	--size: calc(var(--step-0) - 3px);
+	--inputHeight: 8px;
 
 	font-size: var(--size);
 	letter-spacing: 1px;
@@ -52,7 +52,12 @@ h3 {
 
 body {
 	position: relative;
+	background: rgb(var(--darkWhite));
 	min-height: 100vh;
+}
+
+button {
+	cursor: pointer;
 }
 
 .button {
@@ -63,20 +68,22 @@ body {
 	background: rgba(var(--back), var(--o));
 	padding: 12px 0;
 	font-weight: 700;
-	cursor: pointer;
 	width: fit-content;
 }
 
 .button.border {
-	box-shadow: 0 0 0 1px rgb(var(--black));
+	--borderColor: var(--brown);
+
+	box-shadow: 0 0 0 1px rgb(var(--borderColor));
 	border-radius: var(--def-radius);
 	padding-left: 20px;
 	padding-right: 20px;
+	text-transform: uppercase;
 }
 
 .button.border:hover {
-	--back: var(--gray);
-	--o: 0.6;
+	--back: var(--brown);
+	--o: 0.1;
 }
 
 img {
@@ -110,7 +117,7 @@ a {
 
 ::-webkit-scrollbar-thumb {
 	background: rgb(var(--gray));
-	border: 4px solid rgb(var(--white));
+	border: 4px solid rgb(var(--darkWhite));
 	border-radius: 100vw;
 }
 
@@ -122,18 +129,26 @@ input:disabled {
 	background: rgb(var(--transp));
 }
 
+input.border {
+	box-shadow: 0 0 0 1px rgb(var(--black));
+}
+
+input::placeholder {
+	user-select: none;
+}
+
 input:where(:not([type="range"])) {
 	--lineColor: var(--brown);
 	--opacity: 0.4;
 	--scale: 1px;
 
 	border-radius: var(--def-radius);
-	padding: 8px 0 8px 20px;
+	padding: var(--inputHeight) 0 var(--inputHeight) 1vw;
 	width: 100%;
 }
 
 form > *:not(:first-child) {
-	margin-top: 16px;
+	margin-top: 2.5vh;
 }
 
 .title {
@@ -143,4 +158,9 @@ form > *:not(:first-child) {
 input:not(:disabled):where(:hover, :focus) {
 	--opacity: 0.8;
 	--scale: 2px;
+}
+
+main {
+	max-width: 1600px;
+	margin: 0 auto;
 }

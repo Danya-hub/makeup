@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap");
+
 :root {
 	--step-0: clamp(0.88rem, calc(0.83rem + 0.24vw), 1rem);
 	--step-1: clamp(0.93rem, calc(0.81rem + 0.62vw), 1.25rem);

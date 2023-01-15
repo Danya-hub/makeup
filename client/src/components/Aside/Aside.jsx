@@ -7,12 +7,13 @@ import style from "./Aside.module.css";
 
 Aside.propTypes = {
 	id: types.string,
+	className: types.string,
 	openState: types.array,
 	onClose: types.func,
 	children: types.oneOfType([types.array, types.object]),
 };
 
-function Aside({ id = "", openState, ...props }) {
+function Aside({ id = "", className = "", openState, ...props }) {
 	const [isOpen = true, setState] = openState || [];
 
 	useEffect(() => {
@@ -32,7 +33,7 @@ function Aside({ id = "", openState, ...props }) {
 	return (
 		<aside
 			id={id}
-			className={`${style.aside} ${openState ? style.popup : ""}`}
+			className={`${style.aside} ${openState ? style.popup : ""} ${className}`}
 			style={{
 				display: isOpen ? "unset" : "none",
 			}}
@@ -54,10 +55,12 @@ function Aside({ id = "", openState, ...props }) {
 				)}
 				{props.children}
 			</div>
-			<div
-				className={style.background}
-				onClick={handleClose}
-			></div>
+			{openState && (
+				<div
+					className={style.background}
+					onClick={handleClose}
+				></div>
+			)}
 		</aside>
 	);
 }

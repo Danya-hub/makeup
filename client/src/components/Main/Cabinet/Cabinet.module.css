@@ -31,6 +31,10 @@
 	margin-top: 16px;
 }
 
+#cabinet li a {
+	padding-left: var(--space);
+}
+
 #logout {
 	text-align: left;
 	padding-left: var(--space);

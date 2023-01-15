@@ -4,15 +4,15 @@ header {
 	align-items: center;
 	background: rgb(var(--white));
 	width: 100%;
-	padding: 0 5%;
+	padding: 2vh 5%;
 }
 
-header > div {
+header nav {
 	display: flex;
 	align-items: center;
 }
 
-header > div > * {
+header nav > * {
 	margin: 0 2vw;
 }
 
@@ -22,4 +22,5 @@ header > div > * {
 
 #userInfo {
 	width: 40px;
+	padding: 0;
 }

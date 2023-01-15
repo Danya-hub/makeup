@@ -10,8 +10,12 @@
 	z-index: 999;
 }
 
-.content {
+.aside:global(.fitContent) .content {
 	width: fit-content;
+}
+
+.content {
+	width: 100%;
 	height: inherit;
 	padding: 20px 0;
 }
@@ -25,12 +29,12 @@
 	z-index: 1;
 }
 
-.content :where(li a, button) {
+.content :where(.content > div, ul li a, button) {
 	width: 100%;
-	padding: 10px 20px;
+	padding: 14px 2vw;
 }
 
-.content > *:not(:where(:first-child, :last-child)) {
+.aside:global(.lines) .content > *:not(:where(:first-child, :last-child)) {
 	--border: 2px solid rgb(var(--lightGray));
 
 	border-bottom: var(--border);
@@ -52,6 +56,6 @@
 	position: absolute;
 	width: inherit;
 	height: inherit;
-	left: inherit;
-	top: inherit;
+	left: 0;
+	top: 0;
 }

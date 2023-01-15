@@ -38,9 +38,9 @@ function Sublist({ id = "", title, values, isOpen, ...props }) {
 				/>
 			</div>
 			<ul className={style.list}>
-				{values.map(function (value, index) {
-					return <li key={value + "/" + index}>{props.children(...arguments)}</li>;
-				})}
+				{values.map((value, index) => (
+					<li key={value + "/" + index}>{props.children(value)}</li>
+				))}
 			</ul>
 		</div>
 	);

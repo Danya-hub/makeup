@@ -19,14 +19,14 @@ const ProcedureSchema = new mongoose.Schema({
     timestamps: true,
 });
 
-ProcedureSchema.statics.isEquilDate = async function (date, hiddenProp) {
-    const allProcedure = await this.find().populate(hiddenProp);
+ProcedureSchema.statics.isEquilDate = async function (date, refDocs) {
+    const allProcedure = await this.find().populate(refDocs);
 
     return allProcedure
-        .filter((cart) => {
-            return cart.startProcTime.getYear() === date.getYear() &&
-                cart.startProcTime.getMonth() === date.getMonth() &&
-                cart.startProcTime.getDate() === date.getDate()
+        .filter((card) => {
+            return card.startProcTime.getYear() === date.getYear() &&
+                card.startProcTime.getMonth() === date.getMonth() &&
+                card.startProcTime.getDate() === date.getDate()
         });
 }
 

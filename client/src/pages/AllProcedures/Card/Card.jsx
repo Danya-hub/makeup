@@ -4,15 +4,15 @@ import types from "prop-types";
 
 import FormatDate from "@/utils/formatDate.js";
 
-import style from "./Cart.module.css";
+import style from "./Card.module.css";
 
-Cart.propTypes = {
+Card.propTypes = {
 	id: types.string,
 	procedure: types.object,
 	styleAttr: types.object,
 };
 
-function Cart({ id = "", procedure, styleAttr = {}, ...props }) {
+function Card({ id = "", procedure, styleAttr = {}, ...props }) {
 	const { currLng } = useSelector((state) => state.langs);
 	const { t } = useTranslation();
 
@@ -23,7 +23,7 @@ function Cart({ id = "", procedure, styleAttr = {}, ...props }) {
 		<div
 			{...props}
 			id={id}
-			className={style.cart}
+			className={style.card}
 			style={{
 				...styleAttr,
 				background: `rgb(var(--${procedure.state.color}))`,
@@ -41,4 +41,4 @@ function Cart({ id = "", procedure, styleAttr = {}, ...props }) {
 	);
 }
 
-export { Cart as default };
+export { Card as default };

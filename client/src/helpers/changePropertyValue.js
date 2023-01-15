@@ -1,11 +1,8 @@
 function changePropertyValue(props, callback) {
 	callback((prev) => ({
 		...prev,
-		...props
+		...props,
 	}));
 }
 
-export {
-	changePropertyValue as
-	default
-};
+export { changePropertyValue as default };

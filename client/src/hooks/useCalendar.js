@@ -80,11 +80,11 @@ class useCalendar {
 		};
 
 		this.getMinDate = (date) => {
-			return FormatDate.minutesInDate(0, date, false);
+			return FormatDate.minutesToDate(0, date, false);
 		};
 
 		this.getMaxDate = (date) => {
-			return FormatDate.minutesInDate(this.maxHour * 60 - 1, date, false);
+			return FormatDate.minutesToDate(this.maxHour * 60 - 1, date, false);
 		};
 
 		this.switchDayOnOther = (date) => {

@@ -45,24 +45,3 @@
 .input:not(#time) > * {
 	display: block;
 }
-
-.warning {
-	display: flex;
-	border: 2px solid rgba(var(--red), 0.6);
-	border-radius: var(--def-radius);
-	margin: 10px 0;
-	padding: 10px;
-}
-
-.warning p {
-	font-weight: 600;
-}
-
-.warning i {
-	font-size: var(--step-1);
-	color: rgb(var(--red));
-}
-
-#popupNewProc button {
-	text-transform: uppercase;
-}

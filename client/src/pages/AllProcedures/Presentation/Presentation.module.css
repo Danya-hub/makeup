@@ -21,10 +21,10 @@
 
 .nameColumns {
 	position: sticky;
-	background: rgb(var(--white));
+	background: rgb(var(--darkWhite));
 	box-shadow: 0 var(--lineSize) 0 var(--lineColor);
-	top: 0;
 	padding: min(20px, 4%) 0;
+	top: 0;
 	cursor: default;
 	z-index: 2;
 }
@@ -52,18 +52,18 @@
 	display: flex;
 }
 
-.carts {
+.cards {
 	position: relative;
 	width: 100%;
 }
 
-.carts > div:not(:is(#newProcedure, #elapsedTime)) {
+.cards > div:not(:is(#newProcedure, #elapsedTime)) {
 	--op: 1;
 
 	opacity: var(--op);
 }
 
-:where(.noActiveGrabbing, .activeGrabbing) .carts > div:not(:is(#newProcedure, #elapsedTime)) {
+:where(.noActiveGrabbing, .activeGrabbing) .cards > div:not(:is(#newProcedure, #elapsedTime)) {
 	--op: 0.4;
 }
 

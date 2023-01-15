@@ -1,11 +1,12 @@
+import { useState, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import types from "prop-types";
 
 import { actions as langActions } from "@/service/redusers/langs.js";
 import useOutsideEvent from "@/hooks/useOutsideEvent.js";
+import AuthContext from "@/context/auth.js";
 
 import Select from "@/components/UI/Form/Select/Select.jsx";
 import Logo from "@/components/UI/Logo/Logo.jsx";
@@ -18,43 +19,38 @@ Header.propTypes = {
 	isDisplay: types.bool,
 };
 
-function Header({ openCabinetState, isDisplay }) {
+function Header({ openCabinetState }) {
 	const dispatch = useDispatch();
-	const { langs, user } = useSelector((state) => state);
+	const { langs } = useSelector((state) => state);
 	const { t } = useTranslation();
 	const ref = useOutsideEvent(handleCloseSelect);
 
-	const allLangNames = Object.keys(langs.arrayLangs);
+	const { isAuth } = useContext(AuthContext);
 	const [isOpenSelect, setOpenSelect] = useState(false);
-	const [, setBoolOpenCabinet] = openCabinetState;
+
+	const allLangNames = Object.keys(langs.arrayLangs);
+	const [, setOpenCabinet] = openCabinetState;
 
 	function handleCloseSelect() {
 		setOpenSelect(false);
 	}
 
 	return (
-		<header
-			style={{
-				display: !isDisplay ? "none" : "flex",
-			}}
-		>
+		<header>
 			<Logo></Logo>
-			<div>
+			<nav>
 				<Select
+					id={style.langs}
 					ref={ref}
 					defaultValue={langs.currLng}
 					values={allLangNames}
 					strictSwitch={[isOpenSelect, setOpenSelect]}
 					onChange={(ind) => dispatch(langActions.changeLanguage(ind))}
-					id={style.langs}
 				></Select>
-				{!user.info && (
+				{!isAuth && (
 					<Link
 						className="button"
 						to="/signin"
-						state={{
-							purpose: "adviceForAuth",
-						}}
 					>
 						{t("signIn")}
 					</Link>
@@ -69,12 +65,12 @@ function Header({ openCabinetState, isDisplay }) {
 						}).long
 					}
 				</Link>
-				{user.info && (
+				{isAuth && (
 					<button
 						id={style.userInfo}
 						className="button"
 						onClick={() => {
-							setBoolOpenCabinet(true);
+							setOpenCabinet(true);
 						}}
 					>
 						<img
@@ -83,7 +79,7 @@ function Header({ openCabinetState, isDisplay }) {
 						/>
 					</button>
 				)}
-			</div>
+			</nav>
 		</header>
 	);
 }

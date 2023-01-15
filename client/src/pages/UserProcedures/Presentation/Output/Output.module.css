@@ -1,0 +1,42 @@
+.topPanel {
+	margin-bottom: 3vh;
+}
+
+.visualStyle {
+	display: flex;
+	box-shadow: 0 0 0 1px rgb(var(--brown));
+	width: fit-content;
+	margin-left: auto;
+}
+
+.visualStyle button {
+	background: unset;
+	width: 30px;
+	padding: 5px;
+}
+
+.visualStyle button.selectDir {
+	background: rgba(var(--brown), 0.4);
+}
+
+.userProcedure {
+	--size: 250px;
+}
+
+.userProcedure img {
+	height: var(--size);
+}
+
+.vertical .userProcedure {
+	display: inline-block;
+	width: var(--size);
+}
+
+.vertical .userProcedure img {
+	transition: unset;
+}
+
+.horizontal .userProcedure img {
+	max-width: var(--size);
+	width: 100%;
+}

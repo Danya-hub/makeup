@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom";
 import { useState, useLayoutEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -6,10 +7,11 @@ import {
 	getAllStates,
 	getAllTypes,
 	getDefaultProcValue,
-} from "@/service/redusers/allProcedures.js";
+} from "@/service/redusers/procedures.js";
 import useCalendar from "@/hooks/useCalendar.js";
 import FormatDate from "@/utils/formatDate.js";
 import changePropertyValue from "@/helpers/changePropertyValue.js";
+import Check from "@/helpers/check.js";
 
 import ProcPopup from "./ProcPopup/ProcPopup.jsx";
 import ControlPanel from "./ControlPanel/ControlPanel.jsx";
@@ -18,13 +20,17 @@ import Presentation from "./Presentation/Presentation.jsx";
 import style from "./AllProcedures.module.css";
 
 function AllProcedures() {
-	const { allProcedures } = useSelector((state) => state);
+	const { procedures } = useSelector((state) => state);
 	const dispatch = useDispatch();
 	const calendar = new useCalendar();
+	const { state: locationState } = useLocation();
 
 	const [newProcedure, setNewProcedure] = useState({});
-	const [isVisibleProcedurePopup, setVisibleProcedurePopup] = useState(false);
+	const [isVisibleProcedurePopup, setVisibleProcedurePopup] = useState(
+		locationState?.isVisiblePopup
+	);
 	const defaultValueProcedure = useRef(null);
+	const isInitialProcedureLoading = Check.onEmpty(newProcedure);
 
 	class Event {
 		constructor() {
@@ -35,27 +41,27 @@ function AllProcedures() {
 				]);
 			};
 
-			this.onTouchCart = (newProcStartMinutes, newProcFinishMinutes) => {
-				let isTouchCart = false;
+			this.onTouchCard = (newProcStartMinutes, newProcFinishMinutes) => {
+				let isTouchCard = false;
 
-				allProcedures.carts.forEach((cart) => {
-					if (isTouchCart) {
+				procedures.cards.forEach((card) => {
+					if (isTouchCard) {
 						return;
 					}
 
-					const numericStartHours = FormatDate.numericHoursFromDate(cart.startProcTime);
+					const numericStartHours = FormatDate.numericHoursFromDate(card.startProcTime);
 					const startSegment = (numericStartHours - newProcedure.type.durationProc) * 60,
 						finishSegment =
 							numericStartHours * 60 +
-							(cart.type.durationProc + newProcedure.type.durationProc) * 60;
+							(card.type.durationProc + newProcedure.type.durationProc) * 60;
 
-					isTouchCart =
+					isTouchCard =
 						(startSegment < newProcStartMinutes && finishSegment > newProcFinishMinutes) ||
 						(newProcStartMinutes < startSegment && newProcFinishMinutes > finishSegment);
 
 					calendar.warning.setWarning([
 						"takenProcedureTime",
-						isTouchCart ? "takenProcedureTime" : "",
+						isTouchCard ? "takenProcedureTime" : "",
 					]);
 				});
 			};
@@ -73,10 +79,7 @@ function AllProcedures() {
 			(res) => res.payload
 		);
 
-		changePropertyValue(
-			defaultValueProcedure.current,
-			setNewProcedure,
-		);
+		changePropertyValue(defaultValueProcedure.current, setNewProcedure);
 	}
 
 	function handleChangeDate(date) {
@@ -97,7 +100,7 @@ function AllProcedures() {
 				},
 				newDate
 			),
-			setNewProcedure,
+			setNewProcedure
 		);
 	}
 
@@ -113,11 +116,11 @@ function AllProcedures() {
 				{...calendar}
 			></ControlPanel>
 			<Presentation
-				carts={allProcedures.carts}
-				isLoadingContent={allProcedures.isLoading.procedures}
+				cards={procedures.cards}
 				visiblePopupState={[isVisibleProcedurePopup, setVisibleProcedurePopup]}
 				newProcedureState={[newProcedure, setNewProcedure]}
 				handleChangeDate={handleChangeDate}
+				isLoadingContent={procedures.isLoading || isInitialProcedureLoading}
 				{...events}
 				{...calendar}
 			></Presentation>

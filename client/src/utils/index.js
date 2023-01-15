@@ -1,4 +1,4 @@
-import Type from "@/helpers/checkType.js";
+import Check from "@/helpers/check.js";
 
 Array.prototype.sortWithCallback = function (callback) {
 	return this.length ? Array(...this).sort(callback) : this;
@@ -6,7 +6,7 @@ Array.prototype.sortWithCallback = function (callback) {
 
 Date.toDate = function (obj) {
 	for (const key in obj) {
-		const date = Type.isDate(obj[key]);
+		const date = Check.isDate(obj[key]);
 
 		if (date) {
 			obj[key] = date;
@@ -25,6 +25,10 @@ String.prototype.getWidthByChar = function () {
 };
 
 Math.minObject = function (callback, values) {
+	if (!values.length) {
+		return null;
+	}
+
 	const minObj = values.reduce((prevObj, currObj) => {
 		const prevVal = callback(prevObj),
 			currVal = callback(currObj);
@@ -36,6 +40,10 @@ Math.minObject = function (callback, values) {
 };
 
 Math.maxObject = function (callback, values) {
+	if (!values.length) {
+		return null;
+	}
+
 	const maxObj = values.reduce((prevObj, currObj) => {
 		const prevVal = callback(prevObj),
 			currVal = callback(currObj);

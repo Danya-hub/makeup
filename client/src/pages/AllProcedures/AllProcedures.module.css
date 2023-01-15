@@ -2,15 +2,3 @@
 	display: flex;
 	min-height: 100vh;
 }
-
-#allProcedures aside {
-	position: sticky;
-	box-shadow: 0 0 20px rgba(var(--brown), 0.1);
-	padding: 16px 2.5%;
-	height: 100vh;
-	top: 0;
-}
-
-#allProcedures aside > * {
-	padding: 10px 0;
-}

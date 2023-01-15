@@ -5,11 +5,11 @@
 
 .dot {
 	position: absolute;
-	background: rgb(var(--white));
+	background: rgb(var(--red));
 	transition: unset;
 	transform: translate(-50%, -50%) scale(0);
 	border-radius: 50%;
-	opacity: 0.6;
+	opacity: 0;
 	width: 0px;
 	height: 0px;
 	pointer-events: none;

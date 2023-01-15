@@ -13,7 +13,7 @@ const langs = {
 
 i18next.use(initReactI18next).init({
 	resources: langs,
-	lng: localStorage.getItem("lng") || "en",
+	lng: localStorage.getItem("lng") || window.navigator.language,
 	fallbackLng: "en",
 	interpolation: {
 		escapeValue: true,

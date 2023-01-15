@@ -1,44 +1,40 @@
 import { memo, useState } from "react";
 import types from "prop-types";
 
-import changePropertyValue from "@/helpers/changePropertyValue.js";
+import style from "./AnimButton.module.css";
 
-import style from "./Button.module.css";
-
-Button.propTypes = {
+AnimButton.propTypes = {
 	id: types.string,
 	value: types.string,
 	timeout: types.number,
+	children: types.object,
 };
 
-function Button({ id = "", value, timeout = 0, ...props }) {
+//?
+function AnimButton({ id = "", timeout = 0, ...props }) {
+	const [animationStyle, setAnimStyle] = useState({});
 	let timer = null;
-	const [dotStyle, setDotStyle] = useState({});
 
 	function handleClick(e) {
-		if (!timeout) {
-			return;
-		}
-
 		clearTimeout(timer);
 
 		const dotSize = Math.max(e.target.offsetWidth, e.target.offsetHeight);
 		const left = e.nativeEvent.offsetX,
 			top = e.nativeEvent.offsetY;
 
-		setDotStyle({
-			animation: `${style.fadeAnimation} ${timeout}s linear`,
+		const styles = {
+			animation: `${style.fadeAnimation} ${timeout / 1000}s linear`,
 			left: `${left}px`,
 			top: `${top}px`,
 			width: `${dotSize}px`,
 			height: `${dotSize}px`,
-		});
+		};
+
+		setAnimStyle(styles);
 
 		timer = setTimeout(() => {
-			changePropertyValue({
-				animation: "",
-			}, setDotStyle);
-		}, timeout * 1000);
+			setAnimStyle({});
+		}, timeout);
 	}
 
 	return (
@@ -48,13 +44,13 @@ function Button({ id = "", value, timeout = 0, ...props }) {
 			className={style.button}
 			onClick={handleClick}
 		>
-			{value}
+			{props.children}
 			<span
 				className={style.dot}
-				style={dotStyle}
+				style={animationStyle}
 			></span>
 		</button>
 	);
 }
 
-export default memo(Button);
+export default memo(AnimButton);

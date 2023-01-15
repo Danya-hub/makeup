@@ -27,9 +27,12 @@ function useWarning(warnings) {
 		(newValue) => {
 			const [name, value] = newValue;
 
-			changePropertyValue({
-				[name]: t(value),
-			}, setWarning);
+			changePropertyValue(
+				{
+					[name]: t(value),
+				},
+				setWarning
+			);
 		},
 		{
 			hasWarning,

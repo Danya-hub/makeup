@@ -3,3 +3,16 @@
 	margin-right: 10px;
 	margin-top: 4px;
 }
+
+#controlPanel {
+	position: sticky;
+	background: rgb(var(--white));
+	box-shadow: 0 0 20px rgba(var(--brown), 0.1);
+	padding: 16px 2.5%;
+	height: 100vh;
+	top: 0;
+}
+
+#controlPanel > * {
+	padding: 10px 0;
+}

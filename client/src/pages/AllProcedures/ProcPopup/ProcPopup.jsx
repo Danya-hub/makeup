@@ -3,16 +3,14 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import types from "prop-types";
 
-import {
-	actions as procedureCartActions,
-	createNewProcedure,
-} from "@/service/redusers/allProcedures.js";
+import { createNewProcedure } from "@/service/redusers/procedures.js";
 import FormatDate from "@/utils/formatDate.js";
 import useOutsideEvent from "@/hooks/useOutsideEvent";
 import changePropertyValue from "@/helpers/changePropertyValue.js";
 
 import Popup from "@/components/UI/Popup/Popup.jsx";
 import Select from "@/components/UI/Form/Select/Select.jsx";
+import Warning from "@/components/UI/Form/Message/Warning/Warning.jsx";
 import TimeInput from "@/pages/AllProcedures/ProcPopup/TimeInput/TimeInput.jsx";
 
 import style from "./ProcPopup.module.css";
@@ -23,7 +21,7 @@ ProcPopup.propTypes = {
 	viewState: types.object,
 	newProcedureState: types.array,
 	defaultValueProcedure: types.object,
-	onTouchCart: types.func,
+	onTouchCard: types.func,
 	onCrossingElapsedTime: types.func,
 	handleChangeDate: types.func,
 };
@@ -34,24 +32,22 @@ function ProcPopup({
 	viewState,
 	newProcedureState,
 	defaultValueProcedure,
-	onTouchCart,
+	onTouchCard,
 	onCrossingElapsedTime,
 	handleChangeDate,
 }) {
 	const dispatch = useDispatch();
-	const { allProcedures } = useSelector((state) => state);
+	const { procedures } = useSelector((state) => state);
 	const { t } = useTranslation();
 	const ref = useOutsideEvent(onCloseSelectProcedure);
 
 	const { hasWarning } = warning;
 	const [newProcedure, setNewProcedure] = newProcedureState;
 	const [isVisible, setVisible] = visibleState;
-	const [finedWarning, isFoundWarning] = hasWarning();
+	const [finedWarningText, isFoundWarning] = hasWarning();
 
 	const [isOpenSelectProcedure, setOpenSelectProcedure] = useState(false);
 	const [isOpenCalendar, setOpenCalendar] = useState(false);
-
-	console.log(allProcedures);
 
 	function handleSubmitForm(e) {
 		e.preventDefault();
@@ -61,7 +57,6 @@ function ProcPopup({
 		}
 
 		dispatch(createNewProcedure(newProcedure));
-		dispatch(procedureCartActions.addNewProcedure(newProcedure));
 
 		setVisible(false);
 	}
@@ -82,19 +77,8 @@ function ProcPopup({
 				},
 			]}
 		>
-			{isFoundWarning && (
-				<div className={style.warning}>
-					<i
-						className="fa fa-exclamation-circle"
-						aria-hidden="true"
-					></i>
-					<p>{finedWarning}</p>
-				</div>
-			)}
-			<form
-				method=""
-				onSubmit={handleSubmitForm}
-			>
+			{isFoundWarning && <Warning text={finedWarningText}></Warning>}
+			<form onSubmit={handleSubmitForm}>
 				<label
 					className={style.input}
 					id="procedureName"
@@ -103,23 +87,25 @@ function ProcPopup({
 					<Select
 						ref={ref}
 						defaultValue={newProcedure.type?.name}
-						values={allProcedures.types.map((obj) => obj["name"])}
+						values={procedures.types.map((obj) => obj["name"])}
 						onChange={(ind) => {
 							const startProcMinutes =
 								FormatDate.numericHoursFromDate(newProcedure.startProcTime) * 60;
-							const finishProcMinutes =
-								startProcMinutes + allProcedures.types[ind].durationProc * 60;
+							const finishProcMinutes = startProcMinutes + procedures.types[ind].durationProc * 60;
 
-							changePropertyValue({
-								finishProcTime: FormatDate.minutesInDate(
-									finishProcMinutes,
-									newProcedure.finishProcTime,
-									false
-								),
-								type: allProcedures.types[ind],
-							}, setNewProcedure);
+							changePropertyValue(
+								{
+									finishProcTime: FormatDate.minutesToDate(
+										finishProcMinutes,
+										newProcedure.finishProcTime,
+										false
+									),
+									type: procedures.types[ind],
+								},
+								setNewProcedure
+							);
 
-							onTouchCart(startProcMinutes, finishProcMinutes);
+							onTouchCard(startProcMinutes, finishProcMinutes);
 						}}
 						strictSwitch={[
 							isOpenSelectProcedure,
@@ -133,7 +119,7 @@ function ProcPopup({
 				<TimeInput
 					viewState={viewState}
 					newProcedureState={newProcedureState}
-					onTouchCart={onTouchCart}
+					onTouchCard={onTouchCard}
 					onCrossingElapsedTime={onCrossingElapsedTime}
 					warning={warning}
 					onChange={handleChangeDate}

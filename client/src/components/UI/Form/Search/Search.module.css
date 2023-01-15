@@ -1,0 +1,45 @@
+.search {
+	--shadow: 0 0 2px rgba(var(--brown), 0.4);
+
+	position: relative;
+	box-shadow: var(--shadow);
+}
+
+.search input {
+	border-radius: unset;
+}
+
+.search.open .options {
+	display: block;
+}
+
+.options {
+	display: none;
+	position: absolute;
+	background: rgb(var(--white));
+	box-shadow: var(--shadow);
+	border-radius: 0 0 var(--def-radius) var(--def-radius);
+	width: 100%;
+	left: 0;
+	overflow: hidden;
+	z-index: 1;
+}
+
+.options span {
+	--back: var(--white);
+	--o: 1;
+
+	display: block;
+	background: rgba(var(--back), var(--o));
+	padding: 6px 2vw;
+	cursor: pointer;
+}
+
+.options span:hover {
+	--back: var(--brown);
+	--o: 0.2;
+}
+
+.options li:not(:last-child) span {
+	border-bottom: 1px solid rgba(var(--brown), 0.5);
+}

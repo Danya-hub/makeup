@@ -1,94 +1,112 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import types from "prop-types";
-
-import useOutsideEvent from "@/hooks/useOutsideEvent.js";
-import changePropertyValue from "@/helpers/changePropertyValue.js";
 
 import Aside from "@/components/Aside/Aside.jsx";
 import Select from "@/components/UI/Form/Select/Select.jsx";
 import Range from "@/components/UI/Form/Range/Range.jsx";
+import Details from "@/components/UI/Details/Details.jsx";
+import Search from "@/components/UI/Form/Search/Search.jsx";
+
+import style from "./Filters.module.css";
 
 Filters.propTypes = {
-	cartsState: types.array,
-	isLoadingContent: types.bool,
+	tempCardsState: types.array,
+	initialCards: types.array,
 };
 
-const defaultFilters = () => ({
-	min: null,
-	max: null,
-	sort: null,
-});
+const sortOptions = {
+	toExpensive,
+	toCheap,
+};
 
-function toExpensive(items) {
-	const sortedCarts = items.sortWithCallback((a, b) => (a.type.price < b.type.price ? -1 : 1));
+const sortKeys = Object.keys(sortOptions);
 
-	return sortedCarts;
+function toExpensive(procedures) {
+	const sortedProcs = procedures.sortWithCallback((a, b) => (a.type.price < b.type.price ? -1 : 1));
+
+	return sortedProcs;
 }
 
-function toCheap(items) {
-	const sortedCarts = items.sortWithCallback((a, b) => (a.type.price > b.type.price ? -1 : 1));
+function toCheap(procedures) {
+	const sortedProcs = procedures.sortWithCallback((a, b) => (a.type.price > b.type.price ? -1 : 1));
 
-	return sortedCarts;
+	return sortedProcs;
 }
 
-function Filters({ cartsState }) {
+function byRange([min, max], procedures) {
+	const rez = procedures.filter((proc) => proc.type.price >= min && proc.type.price <= max);
+
+	return rez;
+}
+
+function Filters({ tempCardsState, initialCards }) {
+	const [tempCards, setTempCard] = tempCardsState;
+
+	const minProc = Math.minObject((obj) => obj.type.price, tempCards),
+		maxProc = Math.maxObject((obj) => obj.type.price, tempCards);
+
 	const { t } = useTranslation();
-	const ref = useOutsideEvent(handleCloseSelect);
+
 	const [isOpenSelect, setOpenSelect] = useState(false);
 
-	const [carts, setCarts] = cartsState;
-	const initialCarts = useRef(carts);
-	const sortOptions = {
-		toExpensive: toExpensive(carts),
-		toCheap: toCheap(carts),
-	};
-	const sortKeys = Object.keys(sortOptions);
-
-	const minProc = carts.length ? Math.minObject((obj) => obj.type.price, carts) : null;
-	const maxProc = carts.length ? Math.maxObject((obj) => obj.type.price, carts) : null;
-
-	function handleCloseSelect() {
-		setOpenSelect(false);
+	function handleReset() {
+		setTempCard(initialCards);
 	}
 
-	function reset() {
-		setCarts(initialCarts.current);
-		// setFilterOptions(defaultFilters);
+	function handleSearch(procedures) {
+		setTempCard(procedures);
 	}
 
-	return (<Aside>
-		<button
-			className="button"
-			onClick={reset}
-		>
-			Сбросить фильтры
-		</button>
-		<Select
-			ref={ref}
-			values={sortKeys.map(t)}
-			strictSwitch={[isOpenSelect, setOpenSelect]}
-			onChange={(i) => {
-				const key = sortKeys[i];
-				const sortedCarts = sortOptions[key]();
+	return (
+		<Aside id={style.filters}>
+			<button
+				id={style.reset}
+				className="button border"
+				onClick={handleReset}
+			>
+				Сбросить фильтры
+			</button>
+			<Details
+				id="search"
+				title={"Процедуры"}
+				isOpen={true}
+			>
+				<Search
+					values={initialCards}
+					keys={["type", "name"]}
+					onChange={handleSearch}
+				></Search>
+			</Details>
+			<Select
+				id={style.sort}
+				isAbsPos={false}
+				values={sortKeys.map(t)}
+				strictSwitch={[isOpenSelect, setOpenSelect]}
+				onChange={(i) => {
+					const key = sortKeys[i];
+					const procs = sortOptions[key](tempCards);
 
-				setCarts(sortedCarts);
+					setTempCard(procs);
+				}}
+			></Select>
+			<Details
+				id="price"
+				title={"Цена"}
+				isOpen={true}
+			>
+				<Range
+					id={style.procPrice}
+					min={minProc?.type?.price}
+					max={maxProc?.type?.price}
+					onChange={(options) => {
+						const procs = byRange([options.minValue, options.maxValue], tempCards);
 
-				changePropertyValue({
-					sortBy: key,
-				},)
-			}}
-		></Select>
-		<span>Цена</span>
-		<Range
-			id="procPrice"
-			min={minProc?.type?.price}
-			max={maxProc?.type?.price}
-			onChange={(options) => {
-				console.log(options);
-			}}
-		></Range>
-	</Aside>
+						setTempCard(procs);
+					}}
+				></Range>
+			</Details>
+		</Aside>
 	);
 }
 

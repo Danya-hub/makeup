@@ -10,7 +10,9 @@ const initialState = {
 
 const refresh = createAsyncThunk("user/refresh", async (_, { dispatch, rejectWithValue }) => {
 	try {
-		const user = await axios.get("/auth/refresh");
+		const user = await axios.indGet("/auth/refresh");
+		localStorage.setItem("token", user.data.accessToken);
+
 		dispatch(actions.setUser(user.data));
 
 		return user;
@@ -32,6 +34,7 @@ const signup = createAsyncThunk("user/signup", async (value, { rejectWithValue }
 const signin = createAsyncThunk("user/signin", async (value, { dispatch, rejectWithValue }) => {
 	try {
 		const finedUser = await axios.post("/auth/signin", value);
+		localStorage.setItem("token", finedUser.data.accessToken);
 
 		dispatch(actions.setUser(finedUser.data));
 

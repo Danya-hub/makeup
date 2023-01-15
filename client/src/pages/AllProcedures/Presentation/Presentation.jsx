@@ -1,14 +1,15 @@
-import { useSelector, useDispatch } from "react-redux";
-import { useState, useRef, useLayoutEffect } from "react";
+import { useState, useRef, useLayoutEffect, useContext } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import types from "prop-types";
 
-import { getProcedureByDay } from "@/service/redusers/allProcedures.js";
+import { getProcedureByDay } from "@/service/redusers/procedures.js";
 import FormatDate from "@/utils/formatDate.js";
 import changePropertyValue from "@/helpers/changePropertyValue.js";
+import AuthContext from "@/context/auth.js";
 
-import Cart from "@/pages/AllProcedures/Cart/Cart.jsx";
+import Card from "@/pages/AllProcedures/Card/Card.jsx";
 import Loader from "@/components/Loader/Loader.jsx";
 
 import style from "./Presentation.module.css";
@@ -18,7 +19,7 @@ const columnsName = ["time", "status", "procedureName"];
 Presentation.propTypes = {
 	newProcedureState: types.array,
 	warning: types.object,
-	carts: types.array,
+	cards: types.array,
 	viewState: types.object,
 	visiblePopupState: types.array,
 	isElapsedDay: types.func,
@@ -28,16 +29,16 @@ Presentation.propTypes = {
 	minHour: types.number,
 	maxHour: types.number,
 	currentTimeHeightInPx: types.number,
-	onTouchCart: types.func,
+	onTouchCard: types.func,
 	onCrossingElapsedTime: types.func,
-	isLoadingContent: types.bool,
 	isCurrentTime: types.bool,
+	isLoadingContent: types.bool,
 };
 
 function Presentation({
 	newProcedureState,
 	warning,
-	carts,
+	cards,
 	viewState,
 	visiblePopupState,
 	isElapsedDay,
@@ -47,13 +48,12 @@ function Presentation({
 	minHour,
 	maxHour,
 	currentTimeHeightInPx,
-	onTouchCart,
+	onTouchCard,
 	onCrossingElapsedTime,
-	isLoadingContent,
 	isCurrentTime,
+	isLoadingContent,
 }) {
 	const dispatch = useDispatch();
-	const { info: userInfo } = useSelector((state) => state.user);
 	const navigate = useNavigate();
 	const { t } = useTranslation();
 
@@ -62,20 +62,22 @@ function Presentation({
 	const { hasWarning, setWarning } = warning;
 	const { locale, currentTime } = viewState;
 
+	const { isAuth } = useContext(AuthContext);
 	const [innerY, setInnerY] = useState(0);
-	const [selectTime, setSelectTime] = useState(0);
+	const [selectTime, setSelectTime] = useState(minHour);
 	const [isMouseDown, setMouseDown] = useState(false);
 	const parentRef = useRef(null);
 
 	const [isVisiblePopup, setVisiblePopup] = visiblePopupState;
-
 	const widthCharTime = Math.max(...numericHoursFromDay.map((hour) => hour.getWidthByChar()));
 
 	function setNumericTimeByGrabbing(e, y = 0) {
 		const topToRootEl = parentRef.current.offsetTop;
+		const durationProc = newProcedure.type.durationProc;
 
 		const time = (e.pageY - topToRootEl + y) / hourHeightInPx;
-		const rez = minHour > time ? minHour : maxHour < time ? maxHour : time;
+		const rez =
+			minHour > time ? minHour : maxHour - durationProc < time ? maxHour - durationProc : time;
 
 		setSelectTime(rez);
 
@@ -84,35 +86,31 @@ function Presentation({
 
 	function setStartAndFinishTimes(minutes) {
 		const startProcMinutes = minutes || selectTime * 60,
-			finishProcTime = startProcMinutes + newProcedure.type.durationProc * 60;
+			finishProcMinutes = startProcMinutes + newProcedure.type.durationProc * 60;
+
+		const startProcTime = FormatDate.minutesToDate(startProcMinutes, locale, false),
+			finishProcTime = FormatDate.minutesToDate(finishProcMinutes, locale, false);
 
 		changePropertyValue(
 			{
-				startProcTime: FormatDate.minutesInDate(
-					startProcMinutes,
-					newProcedure.startProcTime,
-					false,
-				),
-				finishProcTime: FormatDate.minutesInDate(
-					finishProcTime,
-					newProcedure.startProcTime,
-					false,
-				),
+				startProcTime,
+				finishProcTime,
 			},
-			setNewProcedure,
+			setNewProcedure
 		);
+		onTouchCard(startProcMinutes, finishProcMinutes);
 
-		onTouchCart(startProcMinutes, finishProcTime);
+		const _hasWarning = hasWarning("crossingElapsedTime");
 
-		if (hasWarning("crossingElapsedTime")) {
+		if (_hasWarning) {
 			setWarning(["crossingElapsedTime", ""]);
 		}
 	}
 
-	function onGrabbingCart(e) {
-		const topToCart = selectTime * 60,
+	function onGrabbingCard(e) {
+		const topToCard = selectTime * 60,
 			topToRootEl = parentRef.current.offsetTop;
-		const grabbingInnerY = e.pageY - topToRootEl - topToCart;
+		const grabbingInnerY = e.pageY - topToRootEl - topToCard;
 
 		const rez =
 			newProcedure.type.durationProc * 60 < grabbingInnerY || 0 > grabbingInnerY
@@ -124,8 +122,10 @@ function Presentation({
 		return rez;
 	}
 
-	function onMouseUp() {
-		setStartAndFinishTimes();
+	function onMouseUp(e) {
+		const minutesByMouseUp = setNumericTimeByGrabbing(e, -innerY) * 60;
+
+		setStartAndFinishTimes(minutesByMouseUp);
 
 		setVisiblePopup(!isElapsed);
 		setMouseDown(false);
@@ -140,8 +140,8 @@ function Presentation({
 	}
 
 	function onMouseDown(e) {
-		if (!userInfo) {
-			return navigate("/signup", {
+		if (!isAuth) {
+			return navigate("/signin", {
 				replace: true,
 				state: {
 					purpose: "warningAuthToMakeAppointment",
@@ -149,16 +149,16 @@ function Presentation({
 			});
 		}
 
-		const grabbingInnerY = onGrabbingCart(e);
-		const minutesByClicking = setNumericTimeByGrabbing(e, -grabbingInnerY) * 60;
+		const grabbingInnerY = onGrabbingCard(e);
+		const minutesByMouseDown = setNumericTimeByGrabbing(e, -grabbingInnerY) * 60;
 
 		setVisiblePopup(false);
 		setMouseDown(!isElapsed);
 
-		setStartAndFinishTimes(minutesByClicking);
+		setStartAndFinishTimes(minutesByMouseDown);
 
-		if (minutesByClicking === currentTimeHeightInPx) {
-			window.scrollTo(0, minutesByClicking);
+		if (minutesByMouseDown === currentTimeHeightInPx) {
+			window.scrollTo(0, minutesByMouseDown);
 		}
 	}
 
@@ -196,8 +196,8 @@ function Presentation({
 				</div>
 			</div>
 			<div
-				className={style.wrapper}
 				ref={parentRef}
+				className={style.wrapper}
 				onMouseUp={onMouseUp}
 				onMouseMove={onMouseMove}
 				onMouseDown={onMouseDown}
@@ -223,7 +223,7 @@ function Presentation({
 							</div>
 						))}
 					</div>
-					<div className={style.carts}>
+					<div className={style.cards}>
 						<div
 							id={style.elapsedTime}
 							style={{
@@ -233,24 +233,24 @@ function Presentation({
 							{isCurrentTime && <div id={style.current}></div>}
 						</div>
 						{(isVisiblePopup || isMouseDown) && (
-							<Cart
+							<Card
 								id={style.newProcedure}
 								procedure={newProcedure}
 								styleAttr={{
 									height: `${newProcedure.type.durationProc * hourHeightInPx}px`,
 									top: `${selectTime * hourHeightInPx}px`,
 								}}
-							></Cart>
+							></Card>
 						)}
-						{carts.map((cart, i) => (
-							<Cart
-								key={`${cart.type.name}/${i}`}
-								procedure={cart}
+						{cards.map((card, i) => (
+							<Card
+								key={`${card.type.name}/${i}`}
+								procedure={card}
 								styleAttr={{
-									height: `${cart.type.durationProc * hourHeightInPx}px`,
-									top: `${FormatDate.numericHoursFromDate(cart.startProcTime) * hourHeightInPx}px`,
+									height: `${card.type.durationProc * hourHeightInPx}px`,
+									top: `${FormatDate.numericHoursFromDate(card.startProcTime) * hourHeightInPx}px`,
 								}}
-							></Cart>
+							></Card>
 						))}
 					</div>
 				</div>

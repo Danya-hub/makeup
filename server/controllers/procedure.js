@@ -9,7 +9,7 @@ import StateProcedure from "../models/stateProcedure.js";
 import isAuth from "../middleware/isAuth.js";
 import ApiError from "../utils/apiError.js";
 
-const hiddenProp = ["user", "type", "state"];
+const refDocsName = ["user", "type", "state"];
 
 const ProcedureController = {
     get: {
@@ -18,7 +18,7 @@ const ProcedureController = {
                 async (req, res) => {
                     try {
                         const newDate = new Date(req.params.newDate);
-                        const finedProcedure = await ProcedureModel.isEquilDate(newDate, hiddenProp);
+                        const finedProcedure = await ProcedureModel.isEquilDate(newDate, refDocsName);
 
                         res.status(200).json(finedProcedure);
                     } catch (error) {
@@ -33,7 +33,7 @@ const ProcedureController = {
                     try {
                         const finedProcedure = await ProcedureModel.find({
                             user: req.params.id,
-                        }).populate(hiddenProp);
+                        }).populate(refDocsName);
 
                         if (!finedProcedure) {
                             ApiError.notExist("procedure");
@@ -102,7 +102,7 @@ const ProcedureController = {
                 async (req, res, next) => {
                     try {
                         const errors = validationResult(req);
-                        
+
                         if (!errors.isEmpty()) {
                             ApiError.badRequest(errors.array());
                         }
@@ -110,7 +110,11 @@ const ProcedureController = {
                         const newProcedure = await ProcedureModel.create(req.body);
                         await newProcedure.save();
 
-                        res.status(201).json(newProcedure);
+                        const finedProcedure = await ProcedureModel.findById(newProcedure._id),
+                            unzipedProcedure = await finedProcedure.populate(refDocsName);
+
+                        res.status(201).json(unzipedProcedure);
+
                         next();
                     } catch (error) {
                         next(error);

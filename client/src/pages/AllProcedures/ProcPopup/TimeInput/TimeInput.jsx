@@ -14,7 +14,7 @@ TimeInput.propTypes = {
 	newProcedureState: types.array,
 	warning: types.object,
 	openCalendarState: types.array,
-	onTouchCart: types.func,
+	onTouchCard: types.func,
 	onCrossingElapsedTime: types.func,
 	onChange: types.func,
 	viewState: types.object,
@@ -25,7 +25,7 @@ function TimeInput({
 	warning,
 	openCalendarState,
 	onChange,
-	onTouchCart,
+	onTouchCard,
 	onCrossingElapsedTime,
 	viewState,
 }) {
@@ -45,20 +45,19 @@ function TimeInput({
 		const time = FormatDate.numericTimeFromChar(finalValue);
 		const finishMinutes = time * 60 + newProcedure.type.durationProc * 60;
 
-		const startProcTime = FormatDate.minutesInDate(time * 60, newProcedure.startProcTime, false);
-		const finishProcTime = FormatDate.minutesInDate(
-			finishMinutes,
-			newProcedure.finishProcTime,
-			false
+		const startProcTime = FormatDate.minutesToDate(time * 60, newProcedure.startProcTime, false),
+			finishProcTime = FormatDate.minutesToDate(finishMinutes, newProcedure.finishProcTime, false);
+
+		changePropertyValue(
+			{
+				startProcTime,
+				finishProcTime,
+			},
+			setNewProcedure
 		);
 
-		changePropertyValue({
-			startProcTime,
-			finishProcTime,
-		}, setNewProcedure);
-
-		onCrossingElapsedTime(startProcTime);
-		onTouchCart(startProcTime, finishMinutes);
+		onCrossingElapsedTime(time * 60);
+		onTouchCard(startProcTime, finishMinutes);
 	}
 
 	return (
@@ -77,7 +76,7 @@ function TimeInput({
 				<WidthInput
 					name="day"
 					onClick={() => setOpenCalendar(true)}
-					value={() => FormatDate.weekdayAndMonth(newProcedure.startProcTime, currLng)}
+					value={FormatDate.weekdayAndMonth(newProcedure.startProcTime, currLng)}
 				/>
 				{isOpenCalendar && (
 					<Calendar
@@ -92,14 +91,14 @@ function TimeInput({
 				<WidthInput
 					name="startProcTime"
 					id="startProcTime"
-					value={() => FormatDate.stringHourAndMin(newProcedure.startProcTime, currLng)}
+					value={FormatDate.stringHourAndMin(newProcedure.startProcTime, currLng)}
 					onChange={setStartAndFinishTimes}
 				/>
 				<span>—</span>
 				<WidthInput
 					name="finishProcTime"
 					id="finishProcTime"
-					value={() => FormatDate.stringHourAndMin(newProcedure.finishProcTime, currLng)}
+					value={FormatDate.stringHourAndMin(newProcedure.finishProcTime, currLng)}
 					disabled
 				/>
 			</div>

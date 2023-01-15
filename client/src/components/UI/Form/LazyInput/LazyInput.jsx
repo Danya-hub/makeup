@@ -3,11 +3,11 @@ import types from "prop-types";
 
 LazyInput.propTypes = {
 	value: types.func,
-	styleAttr: types.object,
+	style: types.object,
 	onChange: types.func,
 };
 
-function LazyInput({ value, styleAttr = {}, onChange, ...props }) {
+function LazyInput({ value = "", style = {}, onChange, ...props }) {
 	const [isTyping, setTyping] = useState(false);
 	const [_value, setValue] = useState(value);
 
@@ -26,7 +26,7 @@ function LazyInput({ value, styleAttr = {}, onChange, ...props }) {
 				setValue(e.target.value);
 				setTyping(true);
 			}}
-			style={styleAttr}
+			style={style}
 		/>
 	);
 }

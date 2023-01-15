@@ -3,6 +3,8 @@ import {
     config,
 } from "dotenv";
 
+import ApiError from "../utils/apiError.js";
+
 config();
 
 class TokenService {
@@ -32,12 +34,12 @@ class TokenService {
 
     checkOnValidToken(token, secretKey) {
         try {
-            const refreshToken = jsonwebtoken.verify(
+            const decodedToken = jsonwebtoken.verify(
                 token,
                 secretKey
             );
-
-            return refreshToken;
+            
+            return decodedToken;
         } catch (_) {
             throw ApiError.unauthorized();
         }

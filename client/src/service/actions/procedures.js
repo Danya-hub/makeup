@@ -1,12 +1,12 @@
-import Type from "@/helpers/checkType.js";
+import Check from "@/helpers/check.js";
 
 function addNewProcedure(state, action) {
-	state.carts.push(action.payload);
+	state.cards.push(action.payload);
 }
 
 function putNewValue(state, action) {
 	const [name, value] = action.payload;
-	const _isObj = Type.isObject(value);
+	const _isObj = Check.isObject(value);
 
 	state[name] = value;
 

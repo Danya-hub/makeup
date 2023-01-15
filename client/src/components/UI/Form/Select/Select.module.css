@@ -8,15 +8,20 @@
 	user-select: none;
 }
 
-.options {
-	display: none;
+.select.absolute .options {
 	position: absolute;
-	background: rgb(var(--white));
 	box-shadow: 0 2px 10px rgba(var(--black), 0.3);
 	border-radius: var(--def-radius);
-	max-height: 100px;
-	overflow-y: scroll;
+	left: 0;
 	z-index: 997;
+}
+
+.options {
+	display: none;
+	background: rgb(var(--white));
+	min-width: 100%;
+	max-height: 100px;
+	overflow: hidden scroll;
 }
 
 .options span:hover {
@@ -28,7 +33,6 @@
 
 	background: var(--back);
 	padding-left: 10px;
-	padding-right: 10px;
 	cursor: pointer;
 }
 
@@ -53,8 +57,9 @@
 	display: block;
 }
 
-.activeEl {
-	display: flex;
+.selectValue {
+	display: flex !important;
 	align-items: center;
+	justify-content: space-between;
 	cursor: pointer;
 }

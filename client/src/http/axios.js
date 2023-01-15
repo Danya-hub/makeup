@@ -8,7 +8,9 @@ const options = {
 const $axios = axios.create(options);
 
 $axios.interceptors.request.use((config) => {
-	config.headers.authorization = `Barear ${localStorage.getItem("token")}`;
+	const userToken = localStorage.getItem("token");
+
+	config.headers.authorization = `Barear ${userToken}`;
 
 	return config;
 });
@@ -21,14 +23,13 @@ $axios.interceptors.response.use(
 		const requestConfig = error.config;
 
 		try {
-			if (error.response.status == 401 && !requestConfig && requestConfig._isRetry) {
+			if (error.response.status != 401 || !requestConfig || requestConfig._isRetry) {
 				throw error;
 			}
-
 			requestConfig._isRetry = true;
 
-			const response = await $axios.indGet("auth/refresh");
-			localStorage.setItem("token", response.data.accessToken);
+			const refresh = await $axios.indGet("auth/refresh");
+			localStorage.setItem("token", refresh.data.accessToken);
 
 			return $axios.request(requestConfig);
 		} catch (e) {
@@ -39,10 +40,6 @@ $axios.interceptors.response.use(
 
 $axios.indGet = function (url) {
 	return axios.get(url, options);
-}
-
-export {
-	$axios as
-	default,
-	options
 };
+
+export { $axios as default, options };

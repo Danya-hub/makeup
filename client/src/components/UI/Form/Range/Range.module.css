@@ -9,14 +9,15 @@
 .rangeWrapper {
 	position: relative;
 	width: 100%;
+	margin-top: 1vh;
 }
 
 .rangeWrapper input {
 	display: block;
-	background: rgb(183, 183, 183);
-	width: inherit;
-	height: calc(var(--r) / 2);
+	background: rgb(var(--gray));
 	border-radius: 100vw;
+	width: inherit;
+	height: 2px;
 	cursor: pointer;
 }
 
@@ -43,4 +44,28 @@
 	transform: translate(-50%, -50%);
 	left: 0%;
 	top: 50%;
+}
+
+.inputs {
+	margin: 4vh 5%;
+}
+
+.inputs > div,
+.inputs {
+	display: flex;
+	align-items: center;
+}
+
+.inputs button {
+	width: fit-content;
+	padding: var(--inputHeight) !important;
+	margin-left: 1vw;
+}
+
+.inputs input {
+	text-align: center;
+	transition: unset;
+	padding-left: 0.4vw;
+	padding-right: 0.4vw;
+	margin: 0 5%;
 }

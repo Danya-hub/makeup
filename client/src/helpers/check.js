@@ -1,4 +1,4 @@
-class Type {
+class Check {
 	isObject(value) {
 		return typeof value === "object" && !Array.isArray(value);
 	}
@@ -9,9 +9,21 @@ class Type {
 		return this.isObject(date) && !isNaN(date.getTime()) && typeof value === "string" ? date : null;
 	}
 
-	isNumber(value) {
+	isFloat(value) {
 		return /^(-|\+)?\d*(\.\d+)?$/.test(value);
+	}
+
+	isNumber(value) {
+		return /^(-|\+)?\d*$/.test(value);
+	}
+
+	onEmpty(val) {
+		for (const _ in val) {
+			return false;
+		}
+
+		return true;
 	}
 }
 
-export default new Type();
+export default new Check();

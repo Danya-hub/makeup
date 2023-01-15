@@ -26,11 +26,12 @@ const en = {
 			"To continue using our site, we advise you to sign up or sign in to your account.",
 		signIn: "Sign in",
 		signUp: "Sign up",
-		or: "or",
 		book: {
 			long: "Book now",
 			short: "Book",
 		},
+		notHaveAccount: "Don't you have an account?",
+		alreadyExistsAccount: "Already registered?",
 		changePassword: "Change a password",
 		noAccessToPage: "Before going to a page, you need to sign up or sign in!",
 		toExpensive: "From cheap to expensive",

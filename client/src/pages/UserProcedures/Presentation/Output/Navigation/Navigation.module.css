@@ -1,0 +1,53 @@
+.navigation {
+	--border: 0 0 0 1px rgb(var(--brown));
+	--line: inset 0 -2px 0 -1px rgb(var(--brown));
+	--targetSize: 28px;
+
+	display: flex;
+	flex-wrap: wrap;
+	margin: 0 auto;
+	width: fit-content;
+}
+
+.navigation button:not(.switchBtn) {
+	box-shadow: var(--border);
+}
+
+.navigation :where(button, input) {
+	background: unset;
+	text-align: center;
+	width: var(--targetSize);
+	height: var(--targetSize);
+	font-weight: 800;
+	margin: 0.5vw;
+	padding: 0;
+}
+
+.navigation button {
+	--back: unset;
+
+	background: var(--back);
+	border-radius: var(--def-radius);
+}
+
+.navigation input {
+	box-shadow: var(--line);
+	border-radius: unset;
+}
+
+.navigation input:focus {
+	box-shadow: var(--border);
+	border-radius: var(--def-radius);
+}
+
+.navigation input::placeholder {
+	color: rgb(var(--black));
+}
+
+.navigation :is(button:not(.switchBtn):hover, button.selectPage) {
+	--back: rgba(var(--brown), 0.2);
+}
+
+.switchBtn {
+	padding: 4px;
+}

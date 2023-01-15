@@ -1,5 +1,4 @@
 import { lazy } from "react";
-import { Navigate } from "react-router-dom";
 
 const Base = lazy(() => import("@/pages/Base/Base.jsx"));
 const AllProcedures = lazy(() => import("@/pages/AllProcedures/AllProcedures.jsx"));
@@ -7,6 +6,7 @@ const Error = lazy(() => import("@/pages/Error/Error.jsx"));
 const Signup = lazy(() => import("@/pages/Auth/Signup/Signup.jsx"));
 const Signin = lazy(() => import("@/pages/Auth/Signin/Signin.jsx"));
 const UserProcedures = lazy(() => import("@/pages/UserProcedures/UserProcedures.jsx"));
+const ProcDetails = lazy(() => import("@/pages/ProcDetails/ProcDetails.jsx"));
 
 const routes = [
 	{
@@ -45,23 +45,18 @@ const routes = [
 	},
 	{
 		path: "/myprocedures",
-		elem: (token, msg) => {
-			if (token) {
-				return <UserProcedures />;
-			} else {
-				return (
-					<Navigate
-						to="/signin"
-						replace="true"
-						state={{
-							purpose: msg,
-						}}
-					/>
-				);
-			}
-		},
+		elem: () => <UserProcedures />,
 		state: {
 			title: "Procedures",
+			header: true,
+			footer: true,
+		},
+	},
+	{
+		path: "/details",
+		elem: () => <ProcDetails />,
+		state: {
+			title: "Details",
 			header: true,
 			footer: true,
 		},

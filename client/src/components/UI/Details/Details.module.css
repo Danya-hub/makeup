@@ -1,0 +1,33 @@
+.details {
+	height: fit-content;
+}
+
+.title {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 10px 0;
+	user-select: none;
+	cursor: pointer;
+}
+
+.arrow {
+	--rotate: 0deg;
+
+	transform: rotateX(var(--rotate));
+	margin-left: var(--step-0);
+	width: 10px;
+	height: 10px;
+}
+
+.details.open .arrow {
+	--rotate: 180deg;
+}
+
+.details .content {
+	display: none;
+}
+
+.details.open .content {
+	display: block;
+}

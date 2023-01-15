@@ -62,6 +62,7 @@ const AuthController = {
                             ...userWithoutPassword,
                             ...tokens,
                         });
+
                         next();
                     } catch (error) {
                         next(error);
@@ -82,6 +83,7 @@ const AuthController = {
                             msg: "The user is logout",
                             token: refreshToken,
                         });
+
                         next();
                     } catch (error) {
                         next(error);
@@ -136,6 +138,7 @@ const AuthController = {
                             ...userWithoutPassword,
                             ...tokens,
                         });
+                        
                         next();
                     } catch (error) {
                         next(error);
@@ -172,7 +175,7 @@ const AuthController = {
                             password: _,
                             ...userWithoutPassword
                         } = user._doc;
-
+                        
                         res.cookie(
                             "refreshToken",
                             tokens.refreshToken, {
@@ -184,6 +187,7 @@ const AuthController = {
                             ...userWithoutPassword,
                             ...tokens,
                         });
+                        
                         next();
                     } catch (error) {
                         next(error);

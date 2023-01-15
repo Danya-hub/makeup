@@ -11,8 +11,6 @@
 
 .calendar span {
 	position: absolute;
-	letter-spacing: 0;
-	line-height: 0;
 	transform: translate(-50%, -50%);
 	font-size: calc(var(--step-0) * 0.75);
 	left: 50%;

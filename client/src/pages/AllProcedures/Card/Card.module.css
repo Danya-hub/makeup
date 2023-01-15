@@ -1,4 +1,4 @@
-.cart {
+.card {
 	position: absolute;
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
@@ -11,11 +11,11 @@
 	overflow: hidden;
 }
 
-.cart span {
+.card span {
 	display: block;
 }
 
-.cart :where(p, span) {
+.card :where(p, span) {
 	margin: 6px;
 	user-select: none;
 }

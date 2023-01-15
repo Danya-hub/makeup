@@ -5,7 +5,7 @@ function errorsGather(err, req, res, next) {
         return res.status(err.status).json(err.errors);
     }
 
-    res.status(500).json([err]);
+    res.status(500).json(err.errors);
     
     next();
 }

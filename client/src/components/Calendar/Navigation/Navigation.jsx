@@ -32,8 +32,8 @@ function Navigation({ locale, monthState, onChange }) {
 		<div className={style.topPanel}>
 			<button
 				type="button"
-				className={`button ${style.switchMonth}`}
 				id="prev"
+				className={`button ${style.switchMonth}`}
 				onClick={setPrevMonth}
 			>
 				<img

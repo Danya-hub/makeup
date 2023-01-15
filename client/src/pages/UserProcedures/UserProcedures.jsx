@@ -1,43 +1,60 @@
-import { useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState, useEffect, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { getProcedureByUserId } from "@/service/redusers/userProcedures.js";
+import { getProcedureByUserId } from "@/service/redusers/procedures.js";
+import AuthContext from "@/context/auth.js";
 
 import Filters from "./Filters/Filters.jsx";
 import Presentation from "./Presentation/Presentation.jsx";
 
 import style from "./UserProcedures.module.css";
+import { useNavigate } from "react-router-dom";
 
 function UserProcedures() {
 	const dispatch = useDispatch();
-	const { user, userProcedures } = useSelector((state) => state);
+	const navigate = useNavigate();
+	const { user } = useSelector((state) => state);
 
-	const [carts, setCarts] = useState([]);
+	const { isAuth } = useContext(AuthContext);
+	const [initialCards, setInitialCards] = useState([]);
+	const [tempCards, setTempCard] = useState([]);
 
 	async function __init__() {
-		if (!user.info) {
-			return;
+		if (!isAuth) {
+			return navigate("/signin", {
+				replace: true,
+				state: {
+					purpose: "noAccessToPage",
+				},
+			});
 		}
 
-		const _carts = await dispatch(getProcedureByUserId(user.info._id)).then(
-			(res) => res.payload.data
-		);
+		const res = await dispatch(getProcedureByUserId(user.info._id));
 
-		setCarts(_carts);
+		setTempCard(res.payload || []);
 	}
 
 	useLayoutEffect(() => {
 		return __init__;
 	}, [user.info]);
 
+	useEffect(() => {
+		if (initialCards.length) {
+			return;
+		}
+
+		setInitialCards(tempCards);
+	}, [tempCards]);
+
 	return (
 		<div id={style.userProcedures}>
 			<Filters
-				cartsState={[carts, setCarts]}
+				tempCardsState={[tempCards, setTempCard]}
+				initialCards={initialCards}
 			></Filters>
 			<Presentation
-				carts={carts}
-				isLoadingContent={userProcedures.isLoading}
+				cards={tempCards}
+				initialCards={initialCards}
 			></Presentation>
 		</div>
 	);

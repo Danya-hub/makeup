@@ -13,5 +13,6 @@ const TypesProcedureSchema = new mongoose.Schema({
 const model = mongoose.model("TypesProcedure", TypesProcedureSchema);
 
 export {
-    model as default,
+    model as
+    default,
 };
