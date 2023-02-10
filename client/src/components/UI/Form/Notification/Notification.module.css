@@ -1,0 +1,34 @@
+.notification {
+	--clr: var(--transp);
+
+	display: flex;
+	background: rgba(var(--clr), 0.1);
+	box-shadow: inset 0 0 1px rgb(var(--clr));
+	padding: 1vh 2vw;
+	margin-top: 2vh;
+}
+
+.notification > * {
+	color: rgb(var(--clr));
+}
+
+.notification.success {
+	--clr: var(--lightGreen);
+}
+
+.notification.warning {
+	--clr: var(--yellow);
+}
+
+.notification.error {
+	--clr: var(--red);
+}
+
+.notification i {
+	margin-top: 4px;
+	margin-right: 1vw;
+}
+
+.notification p {
+	font-weight: 700;
+}

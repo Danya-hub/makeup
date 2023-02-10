@@ -7,6 +7,7 @@ import WidthInput from "@/components/UI/Form/WidthInput/WidthInput.jsx";
 import Check from "@/helpers/check.js";
 
 import style from "./Navigation.module.css";
+import { t } from "i18next";
 
 Navigation.propTypes = {
 	countPages: types.number,
@@ -64,7 +65,7 @@ function Navigation({ countPages, numberPageState }) {
 					isFitContent={false}
 					value={minPage}
 					type="text"
-					title="Ном. страницы"
+					title={t("pageNum")}
 					onChange={handleChangePage.bind(
 						null,
 						(value) => value - 1 >= minCountChangeableBtns && value - 1 < integer
@@ -92,7 +93,7 @@ function Navigation({ countPages, numberPageState }) {
 					isFitContent={false}
 					value={maxPage}
 					type="text"
-					title="Ном. страницы"
+					title={t("pageNum")}
 					onChange={handleChangePage.bind(
 						null,
 						(value) =>

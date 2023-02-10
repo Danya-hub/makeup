@@ -1,3 +1,5 @@
+"use strict";
+
 import {
     validationResult,
 } from "express-validator";
@@ -23,13 +25,13 @@ const AdminController = {
                             ApiError.badRequest(errors.array());
                         }
 
-                        const finedUser = await UserModel.findByIdAndDelete(req.params.id);
+                        const foundUser = await UserModel.findByIdAndDelete(req.params.id);
 
-                        if (!finedUser) {
+                        if (!foundUser) {
                             ApiError.notExistUser("user");
                         }
 
-                        res.status(202).json(finedUser);
+                        res.status(202).json(foundUser);
                         next();
                     } catch (error) {
                         next(error);
@@ -45,11 +47,11 @@ const AdminController = {
                 roleAccess(["admin"]),
                 async (req, res, next) => {
                     try {
-                        const finedUser = await UserModel.findByIdAndDelete(
+                        const foundUser = await UserModel.findByIdAndDelete(
                             req.params.id,
                         );
 
-                        if (!finedUser) {
+                        if (!foundUser) {
                             ApiError.notExistUser("user");
                         }
 

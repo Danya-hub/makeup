@@ -16,20 +16,20 @@
 	padding: 4vh 3%;
 }
 
-.form img {
-	width: 26px;
-	height: 26px;
-}
-
-.form input {
-	box-shadow: inset 0 0 0 var(--scale) rgba(var(--lineColor), var(--opacity));
+.form .field {
+	box-shadow: 0 0 0 var(--scale) rgba(var(--lineColor), var(--opacity));
 }
 
 .form form {
 	margin: 3vh 0;
 }
 
-.form form button:hover {
+.form :where(#signIn, #signup) {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.form :where(#signIn, #signup):hover {
 	--back: rgba(var(--brown), 0.6);
 }
 
@@ -49,32 +49,32 @@
 	text-align: center;
 }
 
-.question > * {
+:where(.authQueastion, .forgotPassword) > * {
 	display: inline-block;
 }
 
-.question button {
+:where(.authQueastion, .forgotPassword) button {
 	background: unset;
 	font-weight: 800;
 	margin-left: 6px;
-	margin-bottom: 2vh;
 }
 
-#confirm .row {
-	display: flex;
-	justify-content: center;
-	margin-bottom: 4vh;
+.form .navigation {
+	--col: 3;
+
+	display: grid;
+	grid-auto-flow: column;
+	grid-template-columns: repeat(var(--col), 1fr);
 }
 
-#confirm .row input {
-	text-align: center;
-	font-size: calc(var(--step-0) - 1px);
-	width: 40px;
-	height: 40px;
-	margin: 0 1vw;
-	padding-left: 0;
+.form .navigation > * {
+	--order: 0;
+
+	margin: 0;
+	width: 100%;
+	grid-column-start: calc(var(--col) * var(--order));
 }
 
-#confirm form button {
-	margin: 0 auto;
+.form .navigation #submit {
+	--order: 1;
 }

@@ -28,7 +28,7 @@ Math.minObject = function (callback, values) {
 	if (!values.length) {
 		return null;
 	}
-
+	
 	const minObj = values.reduce((prevObj, currObj) => {
 		const prevVal = callback(prevObj),
 			currVal = callback(currObj);

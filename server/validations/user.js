@@ -1,90 +1,132 @@
+"use strict";
+
 import validator from "express-validator";
 import bcrypt from "bcrypt";
 
 import UserModel from "../models/user.js";
+import UserService from "../service/user.js";
 
 import errors from "../constant/errors.js";
-import ApiError from "../utils/apiError.js";
 
 const range = {
     min: 3,
-    max: 32,
+    max: 20,
 };
 
-async function isUnique(value, {
-    path,
-}) {
-    const article = await UserModel.findOne({
-        [path]: value,
-    });
+class UserValidation {
+    constructor() {
 
-    if (article) {
-        return Promise.reject(errors.alreadyExist(path));
     }
-}
 
-const validation = {
-    signup: [
+    sendPassword = [
         validator
         .check("fullname")
-        .exists()
+        .exists({
+            checkFalsy: true,
+        })
         .withMessage(errors.required("Fullname"))
         .bail()
         .isLength(range)
         .withMessage(errors.inRange("Fullname", range))
-        .bail(),
+        .bail()
+        .custom(this.isUserName),
         validator
         .check("telephone")
-        .exists()
+        .exists({
+            checkFalsy: true,
+        })
         .withMessage(errors.required("Telephone"))
         .bail()
         .isMobilePhone("any")
-        .withMessage(errors.wrong("Telephone"))
+        .withMessage(errors.wrongFormat("telephone"))
         .bail()
-        .custom(isUnique)
+        .custom(this.isUnique),
+        validator
+        .check("email")
+        .exists({
+            checkFalsy: true,
+        })
+        .withMessage(errors.required("Email"))
         .bail()
-    ],
-    signin: [
+        .isEmail()
+        .withMessage(errors.wrongFormat("email"))
+        .bail()
+        .custom(this.isUnique),
+    ];
+
+    signin = [
+        validator
+        .oneOf([
+            validator
+            .check("telephone")
+            .exists({
+                checkFalsy: true,
+            })
+            .withMessage(errors.required("Telephone"))
+            .bail()
+            .isMobilePhone("any")
+            .withMessage(errors.wrongFormat("telephone")),
+            validator
+            .check("email")
+            .exists({
+                checkFalsy: true,
+            })
+            .withMessage(errors.required("Email"))
+            .bail()
+            .isEmail()
+            .withMessage(errors.wrongFormat("email")),
+        ], errors.wrongChannels()),
         validator
         .check("password")
-        .exists()
-        .withMessage(errors.required("Password"))
-        .bail(),
-        validator
-        .check("telephone")
-        .exists()
-        .withMessage(errors.required("Telephone"))
-        .bail()
-        .custom(async (_, {
-            req,
-        }) => {
-            try {
-                const article = await UserModel.findOne({
-                    telephone: req.body.telephone,
-                });
-
-                if (!article) {
-                    throw errors.unrecognizedSignin();
-                }
-
-                const isValidPassword = bcrypt.compareSync(
-                    req.body.password,
-                    article.password
-                );
-
-                if (!isValidPassword) {
-                    throw errors.unrecognizedSignin();
-                }
-
-                return Promise.resolve();
-            } catch (error) {
-                return Promise.reject(error);
-            }
+        .exists({
+            checkFalsy: true,
         })
+        .withMessage(errors.required("Password"))
         .bail()
-    ]
+        .custom(this.comparePassword)
+    ];
+
+    async isUnique(value, {
+        path,
+    }) {
+        const foundUser = await UserModel.findOne({
+            [path]: value,
+        });
+
+        if (foundUser) {
+            throw new Error(errors.alreadyExist(`Email address or telephone`));
+        }
+
+        return true;
+    }
+
+    isUserName(value) {
+        const isValid = /^\p{L}+(?:\s\p{L}+){0,2}$/u.test(value);
+
+        if (!isValid) {
+            throw new Error(errors.fullnameNotValid());
+        }
+
+        return isValid;
+    }
+
+    async comparePassword(value, {
+        req,
+    }) {
+        const foundUser = await UserService.byChannel(req.body);
+
+        if (!foundUser) {
+            throw new Error(errors.wrongSignin());
+        }
+
+        const isEquil = bcrypt.compareSync(value, foundUser.password);
+
+        if (!isEquil) {
+            throw new Error(errors.wrongSignin());
+        }
+
+        return isEquil;
+    }
 }
 
-export {
-    validation as default,
-}
+export default new UserValidation();

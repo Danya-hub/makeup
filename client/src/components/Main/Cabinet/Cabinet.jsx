@@ -7,7 +7,7 @@ import Aside from "@/components/Aside/Aside.jsx";
 import Event from "@/components/Event/Event.jsx";
 import Avatar from "./Avatar/Avatar.jsx";
 
-import { logout } from "@/service/redusers/user.js";
+import { logout, requestResetPassword } from "@/service/redusers/user.js";
 
 import style from "./Cabinet.module.css";
 
@@ -16,9 +16,10 @@ Cabinet.propTypes = {
 };
 
 function Cabinet({ openCabinetState }) {
+	const dispatch = useDispatch();
 	const { info: userInfo } = useSelector((state) => state.user);
 	const { t } = useTranslation();
-	const dispatch = useDispatch();
+
 	const [, setOpenCabinet] = openCabinetState;
 
 	function handleLogout() {
@@ -27,6 +28,14 @@ function Cabinet({ openCabinetState }) {
 
 	function handleCloseCabinet() {
 		setOpenCabinet(false);
+	}
+
+	function handleResetPassword() {
+		dispatch(
+			requestResetPassword({
+				email: userInfo.email,
+			})
+		);
 	}
 
 	return (
@@ -44,25 +53,30 @@ function Cabinet({ openCabinetState }) {
 					<div className={style.fields}>
 						<span id={style.name}>{userInfo.fullname}</span>
 						<span id="telephone">{userInfo.telephone}</span>
-						<Event callback={handleCloseCabinet}>
-							<Link
-								id={style.changePassword}
-								to="/"
-							>
-								{t("changePassword")}
-							</Link>
-						</Event>
+						<span id="telephone">{userInfo.email}</span>
+						<button
+							id={style.resetPassword}
+							onClick={handleResetPassword}
+						>
+							{t("changePassword")}
+						</button>
 					</div>
 				</div>
 				<ul>
 					<li>
 						<Event callback={handleCloseCabinet}>
-							<Link to="/myprocedures">Мои записи процедуры</Link>
+							<Link to="/myprocedures">{t("myProcedures")}</Link>
 						</Event>
 					</li>
 					<li>
 						<Event callback={handleCloseCabinet}>
-							<Link to="/appointment">Записаться</Link>
+							<Link to="/appointment">
+								{
+									t("book", {
+										returnObjects: true,
+									}).long
+								}
+							</Link>
 						</Event>
 					</li>
 				</ul>
@@ -72,7 +86,7 @@ function Cabinet({ openCabinetState }) {
 						className="button"
 						onClick={handleLogout}
 					>
-						Выйти
+						{t("logout")}
 					</button>
 				</Event>
 			</Aside>

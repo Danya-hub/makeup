@@ -5,85 +5,165 @@ import * as reducers from "@/service/actions/user.js";
 
 const initialState = {
 	info: null,
-	error: "",
+	error: null,
 };
 
-const refresh = createAsyncThunk("user/refresh", async (_, { dispatch, rejectWithValue }) => {
-	try {
-		const user = await axios.indGet("/auth/refresh");
-		localStorage.setItem("token", user.data.accessToken);
+export const refresh = createAsyncThunk(
+	"user/refresh",
+	async (_, { dispatch, rejectWithValue }) => {
+		try {
+			const user = await axios.indGet("/auth/refresh");
+			localStorage.setItem("token", user.data.accessToken);
 
-		dispatch(actions.setUser(user.data));
+			dispatch(actions.setUser(user.data));
 
-		return user;
-	} catch (error) {
-		return rejectWithValue(error.response.data);
+			return user;
+		} catch (error) {
+			return rejectWithValue(error.response.data);
+		}
 	}
-});
+);
 
-const signup = createAsyncThunk("user/signup", async (value, { rejectWithValue }) => {
-	try {
-		const createdUser = await axios.post("/auth/signup", value);
+export const signup = createAsyncThunk(
+	"user/signup",
+	async (value, { rejectWithValue, dispatch }) => {
+		try {
+			const createdUser = await axios.post("/auth/signup", value);
+			localStorage.setItem("token", createdUser.data.accessToken);
 
-		return createdUser;
-	} catch (error) {
-		return rejectWithValue(error.response.data);
+			dispatch(actions.setUser(createdUser.data));
+
+			return createdUser;
+		} catch (error) {
+			return rejectWithValue(error.response.data);
+		}
 	}
-});
+);
 
-const signin = createAsyncThunk("user/signin", async (value, { dispatch, rejectWithValue }) => {
-	try {
-		const finedUser = await axios.post("/auth/signin", value);
-		localStorage.setItem("token", finedUser.data.accessToken);
+export const signin = createAsyncThunk(
+	"user/signin",
+	async (value, { dispatch, rejectWithValue }) => {
+		try {
+			const foundUser = await axios.post("/auth/signin", value);
+			localStorage.setItem("token", foundUser.data.accessToken);
 
-		dispatch(actions.setUser(finedUser.data));
+			dispatch(actions.setUser(foundUser.data));
 
-		return finedUser;
-	} catch (error) {
-		return rejectWithValue(error.response.data);
+			return foundUser;
+		} catch (error) {
+			return rejectWithValue(error.response.data);
+		}
 	}
-});
+);
 
-const logout = createAsyncThunk("user/logout", async (value, { dispatch, rejectWithValue }) => {
+export const logout = createAsyncThunk("user/logout", async (_, { dispatch, rejectWithValue }) => {
 	try {
 		await axios.post("/auth/logout");
-
 		localStorage.removeItem("token");
+
 		dispatch(actions.setUser(null));
 	} catch (error) {
 		return rejectWithValue(error.response.data);
 	}
 });
 
-const google = createAsyncThunk("user/google", async (_, { dispatch, rejectWithValue }) => {
-	try {
-		const user = await axios.get("/auth/google");
-		dispatch(actions.setUser(user.data));
+export const sendPassword = createAsyncThunk(
+	"user/sendPassword",
+	async (value, { rejectWithValue }) => {
+		try {
+			const { passwordToken } = await axios
+				.indPost("/auth/sendPassword", value)
+				.then((res) => res.data);
 
-		return user;
-	} catch (error) {
-		return rejectWithValue(error.response.data);
+			return passwordToken;
+		} catch (error) {
+			return rejectWithValue(error.response.data);
+		}
 	}
-});
+);
+
+export const checkPassword = createAsyncThunk(
+	"user/checkPassword",
+	async (value, { rejectWithValue }) => {
+		try {
+			const user = await axios.indPost("/auth/checkPassword", value).then((res) => res.data);
+
+			return user;
+		} catch (error) {
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
+export const requestResetPassword = createAsyncThunk(
+	"user/requestResetPassword",
+	async (value, { rejectWithValue }) => {
+		try {
+			await axios.indPost("/auth/requestResetPassword", value);
+		} catch (error) {
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
+
+export const checkNewPassword = createAsyncThunk(
+	"user/checkNewPassword",
+	async (value, { rejectWithValue }) => {
+		try {
+			const { key, email, newPassword } = value;
+
+			await axios.indPost(`/auth/checkNewPassword?key=${key}&email=${email}`, {
+				newPassword,
+			});
+		} catch (error) {
+			return rejectWithValue(error.response.data);
+		}
+	}
+);
 
 const { reducer, actions } = createSlice({
 	name: "user",
 	initialState,
 	reducers,
 	extraReducers: {
-		[signup.fulfilled]: (state) => {
+		[sendPassword.fulfilled]: (state) => {
 			state.error = "";
 		},
-		[signup.rejected]: (state, action) => {
-			state.error = action.payload[0];
+		[sendPassword.rejected]: (state, action) => {
+			const msg = action.payload?.error[0].msg;
+
+			state.error = msg;
 		},
 		[signin.fulfilled]: (state) => {
 			state.error = "";
 		},
 		[signin.rejected]: (state, action) => {
-			state.error = action.payload[0];
+			const msg = action.payload?.error[0].msg;
+
+			state.error = msg;
+		},
+		[checkPassword.fulfilled]: (state) => {
+			state.error = "";
+		},
+		[checkPassword.rejected]: (state, action) => {
+			state.error = action.payload?.error;
+		},
+		[requestResetPassword.fulfilled]: (state) => {
+			state.error = "";
+		},
+		[requestResetPassword.rejected]: (state, action) => {
+			state.error = action.payload?.error;
+		},
+		[checkNewPassword.fulfilled]: (state) => {
+			state.error = "";
+		},
+		[checkNewPassword.rejected]: (state, action) => {
+			state.error = action.payload?.error;
+		},
+		[checkNewPassword.pending]: (state) => {
+			state.error = "";
 		},
 	},
 });
 
-export { reducer as default, actions, signup, signin, google, refresh, logout };
+export { reducer as default, actions };

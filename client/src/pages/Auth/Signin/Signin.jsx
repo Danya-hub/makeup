@@ -1,24 +1,21 @@
 import { useState } from "react";
 
 import Output from "./Output/Output.jsx";
-import Confirm from "@/pages/Auth/Confirm/Confirm.jsx";
-
-// import { default as GoogleSrc } from "@/assets/image/google.svg";
+import Email from "./Email/Email.jsx";
 
 function Signin() {
-	const [isAcceptForm, setFormState] = useState(false);
-	const userState = useState({});
+	const [user, setUser] = useState({});
+	const [isPasswordForgotten, setPasswordForgotten] = useState(false);
 
-	function onSuccess() {
-		setFormState(true);
-	}
-
-	return isAcceptForm ? (
-		<Confirm formState={[isAcceptForm, setFormState]}></Confirm>
+	return isPasswordForgotten ? (
+		<Email
+			passwordState={[isPasswordForgotten, setPasswordForgotten]}
+			userState={[user, setUser]}
+		></Email>
 	) : (
 		<Output
-			onSuccess={onSuccess}
-			userState={userState}
+			passwordState={[isPasswordForgotten, setPasswordForgotten]}
+			userState={[user, setUser]}
 		></Output>
 	);
 }

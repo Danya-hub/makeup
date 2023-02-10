@@ -7,19 +7,19 @@ import Output from "./Output/Output.jsx";
 import style from "./Presentation.module.css";
 
 Presentation.propTypes = {
-	cards: types.array,
+	tempCards: types.array,
 	initialCards: types.array,
 };
 
-function Presentation({ cards, initialCards }) {
+function Presentation({ tempCards, initialCards }) {
 	return (
 		<div id={style.presentation}>
 			{initialCards.length === 0 ? (
 				<EmptyProc></EmptyProc>
-			) : cards.length === 0 ? (
+			) : tempCards.length === 0 ? (
 				<NotFound></NotFound>
 			) : (
-				<Output cards={cards}></Output>
+				<Output cards={tempCards}></Output>
 			)}
 		</div>
 	);

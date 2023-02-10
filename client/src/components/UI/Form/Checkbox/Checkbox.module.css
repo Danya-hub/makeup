@@ -1,0 +1,36 @@
+.checkbox {
+	--sizeBox: 15px;
+	position: relative;
+	cursor: pointer;
+}
+
+.checkbox span {
+	background: unset;
+	padding: 0 0 0 calc(var(--sizeBox) + 5px);
+	width: unset;
+}
+
+.checkbox input[type="checkbox"] {
+	--lineColor: var(--black);
+	--imageSize: 0%;
+	--borderSize: 0.5px;
+
+	content: "";
+	position: absolute;
+	background-size: var(--imageSize);
+	background-repeat: no-repeat;
+	background-position: center;
+	box-shadow: inset 0 0 0 var(--borderSize) rgb(var(--black));
+	transition: unset;
+	width: var(--sizeBox);
+	height: var(--sizeBox);
+	transform: translateY(-50%);
+	pointer-events: none;
+	top: 50%;
+	left: 0;
+}
+
+.checkbox input[type="checkbox"]:checked {
+	--imageSize: 70%;
+	--borderSize: 1px;
+}

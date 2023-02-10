@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 import axios from "@/http/axios.js";
+
 import * as reducers from "@/service/actions/procedures.js";
 import FormatDate from "@/utils/formatDate.js";
 
@@ -12,6 +13,13 @@ const initialState = {
 	types: [],
 	error: "",
 };
+
+const defaultValue = ({ type, state }) => ({
+	startProcTime: new Date(),
+	finishProcTime: FormatDate.minutesToDate(type.durationProc * 60),
+	state,
+	type,
+});
 
 const getProcedureByUserId = createAsyncThunk(
 	"procedure/getProcedureByUserId",
@@ -43,39 +51,53 @@ const getProcedureByDay = createAsyncThunk(
 	}
 );
 
-const getAllStates = createAsyncThunk("procedure/getAllStates", async (_, { rejectWithValue }) => {
-	try {
-		const states = await axios.indGet("/procedure/allStates");
+const getAllTypes = createAsyncThunk(
+	"procedure/getAllTypes",
+	async (_, { rejectWithValue, getState }) => {
+		try {
+			const { procedures } = getState();
 
-		return states;
-	} catch (error) {
-		return rejectWithValue(error.message);
+			if (procedures.types.length > 0) {
+				return;
+			}
+
+			const types = await axios.indGet("/procedure/allTypes");
+
+			return types;
+		} catch (error) {
+			return rejectWithValue(error.message);
+		}
 	}
-});
+);
 
-const getAllTypes = createAsyncThunk("procedure/getAllTypes", async (_, { rejectWithValue }) => {
-	try {
-		const types = await axios.indGet("/procedure/allTypes");
+const getAllStates = createAsyncThunk(
+	"procedure/getAllStates",
+	async (_, { rejectWithValue, getState }) => {
+		try {
+			const { procedures } = getState();
 
-		return types;
-	} catch (error) {
-		return rejectWithValue(error.message);
+			if (procedures.states.length > 0) {
+				return;
+			}
+
+			const states = await axios.indGet("/procedure/allStates");
+
+			return states;
+		} catch (error) {
+			return rejectWithValue(error.message);
+		}
 	}
-});
+);
 
 const getDefaultProcValue = createAsyncThunk(
 	"procedure/getDefaultProcValue",
 	async (_, { rejectWithValue }) => {
 		try {
-			const defaultValue = await axios.indGet("/procedure/defaultValue").then((res) => {
-				return {
-					...res.data,
-					startProcTime: new Date(),
-					finishProcTime: FormatDate.minutesToDate(res.data.type.durationProc * 60),
-				};
-			});
+			const res = await axios.indGet("/procedure/defaultType").then((res) => res.data);
 
-			return defaultValue;
+			const _defValue = defaultValue(res);
+
+			return _defValue;
 		} catch (error) {
 			return rejectWithValue(error.message);
 		}
@@ -126,20 +148,26 @@ const { actions, reducer } = createSlice({
 			state.error = action.payload;
 			state.isLoading = false;
 		},
-		[getAllStates.fulfilled]: (state, action) => {
-			state.states = action.payload.data;
-		},
 		[getAllTypes.fulfilled]: (state, action) => {
 			state.types = action.payload.data;
+		},
+		[getAllStates.fulfilled]: (state, action) => {
+			state.states = action.payload.data;
 		},
 		[getDefaultProcValue.fulfilled]: (state, action) => {
 			state.newProcedure = action.payload;
 		},
 		[getProcedureByUserId.payload]: (state) => {
+			state.isLoading = true;
 			state.cards = [];
 		},
 		[getProcedureByUserId.fulfilled]: (state, actions) => {
+			state.isLoading = false;
 			state.cards = actions.payload.data;
+		},
+		[getProcedureByUserId.rejected]: (state, actions) => {
+			state.isLoading = false;
+			state.cards = actions.error;
 		},
 	},
 });
@@ -148,8 +176,8 @@ export {
 	reducer as default,
 	getProcedureByUserId,
 	getProcedureByDay,
-	getAllStates,
 	getAllTypes,
+	getAllStates,
 	getDefaultProcValue,
 	createNewProcedure,
 	actions,

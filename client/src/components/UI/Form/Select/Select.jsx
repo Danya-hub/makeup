@@ -1,22 +1,22 @@
 /* eslint-disable react/prop-types */
 
 import { useState, useEffect, memo, forwardRef } from "react";
+import { useTranslation } from "react-i18next";
 
 import style from "./Select.module.css";
 import { default as ArrowSrc } from "@/assets/image/arrow.svg";
 
 function Select({ id, strictSwitch, values, onChange, defaultValue, isAbsPos = true }, ref) {
+	const { t } = useTranslation();
+
 	const [selectValue, setSelectValue] = useState(null);
+
 	const [isActive, setActive] = strictSwitch || useState(false);
-	const EMPTY_VALUE_TEXT = "Выбрать...";
+	const EMPTY_VALUE_TEXT = `${t("select")}...`;
 
 	useEffect(() => {
-		if (!defaultValue) {
-			return;
-		}
-
 		setSelectValue(defaultValue);
-	}, [values]);
+	}, [defaultValue]);
 
 	return (
 		<div

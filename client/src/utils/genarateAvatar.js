@@ -25,8 +25,8 @@ class AvatarCanvas {
 
 	generateCodeName() {
 		return this.name
-			.match(/(^\p{L}{2}(?!\p{L}+\s))|(^\p{L})|(?<=\s)(\p{L}(?=\p{L}+$|$))/giu)
-			.join()
+			.match(/(?<=\s|\P{L}|^)\p{L}/gu)
+			.join("")
 			.toUpperCase();
 	}
 

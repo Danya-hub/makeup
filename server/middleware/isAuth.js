@@ -1,3 +1,5 @@
+"use strict";
+
 import {
     config,
 } from "dotenv";
@@ -20,7 +22,7 @@ function isAuth(req, res, next) {
             token, 
             process.env.ACCESS_TOKEN_SECRET_KEY,
         );
-        
+            
         if (!decoded) {
             ApiError.unauthorized();
         }

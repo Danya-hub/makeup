@@ -17,6 +17,10 @@ class Check {
 		return /^(-|\+)?\d*$/.test(value);
 	}
 
+	isStrictNumber(value) {
+		return /^\d+$/.test(value);
+	}
+
 	onEmpty(val) {
 		for (const _ in val) {
 			return false;

@@ -9,9 +9,6 @@ import { default as HorizontalSrc } from "@/assets/image/horizontal.svg";
 import style from "./Output.module.css";
 
 Output.propTypes = {
-	visualStyle: types.array,
-	handleSwitch: types.func,
-	direction: types.string,
 	cards: types.array,
 };
 

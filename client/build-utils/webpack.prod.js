@@ -13,7 +13,7 @@ const prodConfig = {
 				test: /\.css$/,
 				use: [
 					{
-						loader: MiniCssExtractPlugin.loader, //* instead of style-loader
+						loader: MiniCssExtractPlugin.loader,
 					},
 					{
 						loader: "css-loader",

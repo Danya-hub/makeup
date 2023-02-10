@@ -1,7 +1,6 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import types from "prop-types";
 
-import changePropertyValue from "@/helpers/changePropertyValue.js";
 import Check from "@/helpers/check.js";
 import WidthInput from "@/components/UI/Form/WidthInput/WidthInput.jsx";
 
@@ -18,73 +17,97 @@ const INPUT_MIN_VALUE = 0;
 const INPUT_MAX_VALUE = 100;
 
 function Range({ id, min = INPUT_MIN_VALUE, max = INPUT_MIN_VALUE, onChange }) {
-	const [options, setOption] = useState({
-		min: INPUT_MIN_VALUE,
-		max: INPUT_MAX_VALUE,
-	});
-
-	const minInputValue = parseInt((options.min / INPUT_MAX_VALUE) * (max - min)) + min,
-		maxInputValue = parseInt((options.max / INPUT_MAX_VALUE) * (max - min)) + min;
+	const defaultOptions = () => ({
+		min: {
+			percent: INPUT_MIN_VALUE,
+				number: min,
+		},
+		max: {
+			percent: INPUT_MAX_VALUE,
+				number: max,
+		},
+	})
+	
+	const [options, setOption] = useState(defaultOptions());
 
 	const background = `linear-gradient(
 							to right,
-							rgb(var(--gray)) ${options.min}%,
-							rgb(var(--black)) ${options.min}%,
-							rgb(var(--black)) ${options.max}%,
-							rgb(var(--gray)) ${options.max}%
+							rgb(var(--gray)) ${options.min.percent}%,
+							rgb(var(--black)) ${options.min.percent}%,
+							rgb(var(--black)) ${options.max.percent}%,
+							rgb(var(--gray)) ${options.max.percent}%
 						)`;
-
-	function handleClick() {
-		onChange({
-			...options,
-			minValue: minInputValue,
-			maxValue: maxInputValue,
-		});
-	}
 
 	function handleGrab(e) {
 		const x = Number(e.currentTarget.value);
 
-		const startRange = Math.abs(x - options.min),
-			finishRange = Math.abs(x - options.max);
+		const startRange = Math.abs(x - options.min.percent),
+			finishRange = Math.abs(x - options.max.percent);
 
-		setPosition(startRange < finishRange ? "min" : "max", x);
+		const name = startRange < finishRange ? "min" : "max";
+
+		setRangeOptions(name, x);
 	}
 
 	function handleChange(e) {
-		const eventKey = e.currentTarget.name;
-		const eventValue = Number(e.currentTarget.value);
+		const inputName = e.currentTarget.name;
+		const inputValue = Number(e.currentTarget.value);
 
-		const percent = ((eventValue - min) * INPUT_MAX_VALUE) / (max - min);
-		const isBNumber = Check.isFloat(eventValue),
-			isBFinite = isFinite(percent);
+		const isBNumber = Check.isFloat(inputValue);
 
-		const rez =
-			(!isBNumber || percent < INPUT_MIN_VALUE) && eventKey === "min"
-				? INPUT_MIN_VALUE
-				: (!isBNumber || percent > INPUT_MAX_VALUE) && eventKey === "max"
-				? INPUT_MAX_VALUE
-				: eventKey === "min" && (options.max / INPUT_MAX_VALUE) * eventValue > options.max
-				? options.max
-				: eventKey === "max" && (options.min / INPUT_MAX_VALUE) * eventValue < options.min
-				? options.min
-				: INPUT_MIN_VALUE > eventValue
-				? INPUT_MIN_VALUE
-				: INPUT_MAX_VALUE < eventValue
-				? INPUT_MAX_VALUE
-				: (isBFinite ? percent : 0) || (eventKey === "min" ? INPUT_MIN_VALUE : INPUT_MAX_VALUE);
+		if (!isBNumber) {
+			return;
+		}
 
-		setPosition(eventKey, rez);
+		const percent = ((inputValue - min) * INPUT_MAX_VALUE) / (max - min);
+		const isBFinite = isFinite(percent);
+
+		if (!isBFinite) {
+			return;
+		}
+
+		let rez = null;
+
+		switch (inputName) {
+			case "min":
+				rez =
+					percent < INPUT_MIN_VALUE
+						? INPUT_MIN_VALUE
+						: (percent / INPUT_MAX_VALUE) * inputValue > options.max.percent
+							? options.max.percent 
+							: percent;
+				break;
+
+			case "max":
+				rez =
+					percent > INPUT_MAX_VALUE
+						? INPUT_MAX_VALUE
+						: (percent / INPUT_MAX_VALUE) * inputValue < options.min.percent 
+							? options.min.percent 
+							: percent;
+				break;
+		}
+
+		setRangeOptions(inputName, rez);
 	}
 
-	function setPosition(name, x) {
-		changePropertyValue(
-			{
-				[name]: x,
-			},
-			setOption
-		);
+	function setRangeOptions(name, percent) {
+		setOption((prev) => {
+			prev[name].percent = percent;
+			prev[name].number = parseInt((percent / INPUT_MAX_VALUE) * (max - min)) + min;
+
+			return { ...prev };
+		});
+
 	}
+
+	useEffect(() => {
+		onChange(options);
+	}, [options.min.number, options.max.number]);
+
+	useEffect(() => {
+		setOption(defaultOptions());
+	}, [min, max]);
 
 	return (
 		<div
@@ -98,8 +121,8 @@ function Range({ id, min = INPUT_MIN_VALUE, max = INPUT_MIN_VALUE, onChange }) {
 						className="border"
 						type="text"
 						name="min"
-						placeholder={minInputValue}
-						value={minInputValue}
+						placeholder={options.min.number}
+						value={options.min.number}
 						onChange={handleChange}
 					/>
 					<span>—</span>
@@ -108,17 +131,11 @@ function Range({ id, min = INPUT_MIN_VALUE, max = INPUT_MIN_VALUE, onChange }) {
 						className="border"
 						type="text"
 						name="max"
-						placeholder={minInputValue}
-						value={maxInputValue}
+						placeholder={options.max.number}
+						value={options.max.number}
 						onChange={handleChange}
 					/>
 				</div>
-				<button
-					className="button border"
-					onClick={handleClick}
-				>
-					ок
-				</button>
 			</div>
 			<div className={style.rangeWrapper}>
 				<input
@@ -135,14 +152,14 @@ function Range({ id, min = INPUT_MIN_VALUE, max = INPUT_MIN_VALUE, onChange }) {
 				<div className={style.track}>
 					<span
 						style={{
-							left: `${options.min}%`,
+							left: `${options.min.percent}%`,
 						}}
 						id="min"
 						className={style.thumb}
 					></span>
 					<span
 						style={{
-							left: `${options.max}%`,
+							left: `${options.max.percent}%`,
 						}}
 						id="max"
 						className={style.thumb}

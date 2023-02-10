@@ -1,3 +1,5 @@
+"use strict";
+
 import validator from "express-validator";
 
 import UserModel from "../models/user.js";
@@ -9,9 +11,9 @@ const validation = {
         .check("id")
         .custom(async (id) => {
             try {
-                const finedUser = await UserModel.findById(id);
+                const foundUser = await UserModel.findById(id);
 
-                if (!finedUser) {
+                if (!foundUser) {
                     throw errors.notExist("user");
                 }
 

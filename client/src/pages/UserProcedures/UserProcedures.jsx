@@ -1,14 +1,16 @@
 import { useLayoutEffect, useState, useEffect, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { getProcedureByUserId } from "@/service/redusers/procedures.js";
 import AuthContext from "@/context/auth.js";
+import { getAllTypes, getAllStates } from "@/service/redusers/procedures.js";
 
+import PlaceholderLoader from "@/components/PlaceholderLoader/PlaceholderLoader.jsx"
 import Filters from "./Filters/Filters.jsx";
 import Presentation from "./Presentation/Presentation.jsx";
 
 import style from "./UserProcedures.module.css";
-import { useNavigate } from "react-router-dom";
 
 function UserProcedures() {
 	const dispatch = useDispatch();
@@ -20,9 +22,11 @@ function UserProcedures() {
 	const [tempCards, setTempCard] = useState([]);
 
 	async function __init__() {
+		dispatch(getAllTypes());
+		dispatch(getAllStates());
+
 		if (!isAuth) {
 			return navigate("/signin", {
-				replace: true,
 				state: {
 					purpose: "noAccessToPage",
 				},
@@ -36,7 +40,7 @@ function UserProcedures() {
 
 	useLayoutEffect(() => {
 		return __init__;
-	}, [user.info]);
+	}, []);
 
 	useEffect(() => {
 		if (initialCards.length) {
@@ -48,12 +52,15 @@ function UserProcedures() {
 
 	return (
 		<div id={style.userProcedures}>
-			<Filters
-				tempCardsState={[tempCards, setTempCard]}
-				initialCards={initialCards}
-			></Filters>
+			{tempCards.length ?
+				<Filters
+					tempCardsState={[tempCards, setTempCard]}
+					initialCards={initialCards}
+				></Filters> 
+				: 
+				<PlaceholderLoader widthInPx="300px"></PlaceholderLoader>}
 			<Presentation
-				cards={tempCards}
+				tempCards={tempCards}
 				initialCards={initialCards}
 			></Presentation>
 		</div>

@@ -29,7 +29,7 @@ function Aside({ id = "", className = "", openState, ...props }) {
 
 		document.body.style.overflowY = "scroll";
 	}
-
+	console.log(props.children)
 	return (
 		<aside
 			id={id}

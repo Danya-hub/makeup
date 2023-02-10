@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import changePropertyValue from "@/helpers/changePropertyValue.js";
+import Value from "@/helpers/value.js";
 
 function useWarning(warnings) {
 	const [_warnings, setWarning] = useState(warnings);
@@ -14,9 +14,9 @@ function useWarning(warnings) {
 			rez = [_warnings[warnName], true];
 		} else {
 			let boolean = false;
-			let finedWarn = Object.values(_warnings).find((warning) => (boolean = Boolean(warning)));
+			let foundWarn = Object.values(_warnings).find((warning) => (boolean = Boolean(warning)));
 
-			rez = [finedWarn, boolean];
+			rez = [foundWarn, boolean];
 		}
 
 		return rez;
@@ -27,7 +27,7 @@ function useWarning(warnings) {
 		(newValue) => {
 			const [name, value] = newValue;
 
-			changePropertyValue(
+			Value.changeObject(
 				{
 					[name]: t(value),
 				},

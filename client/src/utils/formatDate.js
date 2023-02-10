@@ -1,4 +1,6 @@
-import { MAX_COUNT_WEEKDAYS, MAX_COUNT_WEEKS_IN_CALENDAR } from "@/constants/calendar.js";
+export const MAX_COUNT_WEEKDAYS = 7;
+export const MAX_COUNT_WEEKS_IN_CALENDAR = 6;
+export const MAX_LENGTH_SYMBOLS_TIME = 2;
 
 function generateDate(date) {
 	return new Date(date.year, date.month - 1, date.day || 0);
@@ -49,8 +51,6 @@ class FormatDate {
 			date.setHours(0);
 			date.setSeconds(0);
 		}
-
-		console.log();
 
 		date.setMinutes((withCurrent ? date.getMinutes() : 0) + (value || 0));
 

@@ -1,9 +1,13 @@
+"use strict";
+
 import jsonwebtoken from "jsonwebtoken";
-import dotenv from "dotenv";
+import {
+    config,
+} from "dotenv";
 
 import ApiError from "../utils/apiError.js";
 
-dotenv.config();
+config();
 
 function roleAccess(roles) {
     return async function (req, res, next) {

@@ -1,45 +1,42 @@
-import { useNavigate, useLocation } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import types from "prop-types";
 
-import { signup, actions } from "@/service/redusers/user.js";
-import changePropertyValue from "@/helpers/changePropertyValue.js";
+import Value from "@/helpers/value.js";
+import { actions, sendPassword } from "@/service/redusers/user.js";
 
-// import GoogleSignin from "@/components/UI/Form/GoogleSignin/GoogleSignin.jsx";
+import Notification from "@/components/UI/Form/Notification/Notification.jsx";
+import ChannelInput from "@/components/UI/Form/ChannelInput/ChannelInput.jsx";
 
 import style from "@/pages/Auth/Auth.module.css";
 
 Output.propTypes = {
-	onSuccess: types.func,
 	userState: types.array,
+	formState: types.array,
 };
 
-function Output({ onSuccess, userState }) {
+function Output({ userState, formState }) {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const { error } = useSelector((state) => state.user);
 	const { state } = useLocation();
+	const { error } = useSelector((state) => state.user);
 
-	const [, setUser] = userState;
+	const [user, setUser] = userState;
+	const [, setFormState] = formState;
 	const purpose = state?.purpose || "adviceForAuth";
 
-	function valueFromInput(e, callback) {
-		const t = e.target;
-
-		changePropertyValue(
-			{
-				[t.name]: t.value,
-			},
-			callback
-		);
-	}
-
-	function handleSubmitForm(e) {
+	async function handleSubmitForm(e) {
 		e.preventDefault();
 
-		onSuccess();
+		const res = await dispatch(sendPassword(user));
+
+		if (res.error) {
+			return;
+		}
+
+		setFormState(true);
 	}
 
 	function toSignin() {
@@ -49,6 +46,7 @@ function Output({ onSuccess, userState }) {
 			state: {
 				purpose,
 			},
+			replace: true,
 		});
 	}
 
@@ -56,37 +54,62 @@ function Output({ onSuccess, userState }) {
 		<div id={style.auth}>
 			<div className={style.form}>
 				<h2 className={style.title}>{t("signupAccount")}</h2>
-				<p className={`${style.message}  ${style.left}`}>{t(purpose)}</p>
-				{/* {error?.msg && <p>{error?.msg}</p>} */}
+				<p className={`${style.message} ${style.left}`}>{t(purpose)}</p>
+				{error && (
+					<Notification
+						text={error}
+						status="error"
+					></Notification>
+				)}
 				<form onSubmit={handleSubmitForm}>
-					<label>
-						<h3 className="title">{t("fullname")}</h3>
+					<div>
+						<label htmlFor="channel">
+							<h3 className="title">{t("fullname")}</h3>
+						</label>
 						<input
 							type="text"
+							className={`input ${style.field}`}
 							name="fullname"
-							onBlur={(e) => valueFromInput(e, setUser)}
+							onBlur={(e) => Value.fromInput(e, setUser)}
 						></input>
-					</label>
-					<label>
-						<h3 className="title">{t("telephone")}</h3>
+					</div>
+					<div>
+						<label htmlFor="channel">
+							<h3 className="title">{t("email")}</h3>
+						</label>
 						<input
-							type="tel"
-							name="telephone"
-							onBlur={(e) => valueFromInput(e, setUser)}
+							type="email"
+							className={`input ${style.field}`}
+							name="email"
+							onBlur={(e) => Value.fromInput(e, setUser)}
 						></input>
-					</label>
-					<button
-						type="submit"
-						className="button border"
-					>
-						{t("signUp")}
-					</button>
+					</div>
+					<div>
+						<label htmlFor="channel">
+							<h3 className="title">{t("telephone")}</h3>
+						</label>
+						<ChannelInput
+							strictIsTel={true}
+							id="channel"
+							type="text"
+							className={style.field}
+							onChange={setUser}
+						></ChannelInput>
+					</div>
+					<div className={style.navigation}>
+						<button
+							type="submit"
+							id={style.signUp}
+							className="button border"
+						>
+							{t("signUp")}
+						</button>
+					</div>
 				</form>
-				<div className={style.question}>
+				<div className={style.authQueastion}>
 					<p>{t("alreadyExistsAccount")}</p>
 					<button
 						type="button"
-						className="button"
 						onClick={toSignin}
 					>
 						{t("signIn")}

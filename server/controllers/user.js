@@ -1,15 +1,26 @@
-import passport from "passport";
+"use strict";
+
 import {
     config,
 } from "dotenv";
+import bcrypt from "bcrypt";
 
-import validation from "../validations/user.js";
+import userValidation from "../validations/user.js";
+
 import checkOnValid from "../middleware/checkOnValid.js";
-import UserModel from "../models/user.js";
+import isAuth from "../middleware/isAuth.js";
+
 import UserService from "../service/user.js";
 import TokenService from "../service/token.js";
+import MessageService from "../service/message.js";
+
+import {
+    COOKIE_REFRESH_TOKEN_MAX_AGE,
+} from "../constant/auth.js";
+import errors from "../constant/errors.js";
 
 import ApiError from "../utils/apiError.js";
+import Password from "../utils/password.js";
 
 config();
 
@@ -17,13 +28,24 @@ const AuthController = {
     post: {
         signup() {
             return [
-                validation.signup,
-                checkOnValid,
                 async (req, res, next) => {
                     try {
                         const newUser = await UserService.createUser(req.body);
 
-                        res.status(201).json(newUser);
+                        const {
+                            refreshToken,
+                            ...rez
+                        } = newUser;
+
+                        res.cookie(
+                            "refreshToken",
+                            refreshToken, {
+                                maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
+                                httpOnly: true,
+                            }
+                        );
+                        res.status(201).json(rez);
+
                         next();
                     } catch (error) {
                         next(error);
@@ -33,35 +55,25 @@ const AuthController = {
         },
         signin() {
             return [
-                validation.signin,
+                userValidation.signin,
                 checkOnValid,
                 async (req, res, next) => {
                     try {
-                        const user = await UserModel.findOne({
-                            telephone: req.body.telephone,
-                        });
+                        const foundUser = await UserService.byChannel(req.body);
 
                         const {
-                            password: _,
-                            ...userWithoutPassword
-                        } = user._doc;
-
-                        const tokens = TokenService.generateTokens({
-                            id: userWithoutPassword._id,
-                            roles: userWithoutPassword.roles,
-                        });
+                            refreshToken,
+                            ...rez
+                        } = foundUser;
 
                         res.cookie(
                             "refreshToken",
-                            tokens.refreshToken, {
-                                maxAge: 7 * 24 * 60 * 60 * 1000, 
+                            refreshToken, {
+                                maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
                                 httpOnly: true,
                             }
                         );
-                        res.status(201).json({
-                            ...userWithoutPassword,
-                            ...tokens,
-                        });
+                        res.status(201).json(rez);
 
                         next();
                     } catch (error) {
@@ -72,11 +84,14 @@ const AuthController = {
         },
         logout() {
             return [
+                isAuth,
+                checkOnValid,
                 (req, res, next) => {
                     try {
                         const {
-                            refreshToken
+                            refreshToken,
                         } = req.cookies;
+
                         res.clearCookie("refreshToken");
 
                         res.json({
@@ -89,115 +104,177 @@ const AuthController = {
                         next(error);
                     }
                 }
+            ];
+        },
+        sendPassword() {
+            return [
+                userValidation.sendPassword,
+                checkOnValid,
+                async (req, res, next) => {
+                    try {
+                        const {
+                            email,
+                        } = req.body;
+                        const passwordFilter = {
+                            topic: "password",
+                            email,
+                        };
+
+                        const foundMessage = await MessageService.get(passwordFilter);
+
+                        if (foundMessage) {
+                            res.status(200).json({
+                                passwordToken: foundMessage.template,
+                            });
+
+                            return next();
+                        }
+
+                        const sendedPassword = await UserService.sendPassword(email);
+
+                        res.status(201).json({
+                            passwordToken: sendedPassword,
+                        });
+
+                        next();
+                    } catch (error) {
+                        next(error);
+                    }
+                }
+            ];
+        },
+        checkPassword() {
+            return [
+                async (req, res, next) => {
+                    try {
+                        const {
+                            email,
+                            password,
+                        } = req.body;
+
+                        const foundMessage = await MessageService.get({
+                            topic: "password",
+                            email,
+                        });
+
+                        if (!foundMessage) {
+                            ApiError.noAccess("Time is over");
+                        }
+
+                        const isEquil = bcrypt.compareSync(password, foundMessage.template);
+
+                        if (!isEquil) {
+                            ApiError.badRequest(errors.wrongSignin());
+                        }
+
+                        res.status(200).json({
+                            ...req.body,
+                            password,
+                        });
+
+                        next();
+                    } catch (error) {
+                        next(error);
+                    }
+                }
+            ];
+        },
+        requestResetPassword() {
+            return [
+                async (req, res, next) => {
+                    try {
+                        const {
+                            email,
+                        } = req.body;
+
+                        await UserService.resetPassword(email);
+
+                        res.status(200).json({
+                            error: "There was submited message for reseting password",
+                        });
+
+                        next();
+                    } catch (error) {
+                        next(error);
+                    }
+                }
+            ];
+        },
+        checkNewPassword() {
+            return [
+                async (req, res, next) => {
+                    try {
+                        const {
+                            newPassword,
+                        } = req.body;
+                        const {
+                            key,
+                            email,
+                        } = req.query;
+
+                        await UserService.checkNewPassword(key, email, newPassword);
+
+                        res.status(200).json({
+                            msg: "Password is changed",
+                        });
+
+                        next();
+                    } catch (error) {
+                        next(error);
+                    }
+                }
             ]
         }
     },
     get: {
-        google() {
-            return [
-                passport.authenticate("google", {
-                    scope: ["profile", "email"],
-                }),
-            ];
-        },
-        ["google/callback"]() {
-            return [
-                passport.authenticate("google", {
-                    successRedirect: "/auth/success",
-                    failureRedirect: "/auth/failure"
-                }),
-            ]
-        },
-        success() {
-            return [
-                async (req, res, next) => {
-                    try {
-                        if (!req.user) {
-                            ApiError.unauthorized();
-                        }
-
-                        const user = await UserService.createUser(req.user);
-                        const tokens = TokenService.generateTokens({
-                            id: user._id,
-                            roles: user.roles,
-                        });
-
-                        const {
-                            password: _,
-                            ...userWithoutPassword
-                        } = user._doc;
-
-                        res.cookie(
-                            "refreshToken",
-                            tokens.refreshToken, {
-                                maxAge: 7 * 24 * 60 * 60 * 1000,
-                                httpOnly: true,
-                            }
-                        );
-                        res.status(201).json({
-                            ...userWithoutPassword,
-                            ...tokens,
-                        });
-                        
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ]
-        },
-        failure() {
-            return [
-                (req, res) => {
-                    res.send("failure");
-                }
-            ]
-        },
         refresh() {
             return [
                 async (req, res, next) => {
                     try {
-                        if (!req.cookies.refreshToken) {
+                        const token = req.cookies.refreshToken;
+
+                        if (!token) {
                             ApiError.unauthorized();
                         }
 
                         const decoded = TokenService.checkOnValidToken(
-                            req.cookies.refreshToken,
+                            token,
                             process.env.REFRESH_TOKEN_SECRET_KEY,
                         );
-                        
-                        const user = await UserModel.findById(decoded.id);
-                        const tokens = TokenService.generateTokens({
-                            id: user._id,
-                            roles: user.roles,
+
+                        if (!decoded) {
+                            ApiError.unauthorized();
+                        }
+
+                        const user = await UserService.getUser({
+                            _id: decoded.id,
                         });
+
                         const {
-                            password: _,
-                            ...userWithoutPassword
-                        } = user._doc;
-                        
+                            refreshToken,
+                            ...rez
+                        } = user;
+
                         res.cookie(
                             "refreshToken",
-                            tokens.refreshToken, {
-                                maxAge: 7 * 24 * 60 * 60 * 1000,
+                            token, {
+                                maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
                                 httpOnly: true,
                             }
                         );
-                        res.status(200).json({
-                            ...userWithoutPassword,
-                            ...tokens,
-                        });
-                        
+                        res.status(200).json(rez);
+
                         next();
                     } catch (error) {
                         next(error);
                     }
                 }
-            ]
+            ];
         }
     },
 };
 
 export {
-    AuthController as default,
+    AuthController as
+    default,
 }

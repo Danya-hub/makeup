@@ -1,8 +1,7 @@
 import { Fragment } from "react";
 import types from "prop-types";
 
-import FormatDate from "@/utils/formatDate.js";
-import { MAX_COUNT_WEEKDAYS, MAX_COUNT_WEEKS_IN_CALENDAR } from "@/constants/calendar.js";
+import FormatDate, { MAX_COUNT_WEEKDAYS, MAX_COUNT_WEEKS_IN_CALENDAR } from "@/utils/formatDate.js";
 
 import style from "./Content.module.css";
 

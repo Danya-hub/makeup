@@ -1,5 +1,6 @@
 .search {
 	--shadow: 0 0 2px rgba(var(--brown), 0.4);
+	--bottomLine: 0 1px 0 rgba(var(--brown), 0.2);
 
 	position: relative;
 	box-shadow: var(--shadow);
@@ -13,11 +14,13 @@
 	display: block;
 }
 
+.border > *:not(:last-child) {
+	box-shadow: var(--bottomLine);
+}
+
 .options {
 	display: none;
-	position: absolute;
 	background: rgb(var(--white));
-	box-shadow: var(--shadow);
 	border-radius: 0 0 var(--def-radius) var(--def-radius);
 	width: 100%;
 	left: 0;

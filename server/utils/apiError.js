@@ -1,3 +1,5 @@
+"use strict";
+
 import errors from "../constant/errors.js";
 
 class ApiError extends Error {
@@ -13,20 +15,26 @@ class ApiError extends Error {
 
     static notExist(field) {
         throw new ApiError(404, [{
-            msg: errors.notExist(field),
+            error: errors.notExist(field),
         }]);
     }
 
     static unauthorized() {
-        throw new ApiError(401, "This user is unauthorized");
+        throw new ApiError(401, {
+            error: "This user is unauthorized"
+        });
     }
 
     static noAccess() {
-        throw new ApiError(403, errors.noAccess());
+        throw new ApiError(403, {
+            error: errors.noAccess()
+        });
     }
 
     static badRequest(errors) {
-        throw new ApiError(400, errors);
+        throw new ApiError(400, {
+            error: errors
+        });
     }
 }
 

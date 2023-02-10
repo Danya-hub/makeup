@@ -2,8 +2,8 @@ import { useSelector } from "react-redux";
 import types from "prop-types";
 
 import FormatDate from "@/utils/formatDate.js";
-import useOutsideEvent from "@/hooks/useOutsideEvent";
-import changePropertyValue from "@/helpers/changePropertyValue";
+import useOutsideEvent from "@/hooks/useOutsideEvent.js";
+import Value from "@/helpers/value.js";
 
 import Calendar from "@/components/Calendar/Calendar.jsx";
 import WidthInput from "@/components/UI/Form/WidthInput/WidthInput.jsx";
@@ -48,7 +48,7 @@ function TimeInput({
 		const startProcTime = FormatDate.minutesToDate(time * 60, newProcedure.startProcTime, false),
 			finishProcTime = FormatDate.minutesToDate(finishMinutes, newProcedure.finishProcTime, false);
 
-		changePropertyValue(
+		Value.changeObject(
 			{
 				startProcTime,
 				finishProcTime,

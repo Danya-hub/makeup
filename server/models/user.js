@@ -1,36 +1,31 @@
+"use strict";
+
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
 import crypto from "crypto";
 
+const COUNT_BYTES = 32;
+
 const UserSchema = new mongoose.Schema({
+    key: String,
     fullname: String,
     telephone: String,
     password: String,
+    email: String,
     roles: {
         type: [String],
-        default: "user"
+        default: "user",
     },
 }, {
     timestamps: true,
 });
 
-UserSchema.statics.generatePassword = function (
-    length = 20,
-    wishlist = "0123456789abcdefghijklmnopqrstuvwxyz"
-) {
-    const buffer = new Uint32Array(length);
-    const random = crypto.randomFillSync(buffer);
+UserSchema.pre("save", function (next) {
+    const hex = crypto.randomBytes(COUNT_BYTES).toString("hex");
 
-    const password = Array.from(random)
-        .map((x) => wishlist[x % wishlist.length]).join("");
+    this.key = hex;
 
-    console.log(password);
-
-    const salt = bcrypt.genSaltSync(),
-        hashPassword = bcrypt.hashSync(password, salt);
-
-    return hashPassword;
-};
+    next();
+});
 
 const model = mongoose.model("User", UserSchema);
 

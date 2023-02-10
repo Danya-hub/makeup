@@ -1,17 +1,21 @@
+"use strict";
+
 import express, {
     urlencoded,
 } from "express";
 import cookieSession from "cookie-session";
 import mongoose from "mongoose";
 import cors from "cors";
-import passport from "passport";
 import cookieParser from "cookie-parser";
 import {
     config,
 } from "dotenv";
 
-import "./config/passport.js";
-import server from "./constant/server.js";
+import {
+    uriDB,
+    serverPort,
+    origin
+} from "./constant/server.js";
 import * as Router from "./routes/index.js";
 import errorsGather from "./middleware/errorsGather.js";
 
@@ -35,11 +39,9 @@ app.use(
         secure: process.env.NODE_ENV === "production",
     })
 );
-app.use(passport.initialize());
-app.use(passport.session());
 app.use(
     cors({
-        origin: "http://localhost:3000",
+        origin,
         methods: ["post", "get"],
         credentials: true,
     })
@@ -53,12 +55,12 @@ app.use(errorsGather);
 
 (async () => {
     try {
-        mongoose.connect(server.uriDB, {
+        mongoose.connect(uriDB, {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         });
 
-        app.listen(server.port);
+        app.listen(serverPort);
     } catch (error) {
         console.error(error);
         process.exit(1);

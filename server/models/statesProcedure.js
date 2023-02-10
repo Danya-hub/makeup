@@ -1,3 +1,5 @@
+"use strict";
+
 import mongoose from "mongoose";
 
 const StateProcedureSchema = new mongoose.Schema({

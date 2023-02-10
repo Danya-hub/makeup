@@ -8,7 +8,7 @@ import style from "./Details.module.css";
 Details.propTypes = {
 	id: types.string,
 	title: types.string,
-	children: types.object,
+	children: types.oneOfType([types.object, types.array]),
 	isOpen: types.bool,
 };
 

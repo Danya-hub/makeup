@@ -4,13 +4,13 @@ import { useSelector, useDispatch } from "react-redux";
 
 import {
 	getProcedureByDay,
-	getAllStates,
 	getAllTypes,
+	getAllStates,
 	getDefaultProcValue,
 } from "@/service/redusers/procedures.js";
 import useCalendar from "@/hooks/useCalendar.js";
 import FormatDate from "@/utils/formatDate.js";
-import changePropertyValue from "@/helpers/changePropertyValue.js";
+import Value from "@/helpers/value.js";
 import Check from "@/helpers/check.js";
 
 import ProcPopup from "./ProcPopup/ProcPopup.jsx";
@@ -72,14 +72,14 @@ function AllProcedures() {
 
 	async function __init__() {
 		dispatch(getProcedureByDay(calendar.viewState.locale));
-		dispatch(getAllStates());
 		dispatch(getAllTypes());
+		dispatch(getAllStates());
 
 		defaultValueProcedure.current = await dispatch(getDefaultProcValue()).then(
 			(res) => res.payload
 		);
 
-		changePropertyValue(defaultValueProcedure.current, setNewProcedure);
+		Value.changeObject(defaultValueProcedure.current, setNewProcedure);
 	}
 
 	function handleChangeDate(date) {
@@ -91,7 +91,7 @@ function AllProcedures() {
 			return;
 		}
 
-		changePropertyValue(
+		Value.changeObject(
 			calendar.setUnitForDate(
 				["Time"],
 				{

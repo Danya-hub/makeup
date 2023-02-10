@@ -10,14 +10,11 @@
 }
 
 #reset {
+	color: rgba(var(--brown));
 	margin: 3vh auto;
 	width: 80%;
 }
 
-#filters input {
-	box-shadow: inset 0 0 0 1px rgb(var(--lineColor));
-}
-
-#filters button {
-	--borderColor: var(--black);
+.alphabetList {
+	margin-top: 1vh;
 }

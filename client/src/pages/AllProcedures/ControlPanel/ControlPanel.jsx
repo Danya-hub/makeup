@@ -17,7 +17,7 @@ ControlPanel.propTypes = {
 function ControlPanel({ viewState, handleChangeDate }) {
 	const { t } = useTranslation();
 	const { states } = useSelector((state) => state.procedures);
-	console.log(states);
+
 	return (
 		<Aside id={style.controlPanel}>
 			<Calendar

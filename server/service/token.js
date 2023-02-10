@@ -1,48 +1,34 @@
+"use strict";
+
 import jsonwebtoken from "jsonwebtoken";
-import {
-    config,
-} from "dotenv";
-
-import ApiError from "../utils/apiError.js";
-
-config();
 
 class TokenService {
     constructor() {
 
     }
 
-    generateTokens(paylaod) {
-        const accessToken = jsonwebtoken.sign(
-                paylaod,
-                process.env.ACCESS_TOKEN_SECRET_KEY, {
-                    expiresIn: "30m",
-                },
-            ),
-            refreshToken = jsonwebtoken.sign(
-                paylaod,
-                process.env.REFRESH_TOKEN_SECRET_KEY, {
-                    expiresIn: "7d",
-                },
-            );
+    generateToken(
+        value,
+        key,
+        options,
+    ) {
+        const token = jsonwebtoken.sign(
+            value,
+            key,
+            options,
+        );
 
-        return {
-            accessToken,
-            refreshToken
-        };
+        return token;
     }
 
-    checkOnValidToken(token, secretKey) {
-        try {
-            const decodedToken = jsonwebtoken.verify(
-                token,
-                secretKey
-            );
-            
-            return decodedToken;
-        } catch (_) {
-            throw ApiError.unauthorized();
-        }
+    checkOnValidToken(token, secretKey, callback = null) {
+        const decodedToken = jsonwebtoken.verify(
+            token,
+            secretKey,
+            callback
+        );
+
+        return decodedToken;
     }
 }
 

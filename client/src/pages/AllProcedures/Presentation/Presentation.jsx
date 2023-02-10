@@ -1,16 +1,16 @@
 import { useState, useRef, useLayoutEffect, useContext } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import types from "prop-types";
 
 import { getProcedureByDay } from "@/service/redusers/procedures.js";
 import FormatDate from "@/utils/formatDate.js";
-import changePropertyValue from "@/helpers/changePropertyValue.js";
+import Value from "@/helpers/value.js";
 import AuthContext from "@/context/auth.js";
 
 import Card from "@/pages/AllProcedures/Card/Card.jsx";
-import Loader from "@/components/Loader/Loader.jsx";
+import SimpleLoader from "@/components/SimpleLoader/SimpleLoader.jsx";
 
 import style from "./Presentation.module.css";
 
@@ -54,6 +54,7 @@ function Presentation({
 	isLoadingContent,
 }) {
 	const dispatch = useDispatch();
+	const { currLng } = useSelector((state) => state.langs);
 	const navigate = useNavigate();
 	const { t } = useTranslation();
 
@@ -61,6 +62,7 @@ function Presentation({
 	const [newProcedure, setNewProcedure] = newProcedureState;
 	const { hasWarning, setWarning } = warning;
 	const { locale, currentTime } = viewState;
+	const [isVisiblePopup, setVisiblePopup] = visiblePopupState;
 
 	const { isAuth } = useContext(AuthContext);
 	const [innerY, setInnerY] = useState(0);
@@ -68,8 +70,8 @@ function Presentation({
 	const [isMouseDown, setMouseDown] = useState(false);
 	const parentRef = useRef(null);
 
-	const [isVisiblePopup, setVisiblePopup] = visiblePopupState;
 	const widthCharTime = Math.max(...numericHoursFromDay.map((hour) => hour.getWidthByChar()));
+	const currentStirngHoursAndMinutes = FormatDate.stringHourAndMin(locale, currLng);
 
 	function setNumericTimeByGrabbing(e, y = 0) {
 		const topToRootEl = parentRef.current.offsetTop;
@@ -91,7 +93,7 @@ function Presentation({
 		const startProcTime = FormatDate.minutesToDate(startProcMinutes, locale, false),
 			finishProcTime = FormatDate.minutesToDate(finishProcMinutes, locale, false);
 
-		changePropertyValue(
+		Value.changeObject(
 			{
 				startProcTime,
 				finishProcTime,
@@ -142,7 +144,6 @@ function Presentation({
 	function onMouseDown(e) {
 		if (!isAuth) {
 			return navigate("/signin", {
-				replace: true,
 				state: {
 					purpose: "warningAuthToMakeAppointment",
 				},
@@ -178,12 +179,13 @@ function Presentation({
 	}, [locale]);
 
 	return isLoadingContent ? (
-		<Loader></Loader>
+		<SimpleLoader></SimpleLoader>
 	) : (
 		<div
 			className={isVisiblePopup ? style.noActiveGrabbing : isMouseDown ? style.activeGrabbing : ""}
 			id={style.presentation}
 		>
+			<h2>{currentStirngHoursAndMinutes}</h2>
 			<div className={style.nameColumns}>
 				<div
 					style={{

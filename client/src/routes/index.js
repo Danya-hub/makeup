@@ -2,9 +2,10 @@ import { lazy } from "react";
 
 const Base = lazy(() => import("@/pages/Base/Base.jsx"));
 const AllProcedures = lazy(() => import("@/pages/AllProcedures/AllProcedures.jsx"));
-const Error = lazy(() => import("@/pages/Error/Error.jsx"));
+const NotFound = lazy(() => import("@/pages/Error/NotFound/NotFound.jsx"));
 const Signup = lazy(() => import("@/pages/Auth/Signup/Signup.jsx"));
 const Signin = lazy(() => import("@/pages/Auth/Signin/Signin.jsx"));
+const ResetPassword = lazy(() => import("@/pages/Auth/ResetPassword/ResetPassword.jsx"));
 const UserProcedures = lazy(() => import("@/pages/UserProcedures/UserProcedures.jsx"));
 const ProcDetails = lazy(() => import("@/pages/ProcDetails/ProcDetails.jsx"));
 
@@ -53,6 +54,14 @@ const routes = [
 		},
 	},
 	{
+		path: "/resetPassword",
+		elem: () => <ResetPassword />,
+		state: {
+			title: "Procedures",
+			header: true,
+		},
+	},
+	{
 		path: "/details",
 		elem: () => <ProcDetails />,
 		state: {
@@ -63,9 +72,9 @@ const routes = [
 	},
 	{
 		path: "*",
-		elem: () => <Error />,
+		elem: () => <NotFound />,
 		state: {
-			title: "Error",
+			title: "Not found",
 		},
 	},
 ];

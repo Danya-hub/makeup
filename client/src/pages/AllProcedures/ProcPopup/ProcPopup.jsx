@@ -6,11 +6,11 @@ import types from "prop-types";
 import { createNewProcedure } from "@/service/redusers/procedures.js";
 import FormatDate from "@/utils/formatDate.js";
 import useOutsideEvent from "@/hooks/useOutsideEvent";
-import changePropertyValue from "@/helpers/changePropertyValue.js";
+import Value from "@/helpers/value.js";
 
 import Popup from "@/components/UI/Popup/Popup.jsx";
 import Select from "@/components/UI/Form/Select/Select.jsx";
-import Warning from "@/components/UI/Form/Message/Warning/Warning.jsx";
+import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 import TimeInput from "@/pages/AllProcedures/ProcPopup/TimeInput/TimeInput.jsx";
 
 import style from "./ProcPopup.module.css";
@@ -44,7 +44,7 @@ function ProcPopup({
 	const { hasWarning } = warning;
 	const [newProcedure, setNewProcedure] = newProcedureState;
 	const [isVisible, setVisible] = visibleState;
-	const [finedWarningText, isFoundWarning] = hasWarning();
+	const [foundWarningText, isFoundWarning] = hasWarning();
 
 	const [isOpenSelectProcedure, setOpenSelectProcedure] = useState(false);
 	const [isOpenCalendar, setOpenCalendar] = useState(false);
@@ -77,7 +77,12 @@ function ProcPopup({
 				},
 			]}
 		>
-			{isFoundWarning && <Warning text={finedWarningText}></Warning>}
+			{isFoundWarning && (
+				<Notification
+					status="warning"
+					text={foundWarningText}
+				></Notification>
+			)}
 			<form onSubmit={handleSubmitForm}>
 				<label
 					className={style.input}
@@ -93,7 +98,7 @@ function ProcPopup({
 								FormatDate.numericHoursFromDate(newProcedure.startProcTime) * 60;
 							const finishProcMinutes = startProcMinutes + procedures.types[ind].durationProc * 60;
 
-							changePropertyValue(
+							Value.changeObject(
 								{
 									finishProcTime: FormatDate.minutesToDate(
 										finishProcMinutes,

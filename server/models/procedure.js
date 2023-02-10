@@ -1,11 +1,16 @@
+"use strict";
+
 import mongoose from "mongoose";
 
 const ProcedureSchema = new mongoose.Schema({
     startProcTime: Date,
     finishProcTime: Date,
+    year: Number,
+    month: Number,
+    day: Number,
     type: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "TypesProcedure"
+        ref: "TypesProcedure",
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -19,16 +24,15 @@ const ProcedureSchema = new mongoose.Schema({
     timestamps: true,
 });
 
-ProcedureSchema.statics.isEquilDate = async function (date, refDocs) {
-    const allProcedure = await this.find().populate(refDocs);
+ProcedureSchema.pre("save", function (next) {
+    const date = this.startProcTime;
 
-    return allProcedure
-        .filter((card) => {
-            return card.startProcTime.getYear() === date.getYear() &&
-                card.startProcTime.getMonth() === date.getMonth() &&
-                card.startProcTime.getDate() === date.getDate()
-        });
-}
+    this.year = date.getFullYear();
+    this.month = date.getMonth();
+    this.day = date.getDate();
+
+    next();
+});
 
 const model = mongoose.model("AllProcedures", ProcedureSchema);
 

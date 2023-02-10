@@ -1,26 +1,29 @@
-import {
-    validationResult,
-} from "express-validator";
+"use strict";
 
-import validation from "../validations/procedure.js";
-import ProcedureModel from "../models/procedure.js";
 import TypesProcedureModel from "../models/typesProcedure.js";
-import StateProcedure from "../models/stateProcedure.js";
-import isAuth from "../middleware/isAuth.js";
-import ApiError from "../utils/apiError.js";
+import StatesProcedureModel from "../models/statesProcedure.js";
 
-const refDocsName = ["user", "type", "state"];
+import isAuth from "../middleware/isAuth.js";
+import checkOnValid from "../middleware/checkOnValid.js";
+import roleAccess from "../middleware/roleAccess.js";
+
+import Procedure from "../service/procedure.js";
 
 const ProcedureController = {
     get: {
         ["byDay/:newDate"]() {
             return [
-                async (req, res) => {
+                async (req, res, next) => {
                     try {
-                        const newDate = new Date(req.params.newDate);
-                        const finedProcedure = await ProcedureModel.isEquilDate(newDate, refDocsName);
+                        const {
+                            newDate,
+                        } = req.params;
 
-                        res.status(200).json(finedProcedure);
+                        const foundProcedure = await Procedure.byDay(newDate);
+
+                        res.status(200).json(foundProcedure);
+
+                        next();
                     } catch (error) {
                         next(error);
                     }
@@ -29,37 +32,24 @@ const ProcedureController = {
         },
         ["byUser/:id"]() {
             return [
+                isAuth,
+                checkOnValid,
                 async (req, res, next) => {
                     try {
-                        const finedProcedure = await ProcedureModel.find({
-                            user: req.params.id,
-                        }).populate(refDocsName);
+                        const {
+                            id,
+                        } = req.params;
 
-                        if (!finedProcedure) {
-                            ApiError.notExist("procedure");
-                        }
+                        const foundProcedure = await Procedure.byUser(id);
 
-                        res.status(200).json(finedProcedure);
+                        res.status(200).json(foundProcedure);
+
                         next();
                     } catch (error) {
                         next(error);
                     }
                 }
             ];
-        },
-        allStates() {
-            return [
-                async (req, res, next) => {
-                    try {
-                        const states = await StateProcedure.find();
-
-                        res.status(200).json(states);
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ]
         },
         allTypes() {
             return [
@@ -68,6 +58,7 @@ const ProcedureController = {
                         const types = await TypesProcedureModel.find();
 
                         res.status(200).json(types);
+
                         next();
                     } catch (error) {
                         next(error);
@@ -75,22 +66,38 @@ const ProcedureController = {
                 }
             ]
         },
-        defaultValue() {
+        allStates() {
             return [
                 async (req, res, next) => {
                     try {
-                        const type = await TypesProcedureModel.findOne();
-                        const state = await StateProcedure.findOne();
+                        const states = await StatesProcedureModel.find();
+
+                        res.status(200).json(states);
+
+                        next();
+                    } catch (error) {
+                        next(error);
+                    }
+                }
+            ]
+        },
+        defaultType() {
+            return [
+                async (req, res, next) => {
+                    try {
+                        const type = await TypesProcedureModel.findOne()
+                        const state = await StatesProcedureModel.findOne()
 
                         res.status(200).json({
                             type,
                             state,
                         });
+
                         next();
                     } catch (error) {
                         next(error);
                     }
-                },
+                }
             ]
         },
     },
@@ -98,22 +105,12 @@ const ProcedureController = {
         create() {
             return [
                 isAuth,
-                validation.create,
+                checkOnValid,
                 async (req, res, next) => {
                     try {
-                        const errors = validationResult(req);
+                        const createdProcedure = await Procedure.createProcedure(req.body);
 
-                        if (!errors.isEmpty()) {
-                            ApiError.badRequest(errors.array());
-                        }
-
-                        const newProcedure = await ProcedureModel.create(req.body);
-                        await newProcedure.save();
-
-                        const finedProcedure = await ProcedureModel.findById(newProcedure._id),
-                            unzipedProcedure = await finedProcedure.populate(refDocsName);
-
-                        res.status(201).json(unzipedProcedure);
+                        res.status(201).json(createdProcedure);
 
                         next();
                     } catch (error) {
@@ -121,26 +118,39 @@ const ProcedureController = {
                     }
                 }
             ]
+        },
+        createProcType() {
+            return [
+                isAuth,
+                roleAccess(["admin"]),
+                checkOnValid,
+                async (req, res, next) => {
+                    try {
+                        const createdNewProcType = await Procedure.createProcType(req.body);
+
+                        res.status(201).json(createdNewProcType);
+
+                        next();
+                    } catch (error) {
+                        next(error);
+                    }
+                }
+            ];
         }
     },
     delete: {
         ["remove/:id"]() {
             return [
                 isAuth,
+                checkOnValid,
                 async (req, res, next) => {
                     try {
-                        const finedUser = await ProcedureModel.findByIdAndDelete(
-                            req.params.id,
-                        );
-
-                        if (!finedUser) {
-                            ApiError.notExist("procedure");
-                        }
+                        await Procedure.removeByUser(req.params.id);
 
                         res.status(200).json({
-                            msg: "AllProcedures was delete",
-                            deletedProcId: req.params.id,
+                            msg: "The procedure is deleted",
                         });
+
                         next();
                     } catch (error) {
                         next(error);

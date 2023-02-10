@@ -42,4 +42,8 @@ $axios.indGet = function (url) {
 	return axios.get(url, options);
 };
 
+$axios.indPost = function (url, value) {
+	return axios.post(url, value, options);
+};
+
 export { $axios as default, options };

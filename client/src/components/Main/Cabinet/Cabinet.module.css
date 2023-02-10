@@ -4,7 +4,7 @@
 
 #info {
 	display: flex;
-	padding: 0 var(--space);
+	padding: 2vh var(--space);
 }
 
 #userAvatar {
@@ -26,11 +26,6 @@
 	font-weight: 700;
 }
 
-#changePassword {
-	font-size: calc(var(--size) - 1px);
-	margin-top: 16px;
-}
-
 #cabinet li a {
 	padding-left: var(--space);
 }
@@ -38,4 +33,12 @@
 #logout {
 	text-align: left;
 	padding-left: var(--space);
+}
+
+#resetPassword {
+	background: unset;
+	width: fit-content;
+	font-weight: 700;
+	padding: 0;
+	margin-top: 2vh;
 }
