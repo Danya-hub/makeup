@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import types from "prop-types";
 
-import { default as ArrowSrc } from "@/assets/image/arrow.svg";
+import ArrowSrc from "@/assets/image/arrow.svg";
 
 import style from "./Details.module.css";
 

@@ -1,3 +1,9 @@
 .weekdays {
 	border-radius: var(--def-radius);
 }
+
+.weekdays th {
+	background: rgba(var(--lightGray), 0.6);
+	text-transform: uppercase;
+	padding: var(--space);
+}

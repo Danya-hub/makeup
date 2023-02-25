@@ -2,7 +2,7 @@
 	position: sticky;
 	background: rgb(var(--white));
 	box-shadow: 0 0 20px rgba(var(--brown), 0.1);
-	padding: 0 16px;
+	padding: 0 20px;
 	height: 100vh;
 	width: 100%;
 	max-width: 300px;
@@ -11,8 +11,7 @@
 
 #reset {
 	color: rgba(var(--brown));
-	margin: 3vh auto;
-	width: 80%;
+	margin: 3vh 0;
 }
 
 .alphabetList {

@@ -8,15 +8,17 @@
 	user-select: none;
 }
 
-.select.absolute .options {
+.select.absolute :global(.options) {
 	position: absolute;
 	box-shadow: 0 2px 10px rgba(var(--black), 0.3);
 	border-radius: var(--def-radius);
 	left: 0;
+	bottom: 0;
+	transform: translateY(100%);
 	z-index: 997;
 }
 
-.options {
+.select :global(.options) {
 	display: none;
 	background: rgb(var(--white));
 	min-width: 100%;
@@ -24,19 +26,20 @@
 	overflow: hidden scroll;
 }
 
-.options span:hover {
+.select :global(.options) span:hover {
 	--back: rgba(var(--gray), 0.6);
 }
 
-.options span {
+.select :global(.options) span {
 	--back: rgb(var(--white));
 
 	background: var(--back);
 	padding-left: 10px;
 	cursor: pointer;
+	white-space: nowrap;
 }
 
-.options .selected {
+.select :global(.options) .selected {
 	--back: rgb(var(--darkGray));
 }
 
@@ -53,13 +56,12 @@
 	--rotate: 180deg;
 }
 
-.select.open .options {
+.select.open :global(.options) {
 	display: block;
 }
 
 .selectValue {
 	display: flex !important;
 	align-items: center;
-	justify-content: space-between;
 	cursor: pointer;
 }

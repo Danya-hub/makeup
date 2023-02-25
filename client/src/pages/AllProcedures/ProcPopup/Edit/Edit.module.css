@@ -1,0 +1,61 @@
+#editProc :global(.popupContent) {
+	left: 50%;
+	top: 50%;
+}
+
+#editProc input {
+	text-transform: capitalize;
+	letter-spacing: 0;
+}
+
+#editProc form > *:not(:first-child) {
+	margin-top: 4vh;
+}
+
+#editProc i {
+	margin-right: 14px;
+}
+
+.title {
+	margin-bottom: 8px;
+	font-weight: 700;
+}
+
+#edit {
+	--order: 1;
+	--back: rgb(var(--gray));
+
+	grid-column-start: calc(var(--col) * var(--order));
+	background: var(--back);
+	border-radius: var(--def-radius);
+	padding: 10px 20px;
+}
+
+#edit:disabled {
+	--back: rgb(var(--gray)) !important;
+	cursor: unset;
+	opacity: 0.5;
+}
+
+#edit:hover {
+	--back: rgba(var(--brown), 0.6);
+}
+
+.input input {
+	box-shadow: inset 0 0 0 var(--scale) rgba(var(--lineColor), var(--opacity));
+}
+
+.input:not(#time) > * {
+	display: block;
+}
+
+.buttons {
+	--col: 3;
+
+	display: grid;
+	grid-template-columns: repeat(var(--col), 1fr);
+}
+
+.buttons button {
+	width: 100%;
+}

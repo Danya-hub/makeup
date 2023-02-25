@@ -14,6 +14,7 @@ export const refresh = createAsyncThunk(
 		try {
 			const user = await axios.indGet("/auth/refresh");
 			localStorage.setItem("token", user.data.accessToken);
+			localStorage.setItem("isAuth", true);
 
 			dispatch(actions.setUser(user.data));
 
@@ -30,6 +31,7 @@ export const signup = createAsyncThunk(
 		try {
 			const createdUser = await axios.post("/auth/signup", value);
 			localStorage.setItem("token", createdUser.data.accessToken);
+			localStorage.setItem("isAuth", true);
 
 			dispatch(actions.setUser(createdUser.data));
 
@@ -46,6 +48,7 @@ export const signin = createAsyncThunk(
 		try {
 			const foundUser = await axios.post("/auth/signin", value);
 			localStorage.setItem("token", foundUser.data.accessToken);
+			localStorage.setItem("isAuth", true);
 
 			dispatch(actions.setUser(foundUser.data));
 
@@ -60,6 +63,7 @@ export const logout = createAsyncThunk("user/logout", async (_, { dispatch, reje
 	try {
 		await axios.post("/auth/logout");
 		localStorage.removeItem("token");
+		localStorage.removeItem("isAuth");
 
 		dispatch(actions.setUser(null));
 	} catch (error) {
@@ -162,6 +166,9 @@ const { reducer, actions } = createSlice({
 		},
 		[checkNewPassword.pending]: (state) => {
 			state.error = "";
+		},
+		[refresh.rejected]: () => {
+			localStorage.removeItem("isAuth");
 		},
 	},
 });

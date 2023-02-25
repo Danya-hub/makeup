@@ -1,7 +1,7 @@
 import { memo } from "react";
 import { Link } from "react-router-dom";
 
-import { default as LogoSrc } from "@/assets/image/logo.svg";
+import LogoSrc from "@/assets/image/logo.svg";
 
 import style from "./Logo.module.css";
 

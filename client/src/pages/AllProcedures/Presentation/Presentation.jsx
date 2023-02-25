@@ -1,83 +1,70 @@
-import { useState, useRef, useLayoutEffect, useContext } from "react";
+import { useState, useRef, useLayoutEffect, useEffect, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import types from "prop-types";
 
 import { getProcedureByDay } from "@/service/redusers/procedures.js";
 import FormatDate from "@/utils/formatDate.js";
-import Value from "@/helpers/value.js";
-import AuthContext from "@/context/auth.js";
+import PropsContext from "@/pages/AllProcedures/context.js";
 
+import SideHours from "./SideHours/SideHours.jsx";
+import Prompt from "@/components/UI/Prompt/Prompt.jsx";
 import Card from "@/pages/AllProcedures/Card/Card.jsx";
-import SimpleLoader from "@/components/SimpleLoader/SimpleLoader.jsx";
 
 import style from "./Presentation.module.css";
 
-const columnsName = ["time", "status", "procedureName"];
+import { COLUMN_NAMES } from "@/pages/AllProcedures/constants.js";
 
-Presentation.propTypes = {
-	newProcedureState: types.array,
-	warning: types.object,
-	cards: types.array,
-	viewState: types.object,
-	visiblePopupState: types.array,
-	isElapsedDay: types.func,
-	switchDayOnOther: types.func,
-	numericHoursFromDay: types.array,
-	hourHeightInPx: types.number,
-	minHour: types.number,
-	maxHour: types.number,
-	currentTimeHeightInPx: types.number,
-	onTouchCard: types.func,
-	onCrossingElapsedTime: types.func,
-	isCurrentTime: types.bool,
-	isLoadingContent: types.bool,
-};
-
-function Presentation({
-	newProcedureState,
-	warning,
-	cards,
-	viewState,
-	visiblePopupState,
-	isElapsedDay,
-	switchDayOnOther,
-	numericHoursFromDay,
-	hourHeightInPx,
-	minHour,
-	maxHour,
-	currentTimeHeightInPx,
-	onTouchCard,
-	onCrossingElapsedTime,
-	isCurrentTime,
-	isLoadingContent,
-}) {
+function Presentation() {
 	const dispatch = useDispatch();
-	const { currLng } = useSelector((state) => state.langs);
 	const navigate = useNavigate();
 	const { t } = useTranslation();
+	const { procedures, langs } = useSelector((state) => state);
+	const {
+		changePopupNameState,
+		newProceduresState,
+		currProcedureState,
+		viewState,
+		visiblePopupState,
+		isElapsedDay,
+		switchDayOnOther,
+		numericHoursFromDay,
+		hourHeightInPx,
+		minHour,
+		maxHour,
+		currentTimeHeightInPx,
+		onCrossingElapsedTime,
+		isCurrentTime,
+		selectTimeState,
+		setStartAndFinishTimes,
+		dateDirection,
+		getDragY,
+		edit: editProcedureByIndex,
+	} = useContext(PropsContext);
 
-	const isElapsed = isElapsedDay(currentTimeHeightInPx);
-	const [newProcedure, setNewProcedure] = newProcedureState;
-	const { hasWarning, setWarning } = warning;
-	const { locale, currentTime } = viewState;
-	const [isVisiblePopup, setVisiblePopup] = visiblePopupState;
-
-	const { isAuth } = useContext(AuthContext);
 	const [innerY, setInnerY] = useState(0);
-	const [selectTime, setSelectTime] = useState(minHour);
 	const [isMouseDown, setMouseDown] = useState(false);
 	const parentRef = useRef(null);
 
+	const isElapsed = isElapsedDay(currentTimeHeightInPx);
+	const [newProcedures] = newProceduresState;
+	const [[currProcedure]] = currProcedureState;
+	const { locale, strictTimeObject, localeTimeObject } = viewState;
+	const [isVisiblePopup, setVisiblePopup] = visiblePopupState;
+	const [selectTime, setSelectTime] = selectTimeState;
 	const widthCharTime = Math.max(...numericHoursFromDay.map((hour) => hour.getWidthByChar()));
-	const currentStirngHoursAndMinutes = FormatDate.stringHourAndMin(locale, currLng);
+	const weekdayAndMonth = FormatDate.weekdayAndMonth(currProcedure.startProcTime, langs.currLng, {
+		weekday: "short",
+	});
+	const currentStirngHoursAndMinutes = FormatDate.stringHourAndMin(locale, langs.currLng);
+	const [popupName] = changePopupNameState;
+	const isAuth = localStorage.getItem("isAuth");
 
-	function setNumericTimeByGrabbing(e, y = 0) {
+	function setNumericTimeByGrabbing(pageY, y = 0) {
 		const topToRootEl = parentRef.current.offsetTop;
-		const durationProc = newProcedure.type.durationProc;
+		const durationProc = currProcedure.type.durationProc;
 
-		const time = (e.pageY - topToRootEl + y) / hourHeightInPx;
+		const time = (pageY - topToRootEl + y) / hourHeightInPx;
 		const rez =
 			minHour > time ? minHour : maxHour - durationProc < time ? maxHour - durationProc : time;
 
@@ -86,36 +73,13 @@ function Presentation({
 		return rez;
 	}
 
-	function setStartAndFinishTimes(minutes) {
-		const startProcMinutes = minutes || selectTime * 60,
-			finishProcMinutes = startProcMinutes + newProcedure.type.durationProc * 60;
-
-		const startProcTime = FormatDate.minutesToDate(startProcMinutes, locale, false),
-			finishProcTime = FormatDate.minutesToDate(finishProcMinutes, locale, false);
-
-		Value.changeObject(
-			{
-				startProcTime,
-				finishProcTime,
-			},
-			setNewProcedure
-		);
-		onTouchCard(startProcMinutes, finishProcMinutes);
-
-		const _hasWarning = hasWarning("crossingElapsedTime");
-
-		if (_hasWarning) {
-			setWarning(["crossingElapsedTime", ""]);
-		}
-	}
-
-	function onGrabbingCard(e) {
+	function onGrabbingCard(pageY) {
 		const topToCard = selectTime * 60,
 			topToRootEl = parentRef.current.offsetTop;
-		const grabbingInnerY = e.pageY - topToRootEl - topToCard;
+		const grabbingInnerY = pageY - topToRootEl - topToCard;
 
 		const rez =
-			newProcedure.type.durationProc * 60 < grabbingInnerY || 0 > grabbingInnerY
+			currProcedure.type.durationProc * 60 < grabbingInnerY || 0 > grabbingInnerY
 				? innerY
 				: grabbingInnerY;
 
@@ -125,12 +89,17 @@ function Presentation({
 	}
 
 	function onMouseUp(e) {
-		const minutesByMouseUp = setNumericTimeByGrabbing(e, -innerY) * 60;
-
-		setStartAndFinishTimes(minutesByMouseUp);
+		const y = getDragY(e.pageY);
+		const minutesByMouseUp = setNumericTimeByGrabbing(y, -innerY) * 60;
 
 		setVisiblePopup(!isElapsed);
 		setMouseDown(false);
+
+		setStartAndFinishTimes(minutesByMouseUp);
+
+		if (minutesByMouseUp === currentTimeHeightInPx) {
+			window.scrollTo(0, minutesByMouseUp);
+		}
 	}
 
 	function onMouseMove(e) {
@@ -138,7 +107,9 @@ function Presentation({
 			return;
 		}
 
-		setNumericTimeByGrabbing(e, -innerY);
+		const y = getDragY(e.pageY);
+
+		setNumericTimeByGrabbing(y, -innerY);
 	}
 
 	function onMouseDown(e) {
@@ -150,26 +121,24 @@ function Presentation({
 			});
 		}
 
-		const grabbingInnerY = onGrabbingCard(e);
-		const minutesByMouseDown = setNumericTimeByGrabbing(e, -grabbingInnerY) * 60;
+		const y = getDragY(e.pageY);
+
+		const grabbingInnerY = onGrabbingCard(y);
+		const minutesByMouseDown = setNumericTimeByGrabbing(y, -grabbingInnerY) * 60;
 
 		setVisiblePopup(false);
 		setMouseDown(!isElapsed);
 
 		setStartAndFinishTimes(minutesByMouseDown);
-
-		if (minutesByMouseDown === currentTimeHeightInPx) {
-			window.scrollTo(0, minutesByMouseDown);
-		}
 	}
 
 	useLayoutEffect(() => {
 		const updateTime = setInterval(() => {
-			const { newDate } = switchDayOnOther(locale);
+			const { newDate, isCurrent } = switchDayOnOther(locale);
 
-			if (!currentTimeHeightInPx) {
+			if (!currentTimeHeightInPx && isCurrent) {
 				dispatch(getProcedureByDay(newDate));
-				currentTime.current.day = newDate.getDate();
+				strictTimeObject.current.day = newDate.getDate();
 			}
 
 			onCrossingElapsedTime(selectTime * 60 - 1);
@@ -178,21 +147,48 @@ function Presentation({
 		return () => clearInterval(updateTime);
 	}, [locale]);
 
-	return isLoadingContent ? (
-		<SimpleLoader></SimpleLoader>
-	) : (
+	useEffect(() => {
+		window.scrollTo(0, minHour * 60);
+	}, []);
+
+	return (
 		<div
 			className={isVisiblePopup ? style.noActiveGrabbing : isMouseDown ? style.activeGrabbing : ""}
 			id={style.presentation}
 		>
-			<h2>{currentStirngHoursAndMinutes}</h2>
-			<div className={style.nameColumns}>
+			<div className={style.top}>
+				<span id={style.date}>{weekdayAndMonth}</span>
+				<Prompt
+					id={style.design}
+					iconName="question-circle-o"
+					text={t("status")}
+					direction="right"
+				>
+					{procedures.states.map((obj, i) => (
+						<div
+							className={style.row}
+							key={"design/" + i}
+						>
+							<i
+								className="fa fa-bookmark color"
+								aria-hidden="true"
+								style={{
+									WebkitTextStroke: obj.color === "white" ? "1px rgb(var(--black))" : "",
+									color: `rgb(var(--${obj.color}))`,
+								}}
+							></i>
+							<p className="text">{t(obj.name)}</p>
+						</div>
+					))}
+				</Prompt>
+			</div>
+			<div className={style.bottom}>
 				<div
 					style={{
 						width: `calc(100% - ${widthCharTime}px)`,
 					}}
 				>
-					{columnsName.map((name, i) => (
+					{COLUMN_NAMES.map((name, i) => (
 						<h3 key={`${name}/${i}`}>{t(name)}</h3>
 					))}
 				</div>
@@ -205,26 +201,11 @@ function Presentation({
 				onMouseDown={onMouseDown}
 			>
 				<div className={style.content}>
-					<div className={style.hours}>
-						{numericHoursFromDay.map((hour, i, arr) => (
-							<div
-								className={style.cell}
-								key={hour + "/" + i}
-								style={{
-									height: hourHeightInPx,
-									width: `${widthCharTime}px`,
-								}}
-							>
-								<span
-									style={{
-										visibility: i === 0 || i === arr.length - 1 ? "hidden" : "",
-									}}
-								>
-									{hour}
-								</span>
-							</div>
-						))}
-					</div>
+					<SideHours
+						numericHoursFromDay={numericHoursFromDay}
+						hourHeightInPx={hourHeightInPx}
+						widthCharTime={widthCharTime}
+					></SideHours>
 					<div className={style.cards}>
 						<div
 							id={style.elapsedTime}
@@ -232,28 +213,64 @@ function Presentation({
 								height: `${currentTimeHeightInPx}px`,
 							}}
 						>
-							{isCurrentTime && <div id={style.current}></div>}
+							{isCurrentTime && (
+								<div id={style.current}>
+									<span className={style.time}>{currentStirngHoursAndMinutes}</span>
+								</div>
+							)}
 						</div>
-						{(isVisiblePopup || isMouseDown) && (
+						{popupName != "design" && (isVisiblePopup || isMouseDown) && (
 							<Card
-								id={style.newProcedure}
-								procedure={newProcedure}
+								isSelected={true}
+								isAddedToList={false}
+								className={style.newProcedure}
+								procedure={currProcedure}
 								styleAttr={{
-									height: `${newProcedure.type.durationProc * hourHeightInPx}px`,
+									height: `${currProcedure.type.durationProc * hourHeightInPx}px`,
 									top: `${selectTime * hourHeightInPx}px`,
 								}}
 							></Card>
 						)}
-						{cards.map((card, i) => (
-							<Card
-								key={`${card.type.name}/${i}`}
-								procedure={card}
-								styleAttr={{
-									height: `${card.type.durationProc * hourHeightInPx}px`,
-									top: `${FormatDate.numericHoursFromDate(card.startProcTime) * hourHeightInPx}px`,
-								}}
-							></Card>
-						))}
+						{newProcedures.map(([proc, _isSelected], i) => {
+							const top = FormatDate.numericHoursFromDate(proc.startProcTime) * hourHeightInPx;
+							let isAccessRender = false;
+
+							const callback = dateDirection(({ isCurrent }) => {
+								isAccessRender = !_isSelected && isCurrent;
+							});
+
+							callback(proc.startProcTime, localeTimeObject);
+
+							return (
+								isAccessRender && (
+									<Card
+										isAddedToList={false}
+										onMouseDown={() => editProcedureByIndex(i, proc)}
+										key={`${proc.type.name}/${i}/newProcedure`}
+										className={style.newProcedure}
+										procedure={proc}
+										styleAttr={{
+											height: `${proc.type.durationProc * hourHeightInPx}px`,
+											top: `${top}px`,
+										}}
+									></Card>
+								)
+							);
+						})}
+						{procedures.cards.map((card, i) => {
+							const top = FormatDate.numericHoursFromDate(card.startProcTime) * hourHeightInPx;
+
+							return (
+								<Card
+									key={`${card.type.name}/${i}/procedure`}
+									procedure={card}
+									styleAttr={{
+										height: `${card.type.durationProc * hourHeightInPx}px`,
+										top: `${top}px`,
+									}}
+								></Card>
+							);
+						})}
 					</div>
 				</div>
 				<div className={style.lines}>

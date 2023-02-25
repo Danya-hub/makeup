@@ -17,26 +17,33 @@ class useCalendar {
 	viewState = useDate(new Date(this.selector.navigateDate.date));
 
 	constructor() {
-		const [warnings, setWarning, { hasWarning }] = useWarning(this.warningsList);
+		this.getDragY = (pageY) => {
+			return (
+				Math.ceil(pageY / this.hourHeightInPx / this.dragStep) * this.hourHeightInPx * this.dragStep
+			);
+		};
 
-		const { locale, currentTime } = this.viewState;
+		const [warnings, setWarning, { checkOnWarning }] = useWarning(this.warningsList);
+		const { locale, strictTimeObject } = this.viewState;
 
 		this.warning = {
 			warnings,
 			setWarning,
-			hasWarning,
+			checkOnWarning,
 		};
 
 		this.isCurrentTime = this.selector.navigateDate.isCurrentDate;
 
-		this.hourHeightInPx = window.screen.height / 12;
+		this.hourHeightInPx = 60;
+		this.dragStep = 0.5;
 		this.numericHoursFromDay = FormatDate.hoursByFormat({
 			hourFormat: this.selector.langs.currLng,
 		});
 		this.currentTimeHeightInPx = FormatDate.minutesFromDate(locale, this.hourHeightInPx);
-		this.minHour = this.currentTimeHeightInPx / this.hourHeightInPx;
+		this.minHour = this.getDragY(this.currentTimeHeightInPx) / this.hourHeightInPx; //!
 		this.maxHour =
-			(this.hourHeightInPx * (this.numericHoursFromDay.length - 1)) / this.hourHeightInPx;
+			this.getDragY(this.hourHeightInPx * (this.numericHoursFromDay.length - 1)) /
+			this.hourHeightInPx;
 
 		this.redirectOnNewDate = (newDate, oldDate) => {
 			const callback = this.dateDirection(({ isCurrent, isMaxDate, newView }) => {
@@ -51,23 +58,23 @@ class useCalendar {
 		};
 
 		this.dateDirection = (callback) => {
-			return function (newView, currentTime) {
+			return function (newView, strictTimeObject) {
 				const selectDay = newView.getDate(),
 					selectMonth = newView.getMonth() + 1,
 					selectYear = newView.getFullYear();
 
 				const isMinDate =
-					currentTime.year < selectYear ||
-					(currentTime.year <= selectYear && currentTime.month < selectMonth) ||
-					(currentTime.year <= selectYear &&
-						currentTime.month <= selectMonth &&
-						currentTime.day < selectDay);
+					strictTimeObject.year < selectYear ||
+					(strictTimeObject.year <= selectYear && strictTimeObject.month < selectMonth) ||
+					(strictTimeObject.year <= selectYear &&
+						strictTimeObject.month <= selectMonth &&
+						strictTimeObject.day < selectDay);
 				const isMaxDate =
-					currentTime.year > selectYear ||
-					(currentTime.year >= selectYear && currentTime.month > selectMonth) ||
-					(currentTime.year >= selectYear &&
-						currentTime.month >= selectMonth &&
-						currentTime.day > selectDay);
+					strictTimeObject.year > selectYear ||
+					(strictTimeObject.year >= selectYear && strictTimeObject.month > selectMonth) ||
+					(strictTimeObject.year >= selectYear &&
+						strictTimeObject.month >= selectMonth &&
+						strictTimeObject.day > selectDay);
 				const isCurrentDate = !(isMaxDate || isMinDate);
 
 				return callback({
@@ -88,7 +95,7 @@ class useCalendar {
 		};
 
 		this.switchDayOnOther = (date) => {
-			const [newDate, isCurrent] = this.redirectOnNewDate(date, currentTime.current);
+			const [newDate, isCurrent] = this.redirectOnNewDate(date, strictTimeObject.current);
 			const selectMinutes = FormatDate.minutesFromDate(newDate, this.hourHeightInPx);
 			const isElapsed = this.isElapsedDay(selectMinutes);
 

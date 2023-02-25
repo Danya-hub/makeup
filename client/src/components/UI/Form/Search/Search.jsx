@@ -5,6 +5,8 @@ import CheckboxList from "@/components/UI/Form/CheckboxList/CheckboxList.jsx";
 
 import style from "./Search.module.css";
 
+import { MAX_COLUMN } from "./constant.js";
+
 Search.propTypes = {
 	values: types.array,
 	keys: types.array,
@@ -15,8 +17,6 @@ Search.propTypes = {
 	isOpen: types.bool,
 	hasMultipleOption: types.bool,
 };
-
-const MAX_COLUMN = 5;
 
 function Search({
 	values,
@@ -63,13 +63,15 @@ function Search({
 				onChange={handleChange}
 				onFocus={() => handleSwitch(true)}
 			/>
-			{hasVisualOptions && (
-				hasMultipleOption ?
+			{hasVisualOptions &&
+				(hasMultipleOption ? (
 					<CheckboxList
 						className={style.border}
 						values={options}
 						onChange={handleClick}
-					></CheckboxList> : <ul className={`${style.options} ${style.border}`}>
+					></CheckboxList>
+				) : (
+					<ul className={`${style.options} ${style.border}`}>
 						{options.map(
 							(value, i) =>
 								i < MAX_COLUMN && (
@@ -79,7 +81,7 @@ function Search({
 								)
 						)}
 					</ul>
-			)}
+				))}
 		</div>
 	);
 }

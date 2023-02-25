@@ -1,21 +1,21 @@
+import { t } from "i18next";
 import types from "prop-types";
 
-import { default as LeftArrowSrc } from "@/assets/image/leftArrow.svg";
-import { default as RightArrowSrc } from "@/assets/image/rightArrow.svg";
+import LeftArrowSrc from "@/assets/image/leftArrow.svg";
+import RightArrowSrc from "@/assets/image/rightArrow.svg";
 import WidthInput from "@/components/UI/Form/WidthInput/WidthInput.jsx";
 
 import Check from "@/helpers/check.js";
 
+import { MAX_COUNT_BUTTONS } from "./constants.js";
+
 import style from "./Navigation.module.css";
-import { t } from "i18next";
 
 Navigation.propTypes = {
 	countPages: types.number,
 	numberPageState: types.array,
 	maxCards: types.number,
 };
-
-const MAX_COUNT_BUTTONS = 4;
 
 function Navigation({ countPages, numberPageState }) {
 	const minPage = 1,

@@ -8,6 +8,23 @@ class Value {
 		}));
 	}
 
+	changeArrayObjectByIndex(props, callback, index, prevBranch) {
+		callback((prev) => {
+			const _prev = prevBranch ? prevBranch(prev[index]) : prev[index];
+
+			const rez = {
+				..._prev,
+				...props,
+			};
+
+			callback([...prev, rez]);
+		});
+	}
+
+	changeArray(value, callback) {
+		callback((prev) => [...prev, value]);
+	}
+
 	fromRecursProps(keys) {
 		function callback(obj, ind = 0) {
 			let value = obj[keys[ind]];

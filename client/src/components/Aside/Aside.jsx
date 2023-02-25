@@ -1,7 +1,7 @@
 import { Fragment, useEffect } from "react";
 import types from "prop-types";
 
-import { default as CloseSrc } from "@/assets/image/close.svg";
+import CloseSrc from "@/assets/image/close.svg";
 
 import style from "./Aside.module.css";
 
@@ -29,7 +29,7 @@ function Aside({ id = "", className = "", openState, ...props }) {
 
 		document.body.style.overflowY = "scroll";
 	}
-	console.log(props.children)
+
 	return (
 		<aside
 			id={id}

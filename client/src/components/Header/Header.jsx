@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -6,11 +6,10 @@ import types from "prop-types";
 
 import { actions as langActions } from "@/service/redusers/langs.js";
 import useOutsideEvent from "@/hooks/useOutsideEvent.js";
-import AuthContext from "@/context/auth.js";
 
 import Select from "@/components/UI/Form/Select/Select.jsx";
 import Logo from "@/components/UI/Logo/Logo.jsx";
-import { default as UserSrc } from "@/assets/image/user.svg";
+import UserSrc from "@/assets/image/user.svg";
 
 import style from "./Header.module.css";
 
@@ -25,11 +24,11 @@ function Header({ openCabinetState }) {
 	const { t } = useTranslation();
 	const ref = useOutsideEvent(handleCloseSelect);
 
-	const { isAuth } = useContext(AuthContext);
 	const [isOpenSelect, setOpenSelect] = useState(false);
 
 	const allLangNames = Object.keys(langs.arrayLangs);
 	const [, setOpenCabinet] = openCabinetState;
+	const isAuth = localStorage.getItem("isAuth");
 
 	function handleCloseSelect() {
 		setOpenSelect(false);
@@ -56,14 +55,10 @@ function Header({ openCabinetState }) {
 					</Link>
 				)}
 				<Link
-					className="button border"
+					className="button uppercase"
 					to="/appointment"
 				>
-					{
-						t("book", {
-							returnObjects: true,
-						}).long
-					}
+					{t("calendar")}
 				</Link>
 				{isAuth && (
 					<button

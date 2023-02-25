@@ -20,11 +20,51 @@ import {
 import errors from "../constant/errors.js";
 
 import ApiError from "../utils/apiError.js";
-import Password from "../utils/password.js";
 
 config();
 
 const AuthController = {
+    get: {
+        refresh() {
+            return [
+                async (req, res, next) => {
+                    try {
+                        const token = req.cookies.refreshToken;
+                        if (!token) {
+                            ApiError.unauthorized();
+                        }
+
+                        const decoded = TokenService.checkOnValidToken(
+                            token,
+                            process.env.REFRESH_TOKEN_SECRET_KEY,
+                        );
+
+                        const user = await UserService.getUser({
+                            _id: decoded.id,
+                        });
+
+                        const {
+                            refreshToken,
+                            ...rez
+                        } = user;
+
+                        res.cookie(
+                            "refreshToken",
+                            token, {
+                                maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
+                                httpOnly: true,
+                            }
+                        );
+                        res.status(200).json(rez);
+
+                        next();
+                    } catch (error) {
+                        next(error);
+                    }
+                }
+            ];
+        }
+    },
     post: {
         signup() {
             return [
@@ -224,52 +264,6 @@ const AuthController = {
                     }
                 }
             ]
-        }
-    },
-    get: {
-        refresh() {
-            return [
-                async (req, res, next) => {
-                    try {
-                        const token = req.cookies.refreshToken;
-
-                        if (!token) {
-                            ApiError.unauthorized();
-                        }
-
-                        const decoded = TokenService.checkOnValidToken(
-                            token,
-                            process.env.REFRESH_TOKEN_SECRET_KEY,
-                        );
-
-                        if (!decoded) {
-                            ApiError.unauthorized();
-                        }
-
-                        const user = await UserService.getUser({
-                            _id: decoded.id,
-                        });
-
-                        const {
-                            refreshToken,
-                            ...rez
-                        } = user;
-
-                        res.cookie(
-                            "refreshToken",
-                            token, {
-                                maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
-                                httpOnly: true,
-                            }
-                        );
-                        res.status(200).json(rez);
-
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ];
         }
     },
 };

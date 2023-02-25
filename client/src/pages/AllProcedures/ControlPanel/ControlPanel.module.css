@@ -8,11 +8,16 @@
 	position: sticky;
 	background: rgb(var(--white));
 	box-shadow: 0 0 20px rgba(var(--brown), 0.1);
-	padding: 16px 2.5%;
 	height: 100vh;
 	top: 0;
+	padding: 0 20px;
 }
 
-#controlPanel > * {
-	padding: 10px 0;
+#createNewProcedure {
+	color: rgba(var(--brown));
+	margin-bottom: 3vh;
+}
+
+#controlPanel table :where(td, th) {
+	--space: 2px;
 }

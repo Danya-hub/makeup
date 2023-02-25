@@ -4,21 +4,16 @@
 	width: fit-content;
 }
 
-.calendar :where(td, th) {
-	position: relative;
-	padding: 14px;
-}
-
-.calendar span {
-	position: absolute;
-	transform: translate(-50%, -50%);
-	font-size: calc(var(--step-0) * 0.75);
-	left: 50%;
-	top: 50%;
+.calendar :where(td, th) span {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: calc(var(--step-0) - 5px);
+	width: 24px;
+	height: 24px;
 	user-select: none;
 }
 
-.calendar th {
-	background: rgba(var(--lightGray), 0.6);
-	text-transform: uppercase;
+.calendar table {
+	margin: 0 auto;
 }

@@ -10,10 +10,10 @@ Content.propTypes = {
 	dayState: types.array,
 	locale: types.object,
 	onChange: types.func,
-	currentTime: types.object,
+	strictTimeObject: types.object,
 };
 
-function Content({ monthState, dayState, locale, onChange, currentTime }) {
+function Content({ monthState, dayState, locale, onChange, strictTimeObject }) {
 	const [day, setDay] = dayState;
 	const [month] = monthState;
 
@@ -31,13 +31,16 @@ function Content({ monthState, dayState, locale, onChange, currentTime }) {
 	return (
 		<Fragment>
 			{[...Array(MAX_COUNT_WEEKS_IN_CALENDAR)].map((_, i) => (
-				<tr key={i + "/weekday"}>
+				<tr
+					className={style.week}
+					key={i + "/week"}
+				>
 					{daysOfMonth.slice(i * MAX_COUNT_WEEKDAYS, (i + 1) * MAX_COUNT_WEEKDAYS).map((d, j) => (
 						<td
 							key={d + "/" + j}
 							className={
 								(!d ? style.empty : "") +
-								(currentTime.current.day === d && currentTime.current.month === month
+								(strictTimeObject.current.day === d && strictTimeObject.current.month === month
 									? style.current
 									: "") +
 								(day === d ? ` ${style.hover}` : "")

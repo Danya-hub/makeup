@@ -5,9 +5,14 @@ import mongoose from "mongoose";
 const ProcedureSchema = new mongoose.Schema({
     startProcTime: Date,
     finishProcTime: Date,
+    paymentMethod: String,
     year: Number,
     month: Number,
     day: Number,
+    file: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "File",
+    },
     type: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "TypesProcedure",

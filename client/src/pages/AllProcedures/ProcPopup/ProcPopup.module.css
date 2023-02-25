@@ -9,7 +9,7 @@
 }
 
 #popupNewProc form > *:not(:first-child) {
-	margin-top: 16px;
+	margin-top: 4vh;
 }
 
 #popupNewProc i {
@@ -18,15 +18,17 @@
 
 .title {
 	margin-bottom: 8px;
+	font-weight: 700;
 }
 
 #makeProc {
+	--order: 1;
 	--back: rgb(var(--gray));
 
+	grid-column-start: calc(var(--col) * var(--order));
 	background: var(--back);
 	border-radius: var(--def-radius);
 	padding: 10px 20px;
-	margin-top: 20px;
 }
 
 #makeProc:disabled {
@@ -44,4 +46,11 @@
 
 .input:not(#time) > * {
 	display: block;
+}
+
+.buttons {
+	--col: 3;
+
+	display: grid;
+	grid-template-columns: repeat(var(--col), 1fr);
 }

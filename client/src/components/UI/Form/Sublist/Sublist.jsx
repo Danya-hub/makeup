@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import types from "prop-types";
 
 import style from "./Sublist.module.css";
-import { default as ArrowSrc } from "@/assets/image/arrow.svg";
+import ArrowSrc from "@/assets/image/arrow.svg";
 
 Sublist.propTypes = {
 	id: types.string,

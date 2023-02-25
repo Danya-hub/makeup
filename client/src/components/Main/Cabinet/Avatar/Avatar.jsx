@@ -3,12 +3,12 @@ import types from "prop-types";
 
 import AvatarCanvas from "@/utils/genarateAvatar.js";
 
+import { SIZE_AVATAR } from "./constant.js";
+
 Avatar.propTypes = {
 	id: types.string,
 	userName: types.string,
 };
-
-const SIZE_AVATAR = 100;
 
 function Avatar({ id = "", userName }) {
 	const avatarUrl = AvatarCanvas.getUrl(userName, SIZE_AVATAR);

@@ -3,8 +3,9 @@
 import { useState, useEffect, memo, forwardRef } from "react";
 import { useTranslation } from "react-i18next";
 
+import ArrowSrc from "@/assets/image/arrow.svg";
+
 import style from "./Select.module.css";
-import { default as ArrowSrc } from "@/assets/image/arrow.svg";
 
 function Select({ id, strictSwitch, values, onChange, defaultValue, isAbsPos = true }, ref) {
 	const { t } = useTranslation();
@@ -35,7 +36,7 @@ function Select({ id, strictSwitch, values, onChange, defaultValue, isAbsPos = t
 					alt="arrow"
 				/>
 			</div>
-			<div className={style.options}>
+			<div className="options">
 				{values.map((value, i) => (
 					<span
 						onClick={() => {

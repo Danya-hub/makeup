@@ -70,13 +70,7 @@ function Cabinet({ openCabinetState }) {
 					</li>
 					<li>
 						<Event callback={handleCloseCabinet}>
-							<Link to="/appointment">
-								{
-									t("book", {
-										returnObjects: true,
-									}).long
-								}
-							</Link>
+							<Link to="/appointment">{t("calendar")}</Link>
 						</Event>
 					</li>
 				</ul>

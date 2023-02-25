@@ -3,22 +3,14 @@ import types from "prop-types";
 
 import Card from "@/pages/UserProcedures/Presentation/Card/Card.jsx";
 import Navigation from "./Navigation/Navigation.jsx";
-import { default as VerticalSrc } from "@/assets/image/vertical.svg";
-import { default as HorizontalSrc } from "@/assets/image/horizontal.svg";
+
+import { MAX_COUNT_CARDS_ON_PAGE, visualStyle, DEFAULT_STYLE_CARDS } from "./constants.js";
 
 import style from "./Output.module.css";
 
 Output.propTypes = {
 	cards: types.array,
 };
-
-const visualStyle = [
-	["horizontal", HorizontalSrc],
-	["vertical", VerticalSrc],
-];
-
-const DEFAULT_STYLE_CARDS = 0;
-const MAX_COUNT_CARDS_ON_PAGE = 8;
 
 function Output({ cards }) {
 	const [[direction], setDirection] = useState(visualStyle[DEFAULT_STYLE_CARDS]);

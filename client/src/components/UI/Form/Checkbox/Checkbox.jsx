@@ -1,6 +1,6 @@
 import types from "prop-types";
 
-import { default as CheckSvg } from "@/assets/image/check.svg";
+import CheckSvg from "@/assets/image/check.svg";
 
 import style from "./Checkbox.module.css";
 

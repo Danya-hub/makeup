@@ -19,11 +19,16 @@ class FormatDate {
 		return /p/i.test(period) ? 12 : 0;
 	}
 
-	weekdayAndMonth(date, locale = "default") {
-		return Intl.DateTimeFormat(locale, {
+	weekdayAndMonth(date, locale = "default", options = {}) {
+		const formats = {
 			weekday: "long",
 			day: "numeric",
 			month: "long",
+		};
+
+		return Intl.DateTimeFormat(locale, {
+			...formats,
+			...options,
 		}).format(date);
 	}
 
@@ -99,18 +104,24 @@ class FormatDate {
 			minutes: 0,
 			hours: 0,
 		},
+		step = 1,
 		maxHour = 25,
 	}) {
 		const date = new Date(),
 			hours = [];
 
-		date.setMinutes(initialState.minutes);
 		date.setHours(initialState.hours);
+		date.setMinutes(initialState.minutes);
 
-		let ind = 0;
+		let ind = Math.ceil((initialState.hours + initialState.minutes / 60) / step) * step;
+
 		while (maxHour > ind) {
-			date.setHours(ind++);
+			date.setHours(0);
+			date.setMinutes(ind * 60);
+
 			hours.push(this.stringHourAndMin(date, hourFormat));
+
+			ind += step;
 		}
 
 		return hours;

@@ -2,11 +2,12 @@ import { useState, useRef } from "react";
 
 function useDate(date) {
 	const locale = date || new Date();
-	const currentTime = useRef({
+	const localeTimeObject = {
 		year: locale.getFullYear(),
 		month: locale.getMonth() + 1,
 		day: locale.getDate(),
-	});
+	};
+	const strictTimeObject = useRef(localeTimeObject);
 	const [month, setMonth] = useState(locale.getMonth() + 1);
 	const [day, setDay] = useState(locale.getDate());
 
@@ -29,7 +30,8 @@ function useDate(date) {
 
 	return {
 		locale,
-		currentTime,
+		localeTimeObject,
+		strictTimeObject,
 		monthState: [month, handleChangeMonth],
 		dayState: [day, handleChangeDay],
 	};

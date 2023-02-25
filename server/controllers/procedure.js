@@ -30,17 +30,17 @@ const ProcedureController = {
                 }
             ];
         },
-        ["byUser/:id"]() {
+        byUser() {
             return [
                 isAuth,
                 checkOnValid,
                 async (req, res, next) => {
                     try {
                         const {
-                            id,
-                        } = req.params;
+                            user,
+                        } = req.body;
 
-                        const foundProcedure = await Procedure.byUser(id);
+                        const foundProcedure = await Procedure.byUser(user);
 
                         res.status(200).json(foundProcedure);
 

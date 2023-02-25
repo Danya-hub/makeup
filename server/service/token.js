@@ -2,6 +2,8 @@
 
 import jsonwebtoken from "jsonwebtoken";
 
+import ApiError from "../utils/apiError.js";
+
 class TokenService {
     constructor() {
 
@@ -22,13 +24,17 @@ class TokenService {
     }
 
     checkOnValidToken(token, secretKey, callback = null) {
-        const decodedToken = jsonwebtoken.verify(
-            token,
-            secretKey,
-            callback
-        );
-
-        return decodedToken;
+        try {
+            const decodedToken = jsonwebtoken.verify(
+                token,
+                secretKey,
+                callback
+            );
+    
+            return decodedToken;
+        } catch (_) {
+            ApiError.unauthorized();
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 import { useLocation } from "react-router-dom";
-import { useState, useLayoutEffect, useRef } from "react";
+import { useState, useRef, useLayoutEffect, Fragment } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 import {
@@ -10,12 +10,14 @@ import {
 } from "@/service/redusers/procedures.js";
 import useCalendar from "@/hooks/useCalendar.js";
 import FormatDate from "@/utils/formatDate.js";
-import Value from "@/helpers/value.js";
-import Check from "@/helpers/check.js";
 
 import ProcPopup from "./ProcPopup/ProcPopup.jsx";
 import ControlPanel from "./ControlPanel/ControlPanel.jsx";
 import Presentation from "./Presentation/Presentation.jsx";
+import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
+
+import PropsContext from "./context.js";
+import { DEFAULT_POPUP_NAME } from "@/pages/AllProcedures/constants.js";
 
 import style from "./AllProcedures.module.css";
 
@@ -25,12 +27,14 @@ function AllProcedures() {
 	const calendar = new useCalendar();
 	const { state: locationState } = useLocation();
 
-	const [newProcedure, setNewProcedure] = useState({});
+	const [newProcedures, setNewProcedure] = useState([]);
+	const [[currProcedure, indexSelectedProcedure], setCurrProcedure] = useState([]);
 	const [isVisibleProcedurePopup, setVisibleProcedurePopup] = useState(
-		locationState?.isVisiblePopup
+		Boolean(locationState?.isVisiblePopup)
 	);
 	const defaultValueProcedure = useRef(null);
-	const isInitialProcedureLoading = Check.onEmpty(newProcedure);
+	const [selectTime, setSelectTime] = useState(calendar.minHour);
+	const [popupName, changePopupName] = useState(DEFAULT_POPUP_NAME);
 
 	class Event {
 		constructor() {
@@ -43,17 +47,16 @@ function AllProcedures() {
 
 			this.onTouchCard = (newProcStartMinutes, newProcFinishMinutes) => {
 				let isTouchCard = false;
-
 				procedures.cards.forEach((card) => {
 					if (isTouchCard) {
 						return;
 					}
 
 					const numericStartHours = FormatDate.numericHoursFromDate(card.startProcTime);
-					const startSegment = (numericStartHours - newProcedure.type.durationProc) * 60,
+					const startSegment = (numericStartHours - currProcedure.type.durationProc) * 60,
 						finishSegment =
 							numericStartHours * 60 +
-							(card.type.durationProc + newProcedure.type.durationProc) * 60;
+							(card.type.durationProc + currProcedure.type.durationProc) * 60;
 
 					isTouchCard =
 						(startSegment < newProcStartMinutes && finishSegment > newProcFinishMinutes) ||
@@ -68,7 +71,37 @@ function AllProcedures() {
 		}
 	}
 
+	class ProcActions {
+		constructor() {
+			this.edit = (i, proc) => {
+				setCurrProcedure([proc, i]);
+				setNewProcedure((prev) => {
+					prev[i][1] = true;
+
+					return [...prev];
+				});
+				changePopupName("edit");
+			};
+
+			this.delete = (i) => {
+				setCurrProcedure([defaultValueProcedure.current, newProcedures.length - 1]);
+				setNewProcedure((prev) => {
+					const array = [...prev];
+
+					array.splice(i, 1);
+
+					return array;
+				});
+
+				if (newProcedures.length - 1 === 0) {
+					changePopupName("make");
+				}
+			};
+		}
+	}
+
 	const events = new Event();
+	const procActions = new ProcActions();
 
 	async function __init__() {
 		dispatch(getProcedureByDay(calendar.viewState.locale));
@@ -79,29 +112,64 @@ function AllProcedures() {
 			(res) => res.payload
 		);
 
-		Value.changeObject(defaultValueProcedure.current, setNewProcedure);
+		setCurrProcedure([defaultValueProcedure.current, newProcedures.length]);
 	}
 
 	function handleChangeDate(date) {
-		const { newDate, isElapsed } = calendar.switchDayOnOther(date);
+		const { newDate } = calendar.switchDayOnOther(date);
 
 		dispatch(getProcedureByDay(newDate));
 
-		if (isElapsed) {
-			return;
-		}
-
-		Value.changeObject(
-			calendar.setUnitForDate(
-				["Time"],
-				{
-					startProcTime: newProcedure.startProcTime,
-					finishProcTime: newProcedure.finishProcTime,
-				},
-				newDate
-			),
-			setNewProcedure
+		const updatedDates = calendar.setUnitForDate(
+			["Time"],
+			{
+				startProcTime: currProcedure.startProcTime,
+				finishProcTime: currProcedure.finishProcTime,
+			},
+			newDate
 		);
+
+		setCurrProcedure((prev) => {
+			prev[0] = {
+				...prev[0],
+				...updatedDates,
+			};
+
+			return [...prev];
+		});
+	}
+
+	function setStartAndFinishTimes(minutes) {
+		const startProcMinutes = minutes || selectTime * 60,
+			finishProcMinutes = startProcMinutes + currProcedure.type.durationProc * 60;
+
+		const startProcTime = FormatDate.minutesToDate(
+				startProcMinutes,
+				calendar.viewState.locale,
+				false
+			),
+			finishProcTime = FormatDate.minutesToDate(
+				finishProcMinutes,
+				calendar.viewState.locale,
+				false
+			);
+
+		setCurrProcedure((prev) => {
+			prev[0] = {
+				...prev[0],
+				startProcTime,
+				finishProcTime,
+			};
+
+			return [...prev];
+		});
+
+		events.onTouchCard(startProcMinutes, finishProcMinutes);
+		const [, _hasWarning] = calendar.warning.checkOnWarning("crossingElapsedTime");
+
+		if (_hasWarning) {
+			calendar.warning.setWarning(["crossingElapsedTime", ""]);
+		}
 	}
 
 	useLayoutEffect(() => {
@@ -110,28 +178,31 @@ function AllProcedures() {
 
 	return (
 		<div id={style.allProcedures}>
-			<ControlPanel
-				newProcedureState={[newProcedure, setNewProcedure]}
-				handleChangeDate={handleChangeDate}
-				{...calendar}
-			></ControlPanel>
-			<Presentation
-				cards={procedures.cards}
-				visiblePopupState={[isVisibleProcedurePopup, setVisibleProcedurePopup]}
-				newProcedureState={[newProcedure, setNewProcedure]}
-				handleChangeDate={handleChangeDate}
-				isLoadingContent={procedures.isLoading || isInitialProcedureLoading}
-				{...events}
-				{...calendar}
-			></Presentation>
-			<ProcPopup
-				defaultValueProcedure={defaultValueProcedure}
-				visibleState={[isVisibleProcedurePopup, setVisibleProcedurePopup]}
-				newProcedureState={[newProcedure, setNewProcedure]}
-				handleChangeDate={handleChangeDate}
-				{...events}
-				{...calendar}
-			></ProcPopup>
+			<PropsContext.Provider
+				value={{
+					changePopupNameState: [popupName, changePopupName],
+					visiblePopupState: [isVisibleProcedurePopup, setVisibleProcedurePopup],
+					selectTimeState: [selectTime, setSelectTime],
+					newProceduresState: [newProcedures, setNewProcedure],
+					currProcedureState: [[currProcedure, indexSelectedProcedure], setCurrProcedure],
+					handleChangeDate,
+					setStartAndFinishTimes,
+					defaultValueProcedure,
+					...events,
+					...calendar,
+					...procActions,
+				}}
+			>
+				<ControlPanel></ControlPanel>
+				{!currProcedure ? (
+					<SimpleLoader></SimpleLoader>
+				) : (
+					<Fragment>
+						<Presentation></Presentation>
+						<ProcPopup></ProcPopup>
+					</Fragment>
+				)}
+			</PropsContext.Provider>
 		</div>
 	);
 }

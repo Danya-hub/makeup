@@ -1,13 +1,10 @@
-#time input {
+#time > div {
 	display: block;
 	background: var(--back);
 	box-shadow: 0 calc(var(--scale) + 1px) 0 -1px rgba(var(--lineColor), var(--opacity));
-	text-align: center;
-	padding: 4px 0;
-	margin: 0 4px;
 }
 
-#time > div input:not(:disabled):focus {
+#time > div:not(:disabled):focus {
 	--back: rgba(var(--brown), 0.1);
 }
 
@@ -17,10 +14,30 @@
 
 #time > div {
 	display: inherit;
+	padding: 4px 0;
+	margin: 0 4px;
 }
 
 #day {
 	position: relative;
+}
+
+#day button {
+	background: unset;
+}
+
+#time > div {
+	--lineColor: var(--brown);
+	--opacity: 0.4;
+	--scale: 1px;
+
+	white-space: nowrap;
+	text-transform: capitalize;
+}
+
+#time > div:hover {
+	--opacity: 1;
+	--scale: 2px;
 }
 
 #time i {
@@ -42,7 +59,7 @@
 	z-index: 1;
 }
 
-#time .warning input {
+#time .warning {
 	--back: rgba(var(--red), 0.1);
 	--lineColor: var(--red);
 	--opacity: 0.8;

@@ -7,7 +7,7 @@ function useWarning(warnings) {
 	const [_warnings, setWarning] = useState(warnings);
 	const { t } = useTranslation();
 
-	function hasWarning(warnName) {
+	function checkOnWarning(warnName) {
 		let rez = null;
 
 		if (_warnings[warnName]) {
@@ -35,7 +35,7 @@ function useWarning(warnings) {
 			);
 		},
 		{
-			hasWarning,
+			checkOnWarning,
 		},
 	];
 }

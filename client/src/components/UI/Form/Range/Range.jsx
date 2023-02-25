@@ -6,6 +6,8 @@ import WidthInput from "@/components/UI/Form/WidthInput/WidthInput.jsx";
 
 import style from "./Range.module.css";
 
+import { INPUT_MAX_VALUE, INPUT_MIN_VALUE } from "./constant.js";
+
 Range.propTypes = {
 	id: types.string,
 	min: types.number,
@@ -13,21 +15,18 @@ Range.propTypes = {
 	onChange: types.func,
 };
 
-const INPUT_MIN_VALUE = 0;
-const INPUT_MAX_VALUE = 100;
-
 function Range({ id, min = INPUT_MIN_VALUE, max = INPUT_MIN_VALUE, onChange }) {
 	const defaultOptions = () => ({
 		min: {
 			percent: INPUT_MIN_VALUE,
-				number: min,
+			number: min,
 		},
 		max: {
 			percent: INPUT_MAX_VALUE,
-				number: max,
+			number: max,
 		},
-	})
-	
+	});
+
 	const [options, setOption] = useState(defaultOptions());
 
 	const background = `linear-gradient(
@@ -74,17 +73,17 @@ function Range({ id, min = INPUT_MIN_VALUE, max = INPUT_MIN_VALUE, onChange }) {
 					percent < INPUT_MIN_VALUE
 						? INPUT_MIN_VALUE
 						: (percent / INPUT_MAX_VALUE) * inputValue > options.max.percent
-							? options.max.percent 
-							: percent;
+						? options.max.percent
+						: percent;
 				break;
 
 			case "max":
 				rez =
 					percent > INPUT_MAX_VALUE
 						? INPUT_MAX_VALUE
-						: (percent / INPUT_MAX_VALUE) * inputValue < options.min.percent 
-							? options.min.percent 
-							: percent;
+						: (percent / INPUT_MAX_VALUE) * inputValue < options.min.percent
+						? options.min.percent
+						: percent;
 				break;
 		}
 
@@ -98,7 +97,6 @@ function Range({ id, min = INPUT_MIN_VALUE, max = INPUT_MIN_VALUE, onChange }) {
 
 			return { ...prev };
 		});
-
 	}
 
 	useEffect(() => {

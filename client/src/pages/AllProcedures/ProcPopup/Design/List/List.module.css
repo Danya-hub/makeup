@@ -1,0 +1,28 @@
+.column {
+	display: grid;
+	grid-auto-flow: column;
+	width: 100%;
+	padding: 1vh 1vw;
+}
+
+.proc {
+	display: flex;
+	align-items: center;
+	border-bottom: 1px solid rgb(var(--brown));
+}
+
+.buttons {
+	display: flex;
+	border-left: 1px solid rgb(var(--brown));
+}
+
+.buttons button {
+	--back: rgba(var(--transp));
+
+	background: var(--back);
+	padding: 8px;
+}
+
+.buttons button:hover {
+	--back: rgba(var(--gray), 0.5);
+}

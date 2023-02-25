@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import types from "prop-types";
 
-import { default as CloseSrc } from "@/assets/image/close.svg";
+import CloseSrc from "@/assets/image/close.svg";
 
 import style from "./Popup.module.css";
 

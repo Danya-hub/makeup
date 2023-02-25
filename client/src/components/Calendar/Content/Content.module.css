@@ -1,12 +1,26 @@
-.current {
+.current span {
 	box-shadow: inset 0 0 0 1px rgb(var(--brown));
 }
 
-.hover {
-	background: rgba(var(--brown), 0.2);
+.week td.hover span {
+	--back: rgba(var(--brown), 0.2) !important;
 }
 
-td:not(.empty) {
-	border-radius: 50%;
+.week td:not(.empty) {
 	cursor: pointer;
+}
+
+.week td {
+	padding: var(--space);
+}
+
+.week td span {
+	--back: rgba(var(--transp));
+
+	background: var(--back);
+	border-radius: 50%;
+}
+
+.week td:not(.empty):hover span {
+	--back: rgba(var(--gray), 0.6);
 }

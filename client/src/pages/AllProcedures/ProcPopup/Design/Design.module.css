@@ -1,0 +1,44 @@
+#design {
+	--order: 1;
+	--back: rgb(var(--gray));
+
+	grid-column-start: calc(var(--col) * var(--order));
+	background: var(--back);
+	border-radius: var(--def-radius);
+	padding: 10px 20px;
+}
+
+#design:disabled {
+	--back: rgb(var(--gray)) !important;
+	cursor: unset;
+}
+
+#design:hover {
+	--back: rgba(var(--brown), 0.6);
+}
+
+.buttons {
+	--col: 3;
+
+	display: grid;
+	grid-template-columns: repeat(var(--col), 1fr);
+}
+
+.buttons button {
+	width: 100%;
+}
+
+#add {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	text-transform: uppercase;
+	white-space: nowrap;
+	width: 100%;
+}
+
+#add img {
+	margin-right: 1vw;
+	width: 30px;
+	height: 30px;
+}

@@ -1,8 +1,8 @@
 import { useSelector } from "react-redux";
 import types from "prop-types";
 
-import { default as LeftArrowSrc } from "@/assets/image/leftArrow.svg";
-import { default as RightArrowSrc } from "@/assets/image/rightArrow.svg";
+import LeftArrowSrc from "@/assets/image/leftArrow.svg";
+import RightArrowSrc from "@/assets/image/rightArrow.svg";
 
 import style from "./Navigation.module.css";
 
@@ -13,8 +13,13 @@ Navigation.propTypes = {
 };
 
 function Navigation({ locale, monthState, onChange }) {
-	const [month, setMonth] = monthState;
 	const lng = useSelector((state) => state.langs.currLng);
+
+	const [month, setMonth] = monthState;
+	const monthName = locale.toLocaleString(lng, {
+		month: "long",
+	});
+	const year = locale.getFullYear();
 
 	function setPrevMonth() {
 		setMonth(month - 1);
@@ -42,12 +47,7 @@ function Navigation({ locale, monthState, onChange }) {
 					alt="leftArrow"
 				/>
 			</button>
-			<h2 className={style.nameMonth}>
-				{locale.toLocaleString(lng, {
-					month: "long",
-				})}{" "}
-				{locale.getFullYear()}
-			</h2>
+			<h2 className={style.nameMonth}>{`${monthName} ${year}`}</h2>
 			<button
 				type="button"
 				className={`button ${style.switchMonth}`}

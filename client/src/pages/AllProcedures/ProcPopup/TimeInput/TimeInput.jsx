@@ -1,44 +1,63 @@
+import { useContext, useState } from "react";
 import { useSelector } from "react-redux";
 import types from "prop-types";
 
 import FormatDate from "@/utils/formatDate.js";
 import useOutsideEvent from "@/hooks/useOutsideEvent.js";
-import Value from "@/helpers/value.js";
+import PropsContext from "@/pages/AllProcedures/context.js";
 
 import Calendar from "@/components/Calendar/Calendar.jsx";
-import WidthInput from "@/components/UI/Form/WidthInput/WidthInput.jsx";
+import Select from "@/components/UI/Form/Select/Select.jsx";
 
 import style from "./TimeInput.module.css";
 
 TimeInput.propTypes = {
-	newProcedureState: types.array,
-	warning: types.object,
+	newProceduresState: types.array,
 	openCalendarState: types.array,
-	onTouchCard: types.func,
-	onCrossingElapsedTime: types.func,
-	onChange: types.func,
-	viewState: types.object,
 };
 
-function TimeInput({
-	newProcedureState,
-	warning,
-	openCalendarState,
-	onChange,
-	onTouchCard,
-	onCrossingElapsedTime,
-	viewState,
-}) {
+function TimeInput({ newProceduresState, openCalendarState }) {
+	const {
+		warning,
+		onChange,
+		onTouchCard,
+		onCrossingElapsedTime,
+		viewState,
+		selectTimeState,
+		minHour,
+		dragStep,
+	} = useContext(PropsContext);
 	const { currLng } = useSelector((state) => state.langs);
-	const ref = useOutsideEvent(onCloseCalendar);
+	const calendarRef = useOutsideEvent(onCloseCalendar);
+	const hoursRef = useOutsideEvent(onCloseSelectHours);
+	const [isOpenSelectHours, setOpenSelectHours] = useState(false);
 
-	const [newProcedure, setNewProcedure] = newProcedureState;
+	const [newProcedure, setNewProcedure] = newProceduresState;
 	const [isOpenCalendar, setOpenCalendar] = openCalendarState;
-	const { warnings, hasWarning: hasWarningFunc } = warning;
-	const [, hasWarning] = hasWarningFunc();
+	const { warnings, checkOnWarning } = warning;
+	const [, setSelectTime] = selectTimeState;
+	const [, hasWarning] = checkOnWarning();
+	const weekdayAndMonth = FormatDate.weekdayAndMonth(newProcedure.startProcTime, currLng);
+	const arrayAllowTimes = FormatDate.hoursByFormat({
+		hourFormat: currLng,
+		initialState: {
+			hours: 0,
+			minutes: minHour * 60,
+		},
+		step: dragStep,
+	});
+	const stringHourAndMin = FormatDate.stringHourAndMin(newProcedure.startProcTime, currLng);
+
+	function onCloseSelectHours() {
+		setOpenSelectHours(false);
+	}
 
 	function onCloseCalendar() {
 		setOpenCalendar(false);
+	}
+
+	function handleSwitchCalendarVisState() {
+		setOpenCalendar((isOpen) => !isOpen);
 	}
 
 	function setStartAndFinishTimes(_, finalValue) {
@@ -48,60 +67,60 @@ function TimeInput({
 		const startProcTime = FormatDate.minutesToDate(time * 60, newProcedure.startProcTime, false),
 			finishProcTime = FormatDate.minutesToDate(finishMinutes, newProcedure.finishProcTime, false);
 
-		Value.changeObject(
-			{
-				startProcTime,
-				finishProcTime,
-			},
-			setNewProcedure
-		);
+		setNewProcedure({
+			startProcTime,
+			finishProcTime,
+		});
 
 		onCrossingElapsedTime(time * 60);
 		onTouchCard(startProcTime, finishMinutes);
+
+		setSelectTime(time);
 	}
 
 	return (
 		<div
-			className={style.input}
 			id={style.time}
+			className={style.input}
 		>
 			<i
 				className="fa fa-clock-o"
 				aria-hidden="true"
 			></i>
 			<div
+				ref={calendarRef}
 				id={style.day}
 				className={warnings.elapsedDay ? style.warning : ""}
 			>
-				<WidthInput
-					name="day"
-					onClick={() => setOpenCalendar(true)}
-					value={FormatDate.weekdayAndMonth(newProcedure.startProcTime, currLng)}
-				/>
+				<button
+					type="button"
+					className={hasWarning ? style.warning : ""}
+					onClick={handleSwitchCalendarVisState}
+				>
+					{weekdayAndMonth}
+				</button>
 				{isOpenCalendar && (
 					<Calendar
 						id={style.dayAndMonthCalendar}
-						ref={ref}
 						options={viewState}
 						onChange={onChange}
 					></Calendar>
 				)}
 			</div>
-			<div className={hasWarning ? style.warning : ""}>
-				<WidthInput
-					name="startProcTime"
-					id="startProcTime"
-					value={FormatDate.stringHourAndMin(newProcedure.startProcTime, currLng)}
-					onChange={setStartAndFinishTimes}
-				/>
-				<span>—</span>
-				<WidthInput
-					name="finishProcTime"
-					id="finishProcTime"
-					value={FormatDate.stringHourAndMin(newProcedure.finishProcTime, currLng)}
-					disabled
-				/>
-			</div>
+			<Select
+				ref={hoursRef}
+				id="startProcTime"
+				className={hasWarning ? style.warning : ""}
+				values={arrayAllowTimes}
+				defaultValue={stringHourAndMin}
+				onChange={setStartAndFinishTimes}
+				strictSwitch={[
+					isOpenSelectHours,
+					(bln) => {
+						setOpenSelectHours(bln);
+					},
+				]}
+			/>
 		</div>
 	);
 }

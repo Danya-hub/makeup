@@ -1,49 +1,62 @@
-import { Fragment } from "react";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useSelector } from "react-redux";
-import types from "prop-types";
 
-import Sublist from "@/components/UI/Form/Sublist/Sublist.jsx";
 import Calendar from "@/components/Calendar/Calendar.jsx";
 import Aside from "@/components/Aside/Aside.jsx";
 
+import PropsContext from "@/pages/AllProcedures/context.js";
+
 import style from "./ControlPanel.module.css";
 
-ControlPanel.propTypes = {
-	viewState: types.object,
-	handleChangeDate: types.func,
-};
-
-function ControlPanel({ viewState, handleChangeDate }) {
+function ControlPanel() {
 	const { t } = useTranslation();
-	const { states } = useSelector((state) => state.procedures);
+	const navigate = useNavigate();
+	const {
+		viewState,
+		handleChangeDate,
+		visiblePopupState,
+		setStartAndFinishTimes,
+		selectTimeState,
+		minHour,
+	} = useContext(PropsContext);
+
+	const [, setSelectTime] = selectTimeState;
+	const [, setVisiblePopupState] = visiblePopupState;
+	const isAuth = localStorage.getItem("isAuth");
+
+	function handleClick() {
+		if (!isAuth) {
+			return navigate("/signin", {
+				state: {
+					purpose: "warningAuthToMakeAppointment",
+				},
+			});
+		}
+
+		const minutes = minHour * 60;
+
+		setSelectTime(minHour);
+		setStartAndFinishTimes(minutes);
+
+		setVisiblePopupState(true);
+
+		window.scrollTo(0, minutes);
+	}
 
 	return (
 		<Aside id={style.controlPanel}>
+			<button
+				id={style.createNewProcedure}
+				className="button border"
+				onClick={handleClick}
+			>
+				{t("book")}
+			</button>
 			<Calendar
 				options={viewState}
 				onChange={handleChangeDate}
 			></Calendar>
-			<Sublist
-				id={style.designation}
-				isOpen={true}
-				title={t("designation")}
-				values={states}
-			>
-				{(obj) => (
-					<Fragment>
-						<i
-							className="fa fa-bookmark color"
-							aria-hidden="true"
-							style={{
-								WebkitTextStroke: obj.color === "white" ? "1px rgb(var(--black))" : "",
-								color: `rgb(var(--${obj.color}))`,
-							}}
-						></i>
-						<p className="text">{t(obj.name)}</p>
-					</Fragment>
-				)}
-			</Sublist>
 		</Aside>
 	);
 }

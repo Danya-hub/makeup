@@ -6,7 +6,7 @@ const ru = {
 		inProcess: "В процессе",
 		finished: "Закончено",
 		availableTime: "Доступное время",
-		procedure: "Имя процедуры",
+		procedure: "Перечень услуг", //!
 		fullname: "Имя, фамилия",
 		password: "Пароль",
 		confirmPassword: "Потвердите пароль",
@@ -30,10 +30,6 @@ const ru = {
 		signUp: "Регистрация",
 		logout: "Выйти",
 		ok: "ок",
-		book: {
-			long: "Записаться",
-			short: "Записаться",
-		},
 		notHaveAccount: "У вас нет аккаунта?",
 		alreadyExistsAccount: "Уже зарегистрированы?",
 		noAccessToPage: "Перед переходом на страницу необходимо зарегистрироваться или авторизоваться!",
@@ -60,6 +56,18 @@ const ru = {
 		procEmpty: "Вы не записывались на процедуры!",
 		pageNum: "Ном. страницы",
 		sortBy: "Сортировать по...",
+		create: "Создать",
+		calendar: "Календарь",
+		continue: "Продолжить",
+		book: "Записаться",
+		checkout: "Оформить",
+		paymentMethod: "Способ оплаты",
+		spot: "Наличными",
+		bankCard: "Банковской картой",
+		add: "Добавить",
+		design: "Оформить",
+		back: "Назад",
+		addMore: "Добавить еще",
 	},
 };
 

@@ -1,4 +1,6 @@
 .card {
+	--ind: 1;
+
 	position: absolute;
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
@@ -9,6 +11,7 @@
 	height: fit-content;
 	right: 0;
 	overflow: hidden;
+	z-index: var(--ind);
 }
 
 .card span {
