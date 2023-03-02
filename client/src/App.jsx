@@ -7,7 +7,7 @@ import Main from "@/components/Main/Main.jsx";
 import Offline from "@/pages/Error/Offline/Offline.jsx";
 
 import { refresh } from "@/service/redusers/user.js";
-import routes from "./routes/index.js";
+import routes from "./routes/index.jsx";
 
 import "@/styles/main.css";
 
@@ -20,7 +20,7 @@ function App() {
 	const onLine = true || window.navigator.onLine;
 	const path = routes.find((route) => route.path === location.pathname || route.path === "*");
 
-	function __init__() {
+	function init() {
 		dispatch(refresh());
 	}
 
@@ -28,18 +28,16 @@ function App() {
 		document.title = path.state.title;
 	}, [path]);
 
-	useLayoutEffect(() => {
-		return __init__;
-	}, []);
+	useLayoutEffect(() => init, []);
 
 	return onLine ? (
-		<Fragment>
-			{path.state.header && <Header openCabinetState={openCabinetState}></Header>}
-			<Main openCabinetState={openCabinetState}></Main>
-		</Fragment>
+		<>
+			{path.state.header && <Header openCabinetState={openCabinetState} />}
+			<Main openCabinetState={openCabinetState} />
+		</>
 	) : (
-		<Offline></Offline>
+		<Offline />
 	);
 }
 
-export { App as default };
+export default App;

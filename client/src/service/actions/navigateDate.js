@@ -1,8 +1,11 @@
-function setNavigateDate(state, action) {
-	const [date, isCurrentDate] = action.payload;
+const actions = {
+	setNavigateDate(state, action) {
+		const [date, isCurrentDate] = action.payload;
+		const objState = state;
 
-	state.date = date.getTime();
-	state.isCurrentDate = Boolean(isCurrentDate);
-}
+		objState.date = date.getTime();
+		objState.isCurrentDate = Boolean(isCurrentDate);
+	},
+};
 
-export { setNavigateDate };
+export default actions;

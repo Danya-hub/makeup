@@ -1,10 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap");
 
 :root {
-	--step-0: clamp(0.88rem, calc(0.83rem + 0.24vw), 1rem);
-	--step-1: clamp(0.93rem, calc(0.81rem + 0.62vw), 1.25rem);
-	--step-2: clamp(1rem, calc(0.78rem + 1.1vw), 1.56rem);
-	--step-3: clamp(1.06rem, calc(0.72rem + 1.74vw), 1.95rem);
-	--step-4: clamp(1.13rem, calc(0.62rem + 2.55vw), 2.44rem);
-	--step-5: clamp(1.21rem, calc(0.49rem + 3.59vw), 3.05rem);
+  --step-0: clamp(0.56rem, calc(0.53rem + 0.14vw), 0.63rem);
+  --step-1: clamp(0.63rem, calc(0.60rem + 0.16vw), 0.70rem);
+  --step-2: clamp(0.71rem, calc(0.68rem + 0.18vw), 0.79rem);
+  --step-3: clamp(0.80rem, calc(0.76rem + 0.20vw), 0.89rem);
+  --step-4: clamp(0.90rem, calc(0.86rem + 0.23vw), 1.00rem);
+  --step-5: clamp(1.01rem, calc(0.96rem + 0.26vw), 1.13rem);
 }

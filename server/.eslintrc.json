@@ -1,0 +1,25 @@
+{
+    "env": {
+        "es2021": true,
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:import/recommended",
+        "airbnb-base"
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "rules": {
+        "import/extensions": "off",
+        "quotes": ["error", "double"],
+        "func-names": "off",
+        "indent": "off",
+        "no-tabs": "off",
+        "class-methods-use-this": "off",
+        "no-underscore-dangle": "off",
+        "comma-dangle": "off"
+    }
+}

@@ -1,28 +1,21 @@
 import { memo } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import types from "prop-types";
 
 import FormatDate from "@/utils/formatDate.js";
 
 import style from "./Card.module.css";
-import { useNavigate } from "react-router-dom";
 
-Card.propTypes = {
-	id: types.number,
-	className: types.string,
-	procedure: types.object,
-	styleAttr: types.object,
-};
-
-function Card({ id = "", className = "", procedure, ...props }) {
+function Card({ key, id, className, procedure }) {
 	const { currLng } = useSelector((state) => state.langs);
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 
 	const shortDate = FormatDate.dateStyle(procedure.startProcTime, currLng);
-	const stringStartTime = FormatDate.stringHourAndMin(procedure.startProcTime, currLng),
-		stringFinishTime = FormatDate.stringHourAndMin(procedure.finishProcTime, currLng);
+	const stringStartTime = FormatDate.stringHourAndMin(procedure.startProcTime, currLng);
+	const stringFinishTime = FormatDate.stringHourAndMin(procedure.finishProcTime, currLng);
 
 	function handleClick() {
 		navigate("/details", {
@@ -33,11 +26,13 @@ function Card({ id = "", className = "", procedure, ...props }) {
 	}
 
 	return (
+		// event for card
+		// eslint-disable-next-line jsx-a11y/no-static-element-interactions
 		<div
-			{...props}
+			key={key}
 			id={id}
 			className={`${style.card} ${className}`}
-			onClick={handleClick}
+			onMouseDown={handleClick}
 		>
 			<img
 				src=""
@@ -57,15 +52,18 @@ function Card({ id = "", className = "", procedure, ...props }) {
 										procedure.state.color === "white" ? "1px rgb(var(--black))" : "",
 									color: `rgb(var(--${procedure.state.color}))`,
 								}}
-							></i>
+							/>
 							<span>{t(procedure.state.name)}</span>
 						</div>
 					</div>
-					<button className={style.favourite}>
+					<button
+						type="button"
+						className={style.favourite}
+					>
 						<i
 							className="fa fa-heart-o"
 							aria-hidden="true"
-						></i>
+						/>
 					</button>
 				</div>
 				<div className={style.bottomPanel}>
@@ -74,9 +72,13 @@ function Card({ id = "", className = "", procedure, ...props }) {
 						{procedure.type.currency}
 					</span>
 					<span>
-						{shortDate},{" "}
+						{shortDate}
+						,
+						{" "}
 						<b>
-							{stringStartTime}—{stringFinishTime}
+							{stringStartTime}
+							—
+							{stringFinishTime}
 						</b>
 					</span>
 				</div>
@@ -84,5 +86,18 @@ function Card({ id = "", className = "", procedure, ...props }) {
 		</div>
 	);
 }
+
+Card.defaultProps = {
+	key: "",
+	id: "",
+	className: "",
+};
+
+Card.propTypes = {
+	key: types.string,
+	id: types.number,
+	className: types.string,
+	procedure: types.instanceOf(Object).isRequired,
+};
 
 export default memo(Card);

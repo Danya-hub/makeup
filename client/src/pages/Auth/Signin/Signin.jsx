@@ -11,13 +11,13 @@ function Signin() {
 		<Email
 			passwordState={[isPasswordForgotten, setPasswordForgotten]}
 			userState={[user, setUser]}
-		></Email>
+		/>
 	) : (
 		<Output
 			passwordState={[isPasswordForgotten, setPasswordForgotten]}
 			userState={[user, setUser]}
-		></Output>
+		/>
 	);
 }
 
-export { Signin as default };
+export default Signin;

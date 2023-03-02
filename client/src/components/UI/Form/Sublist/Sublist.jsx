@@ -4,15 +4,7 @@ import types from "prop-types";
 import style from "./Sublist.module.css";
 import ArrowSrc from "@/assets/image/arrow.svg";
 
-Sublist.propTypes = {
-	id: types.string,
-	title: types.string,
-	values: types.arrayOf(types.object),
-	isOpen: types.bool,
-	children: types.func,
-};
-
-function Sublist({ id = "", title, values, isOpen, ...props }) {
+function Sublist({ id, title, values, isOpen, ...props }) {
 	const [_isOpen, setOpen] = useState(isOpen || false);
 	const sublist = useRef(null);
 
@@ -26,7 +18,8 @@ function Sublist({ id = "", title, values, isOpen, ...props }) {
 			className={style.sublist}
 			id={id}
 		>
-			<div
+			<button
+				type="button"
 				onClick={() => setOpen(!_isOpen)}
 				className={style.title}
 			>
@@ -36,14 +29,26 @@ function Sublist({ id = "", title, values, isOpen, ...props }) {
 					src={ArrowSrc}
 					alt="arrow"
 				/>
-			</div>
+			</button>
 			<ul className={style.list}>
-				{values.map((value, index) => (
-					<li key={value + "/" + index}>{props.children(value)}</li>
+				{values.map((value) => (
+					<li key={value}>{props.children(value)}</li>
 				))}
 			</ul>
 		</div>
 	);
 }
 
-export { Sublist as default };
+Sublist.defaultProps = {
+	id: "",
+};
+
+Sublist.propTypes = {
+	id: types.string,
+	title: types.string.isRequired,
+	values: types.instanceOf(Array).isRequired,
+	isOpen: types.bool.isRequired,
+	children: types.func.isRequired,
+};
+
+export default Sublist;

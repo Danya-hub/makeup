@@ -25,7 +25,6 @@ function MakeProc() {
 		changePopupNameState,
 	} = useContext(PropsContext);
 	const { t } = useTranslation();
-	const ref = useOutsideEvent(onCloseSelectProcedure);
 	const { procedures } = useSelector((state) => state);
 
 	const [newProcedures, setNewProcedure] = newProceduresState;
@@ -38,6 +37,12 @@ function MakeProc() {
 	const [isOpenSelectProcedure, setOpenSelectProcedure] = useState(false);
 	const [isOpenCalendar, setOpenCalendar] = useState(false);
 
+	function onCloseSelectProcedure() {
+		setOpenSelectProcedure(false);
+	}
+
+	const ref = useOutsideEvent(onCloseSelectProcedure);
+
 	function handleSubmitForm(e) {
 		e.preventDefault();
 
@@ -47,9 +52,11 @@ function MakeProc() {
 
 		if (newProcedures[indexSelectedProcedure]) {
 			setNewProcedure((prev) => {
-				prev[indexSelectedProcedure][1] = false;
+				const array = [...prev];
 
-				return [...prev];
+				array[indexSelectedProcedure][1] = false;
+
+				return array;
 			});
 		} else {
 			setNewProcedure((prev) => [...prev, [currProcedure, false, newProcedures.length]]);
@@ -59,26 +66,24 @@ function MakeProc() {
 		changePopupName("design");
 	}
 
-	function onCloseSelectProcedure() {
-		setOpenSelectProcedure(false);
-	}
-
 	function handleChangeProcName(ind) {
 		const startProcMinutes = FormatDate.numericHoursFromDate(currProcedure.startProcTime) * 60;
 		const finishProcMinutes = startProcMinutes + procedures.types[ind].durationProc * 60;
 
 		setCurrProcedure((prev) => {
-			prev[0] = {
-				...prev[0],
+			const array = [...prev];
+
+			array[0] = {
+				...array[0],
 				finishProcTime: FormatDate.minutesToDate(
 					finishProcMinutes,
 					currProcedure.finishProcTime,
-					false
+					false,
 				),
 				type: procedures.types[ind],
 			};
 
-			return [...prev];
+			return array;
 		});
 
 		onTouchCard(startProcMinutes, finishProcMinutes);
@@ -86,12 +91,14 @@ function MakeProc() {
 
 	function handleChangeTime(options) {
 		setCurrProcedure((prev) => {
-			prev[0] = {
-				...prev[0],
+			const array = [...prev];
+
+			array[0] = {
+				...array[0],
 				...options,
 			};
 
-			return [...prev];
+			return array;
 		});
 	}
 
@@ -103,9 +110,11 @@ function MakeProc() {
 		}
 
 		setNewProcedure((prev) => {
-			prev[indexSelectedProcedure][1] = false;
+			const array = [...prev];
 
-			return [...prev];
+			array[indexSelectedProcedure][1] = false;
+
+			return array;
 		});
 	}
 
@@ -125,7 +134,7 @@ function MakeProc() {
 				<Notification
 					status="warning"
 					text={foundWarningText}
-				></Notification>
+				/>
 			)}
 			<form onSubmit={handleSubmitForm}>
 				<div
@@ -136,23 +145,23 @@ function MakeProc() {
 					<Select
 						ref={ref}
 						defaultValue={currProcedure.type?.name}
-						values={procedures.types.map((obj) => obj["name"])}
+						values={procedures.types.map((obj) => obj.name)}
 						onChange={handleChangeProcName}
-						strictSwitch={[
+						openState={[
 							isOpenSelectProcedure,
 							(bln) => {
 								setOpenSelectProcedure(bln);
 							},
 						]}
 						id="procedureName"
-					></Select>
+					/>
 				</div>
 				<div id="time">
 					<h3 className={style.title}>{t("time")}</h3>
 					<TimeInput
 						newProceduresState={[currProcedure, handleChangeTime]}
 						openCalendarState={[isOpenCalendar, setOpenCalendar]}
-					></TimeInput>
+					/>
 				</div>
 				<div className={style.buttons}>
 					<button
@@ -163,6 +172,7 @@ function MakeProc() {
 						{t("add")}
 					</button>
 					<button
+						type="button"
 						id={style.design}
 						className="button border"
 						onClick={() => changePopupName("design")}
@@ -176,4 +186,4 @@ function MakeProc() {
 	);
 }
 
-export { MakeProc as default };
+export default MakeProc;

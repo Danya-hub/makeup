@@ -1,8 +1,16 @@
 import { useContext } from "react";
 
+import MakeProc from "./Make/Make.jsx";
+import DesignProc from "./Design/Design.jsx";
+import EditProc from "./Edit/Edit.jsx";
+
 import PropsContext from "@/pages/AllProcedures/context.js";
 
-import { POPUP_COMPONENTS } from "@/pages/AllProcedures/constants.js";
+export const POPUP_COMPONENTS = {
+	design: () => <DesignProc />,
+	make: () => <MakeProc />,
+	edit: () => <EditProc />,
+};
 
 function ProcPopup() {
 	const { changePopupNameState } = useContext(PropsContext);
@@ -18,4 +26,4 @@ function ProcPopup() {
 	return switchPopup(popupName);
 }
 
-export { ProcPopup as default };
+export default ProcPopup;

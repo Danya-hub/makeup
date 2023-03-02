@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import types from "prop-types";
 
-import { telephone as telephoneFormat } from "@/constant/format.js";
+import constants from "@/constants/format.js";
 import useOutsideEvent from "@/hooks/useOutsideEvent.js";
 import Check from "@/helpers/check.js";
 
@@ -9,54 +9,52 @@ import Select from "@/components/UI/Form/Select/Select.jsx";
 
 import style from "./ChannelInput.module.css";
 
-ChannelInput.propTypes = {
-	className: types.string,
-	onChange: types.func,
-	strictIsTel: types.bool,
-};
-
-function ChannelInput({ className = "", onChange, strictIsTel = false, ...props }) {
-	const [value, setValue] = useState("");
+function ChannelInput({ id, className, onChange, strictIsTel }) {
+	const [inputValue, setValue] = useState("");
 	const [indexCountry, setIndexCountry] = useState(0);
 	const [isOpenSelect, setOpenSelect] = useState(false);
-	const ref = useOutsideEvent(handleCloseSelect);
 
-	const isTel = strictIsTel || Check.isStrictNumber(value);
+	const isTel = strictIsTel || Check.isStrictNumber(inputValue);
 	const channelName = isTel ? "telephone" : "email";
 
 	function handleCloseSelect() {
 		setOpenSelect(false);
 	}
 
-	function handleChangeTelCode(i) {
-		const _value = telephoneFormat.code[indexCountry] + value;
+	const ref = useOutsideEvent(handleCloseSelect);
 
-		setIndexCountry(i);
-		callback(_value);
-	}
-
-	function handleChangeValue(e) {
-		const _value = e.currentTarget.value;
-
-		setValue(_value);
-	}
-
-	function callback(_value) {
+	function changeValueByChannel(val) {
 		onChange((prev) => {
-			delete prev[isTel ? "email" : "telephone"];
+			const array = prev;
+			if (!strictIsTel) {
+				delete array[isTel ? "email" : "telephone"];
+			}
 
 			return {
-				...prev,
-				[channelName]: _value,
+				...array,
+				[channelName]: val,
 			};
 		});
 	}
 
-	useEffect(() => {
-		const _value = (isTel ? telephoneFormat.code[indexCountry] : "") + value;
+	function handleChangeTelCode(i) {
+		const val = constants.telephone.code[indexCountry] + inputValue;
 
-		callback(_value);
-	}, [value, indexCountry]);
+		setIndexCountry(i);
+		changeValueByChannel(val);
+	}
+
+	function handleChangeValue(e) {
+		const val = e.currentTarget.value;
+
+		setValue(val);
+	}
+
+	useEffect(() => {
+		const val = (isTel ? constants.telephone.code[indexCountry] : "") + inputValue;
+
+		changeValueByChannel(val);
+	}, [inputValue, indexCountry]);
 
 	return (
 		<div className={`${style.wrapper} ${className} input`}>
@@ -64,19 +62,33 @@ function ChannelInput({ className = "", onChange, strictIsTel = false, ...props 
 				<Select
 					id={style.code}
 					ref={ref}
-					defaultValue={telephoneFormat.code[indexCountry]}
-					values={telephoneFormat.code}
-					strictSwitch={[isOpenSelect, setOpenSelect]}
+					defaultValue={constants.telephone.code[indexCountry]}
+					values={constants.telephone.code}
+					openState={[isOpenSelect, setOpenSelect]}
 					onChange={handleChangeTelCode}
-				></Select>
+				/>
 			)}
 			<input
+				id={id}
+				type="text"
 				onChange={handleChangeValue}
 				name={channelName}
-				{...props}
 			/>
 		</div>
 	);
 }
 
-export { ChannelInput as default };
+ChannelInput.defaultProps = {
+	id: "",
+	className: "",
+	strictIsTel: false,
+};
+
+ChannelInput.propTypes = {
+	id: types.string,
+	className: types.string,
+	onChange: types.func.isRequired,
+	strictIsTel: types.bool,
+};
+
+export default ChannelInput;

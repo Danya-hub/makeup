@@ -1,19 +1,11 @@
-import { Fragment, useEffect } from "react";
+import { useEffect } from "react";
 import types from "prop-types";
 
 import CloseSrc from "@/assets/image/close.svg";
 
 import style from "./Aside.module.css";
 
-Aside.propTypes = {
-	id: types.string,
-	className: types.string,
-	openState: types.array,
-	onClose: types.func,
-	children: types.oneOfType([types.array, types.object]),
-};
-
-function Aside({ id = "", className = "", openState, ...props }) {
+function Aside({ id, className, openState, ...props }) {
 	const [isOpen = true, setState] = openState || [];
 
 	useEffect(() => {
@@ -40,29 +32,44 @@ function Aside({ id = "", className = "", openState, ...props }) {
 		>
 			<div className={style.content}>
 				{openState && (
-					<Fragment>
-						<button
-							id={style.close}
-							className="button"
-							onClick={handleClose}
-						>
-							<img
-								src={CloseSrc}
-								alt="close"
-							/>
-						</button>
-					</Fragment>
+					<button
+						type="button"
+						id={style.close}
+						className="button"
+						onClick={handleClose}
+					>
+						<img
+							src={CloseSrc}
+							alt="close"
+						/>
+					</button>
 				)}
 				{props.children}
 			</div>
 			{openState && (
+				// background for quick exit
+				// eslint-disable-next-line jsx-a11y/no-static-element-interactions
 				<div
 					className={style.background}
 					onClick={handleClose}
-				></div>
+					// onKeyDown={handleClose}
+				/>
 			)}
 		</aside>
 	);
 }
 
-export { Aside as default };
+Aside.defaultProps = {
+	id: "",
+	className: "",
+	openState: null,
+};
+
+Aside.propTypes = {
+	id: types.string,
+	className: types.string,
+	openState: types.instanceOf(Array),
+	children: types.node.isRequired,
+};
+
+export default Aside;

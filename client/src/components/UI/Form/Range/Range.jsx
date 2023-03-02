@@ -6,16 +6,9 @@ import WidthInput from "@/components/UI/Form/WidthInput/WidthInput.jsx";
 
 import style from "./Range.module.css";
 
-import { INPUT_MAX_VALUE, INPUT_MIN_VALUE } from "./constant.js";
+import { INPUT_MAX_VALUE, INPUT_MIN_VALUE } from "./constants.js";
 
-Range.propTypes = {
-	id: types.string,
-	min: types.number,
-	max: types.number,
-	onChange: types.func,
-};
-
-function Range({ id, min = INPUT_MIN_VALUE, max = INPUT_MIN_VALUE, onChange }) {
+function Range({ id, min, max, onChange }) {
 	const defaultOptions = () => ({
 		min: {
 			percent: INPUT_MIN_VALUE,
@@ -30,18 +23,29 @@ function Range({ id, min = INPUT_MIN_VALUE, max = INPUT_MIN_VALUE, onChange }) {
 	const [options, setOption] = useState(defaultOptions());
 
 	const background = `linear-gradient(
-							to right,
-							rgb(var(--gray)) ${options.min.percent}%,
-							rgb(var(--black)) ${options.min.percent}%,
-							rgb(var(--black)) ${options.max.percent}%,
-							rgb(var(--gray)) ${options.max.percent}%
-						)`;
+		to right,
+		rgb(var(--gray)) ${options.min.percent}%,
+		rgb(var(--black)) ${options.min.percent}%,
+		rgb(var(--black)) ${options.max.percent}%,
+		rgb(var(--gray)) ${options.max.percent}%
+	)`;
+
+	function setRangeOptions(name, percent) {
+		setOption((prev) => {
+			const object = { ...prev };
+
+			object[name].percent = percent;
+			object[name].number = parseInt((percent / INPUT_MAX_VALUE) * (max - min), 10) + min;
+
+			return object;
+		});
+	}
 
 	function handleGrab(e) {
 		const x = Number(e.currentTarget.value);
 
-		const startRange = Math.abs(x - options.min.percent),
-			finishRange = Math.abs(x - options.max.percent);
+		const startRange = Math.abs(x - options.min.percent);
+		const finishRange = Math.abs(x - options.max.percent);
 
 		const name = startRange < finishRange ? "min" : "max";
 
@@ -59,7 +63,7 @@ function Range({ id, min = INPUT_MIN_VALUE, max = INPUT_MIN_VALUE, onChange }) {
 		}
 
 		const percent = ((inputValue - min) * INPUT_MAX_VALUE) / (max - min);
-		const isBFinite = isFinite(percent);
+		const isBFinite = Number.isFinite(percent);
 
 		if (!isBFinite) {
 			return;
@@ -69,34 +73,31 @@ function Range({ id, min = INPUT_MIN_VALUE, max = INPUT_MIN_VALUE, onChange }) {
 
 		switch (inputName) {
 			case "min":
-				rez =
-					percent < INPUT_MIN_VALUE
-						? INPUT_MIN_VALUE
-						: (percent / INPUT_MAX_VALUE) * inputValue > options.max.percent
-						? options.max.percent
-						: percent;
+				if (percent < INPUT_MIN_VALUE) {
+					rez = INPUT_MIN_VALUE;
+				} else if ((percent / INPUT_MAX_VALUE) * inputValue > options.max.percent) {
+					rez = options.max.percent;
+				} else {
+					rez = percent;
+				}
 				break;
 
 			case "max":
-				rez =
-					percent > INPUT_MAX_VALUE
-						? INPUT_MAX_VALUE
-						: (percent / INPUT_MAX_VALUE) * inputValue < options.min.percent
-						? options.min.percent
-						: percent;
+				if (percent > INPUT_MAX_VALUE) {
+					rez = INPUT_MAX_VALUE;
+				} else if ((percent / INPUT_MAX_VALUE) * inputValue < options.min.percent) {
+					rez = options.min.percent;
+				} else {
+					rez = percent;
+				}
+
+				break;
+
+			default:
 				break;
 		}
 
 		setRangeOptions(inputName, rez);
-	}
-
-	function setRangeOptions(name, percent) {
-		setOption((prev) => {
-			prev[name].percent = percent;
-			prev[name].number = parseInt((percent / INPUT_MAX_VALUE) * (max - min)) + min;
-
-			return { ...prev };
-		});
 	}
 
 	useEffect(() => {
@@ -146,7 +147,7 @@ function Range({ id, min = INPUT_MIN_VALUE, max = INPUT_MIN_VALUE, onChange }) {
 					max={INPUT_MAX_VALUE}
 					defaultValue={0}
 					onChange={handleGrab}
-				></input>
+				/>
 				<div className={style.track}>
 					<span
 						style={{
@@ -154,18 +155,31 @@ function Range({ id, min = INPUT_MIN_VALUE, max = INPUT_MIN_VALUE, onChange }) {
 						}}
 						id="min"
 						className={style.thumb}
-					></span>
+					/>
 					<span
 						style={{
 							left: `${options.max.percent}%`,
 						}}
 						id="max"
 						className={style.thumb}
-					></span>
+					/>
 				</div>
 			</div>
 		</div>
 	);
 }
+
+Range.defaultProps = {
+	id: "",
+	min: INPUT_MIN_VALUE,
+	max: INPUT_MIN_VALUE,
+};
+
+Range.propTypes = {
+	id: types.string,
+	min: types.number,
+	max: types.number,
+	onChange: types.func.isRequired,
+};
 
 export default memo(Range);

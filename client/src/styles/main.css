@@ -23,26 +23,26 @@ span,
 p,
 a,
 h3,
+h2,
+h1,
 input,
 button,
-.input {
-	--size: calc(var(--step-0) - 3px);
+.input 
+{
 	--inputHeight: 8px;
-
+	
 	font-size: var(--size);
 	letter-spacing: 1px;
 }
 
-h3 {
-	font-weight: 500;
-}
-
-h2 {
-	font-size: var(--step-2);
-}
-
-h1 {
-	font-size: var(--step-3);
+p,
+a,
+h3,
+span,
+input::placeholder,
+input,
+button {
+	--size: calc(var(--step-1));
 }
 
 h1,

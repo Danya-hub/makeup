@@ -2,4 +2,4 @@ function Error() {
 	return <span>Error</span>;
 }
 
-export { Error as default };
+export default Error;

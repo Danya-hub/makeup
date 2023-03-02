@@ -19,5 +19,5 @@
 }
 
 #controlPanel table :where(td, th) {
-	--space: 2px;
+	--space: 1px;
 }

@@ -3,10 +3,6 @@ import types from "prop-types";
 
 import style from "./PlaceholderLoader.module.css";
 
-BackgroundLoader.propTypes = {
-	widthInPx: types.string,
-};
-
 function BackgroundLoader({ widthInPx = "0px" }) {
 	return (
 		<div
@@ -14,8 +10,12 @@ function BackgroundLoader({ widthInPx = "0px" }) {
 			style={{
 				"--w": widthInPx,
 			}}
-		></div>
+		/>
 	);
 }
 
-export { BackgroundLoader as default };
+BackgroundLoader.propTypes = {
+	widthInPx: types.string.isRequired,
+};
+
+export default BackgroundLoader;

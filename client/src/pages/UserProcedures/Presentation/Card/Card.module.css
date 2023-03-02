@@ -7,7 +7,7 @@
 }
 
 .name {
-	font-size: var(--step-2);
+	--size: var(--step-2);
 	font-weight: 600;
 	margin-bottom: 2vh;
 	word-break: break-word;
@@ -46,8 +46,8 @@
 
 .favourite i {
 	--clr: rgb(var(--brown));
+	--size: var(--step-1);
 
-	font-size: var(--step-1);
 	color: var(--clr);
 }
 

@@ -1,7 +1,6 @@
 import { useLocation } from "react-router-dom";
-import { useState, useRef, useLayoutEffect, Fragment } from "react";
+import { useState, useRef, useLayoutEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-
 import {
 	getProcedureByDay,
 	getAllTypes,
@@ -9,8 +8,8 @@ import {
 	getDefaultProcValue,
 } from "@/service/redusers/procedures.js";
 import useCalendar from "@/hooks/useCalendar.js";
-import FormatDate from "@/utils/formatDate.js";
 
+import FormatDate from "@/utils/formatDate.js";
 import ProcPopup from "./ProcPopup/ProcPopup.jsx";
 import ControlPanel from "./ControlPanel/ControlPanel.jsx";
 import Presentation from "./Presentation/Presentation.jsx";
@@ -24,92 +23,86 @@ import style from "./AllProcedures.module.css";
 function AllProcedures() {
 	const { procedures } = useSelector((state) => state);
 	const dispatch = useDispatch();
-	const calendar = new useCalendar();
 	const { state: locationState } = useLocation();
+	const calendar = useCalendar.call({});
 
 	const [newProcedures, setNewProcedure] = useState([]);
 	const [[currProcedure, indexSelectedProcedure], setCurrProcedure] = useState([]);
 	const [isVisibleProcedurePopup, setVisibleProcedurePopup] = useState(
-		Boolean(locationState?.isVisiblePopup)
+		Boolean(locationState?.isVisiblePopup),
 	);
 	const defaultValueProcedure = useRef(null);
 	const [selectTime, setSelectTime] = useState(calendar.minHour);
 	const [popupName, changePopupName] = useState(DEFAULT_POPUP_NAME);
 
-	class Event {
-		constructor() {
-			this.onCrossingElapsedTime = (minutes) => {
-				calendar.warning.setWarning([
-					"crossingElapsedTime",
-					calendar.currentTimeHeightInPx > minutes ? "crossingElapsedTime" : "",
-				]);
-			};
+	const events = {
+		onCrossingElapsedTime(minutes) {
+			calendar.warning.setWarning([
+				"crossingElapsedTime",
+				calendar.currentTimeHeightInPx > minutes ? "crossingElapsedTime" : "",
+			]);
+		},
 
-			this.onTouchCard = (newProcStartMinutes, newProcFinishMinutes) => {
-				let isTouchCard = false;
-				procedures.cards.forEach((card) => {
-					if (isTouchCard) {
-						return;
-					}
+		onTouchCard(newProcStartMinutes, newProcFinishMinutes) {
+			let isTouchCard = false;
 
-					const numericStartHours = FormatDate.numericHoursFromDate(card.startProcTime);
-					const startSegment = (numericStartHours - currProcedure.type.durationProc) * 60,
-						finishSegment =
-							numericStartHours * 60 +
-							(card.type.durationProc + currProcedure.type.durationProc) * 60;
-
-					isTouchCard =
-						(startSegment < newProcStartMinutes && finishSegment > newProcFinishMinutes) ||
-						(newProcStartMinutes < startSegment && newProcFinishMinutes > finishSegment);
-
-					calendar.warning.setWarning([
-						"takenProcedureTime",
-						isTouchCard ? "takenProcedureTime" : "",
-					]);
-				});
-			};
-		}
-	}
-
-	class ProcActions {
-		constructor() {
-			this.edit = (i, proc) => {
-				setCurrProcedure([proc, i]);
-				setNewProcedure((prev) => {
-					prev[i][1] = true;
-
-					return [...prev];
-				});
-				changePopupName("edit");
-			};
-
-			this.delete = (i) => {
-				setCurrProcedure([defaultValueProcedure.current, newProcedures.length - 1]);
-				setNewProcedure((prev) => {
-					const array = [...prev];
-
-					array.splice(i, 1);
-
-					return array;
-				});
-
-				if (newProcedures.length - 1 === 0) {
-					changePopupName("make");
+			procedures.cards.forEach((card) => {
+				if (isTouchCard) {
+					return;
 				}
-			};
-		}
-	}
 
-	const events = new Event();
-	const procActions = new ProcActions();
+				const numericStartHours = FormatDate.numericHoursFromDate(card.startProcTime);
+				const startSegment = (numericStartHours - currProcedure.type.durationProc) * 60;
+				const finishSegment = numericStartHours * 60
+				+ (card.type.durationProc + currProcedure.type.durationProc) * 60;
 
-	async function __init__() {
+				isTouchCard = (startSegment < newProcStartMinutes && finishSegment > newProcFinishMinutes)
+					|| (newProcStartMinutes < startSegment && newProcFinishMinutes > finishSegment);
+
+				calendar.warning.setWarning([
+					"takenProcedureTime",
+					isTouchCard ? "takenProcedureTime" : "",
+				]);
+			});
+		},
+	};
+
+	const procActions = {
+		edit(i, proc) {
+			setCurrProcedure([proc, i]);
+			setNewProcedure((prev) => {
+				const array = [...prev];
+
+				array[i][1] = true;
+
+				return array;
+			});
+			changePopupName("edit");
+		},
+
+		delete(i) {
+			setCurrProcedure([defaultValueProcedure.current, newProcedures.length - 1]);
+			setNewProcedure((prev) => {
+				const array = [...prev];
+
+				array.splice(i, 1);
+
+				return array;
+			});
+
+			if (newProcedures.length - 1 === 0) {
+				changePopupName("make");
+			}
+		},
+	};
+
+	async function init() {
 		dispatch(getProcedureByDay(calendar.viewState.locale));
 		dispatch(getAllTypes());
 		dispatch(getAllStates());
 
 		defaultValueProcedure.current = await dispatch(getDefaultProcValue()).then(
-			(res) => res.payload
+			(res) => res.payload,
 		);
 
 		setCurrProcedure([defaultValueProcedure.current, newProcedures.length]);
@@ -126,42 +119,46 @@ function AllProcedures() {
 				startProcTime: currProcedure.startProcTime,
 				finishProcTime: currProcedure.finishProcTime,
 			},
-			newDate
+			newDate,
 		);
 
 		setCurrProcedure((prev) => {
-			prev[0] = {
-				...prev[0],
+			const array = [...prev];
+
+			array[0] = {
+				...array[0],
 				...updatedDates,
 			};
 
-			return [...prev];
+			return array;
 		});
 	}
 
 	function setStartAndFinishTimes(minutes) {
-		const startProcMinutes = minutes || selectTime * 60,
-			finishProcMinutes = startProcMinutes + currProcedure.type.durationProc * 60;
+		const startProcMinutes = minutes || selectTime * 60;
+		const finishProcMinutes = startProcMinutes + currProcedure.type.durationProc * 60;
 
 		const startProcTime = FormatDate.minutesToDate(
-				startProcMinutes,
-				calendar.viewState.locale,
-				false
-			),
-			finishProcTime = FormatDate.minutesToDate(
-				finishProcMinutes,
-				calendar.viewState.locale,
-				false
-			);
+			startProcMinutes,
+			calendar.viewState.locale,
+			false,
+		);
+		const finishProcTime = FormatDate.minutesToDate(
+			finishProcMinutes,
+			calendar.viewState.locale,
+			false,
+		);
 
 		setCurrProcedure((prev) => {
-			prev[0] = {
-				...prev[0],
+			const array = [...prev];
+
+			array[0] = {
+				...array[0],
 				startProcTime,
 				finishProcTime,
 			};
 
-			return [...prev];
+			return array;
 		});
 
 		events.onTouchCard(startProcMinutes, finishProcMinutes);
@@ -172,39 +169,38 @@ function AllProcedures() {
 		}
 	}
 
-	useLayoutEffect(() => {
-		return __init__;
-	}, []);
+	useLayoutEffect(() => init, []);
+
+	// eslint-disable-next-line react/jsx-no-constructed-context-values
+	const contextValue = {
+		handleChangeDate,
+		setStartAndFinishTimes,
+		defaultValueProcedure,
+		changePopupNameState: [popupName, changePopupName],
+		visiblePopupState: [isVisibleProcedurePopup, setVisibleProcedurePopup],
+		selectTimeState: [selectTime, setSelectTime],
+		newProceduresState: [newProcedures, setNewProcedure],
+		currProcedureState: [[currProcedure, indexSelectedProcedure], setCurrProcedure],
+		...events,
+		...calendar,
+		...procActions,
+	};
 
 	return (
 		<div id={style.allProcedures}>
-			<PropsContext.Provider
-				value={{
-					changePopupNameState: [popupName, changePopupName],
-					visiblePopupState: [isVisibleProcedurePopup, setVisibleProcedurePopup],
-					selectTimeState: [selectTime, setSelectTime],
-					newProceduresState: [newProcedures, setNewProcedure],
-					currProcedureState: [[currProcedure, indexSelectedProcedure], setCurrProcedure],
-					handleChangeDate,
-					setStartAndFinishTimes,
-					defaultValueProcedure,
-					...events,
-					...calendar,
-					...procActions,
-				}}
-			>
-				<ControlPanel></ControlPanel>
+			<PropsContext.Provider value={contextValue}>
+				<ControlPanel />
 				{!currProcedure ? (
-					<SimpleLoader></SimpleLoader>
+					<SimpleLoader />
 				) : (
-					<Fragment>
-						<Presentation></Presentation>
-						<ProcPopup></ProcPopup>
-					</Fragment>
+					<>
+						<Presentation />
+						<ProcPopup />
+					</>
 				)}
 			</PropsContext.Provider>
 		</div>
 	);
 }
 
-export { AllProcedures as default };
+export default AllProcedures;

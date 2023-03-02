@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import Value from "@/helpers/value.js";
 import { checkNewPassword } from "@/service/redusers/user.js";
-import { MAX_LENGTH_PASSWORD } from "@/constant/auth.js";
+import constants from "@/constants/auth.js";
 
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 import PasswordInput from "@/components/UI/Form/PasswordInput/PasswordInput.jsx";
@@ -18,7 +18,7 @@ function ResetPassword() {
 	const dispatch = useDispatch();
 	const { error } = useSelector((state) => state.user);
 
-	const queries = new URLSearchParams(location.search);
+	const queries = new URLSearchParams(window.location.search);
 
 	const [newPassword, setNewPassword] = useState({});
 
@@ -36,7 +36,7 @@ function ResetPassword() {
 				key: queries.get("key"),
 				email: queries.get("email"),
 				newPassword: newPassword.password,
-			})
+			}),
 		);
 
 		if (res.error) {
@@ -55,7 +55,7 @@ function ResetPassword() {
 					<Notification
 						text={error}
 						status="error"
-					></Notification>
+					/>
 				)}
 				<form onSubmit={handleSubmitForm}>
 					<div>
@@ -66,9 +66,9 @@ function ResetPassword() {
 							id="password"
 							className={`input ${style.field}`}
 							name="password"
-							maxLength={MAX_LENGTH_PASSWORD}
+							maxLength={constants.MAX_LENGTH_PASSWORD}
 							onBlur={(e) => Value.fromInput(e, setNewPassword)}
-						></PasswordInput>
+						/>
 					</div>
 					<div>
 						<label htmlFor="confirmedPassword">
@@ -78,9 +78,9 @@ function ResetPassword() {
 							id="confirmedPassword"
 							className={`input ${style.field}`}
 							name="confirmedPassword"
-							maxLength={MAX_LENGTH_PASSWORD}
+							maxLength={constants.MAX_LENGTH_PASSWORD}
 							onBlur={(e) => Value.fromInput(e, setNewPassword)}
-						></PasswordInput>
+						/>
 					</div>
 					<div className={style.navigation}>
 						<button
@@ -96,4 +96,4 @@ function ResetPassword() {
 	);
 }
 
-export { ResetPassword as default };
+export default ResetPassword;

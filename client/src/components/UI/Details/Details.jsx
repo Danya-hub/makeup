@@ -5,13 +5,6 @@ import ArrowSrc from "@/assets/image/arrow.svg";
 
 import style from "./Details.module.css";
 
-Details.propTypes = {
-	id: types.string,
-	title: types.string,
-	children: types.oneOfType([types.object, types.array]),
-	isOpen: types.bool,
-};
-
 function Details({ id, title, isOpen, ...props }) {
 	const [_isOpen, setOpen] = useState(isOpen || false);
 	const sublist = useRef(null);
@@ -26,20 +19,32 @@ function Details({ id, title, isOpen, ...props }) {
 			ref={sublist}
 			className={style.details}
 		>
-			<div
+			<button
+				type="button"
 				onClick={() => setOpen(!_isOpen)}
 				className={style.title}
 			>
-				<h3>{title}</h3>
+				{title}
 				<img
 					className={style.arrow}
 					src={ArrowSrc}
 					alt="arrow"
 				/>
-			</div>
+			</button>
 			<div className={style.content}>{props.children}</div>
 		</div>
 	);
 }
 
-export { Details as default };
+Details.defaultProps = {
+	id: "",
+};
+
+Details.propTypes = {
+	id: types.string,
+	title: types.string.isRequired,
+	children: types.oneOfType([types.object, types.array]).isRequired,
+	isOpen: types.bool.isRequired,
+};
+
+export default Details;

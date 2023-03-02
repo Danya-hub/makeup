@@ -1,4 +1,38 @@
-export class FilterOptions {
+function sortWithCallback(procedures, callback) {
+	return procedures.length ? Array(...procedures).sort(callback) : procedures;
+}
+
+function minObject(callback, values) {
+	if (!values.length) {
+		return null;
+	}
+
+	const minObj = values.reduce((prevObj, currObj) => {
+		const prevVal = callback(prevObj);
+		const currVal = callback(currObj);
+
+		return prevVal < currVal ? prevObj : currObj;
+	});
+
+	return minObj;
+}
+
+function maxObject(callback, values) {
+	if (!values.length) {
+		return null;
+	}
+
+	const maxObj = values.reduce((prevObj, currObj) => {
+		const prevVal = callback(prevObj);
+		const currVal = callback(currObj);
+
+		return prevVal > currVal ? prevObj : currObj;
+	});
+
+	return maxObj;
+}
+
+class FilterActions {
 	static sortOptions = {
 		toExpensive: this.toExpensive,
 		toCheap: this.toCheap,
@@ -15,21 +49,23 @@ export class FilterOptions {
 	constructor(procedures, options) {
 		this.procedures = procedures;
 		this.options = options;
-		this.minSelectedPrice = Math.minObject((obj) => obj.type.price, this.procedures);
-		this.maxSelectedPrice = Math.maxObject((obj) => obj.type.price, this.procedures);
+		this.minSelectedPrice = minObject((obj) => obj.type.price, this.procedures);
+		this.maxSelectedPrice = maxObject((obj) => obj.type.price, this.procedures);
 	}
 
 	static toExpensive(procedures) {
-		const sortedProcs = procedures.sortWithCallback((a, b) =>
-			a.type.price < b.type.price ? -1 : 1
+		const sortedProcs = sortWithCallback(
+			procedures,
+			(a, b) => (a.type.price < b.type.price ? -1 : 1),
 		);
 
 		return sortedProcs;
 	}
 
 	static toCheap(procedures) {
-		const sortedProcs = procedures.sortWithCallback((a, b) =>
-			a.type.price > b.type.price ? -1 : 1
+		const sortedProcs = sortWithCallback(
+			procedures,
+			(a, b) => (a.type.price > b.type.price ? -1 : 1),
 		);
 
 		return sortedProcs;
@@ -46,12 +82,12 @@ export class FilterOptions {
 			return this.procedures;
 		}
 
-		this.minSelectedPrice = Math.minObject((obj) => obj.type.price, this.procedures);
-		this.maxSelectedPrice = Math.maxObject((obj) => obj.type.price, this.procedures);
+		this.minSelectedPrice = minObject((obj) => obj.type.price, this.procedures);
+		this.maxSelectedPrice = maxObject((obj) => obj.type.price, this.procedures);
 
-		const rez = FilterOptions.byRange(
+		const rez = FilterActions.byRange(
 			[this.minSelectedPrice.type.price, this.maxSelectedPrice.type.price],
-			this.procedures
+			this.procedures,
 		);
 
 		if (!rez.length) {
@@ -59,6 +95,8 @@ export class FilterOptions {
 		}
 
 		this.procedures = rez;
+
+		return rez;
 	}
 
 	changeRangePriceOnGrabbing() {
@@ -68,13 +106,15 @@ export class FilterOptions {
 
 		const [min, max] = this.options.range;
 
-		const rez = FilterOptions.byRange([min, max], this.procedures);
+		const rez = FilterActions.byRange([min, max], this.procedures);
 
 		if (!rez.length) {
 			return this.procedures;
 		}
 
 		this.procedures = rez;
+
+		return rez;
 	}
 
 	selectType() {
@@ -88,6 +128,8 @@ export class FilterOptions {
 		}
 
 		this.procedures = rez;
+
+		return rez;
 	}
 
 	sort() {
@@ -95,11 +137,13 @@ export class FilterOptions {
 			return this.procedures;
 		}
 
-		this.procedures = FilterOptions.sortOptions[this.options.sortBy](this.procedures);
+		this.procedures = FilterActions.sortOptions[this.options.sortBy](this.procedures);
+
+		return this.procedures;
 	}
 
-	static apply() {
-		const filters = new FilterOptions(...arguments);
+	static apply(procedures, options) {
+		const filters = new FilterActions(procedures, options);
 
 		filters.selectType();
 		filters.changeRangePriceOnSelect();
@@ -109,3 +153,5 @@ export class FilterOptions {
 		return filters;
 	}
 }
+
+export default FilterActions;

@@ -1,8 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import i18next from "@/lang/index.js";
-import * as reducers from "@/service/actions/langs.js";
-import { langs as arrayLangs } from "@/lang/index.js";
+import i18next, { langs as arrayLangs } from "@/lang/index.js";
+import reducers from "@/service/actions/langs.js";
 
 const initialState = {
 	currLng: i18next.language,
@@ -15,4 +14,5 @@ const { actions, reducer } = createSlice({
 	reducers,
 });
 
-export { reducer as default, actions };
+export { actions };
+export default reducer;

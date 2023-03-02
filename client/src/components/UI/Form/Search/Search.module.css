@@ -28,7 +28,7 @@
 	z-index: 1;
 }
 
-.options span {
+.options button {
 	--back: var(--white);
 	--o: 1;
 
@@ -38,11 +38,11 @@
 	cursor: pointer;
 }
 
-.options span:hover {
+.options button:hover {
 	--back: var(--brown);
 	--o: 0.2;
 }
 
-.options li:not(:last-child) span {
+.options li:not(:last-child) button {
 	border-bottom: 1px solid rgba(var(--brown), 0.5);
 }

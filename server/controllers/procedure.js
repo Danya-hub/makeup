@@ -1,4 +1,6 @@
-"use strict";
+import {
+  Router
+} from "express";
 
 import TypesProcedureModel from "../models/typesProcedure.js";
 import StatesProcedureModel from "../models/statesProcedure.js";
@@ -9,159 +11,116 @@ import roleAccess from "../middleware/roleAccess.js";
 
 import Procedure from "../service/procedure.js";
 
-const ProcedureController = {
-    get: {
-        ["byDay/:newDate"]() {
-            return [
-                async (req, res, next) => {
-                    try {
-                        const {
-                            newDate,
-                        } = req.params;
+const router = Router();
 
-                        const foundProcedure = await Procedure.byDay(newDate);
+router.get("/byDay/:newDate", async (req, res, next) => {
+  try {
+    const {
+      newDate
+    } = req.params;
 
-                        res.status(200).json(foundProcedure);
+    const foundProcedure = await Procedure.byDay(newDate);
 
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ];
-        },
-        byUser() {
-            return [
-                isAuth,
-                checkOnValid,
-                async (req, res, next) => {
-                    try {
-                        const {
-                            user,
-                        } = req.body;
+    res.status(200).json(foundProcedure);
 
-                        const foundProcedure = await Procedure.byUser(user);
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
-                        res.status(200).json(foundProcedure);
+router.get("/byUser", isAuth, checkOnValid, async (req, res, next) => {
+  try {
+    const {
+      user
+    } = req.body;
 
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ];
-        },
-        allTypes() {
-            return [
-                async (req, res, next) => {
-                    try {
-                        const types = await TypesProcedureModel.find();
+    const foundProcedure = await Procedure.byUser(user);
 
-                        res.status(200).json(types);
+    res.status(200).json(foundProcedure);
 
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ]
-        },
-        allStates() {
-            return [
-                async (req, res, next) => {
-                    try {
-                        const states = await StatesProcedureModel.find();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
-                        res.status(200).json(states);
+router.get("/allTypes", async (req, res, next) => {
+  try {
+    const types = await TypesProcedureModel.find();
 
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ]
-        },
-        defaultType() {
-            return [
-                async (req, res, next) => {
-                    try {
-                        const type = await TypesProcedureModel.findOne()
-                        const state = await StatesProcedureModel.findOne()
+    res.status(200).json(types);
 
-                        res.status(200).json({
-                            type,
-                            state,
-                        });
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ]
-        },
-    },
-    post: {
-        create() {
-            return [
-                isAuth,
-                checkOnValid,
-                async (req, res, next) => {
-                    try {
-                        const createdProcedure = await Procedure.createProcedure(req.body);
+router.get("/allStates", async (req, res, next) => {
+  try {
+    const states = await StatesProcedureModel.find();
 
-                        res.status(201).json(createdProcedure);
+    res.status(200).json(states);
 
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ]
-        },
-        createProcType() {
-            return [
-                isAuth,
-                roleAccess(["admin"]),
-                checkOnValid,
-                async (req, res, next) => {
-                    try {
-                        const createdNewProcType = await Procedure.createProcType(req.body);
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
-                        res.status(201).json(createdNewProcType);
+router.get("/defaultType", async (req, res, next) => {
+  try {
+    const type = await TypesProcedureModel.findOne();
+    const state = await StatesProcedureModel.findOne();
 
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ];
-        }
-    },
-    delete: {
-        ["remove/:id"]() {
-            return [
-                isAuth,
-                checkOnValid,
-                async (req, res, next) => {
-                    try {
-                        await Procedure.removeByUser(req.params.id);
+    res.status(200).json({
+      type,
+      state,
+    });
 
-                        res.status(200).json({
-                            msg: "The procedure is deleted",
-                        });
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ];
-        }
-    }
-}
+router.post("/create", isAuth, checkOnValid, async (req, res, next) => {
+  try {
+    const createdProcedure = await Procedure.createProcedure(req.body);
 
-export {
-    ProcedureController as
-    default,
-}
+    res.status(201).json(createdProcedure);
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/createProcType", isAuth, roleAccess(["admin"]), checkOnValid, async (req, res, next) => {
+  try {
+    const createdNewProcType = await Procedure.createProcType(req.body);
+
+    res.status(201).json(createdNewProcType);
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete("/remove/:id", isAuth, checkOnValid, async (req, res, next) => {
+  try {
+    await Procedure.removeByUser(req.params.id);
+
+    res.status(200).json({
+      msg: "The procedure is deleted",
+    });
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+export default router;

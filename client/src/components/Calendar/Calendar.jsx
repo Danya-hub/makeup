@@ -9,11 +9,6 @@ import Weekday from "@/components/Calendar/Weekday/Weekday.jsx";
 import style from "./Calendar.module.css";
 
 function Calendar({ id = "", onChange, styleAttr = {}, options }, ref) {
-	const _opt = {
-		...options,
-		onChange,
-	};
-
 	return (
 		<div
 			id={id}
@@ -21,11 +16,17 @@ function Calendar({ id = "", onChange, styleAttr = {}, options }, ref) {
 			ref={ref}
 			style={styleAttr}
 		>
-			<Navigation {..._opt}></Navigation>
+			<Navigation
+				onChange={onChange}
+				options={options}
+			/>
 			<table>
 				<tbody>
-					<Weekday></Weekday>
-					<Content {..._opt}></Content>
+					<Weekday />
+					<Content
+						onChange={onChange}
+						options={options}
+					/>
 				</tbody>
 			</table>
 		</div>

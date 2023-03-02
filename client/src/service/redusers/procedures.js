@@ -1,8 +1,14 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+/* eslint-disable no-param-reassign */
+
+import {
+	createSlice,
+	createAsyncThunk,
+} from "@reduxjs/toolkit";
 
 import axios from "@/http/axios.js";
+import Value from "@/helpers/value.js";
 
-import * as reducers from "@/service/actions/procedures.js";
+import reducers from "@/service/actions/procedures.js";
 import FormatDate from "@/utils/formatDate.js";
 
 const initialState = {
@@ -13,7 +19,10 @@ const initialState = {
 	error: "",
 };
 
-const defaultValue = ({ type, state }) => ({
+const defaultValue = ({
+	type,
+	state,
+}) => ({
 	startProcTime: new Date(),
 	finishProcTime: FormatDate.minutesToDate(type.durationProc * 60),
 	state,
@@ -22,22 +31,26 @@ const defaultValue = ({ type, state }) => ({
 
 const getProcedureByUserId = createAsyncThunk(
 	"procedure/getProcedureByUserId",
-	async (_, { rejectWithValue }) => {
+	async (_, {
+		rejectWithValue,
+	}) => {
 		try {
 			const userProcedures = await axios
 				.get("/procedure/byUser")
-				.then((res) => res.data.map(Date.toDate));
+				.then((res) => res.data.map(Value.toDate));
 
 			return userProcedures;
 		} catch (error) {
 			return rejectWithValue(error.message);
 		}
-	}
+	},
 );
 
 const getProcedureByDay = createAsyncThunk(
 	"procedure/getProcedureByDay",
-	async (date, { rejectWithValue }) => {
+	async (date, {
+		rejectWithValue,
+	}) => {
 		try {
 			const userProcedures = await axios
 				.indGet(`/procedure/byDay/${date}`)
@@ -47,10 +60,12 @@ const getProcedureByDay = createAsyncThunk(
 		} catch (error) {
 			return rejectWithValue(error.message);
 		}
-	}
+	},
 );
 
-const getAllTypes = createAsyncThunk("procedure/getAllTypes", async (_, { rejectWithValue }) => {
+const getAllTypes = createAsyncThunk("procedure/getAllTypes", async (_, {
+	rejectWithValue,
+}) => {
 	try {
 		const types = await axios.indGet("/procedure/allTypes");
 
@@ -60,7 +75,9 @@ const getAllTypes = createAsyncThunk("procedure/getAllTypes", async (_, { reject
 	}
 });
 
-const getAllStates = createAsyncThunk("procedure/getAllStates", async (_, { rejectWithValue }) => {
+const getAllStates = createAsyncThunk("procedure/getAllStates", async (_, {
+	rejectWithValue,
+}) => {
 	try {
 		const states = await axios.indGet("/procedure/allStates");
 
@@ -72,33 +89,41 @@ const getAllStates = createAsyncThunk("procedure/getAllStates", async (_, { reje
 
 const getDefaultProcValue = createAsyncThunk(
 	"procedure/getDefaultProcValue",
-	async (_, { rejectWithValue }) => {
+	async (_, {
+		rejectWithValue,
+	}) => {
 		try {
-			const res = await axios.indGet("/procedure/defaultType").then((res) => res.data);
-			const _defValue = defaultValue(res);
+			const res = await axios.indGet("/procedure/defaultType")
+				.then((r) => r.data);
+			const defValue = defaultValue(res);
 
-			return _defValue;
+			return defValue;
 		} catch (error) {
 			return rejectWithValue(error.message);
 		}
-	}
+	},
 );
 
 const createNewProcedure = createAsyncThunk(
 	"procedure/createNewProcedure",
-	async (value, { rejectWithValue }) => {
+	async (value, {
+		rejectWithValue,
+	}) => {
 		try {
-			// const createdProcedure = await axios
-			// 	.post("/procedure/create", value)
-			// 	.then((res) => Date.toDate(res.data));
-			// return createdProcedure;
+			const createdProcedure = await axios
+				.post("/procedure/create", value)
+				.then((res) => Value.toDate(res.data));
+			return createdProcedure;
 		} catch (error) {
 			return rejectWithValue(error.message);
 		}
-	}
+	},
 );
 
-const { actions, reducer } = createSlice({
+const {
+	actions,
+	reducer,
+} = createSlice({
 	name: "procedure",
 	initialState,
 	reducers,
@@ -135,19 +160,18 @@ const { actions, reducer } = createSlice({
 			state.isLoading = true;
 			state.cards = [];
 		},
-		[getProcedureByUserId.fulfilled]: (state, actions) => {
+		[getProcedureByUserId.fulfilled]: (state, action) => {
 			state.isLoading = false;
-			state.cards = actions.payload.data;
+			state.cards = action.payload.data;
 		},
-		[getProcedureByUserId.rejected]: (state, actions) => {
+		[getProcedureByUserId.rejected]: (state, action) => {
 			state.isLoading = false;
-			state.cards = actions.error;
+			state.cards = action.error;
 		},
 	},
 });
 
 export {
-	reducer as default,
 	getProcedureByUserId,
 	getProcedureByDay,
 	getAllTypes,
@@ -156,3 +180,4 @@ export {
 	createNewProcedure,
 	actions,
 };
+export default reducer;

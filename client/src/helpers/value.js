@@ -1,43 +1,29 @@
-class Value {
-	constructor() {}
+import Check from "@/helpers/check.js";
 
+const valueActions = {
 	changeObject(props, callback) {
 		callback((prev) => ({
 			...prev,
 			...props,
 		}));
-	}
+	},
 
 	changeArrayObjectByIndex(props, callback, index, prevBranch) {
 		callback((prev) => {
-			const _prev = prevBranch ? prevBranch(prev[index]) : prev[index];
+			const array = prevBranch ? prevBranch(prev[index]) : prev[index];
 
 			const rez = {
-				..._prev,
+				...array,
 				...props,
 			};
 
 			callback([...prev, rez]);
 		});
-	}
+	},
 
 	changeArray(value, callback) {
 		callback((prev) => [...prev, value]);
-	}
-
-	fromRecursProps(keys) {
-		function callback(obj, ind = 0) {
-			let value = obj[keys[ind]];
-
-			if (ind + 1 < keys.length) {
-				value = callback(value, ++ind);
-			}
-
-			return value;
-		}
-
-		return callback;
-	}
+	},
 
 	fromInput(e, callback) {
 		const t = e.currentTarget;
@@ -46,9 +32,24 @@ class Value {
 			{
 				[t.name]: t.value,
 			},
-			callback
+			callback,
 		);
-	}
-}
+	},
 
-export default new Value();
+	toDate(object) {
+		const o = object;
+		const keys = Object.keys(o);
+
+		keys.forEach((key) => {
+			const date = Check.isDate(o[key]);
+
+			if (date) {
+				o[key] = date;
+			}
+		});
+
+		return o;
+	},
+};
+
+export default valueActions;

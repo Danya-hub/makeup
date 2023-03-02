@@ -2,7 +2,12 @@
 	position: relative;
 }
 
-.select :where(span, h3) {
+.select button {
+	text-align: left;
+	background: unset;
+}
+
+.select :where(button, h3) {
 	display: block;
 	padding: 6px 0;
 	user-select: none;
@@ -26,11 +31,11 @@
 	overflow: hidden scroll;
 }
 
-.select :global(.options) span:hover {
+.select :global(.options) button:hover {
 	--back: rgba(var(--gray), 0.6);
 }
 
-.select :global(.options) span {
+.select :global(.options) button {
 	--back: rgb(var(--white));
 
 	background: var(--back);

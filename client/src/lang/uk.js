@@ -72,4 +72,4 @@ const uk = {
 	},
 };
 
-export { uk as default };
+export default uk;

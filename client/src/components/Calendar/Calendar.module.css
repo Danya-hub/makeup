@@ -4,11 +4,10 @@
 	width: fit-content;
 }
 
-.calendar :where(td, th) span {
+.calendar :where(td, th) :where(button, span) {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-size: calc(var(--step-0) - 5px);
 	width: 24px;
 	height: 24px;
 	user-select: none;

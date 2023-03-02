@@ -24,7 +24,6 @@ function EditProc() {
 		changePopupNameState,
 	} = useContext(PropsContext);
 	const { t } = useTranslation();
-	const ref = useOutsideEvent(onCloseSelectProcedure);
 	const { procedures } = useSelector((state) => state);
 
 	const [newProcedures, setNewProcedure] = newProceduresState;
@@ -37,14 +36,22 @@ function EditProc() {
 	const [isOpenSelectProcedure, setOpenSelectProcedure] = useState(false);
 	const [isOpenCalendar, setOpenCalendar] = useState(false);
 
+	function onCloseSelectProcedure() {
+		setOpenSelectProcedure(false);
+	}
+
+	const ref = useOutsideEvent(onCloseSelectProcedure);
+
 	function handleSubmitForm(e) {
 		e.preventDefault();
 
 		setCurrProcedure([defaultValueProcedure.current, newProcedures.length]);
 		setNewProcedure((prev) => {
-			prev[indexSelectedProcedure] = [currProcedure, false, indexSelectedProcedure];
+			const array = [...prev];
 
-			return [...prev];
+			array[indexSelectedProcedure] = [currProcedure, false, indexSelectedProcedure];
+
+			return prev;
 		});
 		changePopupName("make");
 	}
@@ -52,15 +59,13 @@ function EditProc() {
 	function handleCancel() {
 		setCurrProcedure(newProcedures[indexSelectedProcedure]);
 		setNewProcedure((prev) => {
-			prev[indexSelectedProcedure][1] = false;
+			const array = [...prev];
 
-			return [...prev];
+			array[indexSelectedProcedure][1] = false;
+
+			return array;
 		});
 		changePopupName("make");
-	}
-
-	function onCloseSelectProcedure() {
-		setOpenSelectProcedure(false);
 	}
 
 	function handleChangeProcName(ind) {
@@ -68,17 +73,19 @@ function EditProc() {
 		const finishProcMinutes = startProcMinutes + procedures.types[ind].durationProc * 60;
 
 		setCurrProcedure((prev) => {
-			prev[0] = {
-				...prev[0],
+			const array = [...prev];
+
+			array[0] = {
+				...array[0],
 				finishProcTime: FormatDate.minutesToDate(
 					finishProcMinutes,
 					currProcedure.finishProcTime,
-					false
+					false,
 				),
 				type: procedures.types[ind],
 			};
 
-			return [...prev];
+			return array;
 		});
 
 		onTouchCard(startProcMinutes, finishProcMinutes);
@@ -92,9 +99,11 @@ function EditProc() {
 		}
 
 		setNewProcedure((prev) => {
-			prev[indexSelectedProcedure][1] = false;
+			const array = [...prev];
 
-			return [...prev];
+			array[indexSelectedProcedure][1] = false;
+
+			return array;
 		});
 	}
 
@@ -114,7 +123,7 @@ function EditProc() {
 				<Notification
 					status="warning"
 					text={foundWarningText}
-				></Notification>
+				/>
 			)}
 			<form onSubmit={handleSubmitForm}>
 				<div
@@ -125,16 +134,16 @@ function EditProc() {
 					<Select
 						ref={ref}
 						defaultValue={currProcedure.type?.name}
-						values={procedures.types.map((obj) => obj["name"])}
+						values={procedures.types.map((obj) => obj.name)}
 						onChange={handleChangeProcName}
-						strictSwitch={[
+						openState={[
 							isOpenSelectProcedure,
 							(bln) => {
 								setOpenSelectProcedure(bln);
 							},
 						]}
 						id="procedureName"
-					></Select>
+					/>
 				</div>
 				<div id="time">
 					<h3 className={style.title}>{t("time")}</h3>
@@ -143,20 +152,23 @@ function EditProc() {
 							currProcedure,
 							(props) => {
 								setCurrProcedure((prev) => {
-									prev[0] = {
-										...prev[0],
+									const array = [...prev];
+
+									array[0] = {
+										...array[0],
 										...props,
 									};
 
-									return [...prev];
+									return array;
 								});
 							},
 						]}
 						openCalendarState={[isOpenCalendar, setOpenCalendar]}
-					></TimeInput>
+					/>
 				</div>
 				<div className={style.buttons}>
 					<button
+						type="button"
 						id={style.cancel}
 						onClick={handleCancel}
 						className="button border"
@@ -177,4 +189,4 @@ function EditProc() {
 	);
 }
 
-export { EditProc as default };
+export default EditProc;

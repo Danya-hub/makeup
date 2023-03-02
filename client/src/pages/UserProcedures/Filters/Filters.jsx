@@ -10,43 +10,36 @@ import Range from "@/components/UI/Form/Range/Range.jsx";
 import Details from "@/components/UI/Details/Details.jsx";
 import Search from "@/components/UI/Form/Search/Search.jsx";
 
-import { FilterOptions } from "./actions.js";
+import FilterActions from "./actions.js";
 
 import style from "./Filters.module.css";
-
-Filters.propTypes = {
-	tempCardsState: types.array,
-	initialCards: types.array,
-	placeholderLoaderState: types.array,
-};
 
 function Filters({ tempCardsState, initialCards, placeholderLoaderState }) {
 	const { t } = useTranslation();
 
-	const [selectedOptions, setOption] = useState(FilterOptions.default());
+	const [selectedOptions, setOption] = useState(FilterActions.default());
 	const [[minPrice, maxPrice], setRangePrice] = useState([]);
+	const [isOpenSelectSort, setOpenSelectSort] = useState(false);
 
 	const [, setPlaceholderLoaderState] = placeholderLoaderState;
 	const [tempCards, setTempCard] = tempCardsState;
-	const translatedOption = FilterOptions.sortKeys.map(t);
+	const translatedOption = FilterActions.sortKeys.map(t);
 	const typeProcNames = useMemo(
-		() =>
-			tempCards
-				.map((proc) => proc.type.name)
-				.filter((type, i, arr) => !arr.slice(0, i).includes(type)),
-		[selectedOptions.range]
+		() => tempCards
+			.map((proc) => proc.type.name)
+			.filter((type, i, arr) => !arr.slice(0, i).includes(type)),
+		[selectedOptions.range],
 	);
 
 	function handleReset() {
-		setOption(FilterOptions.default());
+		setOption(FilterActions.default());
 		setPlaceholderLoaderState(true);
 	}
 
 	function handleSearch(typeName) {
-		const _typeName = typeName.toLowerCase();
-		const foundProcs = initialCards.filter((proc) =>
-			proc.type.name.toLowerCase().includes(_typeName)
-		);
+		const lowerTypename = typeName.toLowerCase();
+		const foundProcs = initialCards
+			.filter((proc) => proc.type.name.toLowerCase().includes(lowerTypename));
 
 		setTempCard(foundProcs);
 	}
@@ -56,7 +49,7 @@ function Filters({ tempCardsState, initialCards, placeholderLoaderState }) {
 			return;
 		}
 
-		const filters = FilterOptions.apply(initialCards, selectedOptions);
+		const filters = FilterActions.apply(initialCards, selectedOptions);
 
 		setRangePrice([filters.minSelectedPrice, filters.maxSelectedPrice]);
 		setTempCard(filters.procedures);
@@ -65,6 +58,7 @@ function Filters({ tempCardsState, initialCards, placeholderLoaderState }) {
 	return (
 		<Aside id={style.filters}>
 			<button
+				type="button"
 				id={style.reset}
 				className="button border"
 				onClick={handleReset}
@@ -74,11 +68,11 @@ function Filters({ tempCardsState, initialCards, placeholderLoaderState }) {
 			<Details
 				id="search"
 				title={t("procedures")}
-				isOpen={true}
+				isOpen
 			>
 				<Search
-					isOpen={true}
-					hasMultipleOption={true}
+					isOpen
+					hasMultipleOption
 					values={typeProcNames}
 					onSearch={handleSearch}
 					onSelectOption={(typeNames) => {
@@ -86,31 +80,35 @@ function Filters({ tempCardsState, initialCards, placeholderLoaderState }) {
 							{
 								types: typeNames,
 							},
-							setOption
+							setOption,
 						);
 					}}
-				></Search>
+				/>
 			</Details>
 			<Select
 				id={style.sort}
 				isAbsPos={false}
 				defaultValue={t("sortBy")}
 				values={translatedOption}
+				openState={[
+					isOpenSelectSort,
+					setOpenSelectSort,
+				]}
 				onChange={(i) => {
-					const key = FilterOptions.sortKeys[i];
+					const key = FilterActions.sortKeys[i];
 
 					Value.changeObject(
 						{
 							sortBy: key,
 						},
-						setOption
+						setOption,
 					);
 				}}
-			></Select>
+			/>
 			<Details
 				id="price"
 				title={t("price")}
-				isOpen={true}
+				isOpen
 			>
 				<Range
 					id={style.procPrice}
@@ -123,13 +121,19 @@ function Filters({ tempCardsState, initialCards, placeholderLoaderState }) {
 							{
 								range: [min.number, max.number],
 							},
-							setOption
+							setOption,
 						);
 					}}
-				></Range>
+				/>
 			</Details>
 		</Aside>
 	);
 }
 
-export { Filters as default };
+Filters.propTypes = {
+	tempCardsState: types.instanceOf(Array).isRequired,
+	initialCards: types.instanceOf(Array).isRequired,
+	placeholderLoaderState: types.instanceOf(Array).isRequired,
+};
+
+export default Filters;

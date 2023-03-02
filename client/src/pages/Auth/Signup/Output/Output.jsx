@@ -11,21 +11,16 @@ import ChannelInput from "@/components/UI/Form/ChannelInput/ChannelInput.jsx";
 
 import style from "@/pages/Auth/Auth.module.css";
 
-Output.propTypes = {
-	userState: types.array,
-	formState: types.array,
-};
-
 function Output({ userState, formState }) {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const { state } = useLocation();
+	const { state: locationState } = useLocation();
 	const { error } = useSelector((state) => state.user);
 
 	const [user, setUser] = userState;
 	const [, setFormState] = formState;
-	const purpose = state?.purpose || "adviceForAuth";
+	const purpose = locationState?.purpose || "adviceForAuth";
 
 	async function handleSubmitForm(e) {
 		e.preventDefault();
@@ -59,7 +54,7 @@ function Output({ userState, formState }) {
 					<Notification
 						text={error}
 						status="error"
-					></Notification>
+					/>
 				)}
 				<form onSubmit={handleSubmitForm}>
 					<div>
@@ -70,8 +65,8 @@ function Output({ userState, formState }) {
 							type="text"
 							className={`input ${style.field}`}
 							name="fullname"
-							onBlur={(e) => Value.fromInput(e, setUser)}
-						></input>
+							onChange={(e) => Value.fromInput(e, setUser)}
+						/>
 					</div>
 					<div>
 						<label htmlFor="channel">
@@ -81,20 +76,19 @@ function Output({ userState, formState }) {
 							type="email"
 							className={`input ${style.field}`}
 							name="email"
-							onBlur={(e) => Value.fromInput(e, setUser)}
-						></input>
+							onChange={(e) => Value.fromInput(e, setUser)}
+						/>
 					</div>
 					<div>
 						<label htmlFor="channel">
 							<h3 className="title">{t("telephone")}</h3>
 						</label>
 						<ChannelInput
-							strictIsTel={true}
+							strictIsTel
 							id="channel"
-							type="text"
 							className={style.field}
 							onChange={setUser}
-						></ChannelInput>
+						/>
 					</div>
 					<div className={style.navigation}>
 						<button
@@ -120,4 +114,9 @@ function Output({ userState, formState }) {
 	);
 }
 
-export { Output as default };
+Output.propTypes = {
+	userState: types.instanceOf(Array).isRequired,
+	formState: types.instanceOf(Array).isRequired,
+};
+
+export default Output;

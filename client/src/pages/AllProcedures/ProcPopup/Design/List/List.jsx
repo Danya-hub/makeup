@@ -7,12 +7,6 @@ import TrashSvg from "@/assets/image/trash.svg";
 
 import style from "./List.module.css";
 
-List.propTypes = {
-	procedures: types.array,
-	onEdit: types.func,
-	onDelete: types.func,
-};
-
 function List({ procedures, onEdit, onDelete }) {
 	const { currLng } = useSelector((state) => state.langs);
 
@@ -20,41 +14,41 @@ function List({ procedures, onEdit, onDelete }) {
 		{
 			name: "edit",
 			src: EditSvg,
-			action() {
-				onEdit(...arguments);
-			},
+			action: onEdit,
 		},
 		{
 			name: "trash",
 			src: TrashSvg,
-			action() {
-				onDelete(...arguments);
-			},
+			action: onDelete,
 		},
 	];
 
 	return (
 		<div>
 			{procedures.map(([proc], i) => {
-				const stringStartTime = FormatDate.stringHourAndMin(proc.startProcTime, currLng),
-					stringFinishTime = FormatDate.stringHourAndMin(proc.finishProcTime, currLng);
+				const stringStartTime = FormatDate.stringHourAndMin(proc.startProcTime, currLng);
+				const stringFinishTime = FormatDate.stringHourAndMin(proc.finishProcTime, currLng);
 
 				return (
 					<div
-						key={`${i}/proc`}
+						key={proc.type.name}
 						className={style.proc}
 					>
 						<div className={style.column}>
 							<h3>{proc.type.name}</h3>
 							<span>
-								{stringStartTime} - {stringFinishTime}
+								{stringStartTime}
+								{" "}
+								-
+								{" "}
+								{stringFinishTime}
 							</span>
 							<h3>{proc.type.price}</h3>
 						</div>
 						<div className={style.buttons}>
-							{buttons.map((btn, j) => (
+							{buttons.map((btn) => (
 								<button
-									key={`${j}/btn`}
+									key={btn.name}
 									type="button"
 									className="button"
 									onClick={() => btn.action(i, proc)}
@@ -73,4 +67,10 @@ function List({ procedures, onEdit, onDelete }) {
 	);
 }
 
-export { List as default };
+List.propTypes = {
+	procedures: types.instanceOf(Array).isRequired,
+	onEdit: types.func.isRequired,
+	onDelete: types.func.isRequired,
+};
+
+export default List;

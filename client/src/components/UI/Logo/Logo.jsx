@@ -5,7 +5,7 @@ import LogoSrc from "@/assets/image/logo.svg";
 
 import style from "./Logo.module.css";
 
-export default memo(function Logo() {
+function Logo() {
 	return (
 		<Link to="/">
 			<img
@@ -15,4 +15,6 @@ export default memo(function Logo() {
 			/>
 		</Link>
 	);
-});
+}
+
+export default memo(Logo);

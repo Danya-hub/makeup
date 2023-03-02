@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import * as reducers from "@/service/actions/navigateDate.js";
+import reducers from "@/service/actions/navigateDate.js";
 
 const initialState = {
 	date: new Date(),
@@ -13,4 +13,5 @@ const { actions, reducer } = createSlice({
 	initialState,
 });
 
-export { reducer as default, actions };
+export { actions };
+export default reducer;

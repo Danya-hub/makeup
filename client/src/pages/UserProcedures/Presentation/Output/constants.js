@@ -5,6 +5,5 @@ export const visualStyle = [
 	["horizontal", HorizontalSrc],
 	["vertical", VerticalSrc],
 ];
-
 export const DEFAULT_STYLE_CARDS = 0;
 export const MAX_COUNT_CARDS_ON_PAGE = 8;

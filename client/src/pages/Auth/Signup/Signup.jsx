@@ -29,13 +29,13 @@ function Signup() {
 			formState={[isValidForm, setFormState]}
 			userState={[user, setUser]}
 			onSuccess={onSuccess}
-		></Confirm>
+		/>
 	) : (
 		<Output
 			formState={[isValidForm, setFormState]}
 			userState={[user, setUser]}
-		></Output>
+		/>
 	);
 }
 
-export { Signup as default };
+export default Signup;

@@ -6,18 +6,13 @@ import types from "prop-types";
 import { actions, signin } from "@/service/redusers/user.js";
 import Value from "@/helpers/value.js";
 
-import { MAX_LENGTH_PASSWORD } from "@/constant/auth.js";
+import constants from "@/constants/auth.js";
 
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 import ChannelInput from "@/components/UI/Form/ChannelInput/ChannelInput.jsx";
 import PasswordInput from "@/components/UI/Form/PasswordInput/PasswordInput.jsx";
 
 import style from "@/pages/Auth/Auth.module.css";
-
-Output.propTypes = {
-	userState: types.array,
-	passwordState: types.array,
-};
 
 function Output({ userState, passwordState }) {
 	const dispatch = useDispatch();
@@ -66,7 +61,7 @@ function Output({ userState, passwordState }) {
 					<Notification
 						text={error}
 						status="error"
-					></Notification>
+					/>
 				)}
 				<form onSubmit={handleSubmitForm}>
 					<div>
@@ -75,10 +70,9 @@ function Output({ userState, passwordState }) {
 						</label>
 						<ChannelInput
 							id="channel"
-							type="text"
 							className={style.field}
 							onChange={setUser}
-						></ChannelInput>
+						/>
 					</div>
 					<div>
 						<label htmlFor="password">
@@ -86,14 +80,20 @@ function Output({ userState, passwordState }) {
 						</label>
 						<PasswordInput
 							id="password"
+							name="password"
 							className={`${style.field} input`}
-							maxLength={MAX_LENGTH_PASSWORD}
+							maxLength={constants.MAX_LENGTH_PASSWORD}
 							onBlur={(e) => Value.fromInput(e, setUser)}
-						></PasswordInput>
+						/>
 					</div>
 					<div className={style.forgotPassword}>
 						<p>{t("forgotPassword")}</p>
-						<button onClick={handleResetPassword}>{t("sendToEmail")}</button>
+						<button
+							type="button"
+							onClick={handleResetPassword}
+						>
+							{t("sendToEmail")}
+						</button>
 					</div>
 					<div className={style.navigation}>
 						<button
@@ -119,4 +119,9 @@ function Output({ userState, passwordState }) {
 	);
 }
 
-export { Output as default };
+Output.propTypes = {
+	userState: types.instanceOf(Array).isRequired,
+	passwordState: types.instanceOf(Array).isRequired,
+};
+
+export default Output;

@@ -11,11 +11,6 @@ import Select from "@/components/UI/Form/Select/Select.jsx";
 
 import style from "./TimeInput.module.css";
 
-TimeInput.propTypes = {
-	newProceduresState: types.array,
-	openCalendarState: types.array,
-};
-
 function TimeInput({ newProceduresState, openCalendarState }) {
 	const {
 		warning,
@@ -28,8 +23,6 @@ function TimeInput({ newProceduresState, openCalendarState }) {
 		dragStep,
 	} = useContext(PropsContext);
 	const { currLng } = useSelector((state) => state.langs);
-	const calendarRef = useOutsideEvent(onCloseCalendar);
-	const hoursRef = useOutsideEvent(onCloseSelectHours);
 	const [isOpenSelectHours, setOpenSelectHours] = useState(false);
 
 	const [newProcedure, setNewProcedure] = newProceduresState;
@@ -56,6 +49,9 @@ function TimeInput({ newProceduresState, openCalendarState }) {
 		setOpenCalendar(false);
 	}
 
+	const calendarRef = useOutsideEvent(onCloseCalendar);
+	const hoursRef = useOutsideEvent(onCloseSelectHours);
+
 	function handleSwitchCalendarVisState() {
 		setOpenCalendar((isOpen) => !isOpen);
 	}
@@ -64,8 +60,9 @@ function TimeInput({ newProceduresState, openCalendarState }) {
 		const time = FormatDate.numericTimeFromChar(finalValue);
 		const finishMinutes = time * 60 + newProcedure.type.durationProc * 60;
 
-		const startProcTime = FormatDate.minutesToDate(time * 60, newProcedure.startProcTime, false),
-			finishProcTime = FormatDate.minutesToDate(finishMinutes, newProcedure.finishProcTime, false);
+		const startProcTime = FormatDate.minutesToDate(time * 60, newProcedure.startProcTime, false);
+		const finishProcTime = FormatDate
+			.minutesToDate(finishMinutes, newProcedure.finishProcTime, false);
 
 		setNewProcedure({
 			startProcTime,
@@ -86,7 +83,7 @@ function TimeInput({ newProceduresState, openCalendarState }) {
 			<i
 				className="fa fa-clock-o"
 				aria-hidden="true"
-			></i>
+			/>
 			<div
 				ref={calendarRef}
 				id={style.day}
@@ -104,7 +101,7 @@ function TimeInput({ newProceduresState, openCalendarState }) {
 						id={style.dayAndMonthCalendar}
 						options={viewState}
 						onChange={onChange}
-					></Calendar>
+					/>
 				)}
 			</div>
 			<Select
@@ -114,7 +111,7 @@ function TimeInput({ newProceduresState, openCalendarState }) {
 				values={arrayAllowTimes}
 				defaultValue={stringHourAndMin}
 				onChange={setStartAndFinishTimes}
-				strictSwitch={[
+				openState={[
 					isOpenSelectHours,
 					(bln) => {
 						setOpenSelectHours(bln);
@@ -125,4 +122,9 @@ function TimeInput({ newProceduresState, openCalendarState }) {
 	);
 }
 
-export { TimeInput as default };
+TimeInput.propTypes = {
+	newProceduresState: types.instanceOf(Array).isRequired,
+	openCalendarState: types.instanceOf(Array).isRequired,
+};
+
+export default TimeInput;

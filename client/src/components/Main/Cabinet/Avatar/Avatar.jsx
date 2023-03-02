@@ -3,15 +3,10 @@ import types from "prop-types";
 
 import AvatarCanvas from "@/utils/genarateAvatar.js";
 
-import { SIZE_AVATAR } from "./constant.js";
+import constants from "./constants.js";
 
-Avatar.propTypes = {
-	id: types.string,
-	userName: types.string,
-};
-
-function Avatar({ id = "", userName }) {
-	const avatarUrl = AvatarCanvas.getUrl(userName, SIZE_AVATAR);
+function Avatar({ id, userName }) {
+	const avatarUrl = AvatarCanvas.getUrl(userName, constants.SIZE_AVATAR);
 
 	return (
 		<img
@@ -21,5 +16,14 @@ function Avatar({ id = "", userName }) {
 		/>
 	);
 }
+
+Avatar.defaultProps = {
+	id: "",
+};
+
+Avatar.propTypes = {
+	id: types.string,
+	userName: types.string.isRequired,
+};
 
 export default memo(Avatar);

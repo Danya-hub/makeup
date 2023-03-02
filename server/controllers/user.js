@@ -1,7 +1,8 @@
-"use strict";
-
 import {
-    config,
+  Router
+} from "express";
+import {
+  config
 } from "dotenv";
 import bcrypt from "bcrypt";
 
@@ -15,260 +16,214 @@ import TokenService from "../service/token.js";
 import MessageService from "../service/message.js";
 
 import {
-    COOKIE_REFRESH_TOKEN_MAX_AGE,
+  COOKIE_REFRESH_TOKEN_MAX_AGE
 } from "../constant/auth.js";
 import errors from "../constant/errors.js";
 
 import ApiError from "../utils/apiError.js";
 
+const router = Router();
+
 config();
 
-const AuthController = {
-    get: {
-        refresh() {
-            return [
-                async (req, res, next) => {
-                    try {
-                        const token = req.cookies.refreshToken;
-                        if (!token) {
-                            ApiError.unauthorized();
-                        }
+router.get("/refresh", async (req, res, next) => {
+  try {
+    const token = req.cookies.refreshToken;
+    if (!token) {
+      ApiError.unauthorized();
+    }
 
-                        const decoded = TokenService.checkOnValidToken(
-                            token,
-                            process.env.REFRESH_TOKEN_SECRET_KEY,
-                        );
+    const decoded = TokenService.checkOnValidToken(
+      token,
+      process.env.REFRESH_TOKEN_SECRET_KEY
+    );
 
-                        const user = await UserService.getUser({
-                            _id: decoded.id,
-                        });
+    const user = await UserService.getUser({
+      _id: decoded.id,
+    });
 
-                        const {
-                            refreshToken,
-                            ...rez
-                        } = user;
+    const {
+      refreshToken,
+      ...rez
+    } = user;
 
-                        res.cookie(
-                            "refreshToken",
-                            token, {
-                                maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
-                                httpOnly: true,
-                            }
-                        );
-                        res.status(200).json(rez);
+    res.cookie("refreshToken", token, {
+      maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
+      httpOnly: true,
+    });
+    res.status(200).json(rez);
 
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ];
-        }
-    },
-    post: {
-        signup() {
-            return [
-                async (req, res, next) => {
-                    try {
-                        const newUser = await UserService.createUser(req.body);
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
-                        const {
-                            refreshToken,
-                            ...rez
-                        } = newUser;
+router.post("/signup", async (req, res, next) => {
+  try {
+    const newUser = await UserService.createUser(req.body);
 
-                        res.cookie(
-                            "refreshToken",
-                            refreshToken, {
-                                maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
-                                httpOnly: true,
-                            }
-                        );
-                        res.status(201).json(rez);
+    const {
+      refreshToken,
+      ...rez
+    } = newUser;
 
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ];
-        },
-        signin() {
-            return [
-                userValidation.signin,
-                checkOnValid,
-                async (req, res, next) => {
-                    try {
-                        const foundUser = await UserService.byChannel(req.body);
+    res.cookie("refreshToken", refreshToken, {
+      maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
+      httpOnly: true,
+    });
+    res.status(201).json(rez);
 
-                        const {
-                            refreshToken,
-                            ...rez
-                        } = foundUser;
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
-                        res.cookie(
-                            "refreshToken",
-                            refreshToken, {
-                                maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
-                                httpOnly: true,
-                            }
-                        );
-                        res.status(201).json(rez);
+router.post("/signin", userValidation.signin, checkOnValid, async (req, res, next) => {
+  try {
+    const foundUser = await UserService.byChannel(req.body);
 
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ];
-        },
-        logout() {
-            return [
-                isAuth,
-                checkOnValid,
-                (req, res, next) => {
-                    try {
-                        const {
-                            refreshToken,
-                        } = req.cookies;
+    const {
+      refreshToken,
+      ...rez
+    } = foundUser;
 
-                        res.clearCookie("refreshToken");
+    res.cookie("refreshToken", refreshToken, {
+      maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
+      httpOnly: true,
+    });
+    res.status(201).json(rez);
 
-                        res.json({
-                            msg: "The user is logout",
-                            token: refreshToken,
-                        });
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ];
-        },
-        sendPassword() {
-            return [
-                userValidation.sendPassword,
-                checkOnValid,
-                async (req, res, next) => {
-                    try {
-                        const {
-                            email,
-                        } = req.body;
-                        const passwordFilter = {
-                            topic: "password",
-                            email,
-                        };
+router.post("/logout", isAuth, checkOnValid, (req, res, next) => {
+  try {
+    const {
+      refreshToken
+    } = req.cookies;
 
-                        const foundMessage = await MessageService.get(passwordFilter);
+    res.clearCookie("refreshToken");
 
-                        if (foundMessage) {
-                            res.status(200).json({
-                                passwordToken: foundMessage.template,
-                            });
+    res.status(200).json({
+      msg: "The user is logout",
+      token: refreshToken,
+    });
 
-                            return next();
-                        }
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
-                        const sendedPassword = await UserService.sendPassword(email);
+router.post("/sendPassword", userValidation.sendPassword, checkOnValid, async (req, res, next) => {
+  try {
+    const {
+      email
+    } = req.body;
+    const passwordFilter = {
+      topic: "password",
+      email,
+    };
 
-                        res.status(201).json({
-                            passwordToken: sendedPassword,
-                        });
+    const foundMessage = await MessageService.get(passwordFilter);
 
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ];
-        },
-        checkPassword() {
-            return [
-                async (req, res, next) => {
-                    try {
-                        const {
-                            email,
-                            password,
-                        } = req.body;
+    if (foundMessage) {
+      res.status(200).json({
+        passwordToken: foundMessage.template,
+      });
 
-                        const foundMessage = await MessageService.get({
-                            topic: "password",
-                            email,
-                        });
+      next();
+      return;
+    }
 
-                        if (!foundMessage) {
-                            ApiError.noAccess("Time is over");
-                        }
+    const sendedPassword = await UserService.sendPassword(email);
 
-                        const isEquil = bcrypt.compareSync(password, foundMessage.template);
+    res.status(201).json({
+      passwordToken: sendedPassword,
+    });
 
-                        if (!isEquil) {
-                            ApiError.badRequest(errors.wrongSignin());
-                        }
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
-                        res.status(200).json({
-                            ...req.body,
-                            password,
-                        });
+router.post("/checkPassword", async (req, res, next) => {
+  try {
+    const {
+      email,
+      password
+    } = req.body;
 
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ];
-        },
-        requestResetPassword() {
-            return [
-                async (req, res, next) => {
-                    try {
-                        const {
-                            email,
-                        } = req.body;
+    const foundMessage = await MessageService.get({
+      topic: "password",
+      email,
+    });
 
-                        await UserService.resetPassword(email);
+    if (!foundMessage) {
+      ApiError.noAccess("Time is over");
+    }
 
-                        res.status(200).json({
-                            error: "There was submited message for reseting password",
-                        });
+    const isEquil = bcrypt.compareSync(password, foundMessage.template);
 
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ];
-        },
-        checkNewPassword() {
-            return [
-                async (req, res, next) => {
-                    try {
-                        const {
-                            newPassword,
-                        } = req.body;
-                        const {
-                            key,
-                            email,
-                        } = req.query;
+    if (!isEquil) {
+      ApiError.badRequest(errors.wrongSignin());
+    }
 
-                        await UserService.checkNewPassword(key, email, newPassword);
+    res.status(200).json({
+      ...req.body,
+      password: foundMessage.template,
+    });
 
-                        res.status(200).json({
-                            msg: "Password is changed",
-                        });
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
-                        next();
-                    } catch (error) {
-                        next(error);
-                    }
-                }
-            ]
-        }
-    },
-};
+router.post("/requestResetPassword", async (req, res, next) => {
+  try {
+    const {
+      email
+    } = req.body;
 
-export {
-    AuthController as
-    default,
-}
+    await UserService.resetPassword(email);
+
+    res.status(200).json({
+      msg: "There was submited message for reseting password",
+    });
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/checkNewPassword", async (req, res, next) => {
+  try {
+    const {
+      newPassword
+    } = req.body;
+    const {
+      key,
+      email
+    } = req.query;
+
+    await UserService.checkNewPassword(key, email, newPassword);
+
+    res.status(200).json({
+      msg: "Password is changed",
+    });
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
+
+export default router;

@@ -2,12 +2,15 @@ import i18next, { langs } from "@/lang/index.js";
 
 const langNames = Object.keys(langs);
 
-function changeLanguage(state, action) {
-	const indexNewLang = action.payload;
+const actions = {
+	changeLanguage(state, action) {
+		const indexNewLang = action.payload;
+		const objState = state;
 
-	state.currLng = langNames[indexNewLang];
-	localStorage.setItem("lng", state.currLng);
-	i18next.changeLanguage(state.currLng);
-}
+		objState.currLng = langNames[indexNewLang];
+		localStorage.setItem("lng", objState.currLng);
+		i18next.changeLanguage(objState.currLng);
+	},
+};
 
-export { changeLanguage };
+export default actions;

@@ -8,23 +8,17 @@ import { MAX_COUNT_CARDS_ON_PAGE, visualStyle, DEFAULT_STYLE_CARDS } from "./con
 
 import style from "./Output.module.css";
 
-Output.propTypes = {
-	cards: types.array,
-};
-
 function Output({ cards }) {
 	const [[direction], setDirection] = useState(visualStyle[DEFAULT_STYLE_CARDS]);
 	const [numberPage, setNumberPage] = useState(0);
 
 	const countPages = Math.ceil(cards.length / MAX_COUNT_CARDS_ON_PAGE);
-	const remainder =
-			MAX_COUNT_CARDS_ON_PAGE < cards.length
-				? cards.length - MAX_COUNT_CARDS_ON_PAGE * (numberPage + 1)
-				: cards.length,
-		countCardsOnPage =
-			remainder >= 0 && MAX_COUNT_CARDS_ON_PAGE < cards.length
-				? MAX_COUNT_CARDS_ON_PAGE
-				: Math.abs(remainder);
+	const remainder =			MAX_COUNT_CARDS_ON_PAGE < cards.length
+		? cards.length - MAX_COUNT_CARDS_ON_PAGE * (numberPage + 1)
+		: cards.length;
+	const countCardsOnPage =			remainder >= 0 && MAX_COUNT_CARDS_ON_PAGE < cards.length
+		? MAX_COUNT_CARDS_ON_PAGE
+		: Math.abs(remainder);
 
 	function handleSwitchStyle(i) {
 		setDirection(visualStyle[i]);
@@ -35,11 +29,12 @@ function Output({ cards }) {
 	}
 
 	return (
-		<Fragment>
+		<>
 			<div className={style.topPanel}>
 				<div className={style.visualStyle}>
 					{visualStyle.map(([dir, src], i) => (
 						<button
+							type="button"
 							key={dir}
 							id={dir}
 							title={dir}
@@ -62,18 +57,22 @@ function Output({ cards }) {
 						<Card
 							id={viewIndex}
 							className={style.userProcedure}
-							key={cards[viewIndex]._id + "/" + i}
+							key={cards[viewIndex].type.name}
 							procedure={cards[viewIndex]}
-						></Card>
+						/>
 					);
 				})}
 			</div>
 			<Navigation
 				countPages={countPages}
 				numberPageState={[numberPage, handleSwitchPage]}
-			></Navigation>
-		</Fragment>
+			/>
+		</>
 	);
 }
 
-export { Output as default };
+Output.propTypes = {
+	cards: types.instanceOf(Array).isRequired,
+};
+
+export default Output;

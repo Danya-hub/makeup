@@ -21,7 +21,7 @@
 }
 
 .sublist p {
-	font-size: calc(var(--step-0) * 0.8);
+	--size: calc(var(--step-0));
 }
 
 .arrow {

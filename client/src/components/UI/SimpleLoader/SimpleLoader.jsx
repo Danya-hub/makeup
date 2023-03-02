@@ -1,4 +1,4 @@
-import { default as LoaderSrc } from "@/assets/gif/loader.gif";
+import LoaderSrc from "@/assets/gif/loader.gif";
 
 import style from "./SimpleLoader.module.css";
 
@@ -12,4 +12,4 @@ function Loader() {
 	);
 }
 
-export { Loader as default };
+export default Loader;

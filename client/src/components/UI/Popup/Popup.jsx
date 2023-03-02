@@ -5,23 +5,21 @@ import CloseSrc from "@/assets/image/close.svg";
 
 import style from "./Popup.module.css";
 
-Popup.propTypes = {
-	id: types.string,
-	isSimple: types.bool,
-	strictSwitch: types.array,
-	onClose: types.func,
-	styleAttr: types.object,
-	children: types.oneOfType([types.array, types.object]),
-};
-
-function Popup({ id = "", isSimple = true, strictSwitch, onClose, styleAttr = {}, ...props }) {
+function Popup({ id, isSimple, strictSwitch, onClose, styleAttr, children }) {
 	const [isActive, setActive] = strictSwitch;
 
 	useEffect(() => {
 		document.body.style.overflowY = isActive ? "hidden" : "scroll";
 	}, [isActive]);
 
-	function handleClose() {
+	function handleCloseOnClick() {
+		setActive(false);
+		onClose();
+	}
+
+	function handleCloseOnKeyDown(e) {
+		console.log(e);
+
 		setActive(false);
 		onClose();
 	}
@@ -37,26 +35,45 @@ function Popup({ id = "", isSimple = true, strictSwitch, onClose, styleAttr = {}
 		>
 			<div className={style.popupContent}>
 				<button
+					type="button"
 					id={style.close}
 					className="button"
-					onClick={handleClose}
+					onClick={handleCloseOnClick}
 				>
 					<img
 						src={CloseSrc}
 						alt="close"
 					/>
 				</button>
-				<div>{props.children}</div>
+				<div>{children}</div>
 			</div>
+			{/* background for quick exit */}
+			{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
 			<div
 				className={style.popupBackground}
 				style={{
 					pointerEvents: isSimple ? "unset" : "none",
 				}}
-				onClick={isSimple ? handleClose : null}
-			></div>
+				onClick={isSimple ? handleCloseOnClick : null}
+				onKeyDown={isSimple ? handleCloseOnKeyDown : null}
+			/>
 		</div>
 	);
 }
 
-export { Popup as default };
+Popup.defaultProps = {
+	id: "",
+	isSimple: true,
+	styleAttr: {},
+};
+
+Popup.propTypes = {
+	id: types.string,
+	isSimple: types.bool,
+	strictSwitch: types.instanceOf(Array).isRequired,
+	onClose: types.func.isRequired,
+	styleAttr: types.instanceOf(Object),
+	children: types.node.isRequired,
+};
+
+export default Popup;

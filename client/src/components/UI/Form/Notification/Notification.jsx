@@ -9,11 +9,6 @@ const notifStatus = {
 	error: "exclamation-circle",
 };
 
-Notification.propTypes = {
-	text: types.string,
-	status: types.string,
-};
-// WebkitTextStroke: obj.color === "white" ? "1px rgb(var(--black))" : "",
 function Notification({ text, status }) {
 	const icon = notifStatus[status];
 
@@ -22,10 +17,15 @@ function Notification({ text, status }) {
 			<i
 				className={`fa fa-${icon}`}
 				aria-hidden="true"
-			></i>
+			/>
 			<p>{text}</p>
 		</div>
 	);
 }
+
+Notification.propTypes = {
+	text: types.string.isRequired,
+	status: types.string.isRequired,
+};
 
 export default memo(Notification);

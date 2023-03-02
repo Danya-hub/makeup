@@ -7,12 +7,14 @@ import ArrowSrc from "@/assets/image/arrow.svg";
 
 import style from "./Select.module.css";
 
-function Select({ id, strictSwitch, values, onChange, defaultValue, isAbsPos = true }, ref) {
+function Select({
+	id, openState, values, onChange, defaultValue, isAbsPos = true,
+}, ref) {
 	const { t } = useTranslation();
 
 	const [selectValue, setSelectValue] = useState(null);
 
-	const [isActive, setActive] = strictSwitch || useState(false);
+	const [isActive, setActive] = openState;
 	const EMPTY_VALUE_TEXT = `${t("select")}...`;
 
 	useEffect(() => {
@@ -25,9 +27,10 @@ function Select({ id, strictSwitch, values, onChange, defaultValue, isAbsPos = t
 			ref={ref}
 			className={`${style.select} ${isActive ? style.open : ""} ${isAbsPos ? style.absolute : ""}`}
 		>
-			<div
-				className={style.selectValue}
+			<button
+				type="button"
 				onClick={() => setActive(!isActive)}
+				className={style.selectValue}
 			>
 				<h3>{!selectValue ? EMPTY_VALUE_TEXT : selectValue}</h3>
 				<img
@@ -35,20 +38,21 @@ function Select({ id, strictSwitch, values, onChange, defaultValue, isAbsPos = t
 					src={ArrowSrc}
 					alt="arrow"
 				/>
-			</div>
+			</button>
 			<div className="options">
 				{values.map((value, i) => (
-					<span
+					<button
+						type="button"
 						onClick={() => {
 							setSelectValue(values[i]);
 							setActive(false);
 
 							onChange(i, values[i], values);
 						}}
-						key={value + "/" + i}
+						key={value}
 					>
 						{value}
-					</span>
+					</button>
 				))}
 			</div>
 		</div>

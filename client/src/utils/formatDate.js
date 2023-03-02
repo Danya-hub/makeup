@@ -6,18 +6,16 @@ function generateDate(date) {
 	return new Date(date.year, date.month - 1, date.day || 0);
 }
 
-class FormatDate {
-	constructor() {}
-
+const formatDate = {
 	dateStyle(date, locale = "default", style = "short") {
 		return Intl.DateTimeFormat(locale, {
 			dateStyle: style,
 		}).format(date);
-	}
+	},
 
 	numericPeriod(period) {
 		return /p/i.test(period) ? 12 : 0;
-	}
+	},
 
 	weekdayAndMonth(date, locale = "default", options = {}) {
 		const formats = {
@@ -30,24 +28,24 @@ class FormatDate {
 			...formats,
 			...options,
 		}).format(date);
-	}
+	},
 
 	stringHourAndMin(date, locale = "default") {
 		return Intl.DateTimeFormat(locale, {
 			hour: "numeric",
 			minute: "numeric",
 		}).format(date);
-	}
+	},
 
 	unitTimeFromOtherDate(units, toDate, fromDate) {
-		const _date = new Date(toDate.getTime());
+		const date = new Date(toDate.getTime());
 
 		units.forEach((unitName) => {
-			_date[`set${unitName}`](fromDate[`get${unitName}`]());
+			date[`set${unitName}`](fromDate[`get${unitName}`]());
 		});
 
-		return _date;
-	}
+		return date;
+	},
 
 	minutesToDate(value, originDate, withCurrent = true) {
 		const date = new Date(originDate?.getTime() || Date.now());
@@ -60,43 +58,43 @@ class FormatDate {
 		date.setMinutes((withCurrent ? date.getMinutes() : 0) + (value || 0));
 
 		return date;
-	}
+	},
 
 	numericHoursFromDate(date) {
 		if (!date) {
-			return;
+			return null;
 		}
 
 		return date.getHours() + date.getMinutes() / 60;
-	}
+	},
 
 	numericTimeFromChar(chars) {
 		const [hours, minutes, period] = chars.split(/((?<=\b)(a|p))|:/i).filter(Boolean);
-		const time =
-			(parseFloat(hours) || 0) + (parseFloat(minutes) || 0) / 60 + this.numericPeriod(period);
+		const time = (parseFloat(hours) || 0)
+			+ (parseFloat(minutes) || 0) / 60 + this.numericPeriod(period);
 
 		return time || 0;
-	}
+	},
 
 	minutesFromDate(date, hourHeight = 0) {
 		return date.getHours() * hourHeight + (date.getMinutes() / 60) * hourHeight;
-	}
+	},
 
 	dateFromStringTime(timeString, date) {
-		const b = timeString.match(/\d+/g);
+		const matched = timeString.match(/\d+/g);
 
-		if (!b) {
-			return;
+		if (!matched) {
+			return null;
 		}
 
-		const [hours, minutes] = b;
-		const _date = new Date(date?.getTime() || Date.now());
+		const [hours, minutes] = matched;
+		const d = new Date(date?.getTime() || Date.now());
 
-		_date.setHours(hours > 12 ? hours : Number(hours) + this.numericPeriod(timeString));
-		_date.setMinutes(/\d/.test(minutes) ? minutes : 0);
+		d.setHours(hours > 12 ? hours : Number(hours) + this.numericPeriod(timeString));
+		d.setMinutes(/\d/.test(minutes) ? minutes : 0);
 
-		return _date;
-	}
+		return d;
+	},
 
 	hoursByFormat({
 		hourFormat = "default",
@@ -105,10 +103,10 @@ class FormatDate {
 			hours: 0,
 		},
 		step = 1,
-		maxHour = 25,
+		maxHour = 24,
 	}) {
-		const date = new Date(),
-			hours = [];
+		const date = new Date();
+		const hours = [];
 
 		date.setHours(initialState.hours);
 		date.setMinutes(initialState.minutes);
@@ -125,36 +123,41 @@ class FormatDate {
 		}
 
 		return hours;
-	}
+	},
 
 	allDaysOnMonth(date) {
-		const _date = new Date(date?.getTime() || Date.now());
-		const year = _date.getFullYear();
-		const month = _date.getMonth() + 1;
+		const d = new Date(date?.getTime() || Date.now());
+		const year = d.getFullYear();
+		const month = d.getMonth() + 1;
 
 		const days = [];
-		const lastMonth =
-				32 -
-				generateDate({
-					year,
-					month,
-					day: 32,
-				}).getDate(),
-			firstWeekday =
-				generateDate({
-					year,
-					month,
-				}).getDay() + 1;
+		const lastMonth = 32
+			- generateDate({
+				year,
+				month,
+				day: 32,
+			}).getDate();
+		const firstWeekday = generateDate({
+			year,
+			month,
+		}).getDay() + 1;
 
-		let iterator = 1,
-			space = 0;
-		while (space++ <= MAX_COUNT_WEEKDAYS * MAX_COUNT_WEEKS_IN_CALENDAR - 1) {
-			days.push(space < firstWeekday || lastMonth < iterator ? false : iterator++);
-			_date.setDate(iterator);
+		let iterator = 1;
+		let space = 1;
+		while (space <= MAX_COUNT_WEEKDAYS * MAX_COUNT_WEEKS_IN_CALENDAR - 1) {
+			if (space >= firstWeekday && lastMonth >= iterator) {
+				days.push(iterator);
+
+				iterator += 1;
+			} else {
+				days.push(false);
+			}
+
+			space += 1;
 		}
 
 		return days;
-	}
-}
+	},
+};
 
-export default new FormatDate();
+export default formatDate;

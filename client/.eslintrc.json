@@ -1,19 +1,59 @@
 {
-	"env": {
-		"browser": true,
-		"es2021": true
-	},
-	"ignorePatterns": ["build-utils/*.js"],
-	"extends": ["eslint:recommended", "plugin:react/recommended"],
-	"parserOptions": {
-		"ecmaFeatures": {
-			"jsx": true
-		},
-		"ecmaVersion": "latest",
-		"sourceType": "module"
-	},
-	"plugins": ["react"],
-	"rules": {
-		"react/react-in-jsx-scope": "off"
-	}
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:react/recommended",
+        "plugin:react/jsx-runtime",
+        "plugin:react-hooks/recommended",
+        "plugin:jsx-a11y/recommended",
+        "plugin:import/recommended",
+        "airbnb",
+        "airbnb/hooks"
+    ],
+    "ignorePatterns": ["build-utils/*.js"],
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": "latest",
+        "sourceType": "module"
+    },
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+        "object-curly-newline": "off",
+        "no-tabs": "off",
+        "indent": [2, "tab", {
+            "SwitchCase": 1
+        }],
+        "react/jsx-indent": [2, "tab"],
+        "react/jsx-indent-props": [2, "tab"],
+        "import/no-extraneous-dependencies": ["error", {
+            "devDependencies": true
+        }],
+        "import/no-unresolved": "off",
+        "import/extensions": "off",
+        "react/react-in-jsx-scope": "off",
+        "react-hooks/exhaustive-deps": "off",
+        "quotes": "off",
+        "max-classes-per-file": ["error", 3],
+        "react/jsx-no-bind": ["error", {
+            "allowArrowFunctions": true,
+            "allowFunctions": true
+        }],
+        "jsx-a11y/label-has-associated-control": ["error", {
+            "required": {
+                "some": ["nesting", "id"]
+            }
+        }],
+        "jsx-a11y/label-has-for": ["error", {
+            "required": {
+                "some": ["nesting", "id"]
+            }
+        }]
+    }
 }

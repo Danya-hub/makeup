@@ -1,41 +1,27 @@
-"use strict";
-
 import jsonwebtoken from "jsonwebtoken";
 
 import ApiError from "../utils/apiError.js";
 
 class TokenService {
-    constructor() {
+  generateToken(value, key, options) {
+    const token = jsonwebtoken.sign(value, key, options);
 
-    }
+    return token;
+  }
 
-    generateToken(
-        value,
-        key,
-        options,
-    ) {
-        const token = jsonwebtoken.sign(
-            value,
-            key,
-            options,
-        );
+  checkOnValidToken(token, secretKey) {
+    let decodedToken = null;
 
-        return token;
-    }
+    jsonwebtoken.verify(token, secretKey, (err, decoded) => {
+      if (err) {
+        ApiError.unauthorized();
+      } else {
+        decodedToken = decoded;
+      }
+    });
 
-    checkOnValidToken(token, secretKey, callback = null) {
-        try {
-            const decodedToken = jsonwebtoken.verify(
-                token,
-                secretKey,
-                callback
-            );
-    
-            return decodedToken;
-        } catch (_) {
-            ApiError.unauthorized();
-        }
-    }
+    return decodedToken;
+  }
 }
 
 export default new TokenService();

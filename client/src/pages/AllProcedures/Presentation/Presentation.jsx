@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { getProcedureByDay } from "@/service/redusers/procedures.js";
 import FormatDate from "@/utils/formatDate.js";
 import PropsContext from "@/pages/AllProcedures/context.js";
+import Global from "@/utils/global.js";
 
 import SideHours from "./SideHours/SideHours.jsx";
 import Prompt from "@/components/UI/Prompt/Prompt.jsx";
@@ -13,7 +14,7 @@ import Card from "@/pages/AllProcedures/Card/Card.jsx";
 
 import style from "./Presentation.module.css";
 
-import { COLUMN_NAMES } from "@/pages/AllProcedures/constants.js";
+import { COLUMN_NAMES } from "@/pages/AllProcedures/constants";
 
 function Presentation() {
 	const dispatch = useDispatch();
@@ -52,21 +53,30 @@ function Presentation() {
 	const { locale, strictTimeObject, localeTimeObject } = viewState;
 	const [isVisiblePopup, setVisiblePopup] = visiblePopupState;
 	const [selectTime, setSelectTime] = selectTimeState;
-	const widthCharTime = Math.max(...numericHoursFromDay.map((hour) => hour.getWidthByChar()));
+	const widthCharTime = Math.max(...numericHoursFromDay.map((hour) => Global.getWidthByChar(hour)));
 	const weekdayAndMonth = FormatDate.weekdayAndMonth(currProcedure.startProcTime, langs.currLng, {
 		weekday: "short",
 	});
 	const currentStirngHoursAndMinutes = FormatDate.stringHourAndMin(locale, langs.currLng);
 	const [popupName] = changePopupNameState;
 	const isAuth = localStorage.getItem("isAuth");
+	const classNameByPresentState = (isVisiblePopup && style.noActiveGrabbing) || (isMouseDown && style.activeGrabbing) || "";
 
 	function setNumericTimeByGrabbing(pageY, y = 0) {
 		const topToRootEl = parentRef.current.offsetTop;
-		const durationProc = currProcedure.type.durationProc;
+		const { durationProc } = currProcedure.type;
 
 		const time = (pageY - topToRootEl + y) / hourHeightInPx;
-		const rez =
-			minHour > time ? minHour : maxHour - durationProc < time ? maxHour - durationProc : time;
+
+		let rez = null;
+
+		if (minHour > time) {
+			rez = minHour;
+		} else if (maxHour - durationProc < time) {
+			rez = maxHour - durationProc;
+		} else {
+			rez = time;
+		}
 
 		setSelectTime(rez);
 
@@ -74,14 +84,13 @@ function Presentation() {
 	}
 
 	function onGrabbingCard(pageY) {
-		const topToCard = selectTime * 60,
-			topToRootEl = parentRef.current.offsetTop;
+		const topToCard = selectTime * 60;
+		const topToRootEl = parentRef.current.offsetTop;
 		const grabbingInnerY = pageY - topToRootEl - topToCard;
 
-		const rez =
-			currProcedure.type.durationProc * 60 < grabbingInnerY || 0 > grabbingInnerY
-				? innerY
-				: grabbingInnerY;
+		const rez = currProcedure.type.durationProc * 60 < grabbingInnerY || grabbingInnerY < 0
+			? innerY
+			: grabbingInnerY;
 
 		setInnerY(rez);
 
@@ -114,11 +123,12 @@ function Presentation() {
 
 	function onMouseDown(e) {
 		if (!isAuth) {
-			return navigate("/signin", {
+			navigate("/signin", {
 				state: {
 					purpose: "warningAuthToMakeAppointment",
 				},
 			});
+			return;
 		}
 
 		const y = getDragY(e.pageY);
@@ -153,7 +163,7 @@ function Presentation() {
 
 	return (
 		<div
-			className={isVisiblePopup ? style.noActiveGrabbing : isMouseDown ? style.activeGrabbing : ""}
+			className={classNameByPresentState}
 			id={style.presentation}
 		>
 			<div className={style.top}>
@@ -164,10 +174,10 @@ function Presentation() {
 					text={t("status")}
 					direction="right"
 				>
-					{procedures.states.map((obj, i) => (
+					{procedures.states.map((obj) => (
 						<div
 							className={style.row}
-							key={"design/" + i}
+							key={obj.name}
 						>
 							<i
 								className="fa fa-bookmark color"
@@ -176,7 +186,7 @@ function Presentation() {
 									WebkitTextStroke: obj.color === "white" ? "1px rgb(var(--black))" : "",
 									color: `rgb(var(--${obj.color}))`,
 								}}
-							></i>
+							/>
 							<p className="text">{t(obj.name)}</p>
 						</div>
 					))}
@@ -188,11 +198,13 @@ function Presentation() {
 						width: `calc(100% - ${widthCharTime}px)`,
 					}}
 				>
-					{COLUMN_NAMES.map((name, i) => (
-						<h3 key={`${name}/${i}`}>{t(name)}</h3>
+					{COLUMN_NAMES.map((name) => (
+						<h3 key={name}>{t(name)}</h3>
 					))}
 				</div>
 			</div>
+			{/* The <div> is a parent element which has events for grabbing certain card */}
+			{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
 			<div
 				ref={parentRef}
 				className={style.wrapper}
@@ -205,7 +217,7 @@ function Presentation() {
 						numericHoursFromDay={numericHoursFromDay}
 						hourHeightInPx={hourHeightInPx}
 						widthCharTime={widthCharTime}
-					></SideHours>
+					/>
 					<div className={style.cards}>
 						<div
 							id={style.elapsedTime}
@@ -219,9 +231,9 @@ function Presentation() {
 								</div>
 							)}
 						</div>
-						{popupName != "design" && (isVisiblePopup || isMouseDown) && (
+						{popupName !== "design" && (isVisiblePopup || isMouseDown) && (
 							<Card
-								isSelected={true}
+								isSelected
 								isAddedToList={false}
 								className={style.newProcedure}
 								procedure={currProcedure}
@@ -229,7 +241,7 @@ function Presentation() {
 									height: `${currProcedure.type.durationProc * hourHeightInPx}px`,
 									top: `${selectTime * hourHeightInPx}px`,
 								}}
-							></Card>
+							/>
 						)}
 						{newProcedures.map(([proc, _isSelected], i) => {
 							const top = FormatDate.numericHoursFromDate(proc.startProcTime) * hourHeightInPx;
@@ -246,42 +258,42 @@ function Presentation() {
 									<Card
 										isAddedToList={false}
 										onMouseDown={() => editProcedureByIndex(i, proc)}
-										key={`${proc.type.name}/${i}/newProcedure`}
+										key={proc.type.name}
 										className={style.newProcedure}
 										procedure={proc}
 										styleAttr={{
 											height: `${proc.type.durationProc * hourHeightInPx}px`,
 											top: `${top}px`,
 										}}
-									></Card>
+									/>
 								)
 							);
 						})}
-						{procedures.cards.map((card, i) => {
+						{procedures.cards.map((card) => {
 							const top = FormatDate.numericHoursFromDate(card.startProcTime) * hourHeightInPx;
 
 							return (
 								<Card
-									key={`${card.type.name}/${i}/procedure`}
+									key={card.type.name}
 									procedure={card}
 									styleAttr={{
 										height: `${card.type.durationProc * hourHeightInPx}px`,
 										top: `${top}px`,
 									}}
-								></Card>
+								/>
 							);
 						})}
 					</div>
 				</div>
 				<div className={style.lines}>
-					{numericHoursFromDay.map((hour, i) => (
+					{numericHoursFromDay.map((hour) => (
 						<div
-							key={hour + "/" + i}
+							key={hour}
 							style={{
 								height: hourHeightInPx,
 							}}
 							className={style.lineHour}
-						></div>
+						/>
 					))}
 				</div>
 			</div>
@@ -289,4 +301,4 @@ function Presentation() {
 	);
 }
 
-export { Presentation as default };
+export default Presentation;

@@ -27,11 +27,12 @@ function ControlPanel() {
 
 	function handleClick() {
 		if (!isAuth) {
-			return navigate("/signin", {
+			navigate("/signin", {
 				state: {
 					purpose: "warningAuthToMakeAppointment",
 				},
 			});
+			return;
 		}
 
 		const minutes = minHour * 60;
@@ -47,6 +48,7 @@ function ControlPanel() {
 	return (
 		<Aside id={style.controlPanel}>
 			<button
+				type="button"
 				id={style.createNewProcedure}
 				className="button border"
 				onClick={handleClick}
@@ -56,9 +58,9 @@ function ControlPanel() {
 			<Calendar
 				options={viewState}
 				onChange={handleChangeDate}
-			></Calendar>
+			/>
 		</Aside>
 	);
 }
 
-export { ControlPanel as default };
+export default ControlPanel;

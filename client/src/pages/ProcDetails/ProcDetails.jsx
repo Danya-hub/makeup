@@ -3,9 +3,9 @@ import { useLocation } from "react-router-dom";
 function ProcDetails() {
 	const { state } = useLocation();
 
-	console.log(state.procedure);
+	// console.log(state.procedure);
 
 	return <span>123</span>;
 }
 
-export { ProcDetails as default };
+export default ProcDetails;

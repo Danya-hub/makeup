@@ -1,26 +1,28 @@
-.current span {
+.current {
 	box-shadow: inset 0 0 0 1px rgb(var(--brown));
+	font-weight: 700;
 }
 
-.week td.hover span {
+.week .hover {
 	--back: rgba(var(--brown), 0.2) !important;
 }
 
-.week td:not(.empty) {
-	cursor: pointer;
+.empty {
+	cursor: unset;
 }
 
 .week td {
 	padding: var(--space);
 }
 
-.week td span {
+.week td button {
 	--back: rgba(var(--transp));
+	--size: var(--step-0);
 
 	background: var(--back);
 	border-radius: 50%;
 }
 
-.week td:not(.empty):hover span {
+.week td button:not(.empty):hover {
 	--back: rgba(var(--gray), 0.6);
 }

@@ -2,8 +2,7 @@ import { useLayoutEffect, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { getProcedureByUserId } from "@/service/redusers/procedures.js";
-import { getAllTypes, getAllStates } from "@/service/redusers/procedures.js";
+import { getProcedureByUserId, getAllTypes, getAllStates } from "@/service/redusers/procedures.js";
 
 import PlaceholderLoader from "@/components/UI/PlaceholderLoader/PlaceholderLoader.jsx";
 import Filters from "./Filters/Filters.jsx";
@@ -21,26 +20,28 @@ function UserProcedures() {
 	const [tempCards, setTempCard] = useState([]);
 	const [hasPlaceholderLoader, setPlaceholderLoaderState] = useState(true);
 
-	async function __init__() {
+	async function init() {
 		dispatch(getAllTypes());
 		dispatch(getAllStates());
 
 		if (!isAuth) {
-			return navigate("/signin", {
+			navigate("/signin", {
 				state: {
 					purpose: "noAccessToPage",
 				},
 			});
+			return;
 		}
 
 		const res = await dispatch(getProcedureByUserId());
 
 		if (res.error) {
-			return navigate("/signin", {
+			navigate("/signin", {
 				state: {
 					purpose: "noAccessToPage",
 				},
 			});
+			return;
 		}
 
 		const paylaod = res.payload || [];
@@ -49,9 +50,7 @@ function UserProcedures() {
 		setInitialCards(paylaod);
 	}
 
-	useLayoutEffect(() => {
-		return __init__;
-	}, []);
+	useLayoutEffect(() => init, []);
 
 	useEffect(() => {
 		if (!hasPlaceholderLoader) {
@@ -64,20 +63,20 @@ function UserProcedures() {
 	return (
 		<div id={style.userProcedures}>
 			{hasPlaceholderLoader ? (
-				<PlaceholderLoader widthInPx="300px"></PlaceholderLoader>
+				<PlaceholderLoader widthInPx="300px" />
 			) : (
 				<Filters
 					placeholderLoaderState={[hasPlaceholderLoader, setPlaceholderLoaderState]}
 					tempCardsState={[tempCards, setTempCard]}
 					initialCards={initialCards}
-				></Filters>
+				/>
 			)}
 			<Presentation
 				tempCards={tempCards}
 				initialCards={initialCards}
-			></Presentation>
+			/>
 		</div>
 	);
 }
 
-export { UserProcedures as default };
+export default UserProcedures;

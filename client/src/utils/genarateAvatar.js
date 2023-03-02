@@ -1,5 +1,6 @@
 class AvatarCanvas {
 	canvas = document.createElement("canvas");
+
 	ctx = this.canvas.getContext("2d");
 
 	constructor(name, size, font = "sans-serif") {
@@ -9,16 +10,16 @@ class AvatarCanvas {
 	}
 
 	generateColor() {
-		const charCodeRed = this.name.charCodeAt(0),
-			charCodeGreen = this.name.charCodeAt(1);
+		const charCodeRed = this.name.charCodeAt(0);
+		const charCodeGreen = this.name.charCodeAt(1);
 
-		const red = Math.pow(charCodeRed, 7) % 256,
-			green = Math.pow(charCodeGreen, 7) % 256,
-			blue = (red + green) % 256;
+		const red = (charCodeRed ** 7) % 256;
+		const green = (charCodeGreen ** 7) % 256;
+		const blue = (red + green) % 256;
 
 		const brightFactor = Math.floor((red + green + blue) / 3);
-		const backColor = `rgb(${red}, ${green}, ${blue})`,
-			textColor = brightFactor > 127 ? "black" : "white";
+		const backColor = `rgb(${red}, ${green}, ${blue})`;
+		const textColor = brightFactor > 127 ? "black" : "white";
 
 		return [backColor, textColor];
 	}
@@ -36,7 +37,8 @@ class AvatarCanvas {
 
 		const nameCodeSize = this.ctx.measureText(nameCode);
 
-		this.canvas.width = this.canvas.height = this.size;
+		this.canvas.width = this.size;
+		this.canvas.height = this.size;
 
 		this.ctx.beginPath();
 		this.ctx.fillStyle = backColor;
@@ -51,19 +53,19 @@ class AvatarCanvas {
 		this.ctx.fillText(
 			nameCode,
 			this.canvas.width / 2,
-			this.canvas.height / 2 + nameCodeSize.width / 4
+			this.canvas.height / 2 + nameCodeSize.width / 4,
 		);
 		this.ctx.closePath();
 
 		return this.canvas.toDataURL();
 	}
 
-	static getUrl() {
-		const avatar = new AvatarCanvas(...arguments);
+	static getUrl(name, size, font) {
+		const avatar = new AvatarCanvas(name, size, font);
 		const url = avatar.generateAvatar();
 
 		return url;
 	}
 }
 
-export { AvatarCanvas as default };
+export default AvatarCanvas;

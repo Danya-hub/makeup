@@ -1,36 +1,27 @@
-"use strict";
-
 import jsonwebtoken from "jsonwebtoken";
-import {
-    config,
-} from "dotenv";
+import { config } from "dotenv";
 
 import ApiError from "../utils/apiError.js";
 
 config();
 
 function roleAccess(roles) {
-    return async function (req, res, next) {
-        try {
-            const [, token] = req.headers.authorization.split(/\s/);
-            const decoded = jsonwebtoken.verify(
-                token,
-                process.env.ACCESS_TOKEN_SECRET_KEY
-            );
+  return async function (req, res, next) {
+    try {
+      const [, token] = req.headers.authorization.split(/\s/);
+      const decoded = jsonwebtoken.verify(token, process.env.ACCESS_TOKEN_SECRET_KEY);
 
-            const isEquilRole = roles.every((role) => decoded.roles.includes(role));
+      const isEquilRole = roles.every((role) => decoded.roles.includes(role));
 
-            if (!isEquilRole) {
-                ApiError.noAccess();
-            }
+      if (!isEquilRole) {
+        ApiError.noAccess();
+      }
 
-            next();
-        } catch (error) {
-            next(error);
-        }
+      next();
+    } catch (error) {
+      next(error);
     }
+  };
 }
 
-export {
-    roleAccess as default,
-}
+export default roleAccess;

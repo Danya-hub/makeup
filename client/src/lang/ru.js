@@ -71,4 +71,4 @@ const ru = {
 	},
 };
 
-export { ru as default };
+export default ru;

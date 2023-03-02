@@ -4,11 +4,6 @@ import CheckSvg from "@/assets/image/check.svg";
 
 import style from "./Checkbox.module.css";
 
-Checkbox.propTypes = {
-	text: types.string,
-	onCheck: types.func,
-};
-
 function Checkbox({ text, onCheck }) {
 	function handleCheck(e) {
 		const isChecked = e.target.checked;
@@ -30,4 +25,9 @@ function Checkbox({ text, onCheck }) {
 	);
 }
 
-export { Checkbox as default };
+Checkbox.propTypes = {
+	text: types.string.isRequired,
+	onCheck: types.func.isRequired,
+};
+
+export default Checkbox;

@@ -1,21 +1,28 @@
 import types from "prop-types";
 
+import Global from "@/utils/global.js";
+
 import LazyInput from "@/components/UI/Form/LazyInput/LazyInput.jsx";
 
-WidthInput.propTypes = {
-	value: types.oneOfType([types.string, types.number]),
-	styleAttr: types.object,
-	onChange: types.func,
-	isFitContent: types.bool,
-};
-
-function WidthInput({ value, styleAttr, onChange, isFitContent = true, ...props }) {
-	const widthInput = (value.toString() || "").getWidthByChar();
+function WidthInput({
+	value,
+	styleAttr,
+	onChange,
+	isFitContent,
+	title,
+	placeholder,
+	onBlur,
+	className,
+}) {
+	const widthInput = Global.getWidthByChar(value.toString() || "");
 
 	return (
 		<LazyInput
-			{...props}
+			className={className}
 			type="text"
+			title={title}
+			placeholder={placeholder}
+			onBlur={onBlur}
 			style={{
 				...styleAttr,
 				[isFitContent ? "width" : "minWidth"]: `${widthInput}px`,
@@ -26,4 +33,31 @@ function WidthInput({ value, styleAttr, onChange, isFitContent = true, ...props 
 	);
 }
 
-export { WidthInput as default };
+WidthInput.defaultProps = {
+	className: "",
+	isFitContent: true,
+	title: "",
+	value: "",
+	onBlur: null,
+	placeholder: "",
+	styleAttr: {},
+};
+
+WidthInput.propTypes = {
+	className: types.string,
+	value: types.oneOfType([
+		types.string,
+		types.number,
+	]),
+	styleAttr: types.instanceOf(Object),
+	onChange: types.func.isRequired,
+	isFitContent: types.bool,
+	title: types.string,
+	placeholder: types.oneOfType([
+		types.string,
+		types.number,
+	]),
+	onBlur: types.func,
+};
+
+export default WidthInput;

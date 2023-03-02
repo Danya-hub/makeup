@@ -13,16 +13,10 @@ import UserSrc from "@/assets/image/user.svg";
 
 import style from "./Header.module.css";
 
-Header.propTypes = {
-	openCabinetState: types.array,
-	isDisplay: types.bool,
-};
-
 function Header({ openCabinetState }) {
 	const dispatch = useDispatch();
 	const { langs } = useSelector((state) => state);
 	const { t } = useTranslation();
-	const ref = useOutsideEvent(handleCloseSelect);
 
 	const [isOpenSelect, setOpenSelect] = useState(false);
 
@@ -34,18 +28,20 @@ function Header({ openCabinetState }) {
 		setOpenSelect(false);
 	}
 
+	const ref = useOutsideEvent(handleCloseSelect);
+
 	return (
 		<header>
-			<Logo></Logo>
+			<Logo />
 			<nav>
 				<Select
 					id={style.langs}
 					ref={ref}
 					defaultValue={langs.currLng}
 					values={allLangNames}
-					strictSwitch={[isOpenSelect, setOpenSelect]}
+					openState={[isOpenSelect, setOpenSelect]}
 					onChange={(ind) => dispatch(langActions.changeLanguage(ind))}
-				></Select>
+				/>
 				{!isAuth && (
 					<Link
 						className="button"
@@ -62,6 +58,7 @@ function Header({ openCabinetState }) {
 				</Link>
 				{isAuth && (
 					<button
+						type="button"
 						id={style.userInfo}
 						className="button"
 						onClick={() => {
@@ -79,4 +76,8 @@ function Header({ openCabinetState }) {
 	);
 }
 
-export { Header as default };
+Header.propTypes = {
+	openCabinetState: types.instanceOf(Array).isRequired,
+};
+
+export default Header;

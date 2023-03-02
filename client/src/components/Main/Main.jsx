@@ -4,13 +4,11 @@ import types from "prop-types";
 
 import Cabinet from "./Cabinet/Cabinet.jsx";
 
-import routes from "@/routes/index.js";
-
-Main.propTypes = {
-	openCabinetState: types.array,
-};
+import routes from "@/routes/index.jsx";
 
 function Main({ openCabinetState }) {
+	const [isOpenCabinet] = openCabinetState;
+
 	return (
 		<main>
 			<div className="content">
@@ -21,14 +19,18 @@ function Main({ openCabinetState }) {
 								key={route.path}
 								path={route.path}
 								element={route.elem()}
-							></Route>
+							/>
 						))}
 					</Routes>
 				</Suspense>
 			</div>
-			<Cabinet openCabinetState={openCabinetState}></Cabinet>
+			{isOpenCabinet && <Cabinet openCabinetState={openCabinetState} />}
 		</main>
 	);
 }
 
-export { Main as default };
+Main.propTypes = {
+	openCabinetState: types.instanceOf(Array).isRequired,
+};
+
+export default Main;

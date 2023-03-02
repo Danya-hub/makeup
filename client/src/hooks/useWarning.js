@@ -14,7 +14,13 @@ function useWarning(warnings) {
 			rez = [_warnings[warnName], true];
 		} else {
 			let boolean = false;
-			let foundWarn = Object.values(_warnings).find((warning) => (boolean = Boolean(warning)));
+
+			const foundWarn = Object.values(_warnings)
+				.find((warning) => {
+					boolean = Boolean(warning);
+
+					return boolean;
+				});
 
 			rez = [foundWarn, boolean];
 		}
@@ -31,7 +37,7 @@ function useWarning(warnings) {
 				{
 					[name]: t(value),
 				},
-				setWarning
+				setWarning,
 			);
 		},
 		{
@@ -40,4 +46,4 @@ function useWarning(warnings) {
 	];
 }
 
-export { useWarning as default };
+export default useWarning;

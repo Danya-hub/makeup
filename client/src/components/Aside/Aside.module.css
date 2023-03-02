@@ -29,10 +29,9 @@
 	z-index: 1;
 }
 
-.content :where(.content > div, ul li a, button) {
+/* .content :where(.content > div, ul li a, button) {
 	width: 100%;
-	padding: 1.5vh 0;
-}
+} */
 
 .aside:global(.lines) .content > *:not(:where(:first-child, :last-child)) {
 	--border: 2px solid rgb(var(--lightGray));

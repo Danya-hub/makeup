@@ -5,24 +5,20 @@ import Checkbox from "@/components/UI/Form/Checkbox/Checkbox.jsx";
 
 import style from "./CheckboxList.module.css";
 
-CheckboxList.propTypes = {
-	values: types.array,
-	className: types.string,
-	onChange: types.func,
-};
-
 function CheckboxList({ className, values, onChange }) {
 	const [checkedOptions, setOption] = useState([]);
 
 	function onCheck(option, isChecked) {
 		setOption((prev) => {
+			let array = prev;
+
 			if (isChecked) {
-				prev = [...prev, option];
+				array = [...prev, option];
 			} else {
-				prev = prev.filter((_opt) => option !== _opt);
+				array = prev.filter((_opt) => option !== _opt);
 			}
 
-			return [...prev];
+			return [...array];
 		}, []);
 	}
 
@@ -32,15 +28,25 @@ function CheckboxList({ className, values, onChange }) {
 
 	return (
 		<div className={`${className} ${style.list}`}>
-			{values.map((value, i) => (
+			{values.map((value) => (
 				<Checkbox
-					key={`${value}/${i}`}
+					key={value}
 					text={value}
-					onCheck={onCheck.bind(null, value)}
-				></Checkbox>
+					onCheck={(isChecked) => onCheck(value, isChecked)}
+				/>
 			))}
 		</div>
 	);
 }
 
-export { CheckboxList as default };
+CheckboxList.defaultProps = {
+	className: "",
+};
+
+CheckboxList.propTypes = {
+	values: types.instanceOf(Array).isRequired,
+	className: types.string,
+	onChange: types.func.isRequired,
+};
+
+export default CheckboxList;

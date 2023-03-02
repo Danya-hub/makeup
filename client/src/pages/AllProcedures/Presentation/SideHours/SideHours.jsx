@@ -2,19 +2,13 @@ import types from "prop-types";
 
 import style from "./SideHours.module.css";
 
-SideHours.propTypes = {
-	numericHoursFromDay: types.array,
-	hourHeightInPx: types.number,
-	widthCharTime: types.number,
-};
-
 function SideHours({ numericHoursFromDay, hourHeightInPx, widthCharTime }) {
 	return (
 		<div className={style.hours}>
 			{numericHoursFromDay.map((hour, i, arr) => (
 				<div
 					className={style.cell}
-					key={hour + "/" + i}
+					key={hour}
 					style={{
 						height: hourHeightInPx,
 						width: `${widthCharTime}px`,
@@ -33,4 +27,10 @@ function SideHours({ numericHoursFromDay, hourHeightInPx, widthCharTime }) {
 	);
 }
 
-export { SideHours as default };
+SideHours.propTypes = {
+	numericHoursFromDay: types.instanceOf(Array).isRequired,
+	hourHeightInPx: types.number.isRequired,
+	widthCharTime: types.number.isRequired,
+};
+
+export default SideHours;

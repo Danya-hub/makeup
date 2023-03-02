@@ -70,4 +70,4 @@ const en = {
 	},
 };
 
-export { en as default };
+export default en;

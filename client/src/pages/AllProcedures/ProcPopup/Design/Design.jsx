@@ -49,9 +49,10 @@ function DesignProc() {
 					procedures={newProcedures}
 					onEdit={editProcedureByIndex}
 					onDelete={deleteProcedureByIndex}
-				></List>
+				/>
 				<div className={style.buttons}>
 					<button
+						type="button"
 						id={style.add}
 						className="button border"
 						onClick={() => changePopupName("make")}
@@ -71,4 +72,4 @@ function DesignProc() {
 	);
 }
 
-export { DesignProc as default };
+export default DesignProc;

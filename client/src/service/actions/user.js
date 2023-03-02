@@ -1,9 +1,15 @@
-function setUser(state, action) {
-	state.info = action.payload;
-}
+const actions = {
+	setUser(state, action) {
+		const objState = state;
 
-function clearError(state) {
-	state.error = "";
-}
+		objState.info = action.payload;
+	},
 
-export { setUser, clearError };
+	clearError(state) {
+		const objState = state;
+
+		objState.error = "";
+	},
+};
+
+export default actions;

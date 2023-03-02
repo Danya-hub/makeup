@@ -15,18 +15,22 @@
 	transition: unset;
 	padding: 1vh 1vw;
 	opacity: 0;
-	pointer-events: none;
-	z-index: 9;
+	z-index: 995;
 }
 
 .wrapper > * {
 	white-space: nowrap;
+	--size: var(--step-2);
 }
 
-.icon {
+.prompt :global(.title) {
 	cursor: help;
 }
 
-.icon span {
+.prompt :global(.title) > * {
+	--size: var(--step-2);
+}
+
+.prompt :global(.title) span {
 	margin-left: 1vw;
 }

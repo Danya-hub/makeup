@@ -20,4 +20,4 @@ function useOutsideEvent(callback, eventName = "click") {
 	return ref;
 }
 
-export { useOutsideEvent as default };
+export default useOutsideEvent;

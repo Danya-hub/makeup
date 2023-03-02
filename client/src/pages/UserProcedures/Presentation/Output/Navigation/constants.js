@@ -1,1 +1,5 @@
-export const MAX_COUNT_BUTTONS = 4;
+const constants = {
+	MAX_COUNT_BUTTONS: 4,
+};
+
+export default constants;

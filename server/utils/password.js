@@ -1,32 +1,24 @@
-"use strict";
-
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 
 class Password {
-    constructor() {
+  generate(length = 6, wishlist = "0123456789") {
+    const buffer = new Uint32Array(length);
+    const random = crypto.randomFillSync(buffer);
 
-    }
+    const password = Array.from(random)
+      .map((x) => wishlist[x % wishlist.length])
+      .join("");
 
-    generate(
-        length = 6,
-        wishlist = "0123456789"
-    ) {
-        const buffer = new Uint32Array(length);
-        const random = crypto.randomFillSync(buffer);
+    return password;
+  }
 
-        const password = Array.from(random)
-            .map((x) => wishlist[x % wishlist.length]).join("");
+  hash(value) {
+    const salt = bcrypt.genSaltSync();
+    const hash = bcrypt.hashSync(value, salt);
 
-        return password;
-    }
-
-    hash(value) {
-        const salt = bcrypt.genSaltSync();
-        const hash = bcrypt.hashSync(value, salt);
-
-        return hash;
-    }
+    return hash;
+  }
 }
 
 export default new Password();

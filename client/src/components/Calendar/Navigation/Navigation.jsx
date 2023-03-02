@@ -6,15 +6,10 @@ import RightArrowSrc from "@/assets/image/rightArrow.svg";
 
 import style from "./Navigation.module.css";
 
-Navigation.propTypes = {
-	locale: types.object,
-	monthState: types.array,
-	onChange: types.func,
-};
-
-function Navigation({ locale, monthState, onChange }) {
+function Navigation({ options, onChange }) {
 	const lng = useSelector((state) => state.langs.currLng);
 
+	const { monthState, locale } = options;
 	const [month, setMonth] = monthState;
 	const monthName = locale.toLocaleString(lng, {
 		month: "long",
@@ -64,4 +59,9 @@ function Navigation({ locale, monthState, onChange }) {
 	);
 }
 
-export { Navigation as default };
+Navigation.propTypes = {
+	options: types.instanceOf(Object).isRequired,
+	onChange: types.func.isRequired,
+};
+
+export default Navigation;

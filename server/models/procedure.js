@@ -1,8 +1,7 @@
-"use strict";
-
 import mongoose from "mongoose";
 
-const ProcedureSchema = new mongoose.Schema({
+const ProcedureSchema = new mongoose.Schema(
+  {
     startProcTime: Date,
     finishProcTime: Date,
     paymentMethod: String,
@@ -10,38 +9,37 @@ const ProcedureSchema = new mongoose.Schema({
     month: Number,
     day: Number,
     file: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "File",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "File",
     },
     type: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "TypesProcedure",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "TypesProcedure",
     },
     user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
     state: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "StateProcedure",
-    }
-}, {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "StateProcedure",
+    },
+  },
+  {
     timestamps: true,
-});
+  }
+);
 
 ProcedureSchema.pre("save", function (next) {
-    const date = this.startProcTime;
+  const date = this.startProcTime;
 
-    this.year = date.getFullYear();
-    this.month = date.getMonth();
-    this.day = date.getDate();
+  this.year = date.getFullYear();
+  this.month = date.getMonth();
+  this.day = date.getDate();
 
-    next();
+  next();
 });
 
 const model = mongoose.model("AllProcedures", ProcedureSchema);
 
-export {
-    model as
-    default,
-};
+export default model;

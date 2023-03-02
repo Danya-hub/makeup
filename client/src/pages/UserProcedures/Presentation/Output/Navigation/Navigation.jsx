@@ -7,25 +7,19 @@ import WidthInput from "@/components/UI/Form/WidthInput/WidthInput.jsx";
 
 import Check from "@/helpers/check.js";
 
-import { MAX_COUNT_BUTTONS } from "./constants.js";
+import constants from "./constants.js";
 
 import style from "./Navigation.module.css";
 
-Navigation.propTypes = {
-	countPages: types.number,
-	numberPageState: types.array,
-	maxCards: types.number,
-};
-
 function Navigation({ countPages, numberPageState }) {
-	const minPage = 1,
-		maxPage = countPages;
+	const minPage = 1;
+	const maxPage = countPages;
 
 	const [numberPage, setNumberPage] = numberPageState;
-	const countBtns = MAX_COUNT_BUTTONS > maxPage ? maxPage : MAX_COUNT_BUTTONS;
+	const countBtns = constants.MAX_COUNT_BUTTONS > maxPage ? maxPage : constants.MAX_COUNT_BUTTONS;
 
-	const minCountChangeableBtns = 0,
-		maxCountChangeableBtns = maxPage - countBtns;
+	const minCountChangeableBtns = 0;
+	const maxCountChangeableBtns = maxPage - countBtns;
 	const integer = numberPage < maxCountChangeableBtns ? numberPage : maxCountChangeableBtns;
 
 	function handleClickOnPage(i) {
@@ -36,8 +30,8 @@ function Navigation({ countPages, numberPageState }) {
 		setNumberPage((page) => page + i);
 	}
 
-	function handleChangePage(callback, e) {
-		const value = e.currentTarget.value;
+	function handleChangePage(e, callback) {
+		const { value } = e.currentTarget;
 		const isValid = Check.isNumber(value) && callback(value);
 
 		setNumberPage((_val) => (isValid ? value - 1 : _val));
@@ -50,6 +44,7 @@ function Navigation({ countPages, numberPageState }) {
 	return (
 		<div className={style.navigation}>
 			<button
+				type="button"
 				id="prev"
 				title="prev"
 				className={style.switchBtn}
@@ -64,11 +59,10 @@ function Navigation({ countPages, numberPageState }) {
 				<WidthInput
 					isFitContent={false}
 					value={minPage}
-					type="text"
 					title={t("pageNum")}
-					onChange={handleChangePage.bind(
-						null,
-						(value) => value - 1 >= minCountChangeableBtns && value - 1 < integer
+					onChange={(e) => handleChangePage(
+						e,
+						(value) => value - 1 >= minCountChangeableBtns && value - 1 < integer,
 					)}
 					onBlur={clearField}
 					placeholder="..."
@@ -79,7 +73,8 @@ function Navigation({ countPages, numberPageState }) {
 
 				return (
 					<button
-						key={"nav/" + current}
+						type="button"
+						key={current}
 						id={current}
 						className={current === numberPage ? style.selectPage : ""}
 						onClick={() => setNumberPage(i)}
@@ -94,16 +89,19 @@ function Navigation({ countPages, numberPageState }) {
 					value={maxPage}
 					type="text"
 					title={t("pageNum")}
-					onChange={handleChangePage.bind(
-						null,
-						(value) =>
-							Math.abs(maxCountChangeableBtns - numberPage - maxPage) < value && maxPage > value - 1
-					)}
+					onChange={
+						(e) => handleChangePage(
+							e,
+							(value) => Math.abs(maxCountChangeableBtns - numberPage - maxPage) < value
+							&& maxPage > value - 1,
+						)
+					}
 					onBlur={clearField}
 					placeholder="..."
 				/>
 			)}
 			<button
+				type="button"
 				id="next"
 				title="next"
 				className={style.switchBtn}
@@ -118,4 +116,9 @@ function Navigation({ countPages, numberPageState }) {
 	);
 }
 
-export { Navigation as default };
+Navigation.propTypes = {
+	countPages: types.number.isRequired,
+	numberPageState: types.instanceOf(Array).isRequired,
+};
+
+export default Navigation;

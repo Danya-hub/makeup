@@ -1,129 +1,128 @@
-import { useSelector, useDispatch } from "react-redux";
+import {
+	useSelector,
+	useDispatch,
+} from "react-redux";
 
-import { actions as navigateDateActions } from "@/service/redusers/navigateDate.js";
+import {
+	actions as navigateDateActions,
+} from "@/service/redusers/navigateDate.js";
 import FormatDate from "@/utils/formatDate.js";
 import useDate from "@/hooks/useDate.js";
 import useWarning from "@/hooks/useWarning.js";
 
-class useCalendar {
-	warningsList = {
+function useCalendar() {
+	const dispatch = useDispatch();
+	const selector = useSelector((state) => state);
+
+	this.warningsList = {
 		takenProcedureTime: "",
 		elapsedDay: "",
 		crossingElapsedTime: "",
 	};
 
-	dispatch = useDispatch();
-	selector = useSelector((state) => state);
-	viewState = useDate(new Date(this.selector.navigateDate.date));
+	this.viewState = useDate(new Date(selector.navigateDate.date));
+	this.getDragY = (pageY) => Math.ceil(pageY / this.hourHeightInPx / this.dragStep)
+		* this.hourHeightInPx * this.dragStep;
 
-	constructor() {
-		this.getDragY = (pageY) => {
-			return (
-				Math.ceil(pageY / this.hourHeightInPx / this.dragStep) * this.hourHeightInPx * this.dragStep
-			);
-		};
+	const [warnings, setWarning, {
+		checkOnWarning,
+	}] = useWarning(this.warningsList);
+	const {
+		locale,
+		strictTimeObject,
+	} = this.viewState;
 
-		const [warnings, setWarning, { checkOnWarning }] = useWarning(this.warningsList);
-		const { locale, strictTimeObject } = this.viewState;
+	this.warning = {
+		warnings,
+		setWarning,
+		checkOnWarning,
+	};
 
-		this.warning = {
-			warnings,
-			setWarning,
-			checkOnWarning,
-		};
+	this.isCurrentTime = selector.navigateDate.isCurrentDate;
 
-		this.isCurrentTime = this.selector.navigateDate.isCurrentDate;
+	this.hourHeightInPx = 60;
+	this.dragStep = 0.5;
+	this.numericHoursFromDay = FormatDate.hoursByFormat({
+		hourFormat: selector.langs.currLng,
+	});
+	this.currentTimeHeightInPx = FormatDate.minutesFromDate(locale, this.hourHeightInPx);
+	this.minHour = this.getDragY(this.currentTimeHeightInPx) / this.hourHeightInPx;
+	this.maxHour = this.getDragY(this.hourHeightInPx * (this.numericHoursFromDay.length - 1))
+		/ this.hourHeightInPx;
 
-		this.hourHeightInPx = 60;
-		this.dragStep = 0.5;
-		this.numericHoursFromDay = FormatDate.hoursByFormat({
-			hourFormat: this.selector.langs.currLng,
+	this.redirectOnNewDate = (newDate, oldDate) => {
+		const callback = this.dateDirection(({
+			isCurrent,
+			isMaxDate,
+			newView,
+		}) => {
+			if (isCurrent) {
+				return [new Date(), true];
+			}
+			return [this[isMaxDate ? "getMaxDate" : "getMinDate"](newView), false];
 		});
-		this.currentTimeHeightInPx = FormatDate.minutesFromDate(locale, this.hourHeightInPx);
-		this.minHour = this.getDragY(this.currentTimeHeightInPx) / this.hourHeightInPx; //!
-		this.maxHour =
-			this.getDragY(this.hourHeightInPx * (this.numericHoursFromDay.length - 1)) /
-			this.hourHeightInPx;
 
-		this.redirectOnNewDate = (newDate, oldDate) => {
-			const callback = this.dateDirection(({ isCurrent, isMaxDate, newView }) => {
-				if (isCurrent) {
-					return [new Date(), true];
-				} else {
-					return [this[isMaxDate ? "getMaxDate" : "getMinDate"](newView), false];
-				}
-			});
+		return callback(newDate, oldDate);
+	};
 
-			return callback(newDate, oldDate);
+	this.dateDirection = (callback) => (newView, strict) => {
+		const selectDay = newView.getDate();
+		const selectMonth = newView.getMonth() + 1;
+		const selectYear = newView.getFullYear();
+
+		const isMinDate = strict.year < selectYear
+			|| (strict.year <= selectYear && strict.month < selectMonth)
+			|| (strict.year <= selectYear
+				&& strict.month <= selectMonth
+				&& strict.day < selectDay);
+		const isMaxDate = strict.year > selectYear
+			|| (strict.year >= selectYear && strict.month > selectMonth)
+			|| (strict.year >= selectYear
+				&& strict.month >= selectMonth
+				&& strict.day > selectDay);
+		const isCurrentDate = !(isMaxDate || isMinDate);
+
+		return callback({
+			isCurrent: isCurrentDate,
+			isMaxDate,
+			isMinDate,
+			newView,
+		});
+	};
+
+	this.getMinDate = (date) => FormatDate.minutesToDate(0, date, false);
+
+	this.getMaxDate = (date) => FormatDate.minutesToDate(this.maxHour * 60 - 1, date, false);
+
+	this.switchDayOnOther = (date) => {
+		const [newDate, isCurrent] = this.redirectOnNewDate(date, strictTimeObject.current);
+		const selectMinutes = FormatDate.minutesFromDate(newDate, this.hourHeightInPx);
+		const isElapsed = this.isElapsedDay(selectMinutes);
+
+		dispatch(navigateDateActions.setNavigateDate([newDate, isCurrent]));
+		this.warning.setWarning(["elapsedDay", isElapsed ? "elapsedDay" : ""]);
+
+		return {
+			newDate,
+			isCurrent,
+			isElapsed,
 		};
+	};
 
-		this.dateDirection = (callback) => {
-			return function (newView, strictTimeObject) {
-				const selectDay = newView.getDate(),
-					selectMonth = newView.getMonth() + 1,
-					selectYear = newView.getFullYear();
+	this.setUnitForDate = (unitArr, oldDatesUnits, newDateUnits) => {
+		const rez = {};
+		const entries = Object.entries(oldDatesUnits);
 
-				const isMinDate =
-					strictTimeObject.year < selectYear ||
-					(strictTimeObject.year <= selectYear && strictTimeObject.month < selectMonth) ||
-					(strictTimeObject.year <= selectYear &&
-						strictTimeObject.month <= selectMonth &&
-						strictTimeObject.day < selectDay);
-				const isMaxDate =
-					strictTimeObject.year > selectYear ||
-					(strictTimeObject.year >= selectYear && strictTimeObject.month > selectMonth) ||
-					(strictTimeObject.year >= selectYear &&
-						strictTimeObject.month >= selectMonth &&
-						strictTimeObject.day > selectDay);
-				const isCurrentDate = !(isMaxDate || isMinDate);
+		entries.forEach(([key, value]) => {
+			rez[key] = FormatDate.unitTimeFromOtherDate(unitArr, value, newDateUnits);
+		});
 
-				return callback({
-					isCurrent: isCurrentDate,
-					isMaxDate,
-					isMinDate,
-					newView,
-				});
-			};
-		};
+		return rez;
+	};
 
-		this.getMinDate = (date) => {
-			return FormatDate.minutesToDate(0, date, false);
-		};
+	this.isElapsedDay = (minutes) => this.maxHour === Math.floor((minutes + 1) / 60);
 
-		this.getMaxDate = (date) => {
-			return FormatDate.minutesToDate(this.maxHour * 60 - 1, date, false);
-		};
-
-		this.switchDayOnOther = (date) => {
-			const [newDate, isCurrent] = this.redirectOnNewDate(date, strictTimeObject.current);
-			const selectMinutes = FormatDate.minutesFromDate(newDate, this.hourHeightInPx);
-			const isElapsed = this.isElapsedDay(selectMinutes);
-
-			this.dispatch(navigateDateActions.setNavigateDate([newDate, isCurrent]));
-			this.warning.setWarning(["elapsedDay", isElapsed ? "elapsedDay" : ""]);
-
-			return {
-				newDate,
-				isCurrent,
-				isElapsed,
-			};
-		};
-
-		this.setUnitForDate = (unitArr, oldDatesUnits, newDateUnits) => {
-			const rez = {};
-			const entries = Object.entries(oldDatesUnits);
-
-			entries.forEach(([key, value]) => {
-				rez[key] = FormatDate.unitTimeFromOtherDate(unitArr, value, newDateUnits);
-			});
-
-			return rez;
-		};
-
-		this.isElapsedDay = (minutes) => {
-			return this.maxHour === Math.floor((minutes + 1) / 60);
-		};
-	}
+	return this;
 }
 
-export { useCalendar as default };
+export default useCalendar;

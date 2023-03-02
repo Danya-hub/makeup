@@ -3,11 +3,7 @@ import types from "prop-types";
 
 import style from "./PasswordInput.module.css";
 
-PasswordInput.propTypes = {
-	className: types.string,
-};
-
-function PasswordInput({ className = "", ...props }) {
+function PasswordInput({ className, id, name, maxLength, onBlur }) {
 	const [isVisible, setVisible] = useState(false);
 
 	function handleSwitchVisible() {
@@ -17,9 +13,11 @@ function PasswordInput({ className = "", ...props }) {
 	return (
 		<div className={`${style.wrapper} ${className} input`}>
 			<input
-				name="password"
+				id={id}
+				name={name}
 				type={isVisible ? "text" : "password"}
-				{...props}
+				maxLength={maxLength}
+				onBlur={onBlur}
 			/>
 			<button
 				type="button"
@@ -29,10 +27,23 @@ function PasswordInput({ className = "", ...props }) {
 				<i
 					className={`fa fa-${isVisible ? "eye" : "eye-slash"}`}
 					aria-hidden="true"
-				></i>
+				/>
 			</button>
 		</div>
 	);
 }
 
-export { PasswordInput as default };
+PasswordInput.defaultProps = {
+	className: "",
+	id: "",
+};
+
+PasswordInput.propTypes = {
+	className: types.string,
+	id: types.string,
+	name: types.string.isRequired,
+	maxLength: types.number.isRequired,
+	onBlur: types.func.isRequired,
+};
+
+export default PasswordInput;

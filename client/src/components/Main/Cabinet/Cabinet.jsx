@@ -11,10 +11,6 @@ import { logout, requestResetPassword } from "@/service/redusers/user.js";
 
 import style from "./Cabinet.module.css";
 
-Cabinet.propTypes = {
-	openCabinetState: types.array,
-};
-
 function Cabinet({ openCabinetState }) {
 	const dispatch = useDispatch();
 	const { info: userInfo } = useSelector((state) => state.user);
@@ -34,7 +30,7 @@ function Cabinet({ openCabinetState }) {
 		dispatch(
 			requestResetPassword({
 				email: userInfo.email,
-			})
+			}),
 		);
 	}
 
@@ -49,12 +45,13 @@ function Cabinet({ openCabinetState }) {
 					<Avatar
 						id={style.userAvatar}
 						userName={userInfo.fullname}
-					></Avatar>
+					/>
 					<div className={style.fields}>
 						<span id={style.name}>{userInfo.fullname}</span>
 						<span id="telephone">{userInfo.telephone}</span>
 						<span id="telephone">{userInfo.email}</span>
 						<button
+							type="button"
 							id={style.resetPassword}
 							onClick={handleResetPassword}
 						>
@@ -76,6 +73,7 @@ function Cabinet({ openCabinetState }) {
 				</ul>
 				<Event callback={handleCloseCabinet}>
 					<button
+						type="button"
 						id={style.logout}
 						className="button"
 						onClick={handleLogout}
@@ -88,4 +86,8 @@ function Cabinet({ openCabinetState }) {
 	);
 }
 
-export { Cabinet as default };
+Cabinet.propTypes = {
+	openCabinetState: types.instanceOf(Array).isRequired,
+};
+
+export default Cabinet;

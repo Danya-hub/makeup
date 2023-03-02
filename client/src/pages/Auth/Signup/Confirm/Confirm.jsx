@@ -5,15 +5,9 @@ import types from "prop-types";
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 
 import { sendPassword, checkPassword } from "@/service/redusers/user.js";
-import { MAX_LENGTH_PASSWORD } from "@/constant/auth.js";
+import constants from "@/constants/auth.js";
 
 import style from "@/pages/Auth/Auth.module.css";
-
-Confirm.propTypes = {
-	formState: types.array,
-	userState: types.array,
-	onSuccess: types.func,
-};
 
 function Confirm({ formState, userState, onSuccess }) {
 	const dispatch = useDispatch();
@@ -27,10 +21,25 @@ function Confirm({ formState, userState, onSuccess }) {
 		setFormState(false);
 	}
 
+	async function onCheckPassword(password) {
+		const res = await dispatch(
+			checkPassword({
+				...user,
+				password,
+			}),
+		);
+
+		if (res.error) {
+			return;
+		}
+
+		onSuccess(res.payload);
+	}
+
 	function handleChangePassword(e) {
 		const password = e.currentTarget.value;
 
-		if (password.length !== MAX_LENGTH_PASSWORD) {
+		if (password.length !== constants.MAX_LENGTH_PASSWORD) {
 			return;
 		}
 
@@ -39,21 +48,6 @@ function Confirm({ formState, userState, onSuccess }) {
 
 	function generateNewPassword() {
 		dispatch(sendPassword(user));
-	}
-
-	async function onCheckPassword(password) {
-		const res = await dispatch(
-			checkPassword({
-				...user,
-				password,
-			})
-		);
-
-		if (res.error) {
-			return;
-		}
-
-		onSuccess(res.payload);
 	}
 
 	return (
@@ -69,7 +63,7 @@ function Confirm({ formState, userState, onSuccess }) {
 					<Notification
 						text={error}
 						status="error"
-					></Notification>
+					/>
 				)}
 				<form>
 					<div>
@@ -81,7 +75,7 @@ function Confirm({ formState, userState, onSuccess }) {
 							type="text"
 							className={`input ${style.field}`}
 							name="password"
-							maxLength={MAX_LENGTH_PASSWORD}
+							maxLength={constants.MAX_LENGTH_PASSWORD}
 							onChange={handleChangePassword}
 						/>
 					</div>
@@ -111,4 +105,10 @@ function Confirm({ formState, userState, onSuccess }) {
 	);
 }
 
-export { Confirm as default };
+Confirm.propTypes = {
+	formState: types.instanceOf(Array).isRequired,
+	userState: types.instanceOf(Array).isRequired,
+	onSuccess: types.func.isRequired,
+};
+
+export default Confirm;

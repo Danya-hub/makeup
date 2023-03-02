@@ -20,7 +20,7 @@ function EmptyProc() {
 				{
 					t("book", {
 						returnObjects: true,
-					}).short
+					})
 				}
 			</Link>
 		</div>

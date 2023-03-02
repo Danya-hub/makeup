@@ -7,6 +7,10 @@
 	padding: 2vh var(--space);
 }
 
+#info span {
+	--size: var(--step-1)
+}
+
 #userAvatar {
 	border-radius: 100vw;
 	width: 80px;
@@ -27,7 +31,7 @@
 }
 
 #cabinet li a {
-	padding-left: var(--space);
+	padding: 1vh var(--space);
 }
 
 #logout {

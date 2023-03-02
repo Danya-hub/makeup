@@ -22,10 +22,10 @@ function useDate(date) {
 		setMonth(m);
 	}
 
-	function handleChangeDay(day) {
-		locale.setDate(day);
+	function handleChangeDay(d) {
+		locale.setDate(d);
 
-		setDay(day);
+		setDay(d);
 	}
 
 	return {
@@ -37,4 +37,4 @@ function useDate(date) {
 	};
 }
 
-export { useDate as default };
+export default useDate;

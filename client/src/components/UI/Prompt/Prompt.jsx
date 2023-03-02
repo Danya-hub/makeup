@@ -2,24 +2,17 @@ import types from "prop-types";
 
 import style from "./Prompt.module.css";
 
-Prompt.propTypes = {
-	iconName: types.string,
-	children: types.oneOfType([types.array, types.object]),
-	text: types.string,
-	direction: types.string,
-};
-
-function Prompt({ iconName, children, text, direction = "left", ...props }) {
+function Prompt({ id, iconName, children, text, direction }) {
 	return (
 		<div
-			{...props}
+			id={id}
 			className={style.prompt}
 		>
-			<div className={style.icon}>
+			<div className="title">
 				<i
 					className={`fa fa-${iconName}`}
 					aria-hidden="true"
-				></i>
+				/>
 				{text && <span>{text}</span>}
 			</div>
 			<div
@@ -34,4 +27,20 @@ function Prompt({ iconName, children, text, direction = "left", ...props }) {
 	);
 }
 
-export { Prompt as default };
+Prompt.defaultProps = {
+	id: "",
+	direction: "left",
+};
+
+Prompt.propTypes = {
+	id: types.string,
+	iconName: types.string.isRequired,
+	children: types.oneOfType([
+		types.array,
+		types.object,
+	]).isRequired,
+	text: types.string.isRequired,
+	direction: types.string,
+};
+
+export default Prompt;

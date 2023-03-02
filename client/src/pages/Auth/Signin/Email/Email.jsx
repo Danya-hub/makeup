@@ -9,11 +9,6 @@ import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 
 import style from "@/pages/Auth/Auth.module.css";
 
-Email.propTypes = {
-	userState: types.array,
-	passwordState: types.array,
-};
-
 function Email({ userState, passwordState }) {
 	const dispatch = useDispatch();
 	const { t } = useTranslation();
@@ -30,7 +25,7 @@ function Email({ userState, passwordState }) {
 		const res = await dispatch(
 			requestResetPassword({
 				email,
-			})
+			}),
 		);
 
 		if (res.error) {
@@ -53,7 +48,7 @@ function Email({ userState, passwordState }) {
 					<Notification
 						text={error}
 						status="error"
-					></Notification>
+					/>
 				)}
 				<form onSubmit={handleResetPassword}>
 					<div>
@@ -67,7 +62,7 @@ function Email({ userState, passwordState }) {
 							className={`input ${style.field}`}
 							defaultValue={email}
 							onBlur={(e) => setEmail(e.currentTarget.value)}
-						></input>
+						/>
 					</div>
 					<div className={style.navigation}>
 						<button
@@ -92,4 +87,9 @@ function Email({ userState, passwordState }) {
 	);
 }
 
-export { Email as default };
+Email.propTypes = {
+	userState: types.instanceOf(Array).isRequired,
+	passwordState: types.instanceOf(Array).isRequired,
+};
+
+export default Email;

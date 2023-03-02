@@ -5,27 +5,16 @@ import CheckboxList from "@/components/UI/Form/CheckboxList/CheckboxList.jsx";
 
 import style from "./Search.module.css";
 
-import { MAX_COLUMN } from "./constant.js";
-
-Search.propTypes = {
-	values: types.array,
-	keys: types.array,
-	placeholder: types.string,
-	onSearch: types.func,
-	onSelectOption: types.func,
-	hasVisualOptions: types.bool,
-	isOpen: types.bool,
-	hasMultipleOption: types.bool,
-};
+import constants from "./constants.js";
 
 function Search({
 	values,
-	placeholder = "",
+	placeholder,
 	onSearch,
 	onSelectOption,
-	hasVisualOptions = true,
-	isOpen = false,
-	hasMultipleOption = false,
+	hasVisualOptions,
+	isOpen,
+	hasMultipleOption,
 }) {
 	const [options, setOption] = useState([]);
 	const [_isOpen, setBoolOpen] = useState(isOpen);
@@ -63,27 +52,48 @@ function Search({
 				onChange={handleChange}
 				onFocus={() => handleSwitch(true)}
 			/>
-			{hasVisualOptions &&
-				(hasMultipleOption ? (
+			{hasVisualOptions
+				&& (hasMultipleOption ? (
 					<CheckboxList
 						className={style.border}
 						values={options}
 						onChange={handleClick}
-					></CheckboxList>
+					/>
 				) : (
 					<ul className={`${style.options} ${style.border}`}>
 						{options.map(
-							(value, i) =>
-								i < MAX_COLUMN && (
-									<li key={value + "/" + i}>
-										<span onClick={() => handleClick([options[i]])}>{value}</span>
-									</li>
-								)
+							(value, i) => i < constants.MAX_COLUMN && (
+								<li key={value}>
+									<button
+										type="button"
+										onClick={() => handleClick([options[i]])}
+									>
+										{value}
+									</button>
+								</li>
+							),
 						)}
 					</ul>
 				))}
 		</div>
 	);
 }
+
+Search.defaultProps = {
+	placeholder: "",
+	hasVisualOptions: true,
+	isOpen: false,
+	hasMultipleOption: false,
+};
+
+Search.propTypes = {
+	values: types.instanceOf(Array).isRequired,
+	placeholder: types.string,
+	onSearch: types.func.isRequired,
+	onSelectOption: types.func.isRequired,
+	hasVisualOptions: types.bool,
+	isOpen: types.bool,
+	hasMultipleOption: types.bool,
+};
 
 export default memo(Search);

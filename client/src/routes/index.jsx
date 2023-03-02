@@ -79,4 +79,4 @@ const routes = [
 	},
 ];
 
-export { routes as default };
+export default routes;

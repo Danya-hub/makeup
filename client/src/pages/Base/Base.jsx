@@ -2,4 +2,4 @@ function Base() {
 	return <span>Main</span>;
 }
 
-export { Base as default };
+export default Base;

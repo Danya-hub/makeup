@@ -20,4 +20,5 @@ i18next.use(initReactI18next).init({
 	},
 });
 
-export { i18next as default, langs };
+export { langs };
+export default i18next;

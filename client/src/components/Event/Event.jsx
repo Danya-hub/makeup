@@ -1,27 +1,30 @@
-import { Fragment, memo } from "react";
+import { memo } from "react";
 import types from "prop-types";
 
-Event.propTypes = {
-	children: types.object,
-	callback: types.func,
-	eventName: types.string,
-};
-
-function Event({ callback, eventName = "Click", ...props }) {
-	const _props = props.children.props;
+function Event({ callback, eventName, children }) {
 	const childProps = {
-		..._props,
+		...children.props,
 		[`on${eventName}`]: () => {
-			_props[`on${eventName}`]();
+			children.props[`on${eventName}`]();
 			callback();
 		},
 	};
-	const childElem = {
-		...props.children,
+	const el = {
+		...children,
 		props: childProps,
 	};
 
-	return <Fragment>{childElem}</Fragment>;
+	return el;
 }
+
+Event.defaultProps = {
+	eventName: "Click",
+};
+
+Event.propTypes = {
+	children: types.node.isRequired,
+	callback: types.func.isRequired,
+	eventName: types.string,
+};
 
 export default memo(Event);

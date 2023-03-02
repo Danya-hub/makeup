@@ -1,17 +1,20 @@
 import Check from "@/helpers/check.js";
 
-function putNewValue(state, action) {
-	const [name, value] = action.payload;
-	const _isObj = Check.isObject(value);
+const actions = {
+	putNewValue(state, action) {
+		const [name, value] = action.payload;
+		const isObject = Check.isObject(value);
+		const objState = state;
 
-	state[name] = value;
+		objState[name] = value;
 
-	if (_isObj) {
-		state[name] = {
-			...state[name],
-			...value,
-		};
-	}
-}
+		if (isObject) {
+			objState[name] = {
+				...objState[name],
+				...value,
+			};
+		}
+	},
+};
 
-export { putNewValue };
+export default actions;
