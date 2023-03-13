@@ -54,6 +54,7 @@
             "required": {
                 "some": ["nesting", "id"]
             }
-        }]
+        }],
+        "eol-last": "off"
     }
 }

@@ -15,6 +15,7 @@
 	transition: unset;
 	padding: 1vh 1vw;
 	opacity: 0;
+	pointer-events: none;
 	z-index: 995;
 }
 

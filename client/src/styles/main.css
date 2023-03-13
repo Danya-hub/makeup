@@ -51,6 +51,10 @@ h3 {
 	letter-spacing: 1.5px;
 }
 
+h1 {
+	--size: var(--step-5)
+}
+
 body {
 	position: relative;
 	background: rgb(var(--darkWhite));
@@ -97,11 +101,11 @@ img {
 
 i {
 	display: block;
-	font-size: var(--step-0);
+	font-size: var(--step-2);
 }
 
 p {
-	line-height: var(--step-2);
+	line-height: 20px;
 }
 
 label {
@@ -146,10 +150,15 @@ input::placeholder {
 	border-radius: var(--def-radius);
 	padding: var(--inputHeight) 0 var(--inputHeight) 1vw;
 	width: 100%;
+	overflow: hidden;
 }
 
 form > *:not(:first-child) {
 	margin-top: 2.5vh;
+}
+
+form > *:last-child {
+	margin-top: 5vh;
 }
 
 .title {

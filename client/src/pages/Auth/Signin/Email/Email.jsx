@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import types from "prop-types";
 
-import { requestResetPassword } from "@/service/redusers/user.js";
+import { sendLinkForResetingPassword } from "@/service/redusers/user.js";
 
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 
@@ -23,7 +23,7 @@ function Email({ userState, passwordState }) {
 		e.preventDefault();
 
 		const res = await dispatch(
-			requestResetPassword({
+			sendLinkForResetingPassword({
 				email,
 			}),
 		);
@@ -46,7 +46,7 @@ function Email({ userState, passwordState }) {
 				<p className={`${style.message} ${style.center}`}>{t("sendPasswordResetEmail")}</p>
 				{error && (
 					<Notification
-						text={error}
+						content={error}
 						status="error"
 					/>
 				)}

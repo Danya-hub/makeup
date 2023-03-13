@@ -1,4 +1,7 @@
 {
+    "settings": {
+        // "import/extensions": [".js"]
+    },
     "env": {
         "es2021": true,
         "node": true
@@ -20,6 +23,7 @@
         "no-tabs": "off",
         "class-methods-use-this": "off",
         "no-underscore-dangle": "off",
-        "comma-dangle": "off"
+        "comma-dangle": "off",
+        "eol-last": "off"
     }
 }

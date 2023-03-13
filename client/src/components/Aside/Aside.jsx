@@ -48,11 +48,11 @@ function Aside({ id, className, openState, ...props }) {
 			</div>
 			{openState && (
 				// background for quick exit
-				// eslint-disable-next-line jsx-a11y/no-static-element-interactions
+				// eslint-disable-next-line max-len
+				// eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
 				<div
 					className={style.background}
 					onClick={handleClose}
-					// onKeyDown={handleClose}
 				/>
 			)}
 		</aside>

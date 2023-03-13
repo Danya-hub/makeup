@@ -29,15 +29,14 @@
 	z-index: 1;
 }
 
-/* .content :where(.content > div, ul li a, button) {
-	width: 100%;
-} */
+.content > * {
+	margin-bottom: 2vh;
+}
 
-.aside:global(.lines) .content > *:not(:where(:first-child, :last-child)) {
+/* .aside:global(.lines) .content > *:not(:where(:first-child, :last-child)) {
 	--border: 2px solid rgb(var(--lightGray));
 
-	border-bottom: var(--border);
-}
+} */
 
 .content button {
 	width: 100%;

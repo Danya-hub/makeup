@@ -8,10 +8,10 @@ class ApiError extends Error {
     this.errors = arrErrors;
   }
 
-  static notExist(field) {
+  static notExist(key) {
     throw new ApiError(404, [
       {
-        error: errors.notExist(field),
+        error: errors.notExist(key),
       },
     ]);
   }
@@ -22,9 +22,9 @@ class ApiError extends Error {
     });
   }
 
-  static noAccess() {
+  static noAccess(message) {
     throw new ApiError(403, {
-      error: errors.noAccess(),
+      error: message,
     });
   }
 

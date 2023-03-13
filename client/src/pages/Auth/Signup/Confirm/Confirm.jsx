@@ -4,7 +4,7 @@ import types from "prop-types";
 
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 
-import { sendPassword, checkPassword } from "@/service/redusers/user.js";
+import { sendPasswordForCompare, comparePassword } from "@/service/redusers/user.js";
 import constants from "@/constants/auth.js";
 
 import style from "@/pages/Auth/Auth.module.css";
@@ -23,7 +23,7 @@ function Confirm({ formState, userState, onSuccess }) {
 
 	async function onCheckPassword(password) {
 		const res = await dispatch(
-			checkPassword({
+			comparePassword({
 				...user,
 				password,
 			}),
@@ -47,7 +47,7 @@ function Confirm({ formState, userState, onSuccess }) {
 	}
 
 	function generateNewPassword() {
-		dispatch(sendPassword(user));
+		dispatch(sendPasswordForCompare(user));
 	}
 
 	return (
@@ -61,7 +61,7 @@ function Confirm({ formState, userState, onSuccess }) {
 				</p>
 				{error && (
 					<Notification
-						text={error}
+						content={error}
 						status="error"
 					/>
 				)}

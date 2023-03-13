@@ -32,6 +32,9 @@
 	--scale: 1px;
 
 	white-space: nowrap;
+}
+
+#time button {
 	text-transform: capitalize;
 }
 

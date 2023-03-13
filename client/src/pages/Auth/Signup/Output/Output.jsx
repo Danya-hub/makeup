@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import types from "prop-types";
 
 import Value from "@/helpers/value.js";
-import { actions, sendPassword } from "@/service/redusers/user.js";
+import { actions, sendPasswordForCompare } from "@/service/redusers/user.js";
 
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 import ChannelInput from "@/components/UI/Form/ChannelInput/ChannelInput.jsx";
@@ -25,7 +25,7 @@ function Output({ userState, formState }) {
 	async function handleSubmitForm(e) {
 		e.preventDefault();
 
-		const res = await dispatch(sendPassword(user));
+		const res = await dispatch(sendPasswordForCompare(user));
 
 		if (res.error) {
 			return;
@@ -48,11 +48,11 @@ function Output({ userState, formState }) {
 	return (
 		<div id={style.auth}>
 			<div className={style.form}>
-				<h2 className={style.title}>{t("signupAccount")}</h2>
+				<h1 className={style.title}>{t("signupAccount")}</h1>
 				<p className={`${style.message} ${style.left}`}>{t(purpose)}</p>
 				{error && (
 					<Notification
-						text={error}
+						content={error}
 						status="error"
 					/>
 				)}
@@ -69,14 +69,14 @@ function Output({ userState, formState }) {
 						/>
 					</div>
 					<div>
-						<label htmlFor="channel">
+						<label htmlFor="email">
 							<h3 className="title">{t("email")}</h3>
 						</label>
-						<input
-							type="email"
-							className={`input ${style.field}`}
-							name="email"
-							onChange={(e) => Value.fromInput(e, setUser)}
+						<ChannelInput
+							id="email"
+							strictIsTel={false}
+							className={style.field}
+							onChange={setUser}
 						/>
 					</div>
 					<div>
@@ -85,7 +85,7 @@ function Output({ userState, formState }) {
 						</label>
 						<ChannelInput
 							strictIsTel
-							id="channel"
+							id="telepephone"
 							className={style.field}
 							onChange={setUser}
 						/>

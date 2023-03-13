@@ -1,11 +1,9 @@
-import authController from "../controllers/user.js";
-import procedureController from "../controllers/procedure.js";
-import adminController from "../controllers/admin.js";
+import authController from "./user.js";
+import procedureController from "./procedure.js";
 
 const router = {
-    auth: authController,
-    procedure: procedureController,
-    admin: adminController,
+  auth: authController,
+  procedure: procedureController,
 };
 
 export default router;

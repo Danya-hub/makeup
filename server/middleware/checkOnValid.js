@@ -4,6 +4,7 @@ import ApiError from "../utils/apiError.js";
 function checkOnValid(req, res, next) {
   try {
     const errors = validationResult(req);
+
     const isEmpty = errors.isEmpty();
 
     if (!isEmpty) {

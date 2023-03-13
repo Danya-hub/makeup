@@ -8,6 +8,10 @@ config();
 
 function isAuth(req, res, next) {
   try {
+    if (!req.headers.authorization) {
+      ApiError.unauthorized();
+    }
+
     const [, token] = req.headers.authorization.split(/\s/);
 
     if (!token) {

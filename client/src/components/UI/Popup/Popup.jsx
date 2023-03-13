@@ -17,13 +17,6 @@ function Popup({ id, isSimple, strictSwitch, onClose, styleAttr, children }) {
 		onClose();
 	}
 
-	function handleCloseOnKeyDown(e) {
-		console.log(e);
-
-		setActive(false);
-		onClose();
-	}
-
 	return (
 		<div
 			id={id}
@@ -48,14 +41,14 @@ function Popup({ id, isSimple, strictSwitch, onClose, styleAttr, children }) {
 				<div>{children}</div>
 			</div>
 			{/* background for quick exit */}
-			{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+			{/* eslint-disable-next-line max-len */}
+			{/* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */}
 			<div
 				className={style.popupBackground}
 				style={{
 					pointerEvents: isSimple ? "unset" : "none",
 				}}
 				onClick={isSimple ? handleCloseOnClick : null}
-				onKeyDown={isSimple ? handleCloseOnKeyDown : null}
 			/>
 		</div>
 	);

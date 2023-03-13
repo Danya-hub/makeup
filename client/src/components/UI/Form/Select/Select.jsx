@@ -43,6 +43,7 @@ function Select({
 				{values.map((value, i) => (
 					<button
 						type="button"
+						className="button"
 						onClick={() => {
 							setSelectValue(values[i]);
 							setActive(false);

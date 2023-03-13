@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import Value from "@/helpers/value.js";
-import { checkNewPassword } from "@/service/redusers/user.js";
+import { resetPassword } from "@/service/redusers/user.js";
 import constants from "@/constants/auth.js";
 
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
@@ -32,7 +32,7 @@ function ResetPassword() {
 		}
 
 		const res = await dispatch(
-			checkNewPassword({
+			resetPassword({
 				key: queries.get("key"),
 				email: queries.get("email"),
 				newPassword: newPassword.password,
@@ -53,7 +53,7 @@ function ResetPassword() {
 				<p className={`${style.message} ${style.center}`}>{t("enterPasswordAndConfirmIt")}</p>
 				{error && (
 					<Notification
-						text={error}
+						content={error}
 						status="error"
 					/>
 				)}

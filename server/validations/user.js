@@ -1,10 +1,10 @@
 import validator from "express-validator";
 import bcrypt from "bcrypt";
 
-import UserModel from "../models/user.js";
-import UserService from "../service/user.js";
-
+import db from "../constant/db.js";
 import errors from "../constant/errors.js";
+
+import UserService from "../service/user.js";
 
 const range = {
   min: 3,
@@ -12,112 +12,155 @@ const range = {
 };
 
 class UserValidation {
-  sendPassword = [
+  sendPasswordForCompare = [
     validator
-      .check("fullname")
-      .exists({
-        checkFalsy: true,
-      })
-      .withMessage(errors.required("Fullname"))
-      .bail()
-      .isLength(range)
-      .withMessage(errors.inRange("Fullname", range))
-      .bail()
-      .custom(this.isUserName),
+    .check("fullname")
+    .exists({
+      checkFalsy: true,
+    })
+    .withMessage(errors.required("requiredFullnameValid"))
+    .bail()
+    .isLength(range)
+    .withMessage(errors.inRange("fullname", range))
+    .bail()
+    .custom(this.isUserName),
     validator
-      .check("telephone")
-      .exists({
-        checkFalsy: true,
-      })
-      .withMessage(errors.required("Telephone"))
-      .bail()
-      .isMobilePhone("any")
-      .withMessage(errors.wrongFormat("telephone"))
-      .bail()
-      .custom(this.isUnique),
+    .check("telephone")
+    .exists({
+      checkFalsy: true,
+    })
+    .withMessage(errors.required("requiredTelephoneValid"))
+    .bail()
+    .isMobilePhone("any")
+    .withMessage(errors.wrongFormat("wrongTelFormatValid"))
+    .bail()
+    .custom(this.isUnique),
     validator
-      .check("email")
-      .exists({
-        checkFalsy: true,
-      })
-      .withMessage(errors.required("Email"))
-      .bail()
-      .isEmail()
-      .withMessage(errors.wrongFormat("email"))
-      .bail()
-      .custom(this.isUnique),
+    .check("email")
+    .exists({
+      checkFalsy: true,
+    })
+    .withMessage(errors.required("requiredEmailValid"))
+    .bail()
+    .isEmail()
+    .withMessage(errors.wrongFormat("wrongEmailFormatValid"))
+    .bail()
+    .custom(this.isUnique),
+  ];
+
+  sendLinkForResetingPassword = [
+    validator
+    .check("email")
+    .exists({
+      checkFalsy: true,
+    })
+    .withMessage(errors.required("requiredEmailValid"))
+    .bail()
+    .isEmail()
+    .withMessage(errors.wrongFormat("wrongEmailFormatValid"))
+    .bail()
+    .custom(this.isExists),
+    validator
+    .check("key")
+    .exists({
+      checkFalsy: true,
+    })
+    .withMessage(errors.required("requiredKeyValid"))
   ];
 
   signin = [
     validator.oneOf(
       [
         validator
-          .check("telephone")
-          .exists({
-            checkFalsy: true,
-          })
-          .withMessage(errors.required("Telephone"))
-          .bail()
-          .isMobilePhone("any")
-          .withMessage(errors.wrongFormat("telephone")),
+        .check("telephone")
+        .exists({
+          checkFalsy: true,
+        })
+        .withMessage(errors.required("requiredTelOrEmailValid"))
+        .bail()
+        .isMobilePhone("any")
+        .withMessage(errors.wrongFormat("wrongTelFormatValid")),
         validator
-          .check("email")
-          .exists({
-            checkFalsy: true,
-          })
-          .withMessage(errors.required("Email"))
-          .bail()
-          .isEmail()
-          .withMessage(errors.wrongFormat("email")),
+        .check("email")
+        .exists({
+          checkFalsy: true,
+        })
+        .withMessage(errors.required("requiredTelOrEmailValid"))
+        .bail()
+        .isEmail()
+        .withMessage(errors.wrongFormat("wrongEmailFormatValid")),
       ],
       errors.wrongChannels()
     ),
     validator
-      .check("password")
-      .exists({
-        checkFalsy: true,
-      })
-      .withMessage(errors.required("Password"))
-      .bail()
-      .custom(this.comparePassword),
+    .check("password")
+    .exists({
+      checkFalsy: true,
+    })
+    .withMessage(errors.required("requiredPasswordValid"))
+    .bail()
+    .custom(this.comparePassword)
+    .withMessage(errors.wrongSignin()),
   ];
 
-  async isUnique(value, { path }) {
-    const foundUser = await UserModel.findOne({
-      [path]: value,
+  isExists(value, {
+    path
+  }) {
+    return new Promise((resolve, reject) => {
+      db.query("SELECT * FROM user WHERE ?? = ?", [path, value], (err, result) => {
+        if (err) {
+          return reject(err);
+        }
+
+        if (!result[0]) {
+          return reject(errors.notExist("emailOrTelephoneNotExistsValid"));
+        }
+
+        return resolve(result);
+      });
     });
+  }
 
-    if (foundUser) {
-      throw new Error(errors.alreadyExist("Email address or telephone"));
-    }
+  isUnique(value, {
+    path
+  }) {
+    return new Promise((resolve, reject) => {
+      db.query("SELECT * FROM user WHERE ?? = ?", [path, value], (err, result) => {
+        if (err) {
+          return reject(err);
+        }
 
-    return true;
+        if (result[0]) {
+          return reject(errors.alreadyExist("emailOrTelephoneAlreadyExistsValid"));
+        }
+
+        return resolve(result);
+      });
+    });
   }
 
   isUserName(value) {
     const isValid = /^\p{L}+(?:\s\p{L}+){0,2}$/u.test(value);
 
     if (!isValid) {
-      throw new Error(errors.fullnameNotValid());
+      return Promise.reject(errors.fullname());
     }
 
-    return isValid;
+    return true;
   }
 
-  async comparePassword(value, { req }) {
-    const foundUser = await UserService.byChannel(req.body);
+  comparePassword(value, {
+    req
+  }) {
+    return UserService.foundByChannel(req).then((result) => {
+      const isEquil = bcrypt.compareSync(value, result.password);
 
-    if (!foundUser) {
-      throw new Error(errors.wrongSignin());
-    }
+      if (!isEquil) {
+        return Promise.reject(errors.wrongSignin());
+      }
 
-    const isEquil = bcrypt.compareSync(value, foundUser.password);
-
-    if (!isEquil) {
-      throw new Error(errors.wrongSignin());
-    }
-
-    return isEquil;
+      return Promise.resolve();
+    });
   }
 }
 

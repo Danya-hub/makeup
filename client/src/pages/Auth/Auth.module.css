@@ -1,7 +1,6 @@
 :where(#auth, #confirm) {
 	display: flex;
 	justify-content: center;
-	background: rgb(var(--lightBrown));
 	min-height: 100vh;
 	overflow: hidden;
 }
@@ -37,7 +36,6 @@
 	text-align: center;
 	text-transform: uppercase;
 	color: rgb(var(--brown));
-	--size: var(--step-1);
 	margin-bottom: 1vh;
 }
 

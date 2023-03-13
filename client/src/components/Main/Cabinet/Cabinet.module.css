@@ -34,9 +34,16 @@
 	padding: 1vh var(--space);
 }
 
+#cabinet li a:hover {
+	background: rgba(var(--brown), 0.1);
+}
+
 #logout {
 	text-align: left;
+	color: rgb(var(--brown));
+	border-top: 1px solid;
 	padding-left: var(--space);
+	text-transform: uppercase;
 }
 
 #resetPassword {
@@ -45,4 +52,5 @@
 	font-weight: 700;
 	padding: 0;
 	margin-top: 2vh;
+	text-decoration: underline;
 }

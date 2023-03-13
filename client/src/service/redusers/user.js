@@ -23,7 +23,6 @@ export const refresh = createAsyncThunk(
 		try {
 			const user = await axios.indGet("/auth/refresh");
 			localStorage.setItem("token", user.data.accessToken);
-			localStorage.setItem("isAuth", true);
 
 			dispatch(actions.setUser(user.data));
 
@@ -43,7 +42,6 @@ export const signup = createAsyncThunk(
 		try {
 			const createdUser = await axios.post("/auth/signup", value);
 			localStorage.setItem("token", createdUser.data.accessToken);
-			localStorage.setItem("isAuth", true);
 
 			dispatch(actions.setUser(createdUser.data));
 
@@ -63,7 +61,6 @@ export const signin = createAsyncThunk(
 		try {
 			const foundUser = await axios.post("/auth/signin", value);
 			localStorage.setItem("token", foundUser.data.accessToken);
-			localStorage.setItem("isAuth", true);
 
 			dispatch(actions.setUser(foundUser.data));
 
@@ -81,7 +78,6 @@ export const logout = createAsyncThunk("user/logout", async (_, {
 	try {
 		const requestState = await axios.post("/auth/logout");
 		localStorage.removeItem("token");
-		localStorage.removeItem("isAuth");
 
 		dispatch(actions.setUser(null));
 
@@ -91,8 +87,8 @@ export const logout = createAsyncThunk("user/logout", async (_, {
 	}
 });
 
-export const sendPassword = createAsyncThunk(
-	"user/sendPassword",
+export const sendPasswordForCompare = createAsyncThunk(
+	"user/sendPasswordForCompare",
 	async (value, {
 		rejectWithValue,
 	}) => {
@@ -100,7 +96,7 @@ export const sendPassword = createAsyncThunk(
 			const {
 				passwordToken,
 			} = await axios
-				.indPost("/auth/sendPassword", value)
+				.indPost("/auth/sendPasswordForCompare", value)
 				.then((res) => res.data);
 
 			return passwordToken;
@@ -110,13 +106,13 @@ export const sendPassword = createAsyncThunk(
 	},
 );
 
-export const checkPassword = createAsyncThunk(
-	"user/checkPassword",
+export const comparePassword = createAsyncThunk(
+	"user/comparePassword",
 	async (value, {
 		rejectWithValue,
 	}) => {
 		try {
-			const user = await axios.indPost("/auth/checkPassword", value).then((res) => res.data);
+			const user = await axios.indPost("/auth/comparePassword", value).then((res) => res.data);
 
 			return user;
 		} catch (error) {
@@ -125,13 +121,13 @@ export const checkPassword = createAsyncThunk(
 	},
 );
 
-export const requestResetPassword = createAsyncThunk(
-	"user/requestResetPassword",
+export const sendLinkForResetingPassword = createAsyncThunk(
+	"user/sendLinkForResetingPassword",
 	async (value, {
 		rejectWithValue,
 	}) => {
 		try {
-			const requestState = await axios.indPost("/auth/requestResetPassword", value);
+			const requestState = await axios.indPost("/auth/sendLinkForResetingPassword", value);
 
 			return requestState;
 		} catch (error) {
@@ -140,8 +136,8 @@ export const requestResetPassword = createAsyncThunk(
 	},
 );
 
-export const checkNewPassword = createAsyncThunk(
-	"user/checkNewPassword",
+export const resetPassword = createAsyncThunk(
+	"user/resetPassword",
 	async (value, {
 		rejectWithValue,
 	}) => {
@@ -152,7 +148,7 @@ export const checkNewPassword = createAsyncThunk(
 				newPassword,
 			} = value;
 
-			const requestState = await axios.indPost(`/auth/checkNewPassword?key=${key}&email=${email}`, {
+			const requestState = await axios.indPost(`/auth/resetPassword?key=${key}&email=${email}`, {
 				newPassword,
 			});
 
@@ -171,10 +167,10 @@ const {
 	initialState,
 	reducers,
 	extraReducers: {
-		[sendPassword.fulfilled]: (state) => {
+		[sendPasswordForCompare.fulfilled]: (state) => {
 			state.error = "";
 		},
-		[sendPassword.rejected]: (state, action) => {
+		[sendPasswordForCompare.rejected]: (state, action) => {
 			const msg = action.payload?.error[0].msg;
 
 			state.error = msg;
@@ -183,33 +179,40 @@ const {
 			state.error = "";
 		},
 		[signin.rejected]: (state, action) => {
-			const msg = action.payload?.error[0].msg;
+			const object = action.payload?.error[0];
+			let msg = "";
+
+			if (object.nestedErrors) {
+				msg = object.nestedErrors[0].msg;
+			} else {
+				msg = object.msg;
+			}
 
 			state.error = msg;
 		},
-		[checkPassword.fulfilled]: (state) => {
+		[comparePassword.fulfilled]: (state) => {
 			state.error = "";
 		},
-		[checkPassword.rejected]: (state, action) => {
+		[comparePassword.rejected]: (state, action) => {
 			state.error = action.payload?.error;
 		},
-		[requestResetPassword.fulfilled]: (state) => {
+		[sendLinkForResetingPassword.fulfilled]: (state) => {
 			state.error = "";
 		},
-		[requestResetPassword.rejected]: (state, action) => {
+		[sendLinkForResetingPassword.rejected]: (state, action) => {
 			state.error = action.payload?.error;
 		},
-		[checkNewPassword.fulfilled]: (state) => {
+		[resetPassword.fulfilled]: (state) => {
 			state.error = "";
 		},
-		[checkNewPassword.rejected]: (state, action) => {
+		[resetPassword.rejected]: (state, action) => {
 			state.error = action.payload?.error;
 		},
-		[checkNewPassword.pending]: (state) => {
+		[resetPassword.pending]: (state) => {
 			state.error = "";
 		},
 		[refresh.rejected]: () => {
-			localStorage.removeItem("isAuth");
+			localStorage.removeItem("token");
 		},
 	},
 });

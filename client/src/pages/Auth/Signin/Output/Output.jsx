@@ -49,17 +49,19 @@ function Output({ userState, passwordState }) {
 	}
 
 	function handleResetPassword() {
+		dispatch(actions.clearError());
+
 		setPasswordForgotten(true);
 	}
 
 	return (
 		<div id={style.auth}>
 			<div className={style.form}>
-				<h2 className={style.title}>{t("welcome")}</h2>
+				<h1 className={style.title}>{t("welcome")}</h1>
 				<p className={`${style.message} ${style.left}`}>{t(purpose)}</p>
 				{error && (
 					<Notification
-						text={error}
+						content={error}
 						status="error"
 					/>
 				)}

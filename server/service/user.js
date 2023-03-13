@@ -1,18 +1,10 @@
-import { config } from "dotenv";
-
-import UserModel from "../models/user.js";
-
-import TokenService from "./token.js";
-import MessageService from "./message.js";
-
-import Password from "../utils/password.js";
-import ApiError from "../utils/apiError.js";
-
+import db from "../constant/db.js";
 import errors from "../constant/errors.js";
 import { JWT_ACCESS_TOKEN_MAX_AGE, JWT_REFRESH_TOKEN_MAX_AGE } from "../constant/auth.js";
-import { origin } from "../constant/server.js";
 
-config();
+import TokenService from "./token.js";
+
+import ApiError from "../utils/apiError.js";
 
 class UserService {
   channels = ["email", "telephone"];
@@ -31,128 +23,35 @@ class UserService {
     };
   }
 
-  async createUser(doc) {
-    const newUser = await UserModel.create(doc);
-    await newUser.save();
+  foundByChannel(req) {
+    return new Promise((resolve, reject) => {
+      const name = this.channels.find((channelName) => req.body[channelName]);
 
-    const value = {
-      id: newUser._id,
-      roles: newUser.roles,
-    };
+      db.query("SELECT * FROM user WHERE ?? = ?", [name, req.body[name]], (err, result) => {
+        try {
+          if (err) {
+            throw err;
+          }
 
-    const tokens = this.token(value);
+          if (result.length === 0) {
+            ApiError.badRequest(errors.wrongSignin());
+          }
 
-    return {
-      ...newUser._doc,
-      ...tokens,
-    };
-  }
+          const tokenValue = {
+            id: result[0].id,
+          };
 
-  async getUser(payload) {
-    try {
-      const user = await UserModel.findOne(payload).then((doc) => doc._doc);
+          const tokens = this.token(tokenValue);
 
-      const value = {
-        id: user._id,
-        roles: user.roles,
-      };
-
-      const tokens = this.token(value);
-
-      return {
-        ...user,
-        ...tokens,
-      };
-    } catch (_) {
-      return ApiError.badRequest(errors.notExist("user"));
-    }
-  }
-
-  async sendPassword(email) {
-    const password = Password.generate();
-    const hashPassword = Password.hash(password);
-
-    await MessageService.send({
-      topic: "password",
-      email,
-      template: hashPassword,
+          resolve({
+            ...result[0],
+            ...tokens,
+          });
+        } catch (error) {
+          reject(error);
+        }
+      });
     });
-
-    return hashPassword;
-  }
-
-  async update(filter, update) {
-    const updatedUser = await UserModel.findOneAndUpdate(filter, update);
-
-    return updatedUser;
-  }
-
-  async resetPassword(email) {
-    const foundMessage = await MessageService.get({
-      topic: "resetPassword",
-      email,
-    });
-
-    if (foundMessage) {
-      ApiError.noAccess("Message already is submitted!");
-    }
-
-    const foundUser = await this.getUser({
-      email,
-    });
-
-    await MessageService.send({
-      topic: "resetPassword",
-      email,
-      template: `${origin}/resetPassword?key=${foundUser.key}&email=${foundUser.email}`,
-    });
-  }
-
-  async checkNewPassword(key, email, newPassword) {
-    const foundMessage = await MessageService.get({
-      topic: "resetPassword",
-      email,
-    });
-
-    if (!foundMessage) {
-      ApiError.noAccess("Time is over");
-    }
-
-    const hashPassword = Password.hash(newPassword);
-
-    await this.update(
-      {
-        email,
-        key,
-      },
-      {
-        password: hashPassword,
-      }
-    );
-  }
-
-  async byChannel(doc) {
-    const name = this.channels.find((channelName) => doc[channelName]);
-
-    const foundUser = await UserModel.findOne({
-      [name]: doc[name],
-    }).then((res) => res?._doc);
-
-    if (!foundUser) {
-      throw new Error(errors.wrongSignin());
-    }
-
-    const value = {
-      id: foundUser._id,
-      roles: foundUser.roles,
-    };
-
-    const tokens = this.token(value);
-
-    return {
-      ...foundUser,
-      ...tokens,
-    };
   }
 }
 

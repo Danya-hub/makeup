@@ -1,11 +1,11 @@
 import express, { urlencoded } from "express";
 import cookieSession from "cookie-session";
-import mongoose from "mongoose";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { config } from "dotenv";
 
-import { uriDB, serverPort, origin } from "./constant/server.js";
+import server from "./constant/server.js";
+
 import Router from "./routes/index.js";
 
 import errorsGather from "./middleware/errorsGather.js";
@@ -32,7 +32,7 @@ app.use(
 );
 app.use(
   cors({
-    origin,
+    origin: server.origin,
     methods: ["post", "get"],
     credentials: true,
   })
@@ -41,18 +41,6 @@ app.use(cookieParser());
 
 app.use("/auth", Router.auth);
 app.use("/procedure", Router.procedure);
-app.use("/admin", Router.admin);
 app.use(errorsGather);
 
-(async () => {
-  try {
-    mongoose.connect(uriDB, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
-
-    app.listen(serverPort);
-  } catch (error) {
-    process.exit(1);
-  }
-})();
+app.listen(server.port);

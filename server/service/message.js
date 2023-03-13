@@ -1,23 +1,29 @@
-import MessageModel from "../models/message.js";
+import db from "../constant/db.js";
+import errors from "../constant/errors.js";
+
+import ApiError from "../utils/apiError.js";
 
 class Message {
-  async send(doc) {
-    const newMessage = await MessageModel.create(doc);
-    await newMessage.save();
+  send(next, values, successback) {
+    db.query(
+      `INSERT INTO message (email, topic, template, expire)
+        SELECT "${values.email}", "${values.topic}", "${values.template}", NOW() + INTERVAL 3 MINUTE
+        WHERE NOT EXISTS (SELECT * FROM message m WHERE m.email = "${values.email}" AND m.topic = "${values.topic}")`,
+      values,
+      (err) => {
+        try {
+          if (err) {
+            ApiError.badRequest(errors.alreadyExist("submitedMessageValid"));
+          }
 
-    return newMessage._doc;
-  }
+          successback();
 
-  async get(filter) {
-    const foundMessage = await MessageModel.findOne(filter);
-
-    return foundMessage;
-  }
-
-  async remove(filter) {
-    const removedMessage = await MessageModel.deleteOne(filter);
-
-    return removedMessage;
+          next();
+        } catch (error) {
+          next(error);
+        }
+      }
+    );
   }
 }
 

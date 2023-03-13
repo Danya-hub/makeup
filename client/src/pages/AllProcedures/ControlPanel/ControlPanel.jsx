@@ -23,7 +23,7 @@ function ControlPanel() {
 
 	const [, setSelectTime] = selectTimeState;
 	const [, setVisiblePopupState] = visiblePopupState;
-	const isAuth = localStorage.getItem("isAuth");
+	const isAuth = localStorage.getItem("token");
 
 	function handleClick() {
 		if (!isAuth) {

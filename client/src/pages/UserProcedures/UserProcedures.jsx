@@ -14,7 +14,7 @@ function UserProcedures() {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
 
-	const isAuth = localStorage.getItem("isAuth");
+	const isAuth = localStorage.getItem("token");
 
 	const [initialCards, setInitialCards] = useState([]);
 	const [tempCards, setTempCard] = useState([]);

@@ -59,14 +59,14 @@ function Presentation() {
 	});
 	const currentStirngHoursAndMinutes = FormatDate.stringHourAndMin(locale, langs.currLng);
 	const [popupName] = changePopupNameState;
-	const isAuth = localStorage.getItem("isAuth");
+	const isAuth = localStorage.getItem("token");
 	const classNameByPresentState = (isVisiblePopup && style.noActiveGrabbing) || (isMouseDown && style.activeGrabbing) || "";
 
 	function setNumericTimeByGrabbing(pageY, y = 0) {
 		const topToRootEl = parentRef.current.offsetTop;
 		const { durationProc } = currProcedure.type;
 
-		const time = (pageY - topToRootEl + y) / hourHeightInPx;
+		const time = (pageY - topToRootEl + y) / hourHeightInPx; // Math.round
 
 		let rez = null;
 
@@ -256,9 +256,9 @@ function Presentation() {
 							return (
 								isAccessRender && (
 									<Card
+										key={proc.type.name}
 										isAddedToList={false}
 										onMouseDown={() => editProcedureByIndex(i, proc)}
-										key={proc.type.name}
 										className={style.newProcedure}
 										procedure={proc}
 										styleAttr={{

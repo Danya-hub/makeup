@@ -7,7 +7,7 @@
 	background: unset;
 }
 
-.select :where(button, h3) {
+.select h3 {
 	display: block;
 	padding: 6px 0;
 	user-select: none;
@@ -39,8 +39,8 @@
 	--back: rgb(var(--white));
 
 	background: var(--back);
-	padding-left: 10px;
-	cursor: pointer;
+	padding: 6px 0 6px 10px;
+	width: 100%;
 	white-space: nowrap;
 }
 

@@ -7,7 +7,7 @@ import Aside from "@/components/Aside/Aside.jsx";
 import Event from "@/components/Event/Event.jsx";
 import Avatar from "./Avatar/Avatar.jsx";
 
-import { logout, requestResetPassword } from "@/service/redusers/user.js";
+import { logout, sendLinkForResetingPassword } from "@/service/redusers/user.js";
 
 import style from "./Cabinet.module.css";
 
@@ -28,7 +28,7 @@ function Cabinet({ openCabinetState }) {
 
 	function handleResetPassword() {
 		dispatch(
-			requestResetPassword({
+			sendLinkForResetingPassword({
 				email: userInfo.email,
 			}),
 		);

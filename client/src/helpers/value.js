@@ -37,18 +37,20 @@ const valueActions = {
 	},
 
 	toDate(object) {
-		const o = object;
-		const keys = Object.keys(o);
+		const rez = {
+			...object,
+		};
+		const keys = Object.keys(rez);
 
 		keys.forEach((key) => {
-			const date = Check.isDate(o[key]);
+			const date = Check.isDate(rez[key]);
 
 			if (date) {
-				o[key] = date;
+				rez[key] = date;
 			}
 		});
 
-		return o;
+		return rez;
 	},
 };
 

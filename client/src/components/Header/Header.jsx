@@ -22,7 +22,7 @@ function Header({ openCabinetState }) {
 
 	const allLangNames = Object.keys(langs.arrayLangs);
 	const [, setOpenCabinet] = openCabinetState;
-	const isAuth = localStorage.getItem("isAuth");
+	const isAuth = localStorage.getItem("token");
 
 	function handleCloseSelect() {
 		setOpenSelect(false);

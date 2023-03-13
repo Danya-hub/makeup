@@ -130,12 +130,12 @@ function MakeProc() {
 				},
 			]}
 		>
-			{hasWarning && (
+			{/* {hasWarning && (
 				<Notification
+					content={foundWarningText}
 					status="warning"
-					text={foundWarningText}
 				/>
-			)}
+			)} */}
 			<form onSubmit={handleSubmitForm}>
 				<div
 					className={style.input}

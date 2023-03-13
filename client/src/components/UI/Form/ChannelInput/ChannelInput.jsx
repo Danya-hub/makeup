@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import types from "prop-types";
 
-import constants from "@/constants/format.js";
+import format from "@/constants/format.js";
 import useOutsideEvent from "@/hooks/useOutsideEvent.js";
 import Check from "@/helpers/check.js";
 
@@ -14,8 +14,10 @@ function ChannelInput({ id, className, onChange, strictIsTel }) {
 	const [indexCountry, setIndexCountry] = useState(0);
 	const [isOpenSelect, setOpenSelect] = useState(false);
 
-	const isTel = strictIsTel || Check.isStrictNumber(inputValue);
+	const isTel = strictIsTel == null ? Check.isStrictNumber(inputValue) : strictIsTel;
 	const channelName = isTel ? "telephone" : "email";
+	const telCodes = format.telephone.map((obj) => obj.code);
+	const placeholder = isTel ? format.telephone[indexCountry].template : "name@example.com";
 
 	function handleCloseSelect() {
 		setOpenSelect(false);
@@ -38,7 +40,7 @@ function ChannelInput({ id, className, onChange, strictIsTel }) {
 	}
 
 	function handleChangeTelCode(i) {
-		const val = constants.telephone.code[indexCountry] + inputValue;
+		const val = format.telephone[indexCountry].code + inputValue;
 
 		setIndexCountry(i);
 		changeValueByChannel(val);
@@ -51,7 +53,7 @@ function ChannelInput({ id, className, onChange, strictIsTel }) {
 	}
 
 	useEffect(() => {
-		const val = (isTel ? constants.telephone.code[indexCountry] : "") + inputValue;
+		const val = (isTel ? format.telephone[indexCountry].code : "") + inputValue;
 
 		changeValueByChannel(val);
 	}, [inputValue, indexCountry]);
@@ -62,8 +64,8 @@ function ChannelInput({ id, className, onChange, strictIsTel }) {
 				<Select
 					id={style.code}
 					ref={ref}
-					defaultValue={constants.telephone.code[indexCountry]}
-					values={constants.telephone.code}
+					defaultValue={format.telephone[indexCountry].code}
+					values={telCodes}
 					openState={[isOpenSelect, setOpenSelect]}
 					onChange={handleChangeTelCode}
 				/>
@@ -72,6 +74,8 @@ function ChannelInput({ id, className, onChange, strictIsTel }) {
 				id={id}
 				type="text"
 				onChange={handleChangeValue}
+				placeholder={placeholder}
+				maxLength={isTel ? placeholder.length : null}
 				name={channelName}
 			/>
 		</div>
@@ -81,7 +85,7 @@ function ChannelInput({ id, className, onChange, strictIsTel }) {
 ChannelInput.defaultProps = {
 	id: "",
 	className: "",
-	strictIsTel: false,
+	strictIsTel: null,
 };
 
 ChannelInput.propTypes = {

@@ -1,4 +1,5 @@
 import { memo } from "react";
+import { useTranslation } from "react-i18next";
 import types from "prop-types";
 
 import style from "./Notification.module.css";
@@ -9,7 +10,9 @@ const notifStatus = {
 	error: "exclamation-circle",
 };
 
-function Notification({ text, status }) {
+function Notification({ content, status }) {
+	const { t } = useTranslation();
+
 	const icon = notifStatus[status];
 
 	return (
@@ -18,13 +21,13 @@ function Notification({ text, status }) {
 				className={`fa fa-${icon}`}
 				aria-hidden="true"
 			/>
-			<p>{text}</p>
+			<p>{t(content.key, content.args)}</p>
 		</div>
 	);
 }
 
 Notification.propTypes = {
-	text: types.string.isRequired,
+	content: types.instanceOf(Object).isRequired,
 	status: types.string.isRequired,
 };
 
