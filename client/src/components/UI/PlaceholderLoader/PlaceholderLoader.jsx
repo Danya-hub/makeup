@@ -3,19 +3,19 @@ import types from "prop-types";
 
 import style from "./PlaceholderLoader.module.css";
 
-function BackgroundLoader({ widthInPx = "0px" }) {
+function PlaceholderLoader({ width = "0px" }) {
 	return (
 		<div
 			className={style.background}
 			style={{
-				"--w": widthInPx,
+				"--w": width,
 			}}
 		/>
 	);
 }
 
-BackgroundLoader.propTypes = {
-	widthInPx: types.string.isRequired,
+PlaceholderLoader.propTypes = {
+	width: types.string.isRequired,
 };
 
-export default BackgroundLoader;
+export default PlaceholderLoader;

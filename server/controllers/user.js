@@ -1,15 +1,18 @@
-import { config } from "dotenv";
+import {
+  config
+} from "dotenv";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 
-import db from "../constant/db.js";
-import errors from "../constant/errors.js";
+import MySQL from "../utils/db.js";
+import errors from "../config/errors.js";
 import {
   JWT_ACCESS_TOKEN_MAX_AGE,
   JWT_REFRESH_TOKEN_MAX_AGE,
   COOKIE_REFRESH_TOKEN_MAX_AGE,
-} from "../constant/auth.js";
-import server from "../constant/server.js";
+}
+from "../config/auth.js";
+import server from "../config/server.js";
 
 import UserService from "../service/user.js";
 import TokenService from "../service/token.js";
@@ -40,57 +43,76 @@ class User {
   }
 
   createUser(req, res, next) {
-    const key = crypto.randomBytes(COUNT_BYTES).toString("hex");
+    const accessKey = crypto.randomBytes(COUNT_BYTES).toString("hex");
+    const values = {
+      ...req.body,
+      accessKey,
+    };
 
-    db.query(
-      "INSERT INTO user SET ?",
+    MySQL.createQuery(
       {
-        ...req.body,
-        key,
+        sql: "INSERT INTO user **",
+        values,
       },
-      (err, result) => {
-        try {
-          if (err) {
-            throw err;
-          }
-
-          const tokenValue = {
-            id: result.insertId,
-          };
-          const { accessToken, refreshToken } = User.token(tokenValue);
-
-          res
-            .cookie("refreshToken", refreshToken, {
-              maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
-              httpOnly: true,
-            })
-            .status(201)
-            .json({
-              ...req.body,
-              accessToken,
-            });
-
-          next();
-        } catch (error) {
-          next(error);
-        }
-      }
-    );
-  }
-
-  refresh(req, res, next) {
-    const { user } = req.body;
-
-    db.query("SELECT * FROM user WHERE id = ?", [user], (err, result) => {
-      try {
-        if (err) {
-          ApiError.badRequest(errors.notExist("notExistUserValid"));
+      (error, results) => {
+        if (error) {
+          ApiError.throw("badRequest", errors.alreadyExist("userAlreadyExistsValid"));
         }
 
         const tokenValue = {
-          id: result.insertId,
+          id: results.insertId,
         };
-        const { accessToken, refreshToken } = User.token(tokenValue);
+        const {
+          accessToken,
+          refreshToken
+        } = User.token(tokenValue);
+
+        res.cookie("refreshToken", refreshToken, {
+            maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
+            httpOnly: true,
+          })
+          .status(201)
+          .json({
+            ...req.body,
+            accessToken,
+          });
+
+        next();
+      }
+    ).catch(next);
+  }
+
+  refresh(req, res, next) {
+    const token = req.cookies.refreshToken;
+
+    if (!token) {
+      const apiError = ApiError.get("unauthorized");
+
+      next(apiError);
+    }
+
+    const decoded = TokenService.checkOnValidToken(
+      token,
+      process.env.REFRESH_TOKEN_SECRET_KEY
+    );
+
+    MySQL.createQuery(
+      {
+        sql: "SELECT * FROM user WHERE id = ?",
+        values: [decoded.id]
+      },
+      (error, results) => {
+        if (error) {
+          ApiError.throw("badRequest", errors.notExist("notExistUserValid"));
+        }
+
+        const tokenValue = {
+          id: results[0].id,
+        };
+        const {
+          accessToken,
+          refreshToken
+        } = User.token(tokenValue);
 
         res
           .cookie("refreshToken", refreshToken, {
@@ -99,19 +121,19 @@ class User {
           })
           .status(200)
           .json({
-            ...result[0],
+            ...results[0],
             accessToken,
           });
 
         next();
-      } catch (error) {
-        next(error);
       }
-    });
+    ).catch(next);
   }
 
   logout(req, res, next) {
-    const { refreshToken } = req.cookies;
+    const {
+      refreshToken
+    } = req.cookies;
 
     res.clearCookie("refreshToken").status(200).json({
       success: "The user is logged out",
@@ -122,7 +144,9 @@ class User {
   }
 
   sendPasswordForCompare(req, res, next) {
-    const { email } = req.body;
+    const {
+      email
+    } = req.body;
 
     const password = Password.generate();
     console.log(password);
@@ -142,46 +166,53 @@ class User {
   }
 
   comparePassword(req, res, next) {
-    const { email, password } = req.body;
+    const {
+      email,
+      password
+    } = req.body;
+    const values = {
+      topic: "comparePassword",
+      email,
+    };
 
-    db.query(
-      "SELECT * FROM message WHERE topic = ? AND email = ?",
-      ["password", email],
-      (err, result) => {
-        try {
-          if (err) {
-            throw err;
-          }
-
-          if (!result.length) {
-            ApiError.noAccess(errors.timeOut("comparingPassword"));
-          }
-
-          const isEquil = bcrypt.compareSync(password, result[0].template);
-
-          if (!isEquil) {
-            ApiError.badRequest(errors.wrongSignin());
-          }
-
-          res.status(200).json({
-            ...req.body,
-            password: result[0].template,
-          });
-
-          next();
-        } catch (error) {
-          next(error);
+    MySQL.createQuery(
+      {
+        sql: "SELECT * FROM message WHERE topic = :topic AND email = :email",
+        values,
+      },
+      (error, results) => {
+        if (error) {
+          throw error;
         }
+
+        if (!results.length) {
+          ApiError.throw("noAccess", errors.timeOut("comparingPassword"));
+        }
+
+        const isEquil = bcrypt.compareSync(password, results[0].template);
+
+        if (!isEquil) {
+          ApiError.throw("badRequest", errors.wrongSignin());
+        }
+
+        res.status(200).json({
+          ...req.body,
+          password: results[0].template,
+        });
+
+        next();
       }
-    );
+    ).catch(next);
   }
 
   sendLinkForResetingPassword(req, res, next) {
-    const { email, key } = req.body;
+    const {
+      email
+    } = req.body;
     const values = {
       topic: "resetPassword",
       email,
-      template: `${server.origin}/resetPassword/key/${key}/email/${email}`,
+      template: `${server.origin}/resetPassword?email=${email}`,
     };
 
     MessageService.send(next, values, () => {
@@ -192,40 +223,48 @@ class User {
   }
 
   resetPassword(req, res, next) {
-    const { newPassword } = req.body;
+    const {
+      newPassword,
+      email
+    } = req.body;
     const hashPassword = Password.hash(newPassword);
-    const { key } = req.query;
+    const values = {
+      password: hashPassword,
+      email,
+      topic: "resetPassword",
+    };
 
-    db.query(
-      `UPDATE user u SET u.password = ? WHERE u.key = ? 
-      AND EXISTS (SELECT * FROM message m WHERE m.email = u.email AND m.topic = ?)`,
-      [hashPassword, key, "resetPassword"],
-      (err, result) => {
-        try {
-          if (err) {
-            throw err;
-          }
-
-          if (result.affectedRows === 0) {
-            ApiError.noAccess(errors.timeOut("passwordVerification"));
-          }
-
-          res.status(200).json({
-            success: "Password is changed",
-          });
-
-          next();
-        } catch (error) {
-          next(error);
+    MySQL.createQuery(
+      {
+        sql: `UPDATE user u SET u.password = :password WHERE 
+          EXISTS (SELECT * FROM message m WHERE m.email = :email AND m.topic = :topic)`,
+        values,
+      },
+      (error, results) => {
+        if (error) {
+          throw error;
         }
+
+        if (results.affectedRows === 0) {
+          ApiError.throw("noAccess", errors.timeOut("passwordVerification"));
+        }
+
+        res.status(200).json({
+          success: "Password is changed",
+        });
+
+        next();
       }
-    );
+    ).catch(next);
   }
 
   loginUser(req, res, next) {
     UserService.foundByChannel(req)
       .then((result) => {
-        const { refreshToken, ...object } = result;
+        const {
+          refreshToken,
+          ...object
+        } = result;
 
         res.cookie("refreshToken", refreshToken, {
           maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,

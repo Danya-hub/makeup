@@ -64,9 +64,11 @@ const htmlComponentValue = {
 	design: "Оформити",
 	back: "Назад",
 	addMore: "Добавити ще",
-
 	comparingPassword: "порівняння паролю",
 	passwordVerification: "перевірка паролю",
+	agreeTerms: "Ви погоджуєтесь з умовами послуги?",
+	more: "Детальніше",
+	readTerms: "Read the terms",
 };
 
 export default htmlComponentValue;

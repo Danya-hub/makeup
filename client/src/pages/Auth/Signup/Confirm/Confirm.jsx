@@ -5,7 +5,7 @@ import types from "prop-types";
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 
 import { sendPasswordForCompare, comparePassword } from "@/service/redusers/user.js";
-import constants from "@/constants/auth.js";
+import config from "@/pages/Auth/config/auth.js";
 
 import style from "@/pages/Auth/Auth.module.css";
 
@@ -39,7 +39,7 @@ function Confirm({ formState, userState, onSuccess }) {
 	function handleChangePassword(e) {
 		const password = e.currentTarget.value;
 
-		if (password.length !== constants.MAX_LENGTH_PASSWORD) {
+		if (password.length !== config.MAX_LENGTH_PASSWORD) {
 			return;
 		}
 
@@ -75,7 +75,7 @@ function Confirm({ formState, userState, onSuccess }) {
 							type="text"
 							className={`input ${style.field}`}
 							name="password"
-							maxLength={constants.MAX_LENGTH_PASSWORD}
+							maxLength={config.MAX_LENGTH_PASSWORD}
 							onChange={handleChangePassword}
 						/>
 					</div>

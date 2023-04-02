@@ -14,7 +14,7 @@ class TokenService {
 
     jsonwebtoken.verify(token, secretKey, (err, decoded) => {
       if (err) {
-        ApiError.unauthorized();
+        ApiError.throw("unauthorized");
       } else {
         decodedToken = decoded;
       }

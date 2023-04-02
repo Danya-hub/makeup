@@ -16,7 +16,7 @@ const router = Router();
 
 config();
 
-router.get("/refresh", isAuth, checkOnValid, UserController.refresh);
+router.get("/refresh", UserController.refresh);
 router.post("/signup", UserController.createUser);
 router.post("/signin", userValidation.signin, checkOnValid, UserController.loginUser);
 router.post("/logout", isAuth, checkOnValid, UserController.logout);
@@ -29,11 +29,10 @@ router.post(
 router.post("/comparePassword", UserController.comparePassword);
 router.post(
   "/sendLinkForResetingPassword",
-  // isAuth,
   userValidation.sendLinkForResetingPassword,
   checkOnValid,
   UserController.sendLinkForResetingPassword
 );
-router.post("/resetPassword", isAuth, checkOnValid, UserController.resetPassword);
+router.post("/resetPassword", UserController.resetPassword);
 
 export default router;

@@ -17,7 +17,7 @@ const errors = {
 	timeOutValid: "Час вийшов для {{actionName}}",
 	sentPasswordValid: "Повідомлення вже надіслано",
 	noAccessRequestValid: "У вас немає доступу",
-	emailOrTelephoneAlreadyExistsValid: "Електронна пошта або пароль вже існує",
+	baseUserInfoAlreadyExistsValid: "Телефон або ім'я вже зареєстровано",
 };
 
 export default errors;

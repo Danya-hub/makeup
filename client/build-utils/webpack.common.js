@@ -22,7 +22,7 @@ module.exports = {
 				use: ["babel-loader"],
 			},
 			{
-				test: /\.(svg|gif)$/,
+				test: /\.(svg|gif|pdf)$/,
 				use: ["file-loader"],
 			},
 		],

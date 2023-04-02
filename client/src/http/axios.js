@@ -19,18 +19,18 @@ $axios.interceptors.request.use((config) => {
 $axios.interceptors.response.use(
 	(config) => config,
 	async (error) => {
-		const requestConfig = error.config;
-
 		try {
-			if (error.response.status !== 401 || !requestConfig || requestConfig.isRetry) {
+			const { config } = error;
+
+			if (error.response.status !== 401 || !config || config.isRetry) {
 				throw error;
 			}
-			requestConfig.isRetry = true;
+			config.isRetry = true;
 
-			const refresh = await $axios.indGet("auth/refresh");
+			const refresh = await $axios.get("auth/refresh");
 			localStorage.setItem("token", refresh.data.accessToken);
 
-			return $axios.request(requestConfig);
+			return $axios.request(config);
 		} catch (e) {
 			return Promise.reject(error);
 		}

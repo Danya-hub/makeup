@@ -2,7 +2,7 @@ import { useLayoutEffect, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { getProcedureByUserId, getAllTypes, getAllStates } from "@/service/redusers/procedures.js";
+import { asyncActions } from "@/service/redusers/allProcedures.js";
 
 import PlaceholderLoader from "@/components/UI/PlaceholderLoader/PlaceholderLoader.jsx";
 import Filters from "./Filters/Filters.jsx";
@@ -18,55 +18,54 @@ function UserProcedures() {
 
 	const [initialCards, setInitialCards] = useState([]);
 	const [tempCards, setTempCard] = useState([]);
-	const [hasPlaceholderLoader, setPlaceholderLoaderState] = useState(true);
+	const [isLoading, setLoadState] = useState(true);
 
 	async function init() {
-		dispatch(getAllTypes());
-		dispatch(getAllStates());
+		dispatch(asyncActions.getAllTypes());
 
-		if (!isAuth) {
-			navigate("/signin", {
-				state: {
-					purpose: "noAccessToPage",
-				},
-			});
-			return;
-		}
+		// if (!isAuth) {
+		// 	navigate("/signin", {
+		// 		state: {
+		// 			purpose: "noAccessToPage",
+		// 		},
+		// 	});
+		// 	return;
+		// }
 
-		const res = await dispatch(getProcedureByUserId());
+		// const res = await dispatch(asyncActions.getProcedureByUserId());
 
-		if (res.error) {
-			navigate("/signin", {
-				state: {
-					purpose: "noAccessToPage",
-				},
-			});
-			return;
-		}
+		// if (res.error) {
+		// 	navigate("/signin", {
+		// 		state: {
+		// 			purpose: "noAccessToPage",
+		// 		},
+		// 	});
+		// 	return;
+		// }
 
-		const paylaod = res.payload || [];
+		// const paylaod = res.payload || [];
 
-		setTempCard(paylaod);
-		setInitialCards(paylaod);
+		// setTempCard(paylaod);
+		// setInitialCards(paylaod);
 	}
 
 	useLayoutEffect(() => init, []);
 
 	useEffect(() => {
-		if (!hasPlaceholderLoader) {
+		if (!isLoading) {
 			return;
 		}
 
-		setPlaceholderLoaderState(false);
-	}, [initialCards, hasPlaceholderLoader]);
+		setLoadState(false);
+	}, [initialCards, isLoading]);
 
 	return (
 		<div id={style.userProcedures}>
-			{hasPlaceholderLoader ? (
-				<PlaceholderLoader widthInPx="300px" />
+			{isLoading ? (
+				<PlaceholderLoader width="300px" />
 			) : (
 				<Filters
-					placeholderLoaderState={[hasPlaceholderLoader, setPlaceholderLoaderState]}
+					placeholderLoaderState={[isLoading, setLoadState]}
 					tempCardsState={[tempCards, setTempCard]}
 					initialCards={initialCards}
 				/>

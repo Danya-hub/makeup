@@ -14,7 +14,7 @@ function roleAccess(roles) {
       const isEquilRole = roles.every((role) => decoded.roles.includes(role));
 
       if (!isEquilRole) {
-        ApiError.noAccess();
+        ApiError.throw("noAccess", "You do not have a access");
       }
 
       next();

@@ -1,4 +1,27 @@
-import errors from "../constant/errors.js";
+import errors from "../config/errors.js";
+
+export const errorList = {
+  notExist(key) {
+    return [404, [{
+      error: errors.notExist(key),
+    }]];
+  },
+  unauthorized() {
+    return [401, {
+      error: "This user is unauthorized",
+    }];
+  },
+  noAccess(message) {
+    return [403, {
+      error: message,
+    }];
+  },
+  badRequest(arrErrors) {
+    return [400, {
+      error: arrErrors,
+    }];
+  }
+};
 
 class ApiError extends Error {
   constructor(status, arrErrors = []) {
@@ -8,30 +31,16 @@ class ApiError extends Error {
     this.errors = arrErrors;
   }
 
-  static notExist(key) {
-    throw new ApiError(404, [
-      {
-        error: errors.notExist(key),
-      },
-    ]);
+  static get(errName, args) {
+    const options = errorList[errName](args);
+
+    return new ApiError(...options);
   }
 
-  static unauthorized() {
-    throw new ApiError(401, {
-      error: "This user is unauthorized",
-    });
-  }
+  static throw(errName, args) {
+    const options = errorList[errName](args);
 
-  static noAccess(message) {
-    throw new ApiError(403, {
-      error: message,
-    });
-  }
-
-  static badRequest(arrErrors) {
-    throw new ApiError(400, {
-      error: arrErrors,
-    });
+    throw new ApiError(...options);
   }
 }
 

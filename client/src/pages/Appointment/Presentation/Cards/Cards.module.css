@@ -1,0 +1,59 @@
+.cards {
+	position: relative;
+}
+
+.cards > div:not(:is(.newProcedure, #elapsedTime)) {
+	--op: 1;
+
+	opacity: var(--op);
+}
+
+.newProcedure {
+	box-shadow: 0 0 16px rgba(var(--black), 0.4);
+}
+
+#elapsedTime {
+	position: absolute;
+	background: rgba(var(--brown), 0.1);
+	transition: unset;
+	width: 100%;
+	top: 0;
+}
+
+#current {
+	--currentLineColor: var(--red);
+
+	position: absolute;
+	background: rgb(var(--currentLineColor));
+
+	width: 100%;
+	height: 1px;
+	bottom: 0;
+	z-index: 1;
+}
+
+#current .time {
+	position: absolute;
+	background: rgb(var(--red));
+	color: rgb(var(--white));
+	font-weight: 600;
+	padding: 0 4px;
+	border-top-right-radius: 100vw;
+	border-bottom-right-radius: 100vw;
+	transform: translate(25%, -50%);
+	top: 50%;
+	left: 0;
+	user-select: none;
+}
+
+#current .time::before {
+	content: "";
+	position: absolute;
+	background: inherit;
+	transform: translateX(-100%);
+	width: 25%;
+	height: 100%;
+	left: 0;
+	top: 0;
+	clip-path: polygon(0 50%, 100% 100%, 100% 0);
+}

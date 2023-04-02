@@ -1,21 +1,23 @@
-import { memo } from "react";
+import { memo, useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 import types from "prop-types";
 
+import LangContext from "@/context/lang.js";
 import FormatDate from "@/utils/formatDate.js";
 
 import style from "./Card.module.css";
 
 function Card({ key, id, className, procedure }) {
-	const { currLng } = useSelector((state) => state.langs);
 	const { t } = useTranslation();
 	const navigate = useNavigate();
+	const [{
+		currentLang,
+	}] = useContext(LangContext);
 
-	const shortDate = FormatDate.dateStyle(procedure.startProcTime, currLng);
-	const stringStartTime = FormatDate.stringHourAndMin(procedure.startProcTime, currLng);
-	const stringFinishTime = FormatDate.stringHourAndMin(procedure.finishProcTime, currLng);
+	const shortDate = FormatDate.dateStyle(procedure.startProcTime, currentLang);
+	const stringStartTime = FormatDate.stringHourAndMin(procedure.startProcTime, currentLang);
+	const stringFinishTime = FormatDate.stringHourAndMin(procedure.finishProcTime, currentLang);
 
 	function handleClick() {
 		navigate("/details", {

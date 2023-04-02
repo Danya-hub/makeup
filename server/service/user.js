@@ -1,6 +1,9 @@
-import db from "../constant/db.js";
-import errors from "../constant/errors.js";
-import { JWT_ACCESS_TOKEN_MAX_AGE, JWT_REFRESH_TOKEN_MAX_AGE } from "../constant/auth.js";
+import MySQL from "../utils/db.js";
+import errors from "../config/errors.js";
+import {
+  JWT_ACCESS_TOKEN_MAX_AGE,
+  JWT_REFRESH_TOKEN_MAX_AGE
+} from "../config/auth.js";
 
 import TokenService from "./token.js";
 
@@ -27,30 +30,31 @@ class UserService {
     return new Promise((resolve, reject) => {
       const name = this.channels.find((channelName) => req.body[channelName]);
 
-      db.query("SELECT * FROM user WHERE ?? = ?", [name, req.body[name]], (err, result) => {
-        try {
-          if (err) {
-            throw err;
+      MySQL.createQuery(
+        {
+          sql: "SELECT * FROM user WHERE ?? = ?",
+          values: [req.body[name], name],
+        },
+        (error, results) => {
+          if (error) {
+            throw error;
           }
 
-          if (result.length === 0) {
-            ApiError.badRequest(errors.wrongSignin());
+          if (results.length === 0) {
+            ApiError.throw("badRequest", errors.wrongSignin());
           }
 
           const tokenValue = {
-            id: result[0].id,
+            id: results[0].id,
           };
-
           const tokens = this.token(tokenValue);
 
           resolve({
-            ...result[0],
+            ...results[0],
             ...tokens,
           });
-        } catch (error) {
-          reject(error);
         }
-      });
+      ).catch(reject);
     });
   }
 }

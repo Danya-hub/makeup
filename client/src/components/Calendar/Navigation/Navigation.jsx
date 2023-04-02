@@ -1,31 +1,32 @@
-import { useSelector } from "react-redux";
+import { useContext } from "react";
 import types from "prop-types";
+
+import LangContext from "@/context/lang.js";
 
 import LeftArrowSrc from "@/assets/image/leftArrow.svg";
 import RightArrowSrc from "@/assets/image/rightArrow.svg";
 
 import style from "./Navigation.module.css";
 
-function Navigation({ options, onChange }) {
-	const lng = useSelector((state) => state.langs.currLng);
+function Navigation({ options }) {
+	const [{ currentLang }] = useContext(LangContext);
 
-	const { monthState, locale } = options;
-	const [month, setMonth] = monthState;
-	const monthName = locale.toLocaleString(lng, {
+	const {
+		month: [month, setMonth],
+		year,
+		locale,
+	} = options;
+
+	const monthName = locale.toLocaleString(currentLang, {
 		month: "long",
 	});
-	const year = locale.getFullYear();
 
 	function setPrevMonth() {
 		setMonth(month - 1);
-
-		onChange(locale);
 	}
 
 	function setNextMonth() {
 		setMonth(month + 1);
-
-		onChange(locale);
 	}
 
 	return (
@@ -61,7 +62,6 @@ function Navigation({ options, onChange }) {
 
 Navigation.propTypes = {
 	options: types.instanceOf(Object).isRequired,
-	onChange: types.func.isRequired,
 };
 
 export default Navigation;

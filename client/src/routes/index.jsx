@@ -1,7 +1,7 @@
 import { lazy } from "react";
 
 const Base = lazy(() => import("@/pages/Base/Base.jsx"));
-const AllProcedures = lazy(() => import("@/pages/AllProcedures/AllProcedures.jsx"));
+const Appointment = lazy(() => import("@/pages/Appointment/Appointment.jsx"));
 const NotFound = lazy(() => import("@/pages/Error/NotFound/NotFound.jsx"));
 const Signup = lazy(() => import("@/pages/Auth/Signup/Signup.jsx"));
 const Signin = lazy(() => import("@/pages/Auth/Signin/Signin.jsx"));
@@ -21,7 +21,7 @@ const routes = [
 	},
 	{
 		path: "/appointment",
-		elem: () => <AllProcedures />,
+		elem: () => <Appointment />,
 		state: {
 			title: "Appointment",
 			header: true,

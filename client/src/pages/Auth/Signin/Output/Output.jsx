@@ -5,8 +5,7 @@ import types from "prop-types";
 
 import { actions, signin } from "@/service/redusers/user.js";
 import Value from "@/helpers/value.js";
-
-import constants from "@/constants/auth.js";
+import config from "@/pages/Auth/config/auth.js";
 
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 import ChannelInput from "@/components/UI/Form/ChannelInput/ChannelInput.jsx";
@@ -84,7 +83,7 @@ function Output({ userState, passwordState }) {
 							id="password"
 							name="password"
 							className={`${style.field} input`}
-							maxLength={constants.MAX_LENGTH_PASSWORD}
+							maxLength={config.MAX_LENGTH_PASSWORD}
 							onBlur={(e) => Value.fromInput(e, setUser)}
 						/>
 					</div>

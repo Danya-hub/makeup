@@ -50,7 +50,7 @@ function Select({
 
 							onChange(i, values[i], values);
 						}}
-						key={value}
+						key={`${value}/option`}
 					>
 						{value}
 					</button>

@@ -1,0 +1,31 @@
+.hours {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	pointer-events: none;
+}
+
+.hours .cell {
+	box-shadow: var(--lineSize) 0 0 var(--lineColor);
+	letter-spacing: 0;
+	user-select: none;
+}
+
+.hours .cell span {
+	--size: calc(var(--step-0));
+
+	position: absolute;
+	background: rgb(var(--darkWhite));
+	transform: translateY(-50%);
+	padding: 0 2px;
+	white-space: nowrap;
+}
+
+.line {
+	position: absolute;
+	pointer-events: none;
+	background: var(--lineColor);
+	width: 100%;
+	height: 0.5px;
+}

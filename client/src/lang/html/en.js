@@ -66,6 +66,9 @@ const htmlComponentValue = {
 	addMore: "Add more",
 	comparingPassword: "comparing password",
 	passwordVerification: "password verification",
+	agreeTerms: "Do you agree with the terms of service?",
+	more: "More",
+	readTerms: "Read the terms",
 };
 
 export default htmlComponentValue;

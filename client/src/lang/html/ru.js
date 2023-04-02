@@ -5,7 +5,7 @@ const htmlComponentValue = {
 	inProcess: "В процессе",
 	finished: "Закончено",
 	availableTime: "Доступное время",
-	procedure: "Перечень услуг", //!
+	procedure: "Перечень услуг",
 	fullname: "Имя, фамилия",
 	password: "Пароль",
 	confirmPassword: "Потвердите пароль",
@@ -65,7 +65,10 @@ const htmlComponentValue = {
 	back: "Назад",
 	addMore: "Добавить еще",
 	comparingPassword: "сравнение пароля",
-	passwordVerification: "проверка пароляn",
+	passwordVerification: "проверка пароля",
+	agreeTerms: "Вы соглашаетесь с условиями услуги?",
+	more: "Подробнее",
+	readTerms: "Ознайомитись з умовами",
 };
 
 export default htmlComponentValue;

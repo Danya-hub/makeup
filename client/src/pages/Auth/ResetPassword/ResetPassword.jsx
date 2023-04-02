@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 import Value from "@/helpers/value.js";
 import { resetPassword } from "@/service/redusers/user.js";
-import constants from "@/constants/auth.js";
+import config from "@/pages/Auth/config/auth.js";
 
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 import PasswordInput from "@/components/UI/Form/PasswordInput/PasswordInput.jsx";
@@ -33,7 +33,6 @@ function ResetPassword() {
 
 		const res = await dispatch(
 			resetPassword({
-				key: queries.get("key"),
 				email: queries.get("email"),
 				newPassword: newPassword.password,
 			}),
@@ -66,7 +65,7 @@ function ResetPassword() {
 							id="password"
 							className={`input ${style.field}`}
 							name="password"
-							maxLength={constants.MAX_LENGTH_PASSWORD}
+							maxLength={config.MAX_LENGTH_PASSWORD}
 							onBlur={(e) => Value.fromInput(e, setNewPassword)}
 						/>
 					</div>
@@ -78,7 +77,7 @@ function ResetPassword() {
 							id="confirmedPassword"
 							className={`input ${style.field}`}
 							name="confirmedPassword"
-							maxLength={constants.MAX_LENGTH_PASSWORD}
+							maxLength={config.MAX_LENGTH_PASSWORD}
 							onBlur={(e) => Value.fromInput(e, setNewPassword)}
 						/>
 					</div>

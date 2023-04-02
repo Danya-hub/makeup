@@ -1,10 +1,9 @@
 import validator from "express-validator";
 import bcrypt from "bcrypt";
 
-import db from "../constant/db.js";
-import errors from "../constant/errors.js";
-
+import MySQL from "../utils/db.js";
 import UserService from "../service/user.js";
+import errors from "../config/errors.js";
 
 const range = {
   min: 3,
@@ -23,7 +22,9 @@ class UserValidation {
     .isLength(range)
     .withMessage(errors.inRange("fullname", range))
     .bail()
-    .custom(this.isUserName),
+    .custom(this.isUserName)
+    .bail()
+    .custom(this.isUnique),
     validator
     .check("telephone")
     .exists({
@@ -43,9 +44,7 @@ class UserValidation {
     .withMessage(errors.required("requiredEmailValid"))
     .bail()
     .isEmail()
-    .withMessage(errors.wrongFormat("wrongEmailFormatValid"))
-    .bail()
-    .custom(this.isUnique),
+    .withMessage(errors.wrongFormat("wrongEmailFormatValid")),
   ];
 
   sendLinkForResetingPassword = [
@@ -60,12 +59,6 @@ class UserValidation {
     .withMessage(errors.wrongFormat("wrongEmailFormatValid"))
     .bail()
     .custom(this.isExists),
-    validator
-    .check("key")
-    .exists({
-      checkFalsy: true,
-    })
-    .withMessage(errors.required("requiredKeyValid"))
   ];
 
   signin = [
@@ -106,37 +99,41 @@ class UserValidation {
   isExists(value, {
     path
   }) {
-    return new Promise((resolve, reject) => {
-      db.query("SELECT * FROM user WHERE ?? = ?", [path, value], (err, result) => {
-        if (err) {
-          return reject(err);
+    return MySQL.createQuery(
+      {
+        sql: "SELECT * FROM user WHERE ?? = ?",
+        values: [value, path]
+      },
+      (error, results) => {
+        if (error) {
+          throw error;
         }
 
-        if (!result[0]) {
-          return reject(errors.notExist("emailOrTelephoneNotExistsValid"));
+        if (!results[0]) {
+          throw errors.notExist("emailOrTelephoneNotExistsValid");
         }
-
-        return resolve(result);
-      });
-    });
+      }
+    );
   }
 
   isUnique(value, {
     path
   }) {
-    return new Promise((resolve, reject) => {
-      db.query("SELECT * FROM user WHERE ?? = ?", [path, value], (err, result) => {
-        if (err) {
-          return reject(err);
+    return MySQL.createQuery(
+      {
+        sql: "SELECT * FROM user WHERE ?? = ?",
+        values: [value, path],
+      },
+      (error, results) => {
+        if (error) {
+          throw error;
         }
 
-        if (result[0]) {
-          return reject(errors.alreadyExist("emailOrTelephoneAlreadyExistsValid"));
+        if (results[0]) {
+          throw errors.alreadyExist("baseUserInfoAlreadyExistsValid");
         }
-
-        return resolve(result);
-      });
-    });
+      }
+    );
   }
 
   isUserName(value) {

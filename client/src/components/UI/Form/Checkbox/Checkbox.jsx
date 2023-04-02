@@ -4,7 +4,7 @@ import CheckSvg from "@/assets/image/check.svg";
 
 import style from "./Checkbox.module.css";
 
-function Checkbox({ text, onCheck }) {
+function Checkbox({ text, checked, onCheck }) {
 	function handleCheck(e) {
 		const isChecked = e.target.checked;
 
@@ -15,6 +15,7 @@ function Checkbox({ text, onCheck }) {
 		<label className={style.checkbox}>
 			<input
 				type="checkbox"
+				checked={checked}
 				style={{
 					backgroundImage: `url(${CheckSvg})`,
 				}}
@@ -28,6 +29,7 @@ function Checkbox({ text, onCheck }) {
 Checkbox.propTypes = {
 	text: types.string.isRequired,
 	onCheck: types.func.isRequired,
+	checked: types.bool.isRequired,
 };
 
 export default Checkbox;

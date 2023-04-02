@@ -142,15 +142,7 @@ export const resetPassword = createAsyncThunk(
 		rejectWithValue,
 	}) => {
 		try {
-			const {
-				key,
-				email,
-				newPassword,
-			} = value;
-
-			const requestState = await axios.indPost(`/auth/resetPassword?key=${key}&email=${email}`, {
-				newPassword,
-			});
+			const requestState = await axios.indPost(`/auth/resetPassword`, value);
 
 			return requestState;
 		} catch (error) {
@@ -200,7 +192,7 @@ const {
 			state.error = "";
 		},
 		[sendLinkForResetingPassword.rejected]: (state, action) => {
-			state.error = action.payload?.error;
+			state.error = action.payload?.error[0]?.msg;
 		},
 		[resetPassword.fulfilled]: (state) => {
 			state.error = "";

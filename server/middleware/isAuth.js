@@ -1,4 +1,6 @@
-import { config } from "dotenv";
+import {
+  config
+} from "dotenv";
 
 import TokenService from "../service/token.js";
 
@@ -9,22 +11,17 @@ config();
 function isAuth(req, res, next) {
   try {
     if (!req.headers.authorization) {
-      ApiError.unauthorized();
+      ApiError.throw("unauthorized");
     }
 
     const [, token] = req.headers.authorization.split(/\s/);
-
-    if (!token) {
-      ApiError.unauthorized();
-    }
-
     const decoded = TokenService.checkOnValidToken(token, process.env.ACCESS_TOKEN_SECRET_KEY);
 
     if (!decoded) {
-      ApiError.unauthorized();
+      ApiError.throw("unauthorized");
     }
 
-    req.body.user = decoded.id;
+    req.params.user = decoded.id;
 
     next();
   } catch (error) {

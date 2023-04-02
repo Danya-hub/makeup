@@ -4,7 +4,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { config } from "dotenv";
 
-import server from "./constant/server.js";
+import server from "./config/server.js";
 
 import Router from "./routes/index.js";
 

@@ -17,7 +17,7 @@ const errors = {
 	timeOutValid: "Time is over for {{actionName}}",
 	sentPasswordValid: "Message already is submitted",
 	noAccessRequestValid: "You do not have access",
-	emailOrTelephoneAlreadyExistsValid: "Email or password is already exists",
+	baseUserInfoAlreadyExistsValid: "Phone or name is already registered",
 };
 
 export default errors;

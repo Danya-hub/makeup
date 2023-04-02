@@ -52,6 +52,16 @@ const valueActions = {
 
 		return rez;
 	},
+
+	charWidthInPixels(text) {
+		const canvas = document.createElement("canvas");
+		const ctx = canvas.getContext("2d");
+
+		const { font } = window.getComputedStyle(document.body);
+		ctx.font = font;
+
+		return ctx.measureText(text).width;
+	},
 };
 
 export default valueActions;

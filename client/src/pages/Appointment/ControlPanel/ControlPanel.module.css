@@ -1,0 +1,24 @@
+#designation i {
+	border-radius: 2px;
+	margin-right: 10px;
+	margin-top: 4px;
+}
+
+#controlPanel {
+	position: sticky;
+	background: rgb(var(--white));
+	box-shadow: 0 0 20px rgba(var(--brown), 0.1);
+	height: 100vh;
+	top: 0;
+	padding: 4vh 20px;
+}
+
+#createNewProcedure {
+	color: rgba(var(--brown));
+	margin-bottom: 3vh;
+	width: 100%;
+}
+
+#controlPanel table :where(td, th) {
+	--space: 1px;
+}

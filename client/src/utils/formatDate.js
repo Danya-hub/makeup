@@ -96,30 +96,38 @@ const formatDate = {
 		return d;
 	},
 
-	hoursByFormat({
-		hourFormat = "default",
+	availableTimeByRange({
 		initialState = {
 			minutes: 0,
 			hours: 0,
 		},
 		step = 1,
+		minHour = 0,
 		maxHour = 24,
+		skipCondition,
 	}) {
-		const date = new Date();
 		const hours = [];
 
-		date.setHours(initialState.hours);
-		date.setMinutes(initialState.minutes);
-
-		let ind = Math.ceil((initialState.hours + initialState.minutes / 60) / step) * step;
+		let ind = minHour || Math.ceil((initialState.hours + initialState.minutes / 60) / step) * step;
 
 		while (maxHour > ind) {
+			const date = new Date();
+
 			date.setHours(0);
 			date.setMinutes(ind * 60);
 
-			hours.push(this.stringHourAndMin(date, hourFormat));
-
 			ind += step;
+
+			if (skipCondition) {
+				const skip = skipCondition(ind - step);
+
+				if (skip) {
+					// eslint-disable-next-line no-continue
+					continue;
+				}
+			}
+
+			hours.push(date);
 		}
 
 		return hours;
@@ -132,11 +140,11 @@ const formatDate = {
 
 		const days = [];
 		const lastMonth = 32
-			- generateDate({
-				year,
-				month,
-				day: 32,
-			}).getDate();
+		- generateDate({
+			year,
+			month,
+			day: 32,
+		}).getDate();
 		const firstWeekday = generateDate({
 			year,
 			month,

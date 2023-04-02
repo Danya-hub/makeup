@@ -1,46 +1,83 @@
-import db from "../constant/db.js";
+import http from "http";
 
-import VarType from "../utils/varType.js";
-
+import MySQL from "../utils/db.js";
+import Value from "../utils/value.js";
 import ApiError from "../utils/apiError.js";
+import QrCode from "../utils/qrCode.js";
+
+import server from "../config/server.js";
 
 class Procedure {
+  defaultProcedure() {
+    // ?
+
+    // type (mounted/unmounted id)
+    // file/sign (mounted/unmounted id)
+    // payment
+    // state
+  }
+
   createProcedure(req, res, next) {
-    const body = VarType.toDate(req.body);
+    req.body.forEach((proc) => {
+      const [formated, date] = Value.toSQLDate(proc);
 
-    const values = {
-      ...body,
-      year: body.startProcTime.getFullYear(),
-      month: body.startProcTime.getMonth(),
-      day: body.startProcTime.getDate(),
-    };
-    const options = "INSERT INTO courseaction SET ?";
+      const values = {
+        ...formated,
+        // year: date.getFullYear(),
+        // month: date.getMonth(),
+        // day: date.getDate(),
+      };
 
-    db.query(options, values, (err, result) => {
-      try {
-        if (err) {
-          throw err;
-        }
+      if (values.type.contract) {
+        const content = `Procedure: ${values.type.name}\nId client: ${values.user.id}\nClient: ${values.user.fullname}\nEmail: ${values.user.email}\nCountry: ${values.type.country}\nYYYY-MM-DD: ${values.year}-${values.month}-${values.day}`;
 
-        res.status(200).json(result);
+        const qrCodeImage = new QrCode(content).generate();
+        // http.get(server.origin + values.pdfPath, (socket) => { //!
+        //   const chunks = [];
 
-        next();
-      } catch (error) {
-        next(error);
+        //   socket.on("data", (chunk) => {
+        //     chunks.push(chunk);
+        //   });
+
+        //   socket.on("end", () => {
+        //     const data = Buffer.concat(chunks);
+
+        //     console.log(data);
+        //   });
+        // });
       }
+
+      // MySQL.createQuery(
+      //   {
+      //     sql: "INSERT INTO courseaction **",
+      //     values,
+      //   },
+      //   (error, results) => {
+      //     if (error) {
+      //       throw error;
+      //     }
+
+      //     res.status(200).json(results);
+
+      //     next();
+      //   }
+      // ).catch(next);
     });
   }
 
   removeByUserId(req, res, next) {
-    const { id } = req.params;
+    const {
+      id
+    } = req.params;
 
-    const options = "DELETE FROM courseaction WHERE user = ?";
-    const values = [id];
-
-    db.query(options, values, (err, result) => {
-      try {
-        if (!result.affectedRows) {
-          ApiError.notExist("procedure");
+    MySQL.createQuery(
+      {
+        sql: "DELETE FROM courseaction WHERE user = ?",
+        values: [id],
+      },
+      (error, results) => {
+        if (!results.affectedRows) {
+          ApiError.throw("notExist", "procedure");
         }
 
         res.status(200).json({
@@ -48,54 +85,59 @@ class Procedure {
         });
 
         next();
-      } catch (error) {
-        next(error);
       }
-    });
+    ).catch(next);
   }
 
   byDay(req, res, next) {
-    const { date } = req.params;
+    const {
+      date
+    } = req.params;
 
     const newDate = new Date(date);
-    const values = [newDate.getFullYear(), newDate.getMonth(), newDate.getDate()];
+    const values = {
+      year: newDate.getFullYear(),
+      month: newDate.getMonth(),
+      day: newDate.getDate(),
+    };
 
-    const options = "SELECT * FROM courseaction WHERE year = ? and month = ? and day = ?";
-
-    db.query(options, values, (err, result) => {
-      try {
-        if (err) {
-          throw err;
+    MySQL.createQuery(
+      {
+        sql: "SELECT * FROM courseaction WHERE year = :year and month = :month and day = :day",
+        values,
+      },
+      (error, results) => {
+        if (error) {
+          throw error;
         }
 
-        res.status(200).json(result);
+        res.status(200).json(results);
 
         next();
-      } catch (error) {
-        next(error);
       }
-    });
+    ).catch(next);
   }
 
   byUser(req, res, next) {
-    const { user: id } = req.body;
+    const {
+      user: id
+    } = req.params;
 
-    const options = "SELECT * FROM courseaction WHERE user = ?";
-    const values = [id];
-
-    db.query(options, values, (err, result) => {
-      try {
-        if (err) {
-          throw err;
+    MySQL.createQuery(
+      {
+        sql: "SELECT * FROM courseaction WHERE user = ?",
+        values: [id],
+      },
+      (error, results) => {
+        if (error) {
+          throw error;
         }
 
-        res.status(200).json(result);
+        res.status(200).json(results);
 
         next();
-      } catch (error) {
-        next(error);
       }
-    });
+    ).catch(next);
   }
 }
 

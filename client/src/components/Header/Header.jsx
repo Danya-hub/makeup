@@ -1,47 +1,24 @@
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import types from "prop-types";
 
-import { actions as langActions } from "@/service/redusers/langs.js";
-import useOutsideEvent from "@/hooks/useOutsideEvent.js";
-
-import Select from "@/components/UI/Form/Select/Select.jsx";
 import Logo from "@/components/UI/Logo/Logo.jsx";
+import Lang from "@/components/UI/Lang/Lang.jsx";
 import UserSrc from "@/assets/image/user.svg";
 
 import style from "./Header.module.css";
 
 function Header({ openCabinetState }) {
-	const dispatch = useDispatch();
-	const { langs } = useSelector((state) => state);
 	const { t } = useTranslation();
 
-	const [isOpenSelect, setOpenSelect] = useState(false);
-
-	const allLangNames = Object.keys(langs.arrayLangs);
 	const [, setOpenCabinet] = openCabinetState;
 	const isAuth = localStorage.getItem("token");
-
-	function handleCloseSelect() {
-		setOpenSelect(false);
-	}
-
-	const ref = useOutsideEvent(handleCloseSelect);
 
 	return (
 		<header>
 			<Logo />
 			<nav>
-				<Select
-					id={style.langs}
-					ref={ref}
-					defaultValue={langs.currLng}
-					values={allLangNames}
-					openState={[isOpenSelect, setOpenSelect]}
-					onChange={(ind) => dispatch(langActions.changeLanguage(ind))}
-				/>
+				<Lang />
 				{!isAuth && (
 					<Link
 						className="button"

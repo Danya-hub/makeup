@@ -8,7 +8,7 @@ function checkOnValid(req, res, next) {
     const isEmpty = errors.isEmpty();
 
     if (!isEmpty) {
-      ApiError.badRequest(errors.array());
+      ApiError.throw("badRequest", errors.array());
     }
 
     next();
