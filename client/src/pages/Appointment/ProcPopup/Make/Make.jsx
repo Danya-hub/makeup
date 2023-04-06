@@ -71,19 +71,14 @@ function MakeProc() {
 			type: allProcedures.types[ind],
 		};
 
-		dispatch(userProceduresActions.updateCurrProc([newCurrProc, indexSelectedProcedure]));
+		dispatch(userProceduresActions.updateCurrProc([[newCurrProc, indexSelectedProcedure]]));
 	}
 
 	function onClose() {
-		dispatch(userProceduresActions.updateCurrProc(
+		dispatch(userProceduresActions.updateCurrProc([
 			[userProcedures.defaultProcedure, userProcedures.newProcedures.length],
-		));
-
-		if (!userProcedures.newProcedures[indexSelectedProcedure]) {
-			return;
-		}
-
-		dispatch(userProceduresActions.updateProcStateByIndex([indexSelectedProcedure, false]));
+			false,
+		]));
 	}
 
 	function handleConirmContract(isConfirm) {

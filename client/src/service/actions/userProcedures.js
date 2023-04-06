@@ -15,16 +15,22 @@ export const actions = {
 		const index = action.payload;
 		const [currentProcedure] = state.newProcedures[index];
 
+		for (let i = 0; i < state.newProcedures.length; i += 1) {
+			state.newProcedures[i][1] = index === i;
+		}
+
 		state.currentProcedure = [currentProcedure, index];
-		state.newProcedures = state.newProcedures.filter((_, i) => i !== index);
-		// [index] = [currentProcedure, true, index]
+
+		UserProceduresHelper.defaultAvailableTimeByDate(state);
 	},
 
 	deleteProc(state, action) {
 		const index = action.payload;
 
 		state.currentProcedure = [state.defaultProcedure, state.newProcedures.length - 1];
-		state.newProcedures.splice(index, 1);
+		state.newProcedures = state.newProcedures.filter((_, i) => i !== index);
+
+		UserProceduresHelper.defaultAvailableTimeByDate(state);
 	},
 
 	switchMonth(state, action) {
@@ -51,9 +57,10 @@ export const actions = {
 	},
 
 	updateCurrProc(state, action) {
-		state.currentProcedure = action.payload;
+		const [procedure, updateDay = true] = action.payload;
+		state.currentProcedure = procedure;
 
-		if (state.newProcedures.length > 0) {
+		if (updateDay) {
 			UserProceduresHelper.setDay(state, state.locale.getDate());
 		}
 	},
@@ -72,13 +79,16 @@ export const actions = {
 		state.newProcedures.push(
 			[newProc, false, state.newProcedures.length],
 		);
-		state.currentProcedure = [state.defaultProcedure, state.newProcedures.length + 1];
+		state.lastItemAfterAction = state.newProcedures.length - 1;
+		state.currentProcedure = [state.defaultProcedure, state.newProcedures.length];
 
 		UserProceduresHelper.defaultAvailableTimeByDate(state, true);
 	},
 
 	updateProcStateByIndex(state, action) {
 		const [index, blnState, procedure] = action.payload;
+
+		state.lastItemAfterAction = index;
 
 		if (procedure) {
 			const newProc = UserProceduresHelper.getRangeProcTime(state, procedure);
@@ -87,6 +97,8 @@ export const actions = {
 		} else {
 			state.newProcedures[index][1] = blnState;
 		}
+
+		UserProceduresHelper.defaultAvailableTimeByDate(state, true);
 	},
 };
 

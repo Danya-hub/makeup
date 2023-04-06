@@ -48,23 +48,15 @@ function EditProc() {
 		e.preventDefault();
 
 		dispatch(actions.updateProcStateByIndex([indexSelectedProcedure, false, currentProcedure]));
-		dispatch(actions.updateCurrProc(
-			[
-				userProcedures.defaultProcedure,
-				userProcedures.newProcedures.length,
-			],
-		));
 		changePopupName("make");
 	}
 
 	function handleCancel() {
 		dispatch(actions.updateProcStateByIndex([indexSelectedProcedure, false]));
-		dispatch(actions.updateCurrProc(
-			[
-				userProcedures.defaultProcedure,
-				userProcedures.newProcedures.length,
-			],
-		));
+		dispatch(actions.updateCurrProc([
+			[userProcedures.defaultProcedure, userProcedures.newProcedures.length],
+			false,
+		]));
 		changePopupName("make");
 	}
 
@@ -83,27 +75,21 @@ function EditProc() {
 			type: allProcedures.types[ind],
 		};
 
-		dispatch(actions.updateCurrProc(
+		dispatch(actions.updateCurrProc([
 			[
 				newProc,
 				indexSelectedProcedure,
 			],
-		));
+		]));
 	}
 
 	function onClose() {
-		dispatch(actions.updateCurrProc(
-			[
-				userProcedures.defaultProcedure,
-				userProcedures.newProcedures.length,
-			],
-		));
-
-		if (!userProcedures.newProcedures[indexSelectedProcedure]) {
-			return;
-		}
-
 		dispatch(actions.updateProcStateByIndex([indexSelectedProcedure, false]));
+		dispatch(actions.updateCurrProc([
+			[userProcedures.defaultProcedure, userProcedures.newProcedures.length],
+			false,
+		]));
+		changePopupName("make");
 	}
 
 	return (

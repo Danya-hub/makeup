@@ -30,6 +30,7 @@ function initialState(date) {
 	this.minTimeRangeProc = 0;
 	this.isLoading = true;
 	this.maxTimeRangeProc = 0;
+	this.lastItemAfterAction = 0;
 	this.error = "";
 
 	helper.setDayRange(newDate, this);

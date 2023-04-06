@@ -4,7 +4,7 @@ const allProceduresHelper = {
 		let rez = false;
 
 		state.newProcedures
-			.filter(([card]) => card.day === currentProcedure.day)
+			.filter(([card, isSelected]) => card.day === currentProcedure.day && !isSelected)
 			.forEach(([card]) => {
 				if (rez) {
 					return;

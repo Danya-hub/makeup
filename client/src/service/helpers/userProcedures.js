@@ -127,13 +127,14 @@ const userProceduresHelper = {
 		const {
 			currentProcedure: [currentProcedure],
 			defaultProcedure,
+			hourHeightInPx,
 		} = userProcState;
 		const {
 			year,
 			month,
 			hour,
 		} = currentProcedure;
-		const date = new Date(year, month, value, hour);
+		const date = new Date(year, month, value, 0, hour * hourHeightInPx);
 		const day = date.getDate();
 
 		const newDate = this.setDirection(state, date);
@@ -229,8 +230,9 @@ const userProceduresHelper = {
 		});
 
 		const target = userProcState.newProcedures.length && fromOrigin
-			? userProcState.newProcedures[userProcState.newProcedures.length - 1][0].hour
+			? userProcState.newProcedures[state.lastItemAfterAction][0].hour
 			: currentProcedure.hour;
+
 		const availableHour = availableTime.hours
 			.reduce((prev, curr) => (Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev), 0);
 
@@ -240,8 +242,8 @@ const userProceduresHelper = {
 			return;
 		}
 
-		userProcState.defaultProcedure.hour = availableHour;
 		currentProcedure.hour = availableHour;
+		userProcState.defaultProcedure.hour = currentProcedure.hour;
 	},
 };
 

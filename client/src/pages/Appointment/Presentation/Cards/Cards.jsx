@@ -41,8 +41,9 @@ function Cards({
 		userProcedures.locale,
 		false,
 	);
-	const isAvailableForAddNewProc = popupName !== "design"
-		&& (isVisiblePopup || isMouseDown);
+	const availableNextAction = (popupName !== "design"
+		&& ((isVisiblePopup && userProcedures.availableTime.length > 0)
+			|| isMouseDown));
 	const currentFinishProcPositionYToDate = FormatDate.minutesToDate(
 		currentProcedure.hour * userProcedures.hourHeightInPx
 		+ currentProcedure.type.duration * userProcedures.hourHeightInPx,
@@ -167,7 +168,7 @@ function Cards({
 					</div>
 				)}
 			</div>
-			{isAvailableForAddNewProc && (
+			{availableNextAction && (
 				<Card
 					start={formatedStartCurrProc}
 					finish={formatedFinishCurrProc}
