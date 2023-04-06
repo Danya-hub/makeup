@@ -106,31 +106,36 @@ const formatDate = {
 		maxHour = 24,
 		skipCondition,
 	}) {
-		const hours = [];
+		const rez = {
+			dates: [],
+			hours: [],
+		};
 
 		let ind = minHour || Math.ceil((initialState.hours + initialState.minutes / 60) / step) * step;
 
-		while (maxHour > ind) {
+		while (maxHour >= ind) {
 			const date = new Date();
 
 			date.setHours(0);
 			date.setMinutes(ind * 60);
 
-			ind += step;
-
 			if (skipCondition) {
-				const skip = skipCondition(ind - step);
+				const skip = skipCondition(ind);
 
 				if (skip) {
+					ind += step;
+
 					// eslint-disable-next-line no-continue
 					continue;
 				}
 			}
 
-			hours.push(date);
+			rez.dates.push(date);
+			rez.hours.push(ind);
+			ind += step;
 		}
 
-		return hours;
+		return rez;
 	},
 
 	allDaysOnMonth(date) {

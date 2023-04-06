@@ -1,63 +1,65 @@
 import ProcConfig from "@/config/procedures.js";
 import FormatDate from "@/utils/formatDate.js";
+import AllProceduresHelper from "@/service/helpers/allProcedures.js";
 
 const userProceduresHelper = {
 	getDayRange(state) {
-		const timeState = state;
+		const userProcState = state;
 
 		const minY = this.getDragY(
-			timeState.currentTimeHeightInPx,
-			timeState,
+			userProcState.currentTimeHeightInPx,
+			userProcState,
 		);
 		const maxY = this.getDragY(
-			timeState.hourHeightInPx * ProcConfig.FINISH_WORK_TIME,
-			timeState,
+			userProcState.hourHeightInPx * ProcConfig.FINISH_WORK_TIME,
+			userProcState,
 		);
 
-		timeState.minDayTime = minY / timeState.hourHeightInPx + ProcConfig.START_WORK_TIME;
-		timeState.maxDayTime = maxY / timeState.hourHeightInPx;
+		userProcState.minDayTime = minY / userProcState.hourHeightInPx + ProcConfig.START_WORK_TIME;
+		userProcState.maxDayTime = maxY / userProcState.hourHeightInPx;
 	},
 
 	setDayRange(date, state) {
-		const timeState = state;
+		const userProcState = state;
 
-		if (timeState.isCurrentTime) {
-			const max = (ProcConfig.FINISH_WORK_TIME - ProcConfig.START_WORK_TIME) * 60;
-			const currentTimeHeightInPx = FormatDate.minutesFromDate(date, timeState.hourHeightInPx)
-				- ProcConfig.START_WORK_TIME * 60;
+		if (userProcState.isCurrentTime) {
+			const max = (ProcConfig.FINISH_WORK_TIME - ProcConfig.START_WORK_TIME)
+				* userProcState.hourHeightInPx;
+			const currentTimeHeightInPx = FormatDate.minutesFromDate(date, userProcState.hourHeightInPx)
+				- ProcConfig.START_WORK_TIME * userProcState.hourHeightInPx;
 
-			timeState.locale = date;
+			userProcState.locale = date;
 
 			if (currentTimeHeightInPx < 0) {
-				timeState.currentTimeHeightInPx = 0;
+				userProcState.currentTimeHeightInPx = 0;
 			} else if (currentTimeHeightInPx > max) {
-				timeState.currentTimeHeightInPx = max;
+				userProcState.currentTimeHeightInPx = max;
 			} else {
-				timeState.currentTimeHeightInPx = currentTimeHeightInPx;
+				userProcState.currentTimeHeightInPx = currentTimeHeightInPx;
 			}
 
 			return;
 		}
 
-		if (timeState.isPrevTime) {
-			timeState.locale = this.getMaxDate(date, {
+		if (userProcState.isPrevTime) {
+			userProcState.locale = this.getMaxDate(date, {
 				maxHour: ProcConfig.FINISH_WORK_TIME,
 			});
-			timeState.currentTimeHeightInPx = (ProcConfig.FINISH_WORK_TIME - ProcConfig.START_WORK_TIME)
-				* 60;
+			userProcState.currentTimeHeightInPx = (ProcConfig.FINISH_WORK_TIME
+				- ProcConfig.START_WORK_TIME) * userProcState.hourHeightInPx;
 		} else {
-			timeState.locale = this.getMinDate(date, {
+			userProcState.locale = this.getMinDate(date, {
 				minHour: ProcConfig.START_WORK_TIME,
 			});
-			timeState.currentTimeHeightInPx = 0;
+			userProcState.currentTimeHeightInPx = 0;
 		}
 	},
 
 	getRangeProcTime(state, procedure) {
 		const [currentProcedure] = state.currentProcedure;
 
-		const startProcMinutes = currentProcedure.hour * 60;
-		const finishProcMinutes = startProcMinutes + procedure.type.duration * 60;
+		const startProcMinutes = currentProcedure.hour * state.hourHeightInPx;
+		const finishProcMinutes = startProcMinutes + procedure.type.duration * state.hourHeightInPx;
 		const startProcTime = FormatDate.minutesToDate(
 			startProcMinutes,
 			state.locale,
@@ -77,7 +79,7 @@ const userProceduresHelper = {
 	},
 
 	setDirection(state, date) {
-		const timeState = state;
+		const userProcState = state;
 
 		const [newDate, direction] = this.redirectOnNewDate(date, {
 			minHour: ProcConfig.START_WORK_TIME,
@@ -85,46 +87,63 @@ const userProceduresHelper = {
 			...state.strictTimeObject,
 		});
 
-		timeState.isNextTime = direction.isNext;
-		timeState.isPrevTime = direction.isPrev;
-		timeState.isCurrentTime = direction.isCurrent;
+		userProcState.isNextTime = direction.isNext;
+		userProcState.isPrevTime = direction.isPrev;
+		userProcState.isCurrentTime = direction.isCurrent;
 
 		return newDate;
 	},
 
 	setMonth(state, date, month) {
+		const userProcState = state;
 		const {
 			currentProcedure: [currentProcedure],
 			defaultProcedure,
-		} = state;
+		} = userProcState;
 		let localeMonth = 0;
+		let localeYear = 0;
 
 		if (currentProcedure.month > month) {
 			localeMonth = (date.getMonth() || 12) - 1;
+			localeYear = date.getFullYear() - (month < 0 ? 1 : 0);
 
-			date.setFullYear(date.getFullYear() - (!(month % 12) ? 1 : 0));
+			date.setFullYear(localeYear);
 			date.setMonth(localeMonth);
 		} else {
 			localeMonth = date.getMonth() + 1;
+			localeYear = date.getFullYear();
 
 			date.setMonth(localeMonth);
 		}
 
+		defaultProcedure.year = localeYear;
+		currentProcedure.year = localeYear;
 		defaultProcedure.month = localeMonth;
 		currentProcedure.month = localeMonth;
-		defaultProcedure.hour = FormatDate.numericHoursFromDate(date);
 	},
 
-	setDay(state, date) {
+	setDay(state, value) {
+		const userProcState = state;
 		const {
 			currentProcedure: [currentProcedure],
 			defaultProcedure,
-		} = state;
+		} = userProcState;
+		const {
+			year,
+			month,
+			hour,
+		} = currentProcedure;
+		const date = new Date(year, month, value, hour);
 		const day = date.getDate();
+
+		const newDate = this.setDirection(state, date);
 
 		currentProcedure.day = day;
 		defaultProcedure.day = day;
-		defaultProcedure.hour = FormatDate.numericHoursFromDate(date);
+
+		this.setDayRange(newDate, state);
+		this.getDayRange(state);
+		this.defaultAvailableTimeByDate(state);
 	},
 
 	dateDirection(newView, strict) {
@@ -186,9 +205,43 @@ const userProceduresHelper = {
 		];
 	},
 
-	getDragY(pageY, states) {
-		return Math.ceil(pageY / states.hourHeightInPx / states.dragStep)
-			* states.hourHeightInPx * states.dragStep;
+	getDragY(pageY, state) {
+		return Math.ceil(pageY / state.hourHeightInPx / state.dragStep)
+			* state.hourHeightInPx * state.dragStep;
+	},
+
+	defaultAvailableTimeByDate(state, fromOrigin = false) {
+		const userProcState = state;
+		const [currentProcedure] = userProcState.currentProcedure;
+
+		const availableTime = FormatDate.availableTimeByRange({
+			initialState: {
+				hours: 0,
+				minutes: userProcState.minDayTime * userProcState.hourHeightInPx,
+			},
+			step: userProcState.dragStep,
+			minHour: userProcState.minDayTime,
+			maxHour: ProcConfig.FINISH_WORK_TIME - currentProcedure.type.duration,
+			skipCondition: (time) => AllProceduresHelper.isTouchCard(time, {
+				newProcedures: userProcState.newProcedures,
+				currentProcedure: userProcState.currentProcedure,
+			}),
+		});
+
+		const target = userProcState.newProcedures.length && fromOrigin
+			? userProcState.newProcedures[userProcState.newProcedures.length - 1][0].hour
+			: currentProcedure.hour;
+		const availableHour = availableTime.hours
+			.reduce((prev, curr) => (Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev), 0);
+
+		userProcState.availableTime = availableTime.dates;
+
+		if (!availableHour) {
+			return;
+		}
+
+		userProcState.defaultProcedure.hour = availableHour;
+		currentProcedure.hour = availableHour;
 	},
 };
 

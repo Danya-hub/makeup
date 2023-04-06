@@ -26,10 +26,11 @@ function Appointment() {
 	} = useSelector((state) => state);
 	const { state: locationState } = useLocation();
 
-	const [isVisibleProcedurePopup, setVisibleProcedurePopup] = useState(
+	const visiblePopupState = useState(
 		Boolean(locationState?.isVisiblePopup),
 	);
-	const [popupName, changePopupName] = useState(DEFAULT_POPUP_NAME);
+	const changePopupNameState = useState(DEFAULT_POPUP_NAME);
+	const mouseDownState = useState(false);
 
 	async function init() {
 		dispatch(allProcAsyncActions.getProcedureByDay(userProcedures.locale));
@@ -41,8 +42,9 @@ function Appointment() {
 
 	// eslint-disable-next-line react/jsx-no-constructed-context-values
 	const contextValue = {
-		changePopupNameState: [popupName, changePopupName],
-		visiblePopupState: [isVisibleProcedurePopup, setVisibleProcedurePopup],
+		changePopupNameState,
+		visiblePopupState,
+		mouseDownState,
 	};
 
 	return (

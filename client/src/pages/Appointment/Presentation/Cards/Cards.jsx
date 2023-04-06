@@ -1,6 +1,7 @@
-import { useContext, useState, useRef } from "react";
+import { useContext, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import types from "prop-types";
 
 import FormatDate from "@/utils/formatDate.js";
 import PropsContext from "@/pages/Appointment/context.js";
@@ -14,12 +15,15 @@ import Card from "@/pages/Appointment/Card/Card.jsx";
 
 import style from "./Cards.module.css";
 
-function Cards() {
+function Cards({
+	widthCharTime,
+}) {
 	const dispatch = useDispatch();
 	const { allProcedures, userProcedures } = useSelector((state) => state);
 	const {
 		changePopupNameState: [popupName, changePopupName],
 		visiblePopupState: [isVisiblePopup, setVisiblePopup],
+		mouseDownState: [isMouseDown, setMouseDown],
 	} = useContext(PropsContext);
 	const [{
 		currentLang,
@@ -27,29 +31,27 @@ function Cards() {
 	const navigate = useNavigate();
 	const parentRef = useRef(null);
 
-	const [isMouseDown, setMouseDown] = useState(false);
-
 	const [currentProcedure] = userProcedures.currentProcedure;
 	const classNameByPresentState = (isVisiblePopup && "noActiveGrabbing") || (isMouseDown && "activeGrabbing") || "";
 	const isAuth = localStorage.getItem("token");
 	const currentStartProcPositionY = currentProcedure.hour
 		* userProcedures.hourHeightInPx - ProcConfig.START_WORK_TIME * userProcedures.hourHeightInPx;
 	const currentStartProcPositionYToDate = FormatDate.minutesToDate(
-		currentProcedure.hour * 60,
+		currentProcedure.hour * userProcedures.hourHeightInPx,
 		userProcedures.locale,
 		false,
 	);
 	const isAvailableForAddNewProc = popupName !== "design"
 		&& (isVisiblePopup || isMouseDown);
-	const formatedStartCurrProc = FormatDate.stringHourAndMin(
-		currentStartProcPositionYToDate,
-		currentLang,
-	);
 	const currentFinishProcPositionYToDate = FormatDate.minutesToDate(
-		currentProcedure.hour * 60
+		currentProcedure.hour * userProcedures.hourHeightInPx
 		+ currentProcedure.type.duration * userProcedures.hourHeightInPx,
 		userProcedures.locale,
 		false,
+	);
+	const formatedStartCurrProc = FormatDate.stringHourAndMin(
+		currentStartProcPositionYToDate,
+		currentLang,
 	);
 	const formatedFinishCurrProc = FormatDate.stringHourAndMin(
 		currentFinishProcPositionYToDate,
@@ -60,10 +62,10 @@ function Cards() {
 		currentLang,
 	);
 
-	function setNumericTimeByGrabbing(e, pageY) { //!
-		const topToRootEl = parentRef.current.offsetTop;
+	function setNumericTimeByGrabbing(e, pageY) {
 		const time = (pageY
-			- Math.ceil((topToRootEl + e.currentTarget.parentNode.offsetTop) / 60) * 60)
+			- Math.ceil((parentRef.current.offsetTop + e.currentTarget.parentNode.offsetTop)
+			/ userProcedures.hourHeightInPx) * userProcedures.hourHeightInPx)
 			/ userProcedures.hourHeightInPx;
 
 		const isIt = AllProceduresHelper.isTouchCard(
@@ -72,36 +74,42 @@ function Cards() {
 		);
 
 		if (isIt) {
-			return currentProcedure.hour;
+			return;
 		}
 
 		let rez = time;
 
-		if (userProcedures.minDayTime - ProcConfig.START_WORK_TIME > time) {
+		if (userProcedures.minDayTime > time + ProcConfig.START_WORK_TIME) {
 			rez = userProcedures.minDayTime - ProcConfig.START_WORK_TIME;
-		} else if (userProcedures.maxDayTime - currentProcedure.type.duration < time) {
-			rez = userProcedures.maxDayTime - currentProcedure.type.duration;
+		} else if (userProcedures.maxDayTime - currentProcedure.type.duration < time
+			+ ProcConfig.START_WORK_TIME) {
+			rez = userProcedures.maxDayTime - ProcConfig.START_WORK_TIME - currentProcedure.type.duration;
 		}
 
 		dispatch(actions.changeHour(rez));
-
-		return currentProcedure.hour;
 	}
 
 	function onMouseUp(e) {
+		if (!userProcedures.availableTime.length) {
+			return;
+		}
+
 		const y = UserProceduresHelper.getDragY(e.pageY, userProcedures);
-		const minutesByMouseUp = setNumericTimeByGrabbing(e, y) * 60;
+		setNumericTimeByGrabbing(e, y);
+
+		const minutesOnMouseUp = currentProcedure.hour * userProcedures.hourHeightInPx
+			- ProcConfig.START_WORK_TIME;
 
 		setMouseDown(false);
 		setVisiblePopup(!userProcedures.isPrevTime);
 
-		if (minutesByMouseUp === userProcedures.currentTimeHeightInPx) {
-			window.scrollTo(0, minutesByMouseUp);
+		if (minutesOnMouseUp === userProcedures.currentTimeHeightInPx) {
+			window.scrollTo(0, minutesOnMouseUp);
 		}
 	}
 
 	function onMouseMove(e) {
-		if (!isMouseDown) {
+		if (!isMouseDown || !userProcedures.availableTime.length) {
 			return;
 		}
 
@@ -117,6 +125,10 @@ function Cards() {
 					purpose: "warningAuthToMakeAppointment",
 				},
 			});
+			return;
+		}
+
+		if (!userProcedures.availableTime.length) {
 			return;
 		}
 
@@ -137,6 +149,7 @@ function Cards() {
 			style={{
 				height: (ProcConfig.FINISH_WORK_TIME - ProcConfig.START_WORK_TIME)
 					* userProcedures.hourHeightInPx,
+				width: `calc(100% - ${widthCharTime}px)`,
 			}}
 			onMouseUp={onMouseUp}
 			onMouseMove={onMouseMove}
@@ -226,5 +239,9 @@ function Cards() {
 		</div>
 	);
 }
+
+Cards.propTypes = {
+	widthCharTime: types.number.isRequired,
+};
 
 export default Cards;

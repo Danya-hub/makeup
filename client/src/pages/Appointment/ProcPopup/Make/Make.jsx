@@ -21,13 +21,11 @@ function MakeProc() {
 	const { allProcedures, userProcedures } = useSelector((state) => state);
 	const dispatch = useDispatch();
 	const {
-		visiblePopupState,
-		changePopupNameState,
+		visiblePopupState: [isVisible, setVisible],
+		changePopupNameState: [, changePopupName],
 	} = useContext(PropsContext);
 
 	const [currentProcedure, indexSelectedProcedure] = userProcedures.currentProcedure;
-	const [isVisible, setVisible] = visiblePopupState;
-	const [, changePopupName] = changePopupNameState;
 	const isValidForAdding = ProcConfig.MAX_COUNT_PROCEDURE <= userProcedures.newProcedures.length
 		|| (!currentProcedure.pdfPath && currentProcedure.type.contract);
 
@@ -52,11 +50,16 @@ function MakeProc() {
 		} else {
 			dispatch(userProceduresActions.addProc());
 		}
+
+		const scrollYInPx = (currentProcedure.hour - ProcConfig.START_WORK_TIME)
+			* userProcedures.hourHeightInPx;
+		window.scrollTo(0, scrollYInPx);
 	}
 
 	function handleChangeProcName(ind) {
-		const startProcMinutes = currentProcedure.hour * 60;
-		const finishProcMinutes = startProcMinutes + allProcedures.types[ind].duration * 60;
+		const startProcMinutes = currentProcedure.hour * userProcedures.hourHeightInPx;
+		const finishProcMinutes = startProcMinutes + allProcedures.types[ind].duration
+			* userProcedures.hourHeightInPx;
 
 		const newCurrProc = {
 			...currentProcedure,
@@ -69,7 +72,6 @@ function MakeProc() {
 		};
 
 		dispatch(userProceduresActions.updateCurrProc([newCurrProc, indexSelectedProcedure]));
-		// dispatch(userProceduresActions.changeHour(userProcedures.availableTime[0]));
 	}
 
 	function onClose() {

@@ -69,8 +69,9 @@ function EditProc() {
 	}
 
 	function handleChangeProcName(ind) {
-		const startProcMinutes = currentProcedure.hour * 60;
-		const finishProcMinutes = startProcMinutes + allProcedures.types[ind].duration * 60;
+		const startProcMinutes = currentProcedure.hour * userProcedures.hourHeightInPx;
+		const finishProcMinutes = startProcMinutes + allProcedures.types[ind].duration
+			* userProcedures.hourHeightInPx;
 
 		const newProc = {
 			...currentProcedure,

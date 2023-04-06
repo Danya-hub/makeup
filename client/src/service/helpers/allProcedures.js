@@ -3,20 +3,22 @@ const allProceduresHelper = {
 		const [currentProcedure] = state.currentProcedure;
 		let rez = false;
 
-		state.newProcedures.forEach(([card]) => {
-			if (rez) {
-				return;
-			}
+		state.newProcedures
+			.filter(([card]) => card.day === currentProcedure.day)
+			.forEach(([card]) => {
+				if (rez) {
+					return;
+				}
 
-			const startSegment = (card.hour - currentProcedure.type.duration);
-			const finishSegment = card.hour
+				const startSegment = (card.hour - currentProcedure.type.duration);
+				const finishSegment = card.hour
                 + (card.type.duration + currentProcedure.type.duration);
 
-			rez = (startSegment < selectedTime
+				rez = (startSegment < selectedTime
                     && finishSegment > selectedTime + currentProcedure.type.duration)
                 || (selectedTime < startSegment
                     && selectedTime + currentProcedure.type.duration > finishSegment);
-		});
+			});
 
 		return rez;
 	},

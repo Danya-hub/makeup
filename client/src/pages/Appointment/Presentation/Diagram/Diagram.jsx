@@ -1,30 +1,14 @@
-import { useContext } from "react";
-import types from "prop-types";
 import { useSelector } from "react-redux";
+import types from "prop-types";
 
-import FormatDate from "@/utils/formatDate.js";
-import ProcConfig from "@/config/procedures.js";
-import LangContext from "@/context/lang.js";
-import Value from "@/helpers/value.js";
 import style from "./Diagram.module.css";
 
-function Diagram({ hourHeightInPx }) {
-	const [{
-		currentLang,
-	}] = useContext(LangContext);
+function Diagram({
+	hourHeightInPx,
+	formatedTimes,
+	widthCharTime,
+}) {
 	const { userProcedures } = useSelector((state) => state);
-
-	const times = FormatDate.availableTimeByRange({
-		minHour: ProcConfig.START_WORK_TIME,
-		maxHour: ProcConfig.FINISH_WORK_TIME,
-	});
-	const formatedTimes = times.map((date) => (
-		FormatDate.stringHourAndMin(
-			date,
-			currentLang,
-		)
-	));
-	const widthCharTime = Value.charWidthInPixels(formatedTimes[formatedTimes.length - 1]);
 
 	return (
 		<div className={style.hours}>
@@ -34,7 +18,7 @@ function Diagram({ hourHeightInPx }) {
 					className={style.cell}
 					style={{
 						height: hourHeightInPx,
-						width: `${widthCharTime}px`,
+						width: widthCharTime,
 					}}
 				>
 					<div
@@ -59,6 +43,8 @@ function Diagram({ hourHeightInPx }) {
 
 Diagram.propTypes = {
 	hourHeightInPx: types.number.isRequired,
+	formatedTimes: types.instanceOf(Array).isRequired,
+	widthCharTime: types.number.isRequired,
 };
 
 export default Diagram;

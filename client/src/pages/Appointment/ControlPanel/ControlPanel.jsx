@@ -19,6 +19,7 @@ function ControlPanel() {
 		currentProcedure: [currentProcedure],
 		minDayTime,
 		locale,
+		hourHeightInPx,
 	} = useSelector((state) => state.userProcedures);
 	const {
 		visiblePopupState: [, setVisiblePopupState],
@@ -42,7 +43,7 @@ function ControlPanel() {
 			return;
 		}
 
-		const minutes = currentProcedure.minDayTime * 60;
+		const minutes = currentProcedure.minDayTime * hourHeightInPx;
 
 		dispatch(actions.changeHour(minDayTime));
 		setVisiblePopupState(true);

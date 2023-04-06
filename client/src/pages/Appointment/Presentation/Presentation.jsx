@@ -2,10 +2,12 @@ import { useRef, useLayoutEffect, useEffect, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
+import FormatDate from "@/utils/formatDate.js";
+import ProcConfig from "@/config/procedures.js";
+import LangContext from "@/context/lang.js";
+import Value from "@/helpers/value.js";
 import { asyncActions as allProceduresAsyncActions } from "@/service/redusers/allProcedures.js";
 import { actions as userProceduresActions } from "@/service/redusers/userProcedures.js";
-import FormatDate from "@/utils/formatDate.js";
-import LangContext from "@/context/lang.js";
 import { COLUMN_NAMES } from "@/pages/Appointment/constants";
 
 import Cards from "./Cards/Cards.jsx";
@@ -28,10 +30,21 @@ function Presentation() {
 	const weekdayAndMonth = FormatDate.weekdayAndMonth(currentProcedure.startProcTime, currentLang, {
 		weekday: "short",
 	});
+	const times = useRef(FormatDate.availableTimeByRange({
+		minHour: ProcConfig.START_WORK_TIME,
+		maxHour: ProcConfig.FINISH_WORK_TIME - 1,
+	}).dates);
+	const formatedTimes = times.current.map((date) => (
+		FormatDate.stringHourAndMin(
+			date,
+			currentLang,
+		)
+	));
+	const widthCharTime = Value.charWidthInPixels(formatedTimes[formatedTimes.length - 1]);
 
 	useLayoutEffect(() => {
 		const updateTime = setInterval(() => {
-			dispatch(userProceduresActions.switchDay(userProcedures.locale));
+			dispatch(userProceduresActions.switchDay(userProcedures.locale.getDate()));
 
 			if (!userProcedures.currentTimeHeightInPx && userProcedures.isCurrentTime) {
 				dispatch(allProceduresAsyncActions.getProcedureByDay(userProcedures.locale));
@@ -42,7 +55,7 @@ function Presentation() {
 	}, [userProcedures.locale]);
 
 	useEffect(() => {
-		window.scrollTo(0, userProcedures.minDayTime * 60);
+		window.scrollTo(0, userProcedures.minDayTime * userProcedures.hourHeightInPx);
 	}, []);
 
 	return (
@@ -82,7 +95,7 @@ function Presentation() {
 				<div
 					className={style.bottom}
 					style={{
-						// paddingLeft: widthCharTime,
+						paddingLeft: widthCharTime,
 					}}
 				>
 					{COLUMN_NAMES.map((name) => (
@@ -90,9 +103,13 @@ function Presentation() {
 					))}
 				</div>
 				<Diagram
+					formatedTimes={formatedTimes}
+					widthCharTime={widthCharTime}
 					hourHeightInPx={userProcedures.hourHeightInPx}
 				/>
-				<Cards />
+				<Cards
+					widthCharTime={widthCharTime}
+				/>
 			</div>
 		</div>
 	);

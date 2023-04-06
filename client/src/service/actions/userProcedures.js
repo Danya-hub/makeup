@@ -4,12 +4,10 @@ import {
 	createAsyncThunk,
 } from "@reduxjs/toolkit";
 
-import helper from "@/service/helpers/userProcedures.js";
+import UserProceduresHelper from "@/service/helpers/userProcedures.js";
 import ProcConfig from "@/config/procedures.js";
 import FormatDate from "@/utils/formatDate.js";
-import Check from "@/helpers/check.js";
 import Value from "@/helpers/value.js";
-import AllProceduresHelper from "@/service/helpers/allProcedures.js";
 import axios from "@/http/axios.js";
 
 export const actions = {
@@ -18,7 +16,8 @@ export const actions = {
 		const [currentProcedure] = state.newProcedures[index];
 
 		state.currentProcedure = [currentProcedure, index];
-		state.newProcedures[index] = [currentProcedure, true, index];
+		state.newProcedures = state.newProcedures.filter((_, i) => i !== index);
+		// [index] = [currentProcedure, true, index]
 	},
 
 	deleteProc(state, action) {
@@ -32,29 +31,17 @@ export const actions = {
 		const date = new Date(state.locale.getTime());
 		const month = action.payload;
 
-		helper.setMonth(state, date, month);
-		const newDate = helper.setDirection(state, date);
+		UserProceduresHelper.setMonth(state, date, month);
+		const newDate = UserProceduresHelper.setDirection(state, date);
 
-		helper.setDayRange(newDate, state);
+		UserProceduresHelper.setDayRange(newDate, state);
+		UserProceduresHelper.defaultAvailableTimeByDate(state);
 	},
 
 	switchDay(state, action) {
-		const [currentProcedure] = state.currentProcedure;
 		const value = action.payload;
-		const isDay = Check.isStrictNumber(value);
 
-		const {
-			year,
-			month,
-			hour,
-		} = currentProcedure;
-
-		const date = isDay ? new Date(year, month, value, hour) : value;
-		const newDate = helper.setDirection(state, date);
-
-		helper.setDay(state, newDate);
-		helper.setDayRange(newDate, state);
-		helper.getDayRange(state);
+		UserProceduresHelper.setDay(state, value);
 	},
 
 	changeHour(state, action) {
@@ -65,6 +52,10 @@ export const actions = {
 
 	updateCurrProc(state, action) {
 		state.currentProcedure = action.payload;
+
+		if (state.newProcedures.length > 0) {
+			UserProceduresHelper.setDay(state, state.locale.getDate());
+		}
 	},
 
 	setCurrProcValue(state, action) {
@@ -76,36 +67,21 @@ export const actions = {
 
 	addProc(state) {
 		const [currentProcedure] = state.currentProcedure;
-		const newProc = helper.getRangeProcTime(state, currentProcedure);
+		const newProc = UserProceduresHelper.getRangeProcTime(state, currentProcedure);
 
 		state.newProcedures.push(
 			[newProc, false, state.newProcedures.length],
 		);
-		state.availableTime = FormatDate.availableTimeByRange({
-			initialState: {
-				hours: 0,
-				minutes: state.minDayTime * 60,
-			},
-			step: state.dragStep,
-			minHour: ProcConfig.START_WORK_TIME,
-			maxHour: ProcConfig.FINISH_WORK_TIME,
-			skipCondition: (time) => AllProceduresHelper.isTouchCard(time, {
-				newProcedures: state.newProcedures,
-				currentProcedure: state.currentProcedure,
-			}),
-		});
-
-		const time = FormatDate.minutesFromDate(state.availableTime[0], 1);
-
-		state.defaultProcedure.hour = time;
 		state.currentProcedure = [state.defaultProcedure, state.newProcedures.length + 1];
+
+		UserProceduresHelper.defaultAvailableTimeByDate(state, true);
 	},
 
 	updateProcStateByIndex(state, action) {
 		const [index, blnState, procedure] = action.payload;
 
 		if (procedure) {
-			const newProc = helper.getRangeProcTime(state, procedure);
+			const newProc = UserProceduresHelper.getRangeProcTime(state, procedure);
 
 			state.newProcedures[index] = [newProc, blnState, index];
 		} else {
@@ -150,7 +126,8 @@ export const asyncActions = {
 					.then((r) => r.data);
 				const defValue = {
 					startProcTime: new Date(),
-					finishProcTime: FormatDate.minutesToDate(type.duration * 60),
+					finishProcTime: FormatDate.minutesToDate(type.duration
+						* states.userProcedures.hourHeightInPx),
 					type,
 				};
 
@@ -174,19 +151,9 @@ export const extraReducers = {
 			...value,
 		};
 		state.currentProcedure = [state.defaultProcedure, 0];
-		state.availableTime = FormatDate.availableTimeByRange({
-			initialState: {
-				hours: 0,
-				minutes: state.minDayTime * 60,
-			},
-			step: state.dragStep,
-			minHour: ProcConfig.START_WORK_TIME,
-			maxHour: ProcConfig.FINISH_WORK_TIME,
-			skipCondition: (time) => AllProceduresHelper.isTouchCard(time, {
-				newProcedures: state.newProcedures,
-				currentProcedure: state.currentProcedure,
-			}),
-		});
+
+		UserProceduresHelper.defaultAvailableTimeByDate(state);
+
 		state.isLoading = false;
 	},
 	[asyncActions.createNewProcedures.pending]: (state) => {

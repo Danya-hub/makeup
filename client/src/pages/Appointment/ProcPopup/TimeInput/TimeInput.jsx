@@ -23,6 +23,7 @@ function TimeInput({ openCalendarState }) {
 		strictTimeObject,
 		currentProcedure,
 		availableTime,
+		hourHeightInPx,
 	} = useSelector((state) => state.userProcedures);
 
 	const [isOpenSelectHours, setOpenSelectHours] = useState(false);
@@ -30,7 +31,7 @@ function TimeInput({ openCalendarState }) {
 	const [procedure] = currentProcedure;
 	const [isOpenCalendar, setOpenCalendar] = openCalendarState;
 	const currentProcDate = FormatDate.minutesToDate(
-		procedure.hour * 60,
+		procedure.hour * hourHeightInPx,
 		locale,
 		false,
 	);
