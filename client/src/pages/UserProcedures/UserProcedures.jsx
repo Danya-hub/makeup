@@ -2,7 +2,7 @@ import { useLayoutEffect, useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import { asyncActions } from "@/service/redusers/allProcedures.js";
+import { asyncActions } from "@/service/redusers/userProcedures.js";
 
 import PlaceholderLoader from "@/components/UI/PlaceholderLoader/PlaceholderLoader.jsx";
 import Filters from "./Filters/Filters.jsx";

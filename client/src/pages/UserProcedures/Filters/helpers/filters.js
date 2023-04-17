@@ -32,7 +32,7 @@ function maxObject(callback, values) {
 	return maxObj;
 }
 
-class FilterActions {
+class FilterHelpers {
 	static sortOptions = {
 		toExpensive: this.toExpensive,
 		toCheap: this.toCheap,
@@ -77,7 +77,7 @@ class FilterActions {
 		return rez;
 	}
 
-	changeRangePriceOnSelect() {
+	changeRangeProcedureOnSelect() {
 		if (!this.options.range?.length || !this.options.types?.length) {
 			return this.procedures;
 		}
@@ -85,7 +85,7 @@ class FilterActions {
 		this.minSelectedPrice = minObject((obj) => obj.type.price, this.procedures);
 		this.maxSelectedPrice = maxObject((obj) => obj.type.price, this.procedures);
 
-		const rez = FilterActions.byRange(
+		const rez = FilterHelpers.byRange(
 			[this.minSelectedPrice.type.price, this.maxSelectedPrice.type.price],
 			this.procedures,
 		);
@@ -106,7 +106,7 @@ class FilterActions {
 
 		const [min, max] = this.options.range;
 
-		const rez = FilterActions.byRange([min, max], this.procedures);
+		const rez = FilterHelpers.byRange([min, max], this.procedures);
 
 		if (!rez.length) {
 			return this.procedures;
@@ -137,16 +137,16 @@ class FilterActions {
 			return this.procedures;
 		}
 
-		this.procedures = FilterActions.sortOptions[this.options.sortBy](this.procedures);
+		this.procedures = FilterHelpers.sortOptions[this.options.sortBy](this.procedures);
 
 		return this.procedures;
 	}
 
 	static apply(procedures, options) {
-		const filters = new FilterActions(procedures, options);
+		const filters = new FilterHelpers(procedures, options);
 
 		filters.selectType();
-		filters.changeRangePriceOnSelect();
+		filters.changeRangeProcedureOnSelect();
 		filters.changeRangePriceOnGrabbing();
 		filters.sort();
 
@@ -154,4 +154,4 @@ class FilterActions {
 	}
 }
 
-export default FilterActions;
+export default FilterHelpers;

@@ -31,11 +31,12 @@ function Appointment() {
 	);
 	const changePopupNameState = useState(DEFAULT_POPUP_NAME);
 	const mouseDownState = useState(false);
+	const visibledGroupProcedures = useState({});
 
 	async function init() {
-		dispatch(allProcAsyncActions.getProcedureByDay(userProcedures.locale));
-		dispatch(allProcAsyncActions.getAllTypes());
-		dispatch(userProcAsyncActions.getDefaultProcValue());
+		await dispatch(allProcAsyncActions.getProcedureByDay(userProcedures.locale));
+		await dispatch(userProcAsyncActions.getAllTypes());
+		await dispatch(userProcAsyncActions.getDefaultProcValue());
 	}
 
 	useLayoutEffect(() => init, []);
@@ -45,6 +46,7 @@ function Appointment() {
 		changePopupNameState,
 		visiblePopupState,
 		mouseDownState,
+		visibledGroupProcedures,
 	};
 
 	return (

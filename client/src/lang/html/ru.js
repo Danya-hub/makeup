@@ -1,4 +1,11 @@
 const htmlComponentValue = {
+	day: "День",
+	month: "Месяц",
+	year: "Год",
+	birthday: "Дата рождения",
+	makeProcPopup: "Запись",
+	editProcPopup: "Редактирование",
+	designProcPopup: "Оформление",
 	weekdayNames: ["пн", "вт", "ср", "чт", "пт", "сб", "вс"],
 	designation: "Обозначение",
 	pending: "Ожидание начала работы",
@@ -17,7 +24,7 @@ const htmlComponentValue = {
 	crossingElapsedTime: "Вы пересекли уже пройдённое время",
 	time: "Время",
 	status: "Состояние",
-	procedureName: "Название процедуры",
+	serviceName: "Название услуги",
 	welcome: "Добро пожаловать!",
 	signupAccount: "Создать учетную запись",
 	signinAccount: "Войти в учетную запись",
@@ -68,7 +75,16 @@ const htmlComponentValue = {
 	passwordVerification: "проверка пароля",
 	agreeTerms: "Вы соглашаетесь с условиями услуги?",
 	more: "Подробнее",
-	readTerms: "Ознайомитись з умовами",
+	readTerms: "Ознакомиться с условиями",
+	calendars: "Календари",
+	myAppointments: "Мои записи",
+	otherAppointments: "Записи других",
+	appointmentList: "Список записей",
+	delete: "Удалить",
+	edit: "Редактировать",
+	total: "Итог",
+	sum: "Сумма",
+	duration: "Длительность (чч:мм)",
 };
 
 export default htmlComponentValue;

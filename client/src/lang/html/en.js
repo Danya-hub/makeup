@@ -1,4 +1,11 @@
 const htmlComponentValue = {
+	day: "Day",
+	month: "Month",
+	year: "Year",
+	birthday: "Date of birth",
+	makeProcPopup: "Make",
+	editProcPopup: "Edit",
+	designProcPopup: "Design",
 	weekdayNames: ["mon", "tue", "wen", "thu", "fri", "sut", "sun"],
 	designation: "Designation",
 	pending: "Waiting for work to start",
@@ -17,7 +24,7 @@ const htmlComponentValue = {
 	crossingElapsedTime: "You have crossed a time that has already passed",
 	time: "Time",
 	status: "Status",
-	procedureName: "Name of procedure",
+	serviceName: "Name of service",
 	welcome: "Welcome!",
 	signupAccount: "Create your account",
 	signinAccount: "Sign in your account",
@@ -69,6 +76,15 @@ const htmlComponentValue = {
 	agreeTerms: "Do you agree with the terms of service?",
 	more: "More",
 	readTerms: "Read the terms",
+	calendars: "Calendars",
+	myAppointments: "My appointments",
+	otherAppointments: "Other appointments",
+	appointmentList: "Appointment list",
+	delete: "Delete",
+	edit: "Edit",
+	total: "Total",
+	sum: "Sum",
+	duration: "Duration (hh:mm)",
 };
 
 export default htmlComponentValue;

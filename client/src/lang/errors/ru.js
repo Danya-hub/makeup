@@ -18,6 +18,8 @@ const errors = {
 	sentPasswordValid: "Сообщение уже отправлено",
 	noAccessRequestValid: "У вас нет доступа",
 	baseUserInfoAlreadyExistsValid: "Телефон или имя уже зарегестрировано",
+	requiredBirthday: "Требуется дата рождения",
+	availableTimeValid: "Свободного времени нет.Запишитесь на другое время",
 };
 
 export default errors;

@@ -7,8 +7,8 @@
 }
 
 .topPanel .switchMonth {
-	width: 30px;
-	height: 30px;
+	width: 20px;
+	height: 20px;
 	padding: 0;
 }
 
@@ -17,8 +17,8 @@
 }
 
 .nameMonth {
-	text-transform: capitalize;
 	--size: var(--step-2);
+	text-transform: capitalize;
 	white-space: nowrap;
 }
 

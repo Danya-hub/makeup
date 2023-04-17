@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Output from "./Output/Output.jsx";
 import Confirm from "./Confirm/Confirm.jsx";
 
-import { signup } from "@/service/redusers/user.js";
+import { asyncActions } from "@/service/redusers/user.js";
 
 function Signup() {
 	const dispatch = useDispatch();
@@ -14,8 +14,8 @@ function Signup() {
 	const [user, setUser] = useState({});
 	const [isValidForm, setFormState] = useState(false);
 
-	async function onSuccess(_user) {
-		const res = await dispatch(signup(_user));
+	async function onSuccess(object) {
+		const res = await dispatch(asyncActions.signup(object));
 
 		if (res.error) {
 			return;

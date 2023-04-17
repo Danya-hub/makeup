@@ -7,7 +7,7 @@ import Aside from "@/components/Aside/Aside.jsx";
 import Event from "@/components/Event/Event.jsx";
 import Avatar from "./Avatar/Avatar.jsx";
 
-import { logout, sendLinkForResetingPassword } from "@/service/redusers/user.js";
+import { asyncActions } from "@/service/redusers/user.js";
 
 import style from "./Cabinet.module.css";
 
@@ -19,7 +19,7 @@ function Cabinet({ openCabinetState }) {
 	const [, setOpenCabinet] = openCabinetState;
 
 	function handleLogout() {
-		dispatch(logout());
+		dispatch(asyncActions.logout());
 	}
 
 	function handleCloseCabinet() {
@@ -28,7 +28,7 @@ function Cabinet({ openCabinetState }) {
 
 	function handleResetPassword() {
 		dispatch(
-			sendLinkForResetingPassword({
+			asyncActions.sendLinkForResetingPassword({
 				email: userInfo.email,
 			}),
 		);

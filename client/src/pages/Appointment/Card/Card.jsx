@@ -1,23 +1,34 @@
+import { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import types from "prop-types";
+
+import FormatDate from "@/utils/formatDate.js";
+import LangContext from "@/context/lang.js";
 
 import style from "./Card.module.css";
 
 function Card({
 	id,
+	date,
 	className,
 	procedure,
 	styleAttr,
 	isExists,
 	isSelected,
 	onMouseDown,
-	start,
-	finish,
 }) {
 	const { t } = useTranslation();
+	const [{
+		currentLang,
+	}] = useContext(LangContext);
 
 	const backColor = isExists ? procedure.state.color : "lightGray";
 	const border = isSelected ? "inset 0 0 0 2px rgb(var(--black))" : "";
+	const formatedTimeCurrProc = FormatDate.stringHourAndMinWithRange(
+		date,
+		procedure.type.duration,
+		currentLang,
+	);
 
 	return (
 		// event for card
@@ -34,15 +45,11 @@ function Card({
 			onMouseDown={onMouseDown}
 		>
 			<div className="time">
-				<span>
-					{start}
-					—
-					{finish}
-				</span>
+				<span>{formatedTimeCurrProc}</span>
 				{/* <span>{procedure.fnClient}</span> */}
 			</div>
 			<span className="status">{t(procedure.type.state)}</span>
-			<p className="procedureName">{procedure.type.name}</p>
+			<p className="procedureName">{t(procedure.type.name)}</p>
 		</div>
 	);
 }
@@ -59,13 +66,12 @@ Card.defaultProps = {
 Card.propTypes = {
 	id: types.string,
 	className: types.string,
+	date: types.instanceOf(Object).isRequired,
 	procedure: types.instanceOf(Object).isRequired,
 	styleAttr: types.instanceOf(Object),
 	isExists: types.bool,
 	isSelected: types.bool,
 	onMouseDown: types.func,
-	start: types.string.isRequired,
-	finish: types.string.isRequired,
 };
 
 export default Card;

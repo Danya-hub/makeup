@@ -3,7 +3,7 @@ import FormatDate from "@/utils/formatDate.js";
 import AllProceduresHelper from "@/service/helpers/allProcedures.js";
 
 const userProceduresHelper = {
-	getDayRange(state) {
+	setDayRange(state) {
 		const userProcState = state;
 
 		const minY = this.getDragY(
@@ -19,7 +19,7 @@ const userProceduresHelper = {
 		userProcState.maxDayTime = maxY / userProcState.hourHeightInPx;
 	},
 
-	setDayRange(date, state) {
+	setViewDate(date, state) {
 		const userProcState = state;
 
 		if (userProcState.isCurrentTime) {
@@ -63,12 +63,10 @@ const userProceduresHelper = {
 		const startProcTime = FormatDate.minutesToDate(
 			startProcMinutes,
 			state.locale,
-			false,
 		);
 		const finishProcTime = FormatDate.minutesToDate(
 			finishProcMinutes,
 			state.locale,
-			false,
 		);
 
 		return {
@@ -127,14 +125,12 @@ const userProceduresHelper = {
 		const {
 			currentProcedure: [currentProcedure],
 			defaultProcedure,
-			hourHeightInPx,
 		} = userProcState;
 		const {
 			year,
 			month,
-			hour,
 		} = currentProcedure;
-		const date = new Date(year, month, value, 0, hour * hourHeightInPx);
+		const date = new Date(year, month, value);
 		const day = date.getDate();
 
 		const newDate = this.setDirection(state, date);
@@ -142,13 +138,12 @@ const userProceduresHelper = {
 		currentProcedure.day = day;
 		defaultProcedure.day = day;
 
-		this.setDayRange(newDate, state);
-		this.getDayRange(state);
+		this.setViewDate(newDate, state);
+		this.setDayRange(state);
 		this.defaultAvailableTimeByDate(state);
 	},
 
 	dateDirection(newView, strict) {
-		const selectHour = newView.getHours();
 		const selectDay = newView.getDate();
 		const selectMonth = newView.getMonth();
 		const selectYear = newView.getFullYear();
@@ -157,11 +152,7 @@ const userProceduresHelper = {
 			|| (strict.year >= selectYear && strict.month > selectMonth)
 			|| (strict.year >= selectYear
 				&& strict.month >= selectMonth
-				&& strict.day > selectDay)
-			|| (strict.year >= selectYear
-				&& strict.month >= selectMonth
-				&& strict.day >= selectDay
-				&& strict.maxHour <= selectHour);
+				&& strict.day > selectDay);
 		const isNext = strict.year < selectYear
 			|| (strict.year <= selectYear && strict.month < selectMonth)
 			|| (strict.year <= selectYear
@@ -180,13 +171,13 @@ const userProceduresHelper = {
 	getMinDate(date, {
 		minHour,
 	}) {
-		return FormatDate.minutesToDate(minHour * 60, date, false);
+		return FormatDate.minutesToDate(minHour * 60, date);
 	},
 
 	getMaxDate(date, {
 		maxHour,
 	}) {
-		return FormatDate.minutesToDate(maxHour * 60 - 1, date, false);
+		return FormatDate.minutesToDate(maxHour * 60 - 1, date);
 	},
 
 	isElapsedDay(maxHour, minutes) {
@@ -211,32 +202,102 @@ const userProceduresHelper = {
 			* state.hourHeightInPx * state.dragStep;
 	},
 
+	availableTimeByScrolling({
+		step = 1,
+		minHour = 0,
+		maxHour = 24,
+		skipCondition,
+	}) {
+		const availableTime = {
+			dates: [],
+			hours: [],
+		};
+
+		let ind = minHour;
+
+		while (maxHour >= ind) {
+			const date = new Date();
+
+			date.setHours(0);
+			date.setMinutes(ind * 60);
+
+			if (skipCondition) {
+				const skip = skipCondition(ind);
+
+				if (skip) {
+					ind += step;
+
+					// eslint-disable-next-line no-continue
+					continue;
+				}
+			}
+
+			availableTime.dates.push(date);
+			availableTime.hours.push(ind);
+			ind += step;
+		}
+
+		return availableTime;
+	},
+
+	availableTypesByProcedures(state, {
+		minHour = 0,
+		maxHour = 24,
+	}) {
+		if (minHour >= maxHour) {
+			return [];
+		}
+
+		if (!state.newProcedures.length) {
+			return state.types;
+		}
+
+		const availableTypes = state.types.filter(
+			(type) => AllProceduresHelper.hasFreeSpaceByCards(type, state),
+		);
+
+		return availableTypes;
+	},
+
 	defaultAvailableTimeByDate(state, fromOrigin = false) {
 		const userProcState = state;
 		const [currentProcedure] = userProcState.currentProcedure;
 
-		const availableTime = FormatDate.availableTimeByRange({
-			initialState: {
-				hours: 0,
-				minutes: userProcState.minDayTime * userProcState.hourHeightInPx,
-			},
+		userProcState.availableTypes = this.availableTypesByProcedures(userProcState, {
+			minHour: userProcState.minDayTime,
+			maxHour: ProcConfig.FINISH_WORK_TIME,
+		});
+
+		const isSameType = userProcState.availableTypes
+			.some((type) => currentProcedure.type.id === type.id);
+		if (!isSameType && userProcState.availableTypes.length) {
+			// eslint-disable-next-line prefer-destructuring
+			currentProcedure.type = userProcState.availableTypes[0];
+		}
+
+		const availableDateTime = this.availableTimeByScrolling({
 			step: userProcState.dragStep,
 			minHour: userProcState.minDayTime,
 			maxHour: ProcConfig.FINISH_WORK_TIME - currentProcedure.type.duration,
-			skipCondition: (time) => AllProceduresHelper.isTouchCard(time, {
-				newProcedures: userProcState.newProcedures,
-				currentProcedure: userProcState.currentProcedure,
-			}),
+			skipCondition: (time) => AllProceduresHelper.isTouchCardBySelectedTime(
+				time,
+				currentProcedure.type.duration,
+				{
+					newProcedures: userProcState.newProcedures,
+					currentProcedure: userProcState.currentProcedure,
+				},
+			),
 		});
 
 		const target = userProcState.newProcedures.length && fromOrigin
 			? userProcState.newProcedures[state.lastItemAfterAction][0].hour
 			: currentProcedure.hour;
 
-		const availableHour = availableTime.hours
+		const availableHour = availableDateTime.hours
 			.reduce((prev, curr) => (Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev), 0);
 
-		userProcState.availableTime = availableTime.dates;
+		userProcState.availableDateTime = availableDateTime.dates;
+		userProcState.availableHoursTime = availableDateTime.hours;
 
 		if (!availableHour) {
 			return;

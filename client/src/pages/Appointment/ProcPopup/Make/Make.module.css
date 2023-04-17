@@ -26,24 +26,56 @@
 	font-weight: 700;
 }
 
+#add {
+	--back: rgba(var(--brown), 0.2);
+
+	background: var(--back);
+}
+
 #design {
 	--order: 1;
-	--back: rgb(var(--gray));
+	--back: var(--trans);
 
+	position: relative;
+	display: flex;
+    align-items: center;
 	grid-column-start: calc(var(--col) * var(--order));
-	background: var(--back);
 	border-radius: var(--def-radius);
 	padding: 10px 20px;
 }
 
 #design:disabled {
-	--back: rgb(var(--gray)) !important;
 	cursor: unset;
 	opacity: 0.5;
 }
 
-#design:hover {
-	--back: rgba(var(--brown), 0.6);
+#design:not(:disabled):hover {
+	--back: var(--brown);
+	--o: 0.2;
+}
+
+#countProcedures {
+	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	transform: translate(-50%, -50%);
+	background: rgba(var(--brown));
+	color: rgb(var(--white));
+	letter-spacing: 0;
+	font-size: 12px;
+	top: 0;
+	left: 0;
+	width: 20px;
+	height: 20px;
+	pointer-events: none;
+}
+
+#design img {
+	width: 20px;
+	height: 20px;
+	margin-left: 1vw;
 }
 
 .input input {
@@ -63,4 +95,14 @@
 
 .buttons button {
 	width: 100%;
+}
+
+.agreeTerms {
+	margin-bottom: 1vh;
+}
+
+.pdfLink {
+	color: rgb(var(--brown));
+	font-weight: 600;
+	text-decoration: underline;
 }

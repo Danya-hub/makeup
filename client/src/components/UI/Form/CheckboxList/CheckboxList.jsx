@@ -1,24 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import types from "prop-types";
 
 import Checkbox from "@/components/UI/Form/Checkbox/Checkbox.jsx";
 
 import style from "./CheckboxList.module.css";
 
-function CheckboxList({ className, values, onChange }) {
-	const [checkedOptions, setOption] = useState([]);
+function CheckboxList({ className, defaultOptions, values, onChange }) {
+	const [checkedOptions, setOption] = useState(defaultOptions);
 
 	function onCheck(option, isChecked) {
+		// console.log(option);
 		setOption((prev) => {
-			let array = prev;
+			let object = prev;
 
 			if (isChecked) {
-				array = [...prev, option];
+				object = {
+					...prev,
+					[option]: option,
+				};
 			} else {
-				array = prev.filter((_opt) => option !== _opt);
+				delete object[option];
 			}
 
-			return [...array];
+			return {
+				...object,
+			};
 		}, []);
 	}
 
@@ -30,6 +36,7 @@ function CheckboxList({ className, values, onChange }) {
 		<div className={`${className} ${style.list}`}>
 			{values.map((value) => (
 				<Checkbox
+					checked={Boolean(checkedOptions[value])}
 					key={value}
 					text={value}
 					onCheck={(isChecked) => onCheck(value, isChecked)}
@@ -41,12 +48,14 @@ function CheckboxList({ className, values, onChange }) {
 
 CheckboxList.defaultProps = {
 	className: "",
+	defaultOptions: {},
 };
 
 CheckboxList.propTypes = {
 	values: types.instanceOf(Array).isRequired,
 	className: types.string,
 	onChange: types.func.isRequired,
+	defaultOptions: types.instanceOf(Object),
 };
 
-export default CheckboxList;
+export default memo(CheckboxList);

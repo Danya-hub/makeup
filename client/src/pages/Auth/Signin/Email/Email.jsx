@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import types from "prop-types";
 
-import { sendLinkForResetingPassword } from "@/service/redusers/user.js";
+import { asyncActions } from "@/service/redusers/user.js";
 
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 
@@ -23,7 +23,7 @@ function Email({ userState, passwordState }) {
 		e.preventDefault();
 
 		const res = await dispatch(
-			sendLinkForResetingPassword({
+			asyncActions.sendLinkForResetingPassword({
 				email,
 			}),
 		);

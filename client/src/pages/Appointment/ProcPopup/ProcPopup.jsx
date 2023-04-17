@@ -13,9 +13,9 @@ export const POPUP_COMPONENTS = {
 };
 
 function ProcPopup() {
-	const { changePopupNameState } = useContext(PropsContext);
-
-	const [popupName] = changePopupNameState;
+	const {
+		changePopupNameState: [popupName],
+	} = useContext(PropsContext);
 
 	function switchPopup(name) {
 		const el = POPUP_COMPONENTS[name]();

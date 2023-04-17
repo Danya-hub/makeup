@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import types from "prop-types";
 
-import { actions, signin } from "@/service/redusers/user.js";
+import { asyncActions, actions } from "@/service/redusers/user.js";
 import Value from "@/helpers/value.js";
 import config from "@/pages/Auth/config/auth.js";
 
@@ -27,7 +27,7 @@ function Output({ userState, passwordState }) {
 	async function handleSubmitForm(e) {
 		e.preventDefault();
 
-		const res = await dispatch(signin(user));
+		const res = await dispatch(asyncActions.signin(user));
 
 		if (res.error) {
 			return;

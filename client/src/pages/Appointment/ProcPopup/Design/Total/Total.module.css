@@ -1,0 +1,12 @@
+.total {
+    background: rgba(var(--brown), 0.2);
+    padding: 1vh 1vw;
+}
+
+.total span {
+    display: block;
+}
+
+.total > *:not(:last-child) {
+    margin-bottom: 1vh;
+}

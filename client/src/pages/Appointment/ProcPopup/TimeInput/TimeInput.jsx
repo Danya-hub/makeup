@@ -8,7 +8,7 @@ import useOutsideEvent from "@/hooks/useOutsideEvent.js";
 import { actions } from "@/service/redusers/userProcedures.js";
 import ProcConfig from "@/config/procedures.js";
 
-import Calendar from "@/components/Calendar/Calendar.jsx";
+import Calendar from "@/components/UI/Calendar/Calendar.jsx";
 import Select from "@/components/UI/Form/Select/Select.jsx";
 
 import style from "./TimeInput.module.css";
@@ -22,7 +22,7 @@ function TimeInput({ openCalendarState }) {
 		locale,
 		strictTimeObject,
 		currentProcedure,
-		availableTime,
+		availableDateTime,
 		hourHeightInPx,
 	} = useSelector((state) => state.userProcedures);
 
@@ -33,10 +33,10 @@ function TimeInput({ openCalendarState }) {
 	const currentProcDate = FormatDate.minutesToDate(
 		procedure.hour * hourHeightInPx,
 		locale,
-		false,
 	);
-	const formatedTimeCurrProc = FormatDate.stringHourAndMin(
+	const formatedTimeCurrProc = FormatDate.stringHourAndMinWithRange(
 		currentProcDate,
+		procedure.type.duration,
 		currentLang,
 	);
 	const weekdayAndMonth = FormatDate.weekdayAndMonth(currentProcDate, currentLang);
@@ -47,11 +47,9 @@ function TimeInput({ openCalendarState }) {
 		locale,
 		strictTimeObject,
 	};
-	const formatedAvailableTime = availableTime.map((date) => (
-		FormatDate.stringHourAndMin(
-			date,
-			currentLang,
-		)
+	const formatedAvailableTime = availableDateTime.map((date) => FormatDate.stringHourAndMin(
+		date,
+		currentLang,
 	));
 
 	function onCloseSelectHours() {
@@ -73,6 +71,9 @@ function TimeInput({ openCalendarState }) {
 		const time = FormatDate.numericTimeFromChar(finalValue) - ProcConfig.START_WORK_TIME;
 
 		dispatch(actions.changeHour(time));
+
+		const scrollYInPx = time * hourHeightInPx;
+		window.scrollTo(0, scrollYInPx);
 	}
 
 	return (

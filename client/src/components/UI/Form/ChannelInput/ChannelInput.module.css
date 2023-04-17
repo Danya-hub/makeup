@@ -5,7 +5,7 @@
 }
 
 .wrapper > * {
-	margin-left: 6px;
+	padding-left: 6px !important;
 }
 
 .wrapper input {

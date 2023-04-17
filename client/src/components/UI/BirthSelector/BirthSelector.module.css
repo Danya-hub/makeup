@@ -1,0 +1,20 @@
+.birthSelector {
+    display: flex;
+}
+
+.birthSelector > * {
+    --scale: 1px;
+    --lineColor: var(--brown);
+    --opacity: 1;
+
+    padding: 0 1vw;
+    border-radius: var(--def-radius);
+}
+
+.birthSelector > *:not(:last-child) {
+    margin-right: 1vw;
+}
+
+.birthSelector h3 {
+    text-transform: capitalize;
+}

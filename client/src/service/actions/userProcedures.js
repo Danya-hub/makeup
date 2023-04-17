@@ -7,10 +7,22 @@ import {
 import UserProceduresHelper from "@/service/helpers/userProcedures.js";
 import ProcConfig from "@/config/procedures.js";
 import FormatDate from "@/utils/formatDate.js";
-import Value from "@/helpers/value.js";
 import axios from "@/http/axios.js";
 
 export const actions = {
+	addProc(state) {
+		const [currentProcedure] = state.currentProcedure;
+		const newProc = UserProceduresHelper.getRangeProcTime(state, currentProcedure);
+
+		state.newProcedures.push(
+			[newProc, false, state.newProcedures.length],
+		);
+		state.lastItemAfterAction = state.newProcedures.length - 1;
+		state.currentProcedure = [state.defaultProcedure, state.newProcedures.length];
+
+		UserProceduresHelper.defaultAvailableTimeByDate(state, true);
+	},
+
 	switchCurrentProc(state, action) {
 		const index = action.payload;
 		const [currentProcedure] = state.newProcedures[index];
@@ -40,7 +52,7 @@ export const actions = {
 		UserProceduresHelper.setMonth(state, date, month);
 		const newDate = UserProceduresHelper.setDirection(state, date);
 
-		UserProceduresHelper.setDayRange(newDate, state);
+		UserProceduresHelper.setViewDate(newDate, state);
 		UserProceduresHelper.defaultAvailableTimeByDate(state);
 	},
 
@@ -72,19 +84,6 @@ export const actions = {
 		currProcedure[key] = value;
 	},
 
-	addProc(state) {
-		const [currentProcedure] = state.currentProcedure;
-		const newProc = UserProceduresHelper.getRangeProcTime(state, currentProcedure);
-
-		state.newProcedures.push(
-			[newProc, false, state.newProcedures.length],
-		);
-		state.lastItemAfterAction = state.newProcedures.length - 1;
-		state.currentProcedure = [state.defaultProcedure, state.newProcedures.length];
-
-		UserProceduresHelper.defaultAvailableTimeByDate(state, true);
-	},
-
 	updateProcStateByIndex(state, action) {
 		const [index, blnState, procedure] = action.payload;
 
@@ -111,15 +110,29 @@ export const asyncActions = {
 		}) => {
 			try {
 				const state = getState();
-				const newProcedures = value.map(([object]) => ({
-					...object,
-					user: state.user.info,
-				}));
+				const newProcedures = value.map(([object]) => {
+					object = {
+						...object,
+						user: state.user.info,
+						createdAt: new Date(),
+					};
 
-				const createdProcedure = await axios
-					.post("/procedure/createProcedure", newProcedures)
-					.then((res) => Value.toDate(res.data));
-				return createdProcedure;
+					const result = {};
+					const [file, values] = object.contract;
+
+					Object.keys(values).forEach((key) => {
+						result[key] = values[key](object);
+					});
+
+					return {
+						...object,
+						contract: [file, result],
+					};
+				});
+
+				await axios.post("/procedure/createProcedure", newProcedures);
+
+				return newProcedures;
 			} catch (error) {
 				return rejectWithValue(error.message);
 			}
@@ -134,21 +147,40 @@ export const asyncActions = {
 		}) => {
 			try {
 				const states = getState();
-				const type = await axios.indGet(`/procedure/defaultType/${states.allProcedures.country}`)
+				const defaultValue = await axios.indGet(`/procedure/default/${states.allProcedures.country}`)
 					.then((r) => r.data);
-				const defValue = {
+
+				const object = {
+					state: "pending",
 					startProcTime: new Date(),
-					finishProcTime: FormatDate.minutesToDate(type.duration
-						* states.userProcedures.hourHeightInPx),
-					type,
+					finishProcTime: FormatDate.minutesToDate(
+						defaultValue.type.duration * states.userProcedures.hourHeightInPx,
+						null,
+						true,
+					),
+					...defaultValue,
 				};
 
-				return defValue;
+				return object;
 			} catch (error) {
 				return rejectWithValue(error.message);
 			}
 		},
 	),
+
+	getAllTypes: createAsyncThunk("procedure/getAllTypes", async (_, {
+		getState,
+		rejectWithValue,
+	}) => {
+		try {
+			const states = getState();
+			const types = await axios.indGet(`/procedure/allTypes/${states.allProcedures.country}`);
+
+			return types;
+		} catch (error) {
+			return rejectWithValue(error.message);
+		}
+	}),
 };
 
 export const extraReducers = {
@@ -177,5 +209,8 @@ export const extraReducers = {
 	[asyncActions.createNewProcedures.rejected]: (state, action) => {
 		state.error = action.payload;
 		state.isLoading = false;
+	},
+	[asyncActions.getAllTypes.fulfilled]: (state, action) => {
+		state.types = action.payload.data;
 	},
 };

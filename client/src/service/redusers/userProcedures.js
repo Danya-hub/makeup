@@ -25,6 +25,8 @@ function initialState(date) {
 	this.hourHeightInPx = 60;
 	this.dragStep = 0.5;
 	this.currentTimeHeightInPx = 0;
+	this.types = [];
+	this.availableTypes = [];
 	this.newProcedures = [];
 	this.currentProcedure = null;
 	this.minTimeRangeProc = 0;
@@ -33,8 +35,8 @@ function initialState(date) {
 	this.lastItemAfterAction = 0;
 	this.error = "";
 
-	helper.setDayRange(newDate, this);
-	helper.getDayRange(this);
+	helper.setViewDate(newDate, this);
+	helper.setDayRange(this);
 
 	this.defaultProcedure = {
 		...timeSystem,

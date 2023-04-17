@@ -60,20 +60,6 @@ export const asyncActions = {
 			}
 		},
 	),
-
-	getAllTypes: createAsyncThunk("procedure/getAllTypes", async (_, {
-		getState,
-		rejectWithValue,
-	}) => {
-		try {
-			const states = getState();
-			const types = await axios.indGet(`/procedure/allTypes/${states.allProcedures.country}`);
-
-			return types;
-		} catch (error) {
-			return rejectWithValue(error.message);
-		}
-	}),
 };
 
 export const extraReducers = {
@@ -88,9 +74,6 @@ export const extraReducers = {
 	[asyncActions.getProcedureByDay.rejected]: (state, action) => {
 		state.isLoading = false;
 		state.error = action.payload;
-	},
-	[asyncActions.getAllTypes.fulfilled]: (state, action) => {
-		state.types = action.payload.data;
 	},
 	[asyncActions.getProcedureByUserId.payload]: (state) => {
 		state.isLoading = true;

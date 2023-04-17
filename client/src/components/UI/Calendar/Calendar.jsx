@@ -2,9 +2,9 @@
 
 import { memo, forwardRef } from "react";
 
-import Navigation from "@/components/Calendar/Navigation/Navigation.jsx";
-import Content from "@/components/Calendar/Content/Content.jsx";
-import Weekday from "@/components/Calendar/Weekday/Weekday.jsx";
+import Navigation from "@/components/UI/Calendar/Navigation/Navigation.jsx";
+import Content from "@/components/UI/Calendar/Content/Content.jsx";
+import Weekday from "@/components/UI/Calendar/Weekday/Weekday.jsx";
 
 import style from "./Calendar.module.css";
 

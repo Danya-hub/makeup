@@ -1,0 +1,39 @@
+.buttons button {
+	--o: 0.4;
+
+	background: var(--back);
+	min-width: 20px;
+	margin: 0 1vw;
+	opacity: var(--o);
+}
+
+.buttons button:hover {
+	--o: 1;
+}
+
+.buttons {
+	border-left: 1px solid rgb(var(--brown));
+}
+
+.buttons > div {
+	display: flex;
+}
+
+.time {
+	white-space: nowrap;
+}
+
+.table {
+	border-collapse: collapse;
+}
+
+.table th {
+	padding: 5px;
+	text-align: left;
+	white-space: nowrap;
+}
+
+.table td {
+	border-bottom: 1px solid rgb(var(--brown));
+	padding: 5px;
+}

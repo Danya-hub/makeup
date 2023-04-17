@@ -4,10 +4,11 @@ import { useTranslation } from "react-i18next";
 import types from "prop-types";
 
 import Value from "@/helpers/value.js";
-import { actions, sendPasswordForCompare } from "@/service/redusers/user.js";
+import { actions, asyncActions } from "@/service/redusers/user.js";
 
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 import ChannelInput from "@/components/UI/Form/ChannelInput/ChannelInput.jsx";
+import BirthSelector from "@/components/UI/BirthSelector/BirthSelector.jsx";
 
 import style from "@/pages/Auth/Auth.module.css";
 
@@ -25,7 +26,7 @@ function Output({ userState, formState }) {
 	async function handleSubmitForm(e) {
 		e.preventDefault();
 
-		const res = await dispatch(sendPasswordForCompare(user));
+		const res = await dispatch(asyncActions.sendPasswordForCompare(user));
 
 		if (res.error) {
 			return;
@@ -88,6 +89,26 @@ function Output({ userState, formState }) {
 							id="telepephone"
 							className={style.field}
 							onChange={setUser}
+						/>
+					</div>
+					<div>
+						<label htmlFor="birthday">
+							<h3 className="title">{t("birthday")}</h3>
+						</label>
+						<BirthSelector
+							id="birthday"
+							className={style.field}
+							onChange={(date) => {
+								setUser((prev) => {
+									const state = prev;
+
+									state.birthday = date;
+
+									return {
+										...prev,
+									};
+								});
+							}}
 						/>
 					</div>
 					<div className={style.navigation}>

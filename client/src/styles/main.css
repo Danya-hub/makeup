@@ -88,7 +88,7 @@ button {
 
 .button.border:hover {
 	--back: var(--brown);
-	--o: 0.1;
+	--o: 0.4;
 }
 
 img {
@@ -150,7 +150,6 @@ input::placeholder {
 	border-radius: var(--def-radius);
 	padding: var(--inputHeight) 0 var(--inputHeight) 1vw;
 	width: 100%;
-	overflow: hidden;
 }
 
 form > *:not(:first-child) {

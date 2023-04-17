@@ -1,10 +1,13 @@
+import { useTranslation } from "react-i18next";
 import types from "prop-types";
 
 import CheckSvg from "@/assets/image/check.svg";
 
 import style from "./Checkbox.module.css";
 
-function Checkbox({ text, checked, onCheck }) {
+function Checkbox({ className, text, checked, onCheck }) {
+	const { t } = useTranslation();
+
 	function handleCheck(e) {
 		const isChecked = e.target.checked;
 
@@ -12,7 +15,9 @@ function Checkbox({ text, checked, onCheck }) {
 	}
 
 	return (
-		<label className={style.checkbox}>
+		<label
+			className={`${style.checkbox} ${className}`}
+		>
 			<input
 				type="checkbox"
 				checked={checked}
@@ -21,15 +26,21 @@ function Checkbox({ text, checked, onCheck }) {
 				}}
 				onChange={handleCheck}
 			/>
-			<span>{text}</span>
+			<span>{t(text)}</span>
 		</label>
 	);
 }
 
+Checkbox.defaultProps = {
+	className: "",
+	checked: false,
+};
+
 Checkbox.propTypes = {
-	text: types.string.isRequired,
+	className: types.string,
+	text: types.oneOfType([types.string, types.number]).isRequired,
 	onCheck: types.func.isRequired,
-	checked: types.bool.isRequired,
+	checked: types.bool,
 };
 
 export default Checkbox;

@@ -18,7 +18,7 @@ config();
 
 router.get("/refresh", UserController.refresh);
 router.post("/signup", UserController.createUser);
-router.post("/signin", userValidation.signin, checkOnValid, UserController.loginUser);
+router.post("/signin", userValidation.signin, checkOnValid, UserController.login);
 router.post("/logout", isAuth, checkOnValid, UserController.logout);
 router.post(
   "/sendPasswordForCompare",

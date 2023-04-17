@@ -1,68 +1,63 @@
-import http from "http";
-
 import MySQL from "../utils/db.js";
 import Value from "../utils/value.js";
+import Pdf from "../utils/pdf.js";
 import ApiError from "../utils/apiError.js";
-import QrCode from "../utils/qrCode.js";
-
+import TypeService from "../service/type.js";
+import ProcedureService from "../service/procedure.js";
 import server from "../config/server.js";
 
 class Procedure {
-  defaultProcedure() {
-    // ?
+  async defaultValue(req, res, next) {
+    try {
+      const rez = {};
+      rez.type = await TypeService.defaultType(req, res, next)
+        .then((value) => value[0]);
 
-    // type (mounted/unmounted id)
-    // file/sign (mounted/unmounted id)
-    // payment
-    // state
+      res.status(200).json(rez);
+
+      next();
+    } catch (error) {
+      next(error);
+    }
   }
 
   createProcedure(req, res, next) {
-    req.body.forEach((proc) => {
-      const [formated, date] = Value.toSQLDate(proc);
+    req.body.forEach(async (proc) => {
+      const values = Value.toSQLDate({
+        ...proc,
+        type: proc.type.id,
+        user: proc.user.id,
+      });
 
-      const values = {
-        ...formated,
-        // year: date.getFullYear(),
-        // month: date.getMonth(),
-        // day: date.getDate(),
-      };
+      if (proc.type.contract) {
+        const [path, fields] = proc.contract;
+        const newPdfFile = new Pdf();
 
-      if (values.type.contract) {
-        const content = `Procedure: ${values.type.name}\nId client: ${values.user.id}\nClient: ${values.user.fullname}\nEmail: ${values.user.email}\nCountry: ${values.type.country}\nYYYY-MM-DD: ${values.year}-${values.month}-${values.day}`;
+        await newPdfFile.readFile(server.origin + path);
+        await newPdfFile.setFieldsText(fields);
+        newPdfFile.form.flatten();
 
-        const qrCodeImage = new QrCode(content).generate();
-        // http.get(server.origin + values.pdfPath, (socket) => { //!
-        //   const chunks = [];
-
-        //   socket.on("data", (chunk) => {
-        //     chunks.push(chunk);
-        //   });
-
-        //   socket.on("end", () => {
-        //     const data = Buffer.concat(chunks);
-
-        //     console.log(data);
-        //   });
-        // });
+        values.contract = newPdfFile.getBlob();
       }
 
-      // MySQL.createQuery(
-      //   {
-      //     sql: "INSERT INTO courseaction **",
-      //     values,
-      //   },
-      //   (error, results) => {
-      //     if (error) {
-      //       throw error;
-      //     }
-
-      //     res.status(200).json(results);
-
-      //     next();
-      //   }
-      // ).catch(next);
+      MySQL.createQuery(
+        {
+          sql: "INSERT INTO service **",
+          values,
+        },
+        (error) => {
+          if (error) {
+            throw error;
+          }
+        }
+      ).catch(next);
     });
+
+    res.status(200).json({
+      msg: "New procedures created",
+    });
+
+    next();
   }
 
   removeByUserId(req, res, next) {
@@ -72,7 +67,7 @@ class Procedure {
 
     MySQL.createQuery(
       {
-        sql: "DELETE FROM courseaction WHERE user = ?",
+        sql: "DELETE FROM service WHERE user = ?",
         values: [id],
       },
       (error, results) => {
@@ -89,9 +84,9 @@ class Procedure {
     ).catch(next);
   }
 
-  byDay(req, res, next) {
+  async byDay(req, res, next) {
     const {
-      date
+      date,
     } = req.params;
 
     const newDate = new Date(date);
@@ -101,21 +96,23 @@ class Procedure {
       day: newDate.getDate(),
     };
 
-    MySQL.createQuery(
+    const proceduresByDay = await MySQL.createQuery(
       {
-        sql: "SELECT * FROM courseaction WHERE year = :year and month = :month and day = :day",
+        sql: "SELECT * FROM service WHERE year = :year and month = :month and day = :day",
         values,
       },
-      (error, results) => {
+      (error) => {
         if (error) {
           throw error;
         }
-
-        res.status(200).json(results);
-
-        next();
       }
     ).catch(next);
+
+    const populated = await Promise.all(proceduresByDay.map(ProcedureService.populate));
+
+    res.status(200).json(populated);
+
+    next();
   }
 
   byUser(req, res, next) {
@@ -125,7 +122,7 @@ class Procedure {
 
     MySQL.createQuery(
       {
-        sql: "SELECT * FROM courseaction WHERE user = ?",
+        sql: "SELECT * FROM service WHERE user = ?",
         values: [id],
       },
       (error, results) => {

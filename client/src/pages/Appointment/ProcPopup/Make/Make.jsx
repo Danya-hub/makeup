@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -7,27 +7,36 @@ import Select from "@/components/UI/Form/Select/Select.jsx";
 import Checkbox from "@/components/UI/Form/Checkbox/Checkbox.jsx";
 import TimeInput from "@/pages/Appointment/ProcPopup/TimeInput/TimeInput.jsx";
 
+import RightArrowSrc from "@/assets/image/rightArrow.svg";
+import MessageHelper from "./helpers/message.js";
 import PropsContext from "@/pages/Appointment/context.js";
 import FormatDate from "@/utils/formatDate.js";
 import useOutsideEvent from "@/hooks/useOutsideEvent";
 import ProcConfig from "@/config/procedures.js";
-import docs from "@/constants/docs.js";
-import { actions as userProceduresActions } from "@/service/redusers/userProcedures.js";
+import docs from "@/helpers/docs.js";
+import {
+	actions as userProceduresActions,
+} from "@/service/redusers/userProcedures.js";
 
 import style from "./Make.module.css";
 
 function MakeProc() {
 	const { t } = useTranslation();
-	const { allProcedures, userProcedures } = useSelector((state) => state);
+	const {
+		userProcedures,
+	} = useSelector((state) => state);
 	const dispatch = useDispatch();
 	const {
 		visiblePopupState: [isVisible, setVisible],
 		changePopupNameState: [, changePopupName],
 	} = useContext(PropsContext);
+	const Message = useMemo(
+		() => MessageHelper.check(userProcedures),
+		[userProcedures.availableTypes, userProcedures.newProcedures],
+	);
 
 	const [currentProcedure, indexSelectedProcedure] = userProcedures.currentProcedure;
-	const isValidForAdding = ProcConfig.MAX_COUNT_PROCEDURE <= userProcedures.newProcedures.length
-		|| (!currentProcedure.pdfPath && currentProcedure.type.contract);
+	const isValidForAdding = (!currentProcedure.contract && currentProcedure.type.contract);
 
 	const [isOpenSelectProcedure, setOpenSelectProcedure] = useState(false);
 	const [isOpenCalendar, setOpenCalendar] = useState(false);
@@ -58,7 +67,7 @@ function MakeProc() {
 
 	function handleChangeProcName(ind) {
 		const startProcMinutes = currentProcedure.hour * userProcedures.hourHeightInPx;
-		const finishProcMinutes = startProcMinutes + allProcedures.types[ind].duration
+		const finishProcMinutes = startProcMinutes + userProcedures.availableTypes[ind].duration
 			* userProcedures.hourHeightInPx;
 
 		const newCurrProc = {
@@ -66,9 +75,8 @@ function MakeProc() {
 			finishProcTime: FormatDate.minutesToDate(
 				finishProcMinutes,
 				currentProcedure.finishProcTime,
-				false,
 			),
-			type: allProcedures.types[ind],
+			type: userProcedures.availableTypes[ind],
 		};
 
 		dispatch(userProceduresActions.updateCurrProc([[newCurrProc, indexSelectedProcedure]]));
@@ -83,7 +91,7 @@ function MakeProc() {
 
 	function handleConirmContract(isConfirm) {
 		dispatch(userProceduresActions.setCurrProcValue(
-			["pdfPath", isConfirm ? docs[currentProcedure.type.contract] : null],
+			["contract", isConfirm ? docs[currentProcedure.type.contract] : null],
 		));
 	}
 
@@ -100,6 +108,7 @@ function MakeProc() {
 			]}
 		>
 			<form onSubmit={handleSubmitForm}>
+				{Message.component}
 				<div
 					className={style.input}
 					id="procedureName"
@@ -107,8 +116,8 @@ function MakeProc() {
 					<h3 className={style.title}>{t("procedure")}</h3>
 					<Select
 						ref={ref}
-						defaultValue={currentProcedure.type?.name}
-						values={allProcedures.types.map((obj) => obj.name)}
+						defaultValue={t(currentProcedure.type?.name)}
+						values={userProcedures.availableTypes.map((obj) => t(obj.name))}
 						onChange={handleChangeProcName}
 						openState={[
 							isOpenSelectProcedure,
@@ -126,13 +135,20 @@ function MakeProc() {
 					/>
 				</div>
 				{currentProcedure.type.contract && (
-					<div id="signature">
+					<div className={style.signature}>
 						<Checkbox
+							className={style.agreeTerms}
 							text={t("agreeTerms")}
 							onCheck={handleConirmContract}
-							checked={Boolean(currentProcedure.pdfPath)}
+							checked={Boolean(currentProcedure.contract)}
 						/>
-						<a href={docs[currentProcedure.type.contract]} title={t("more")}>{t("readTerms")}</a>
+						<a
+							className={style.pdfLink}
+							href={docs[currentProcedure.type.contract][0]}
+							title={t("more")}
+						>
+							{t("readTerms")}
+						</a>
 					</div>
 				)}
 				<div className={style.buttons}>
@@ -150,7 +166,14 @@ function MakeProc() {
 						onClick={() => changePopupName("design")}
 						disabled={!userProcedures.newProcedures.length}
 					>
+						{Boolean(userProcedures.newProcedures.length)
+							&& <span id={style.countProcedures}>{userProcedures.newProcedures.length}</span>}
 						{t("design")}
+						<img
+							className={style.arrow}
+							src={RightArrowSrc}
+							alt="rightArrow"
+						/>
 					</button>
 				</div>
 			</form>

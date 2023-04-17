@@ -3,9 +3,10 @@ import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 
 import Popup from "@/components/UI/Popup/Popup.jsx";
-import List from "./List/List.jsx";
-import { actions, asyncActions } from "@/service/redusers/userProcedures.js";
+import Table from "./Table/Table.jsx";
+import Total from "./Total/Total.jsx";
 
+import { actions, asyncActions } from "@/service/redusers/userProcedures.js";
 import PropsContext from "@/pages/Appointment/context.js";
 import ProcConfig from "@/config/procedures.js";
 
@@ -63,10 +64,13 @@ function DesignProc() {
 						{ProcConfig.MAX_COUNT_PROCEDURE}
 					</p>
 				</div>
-				<List
+				<Table
 					procedures={newProcedures}
 					onEdit={handleEdit}
 					onDelete={handleDelete}
+				/>
+				<Total
+					procedures={newProcedures}
 				/>
 				<div className={style.buttons}>
 					<button

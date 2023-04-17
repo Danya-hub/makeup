@@ -24,6 +24,7 @@ function Cards({
 		changePopupNameState: [popupName, changePopupName],
 		visiblePopupState: [isVisiblePopup, setVisiblePopup],
 		mouseDownState: [isMouseDown, setMouseDown],
+		visibledGroupProcedures: [visibledGroup],
 	} = useContext(PropsContext);
 	const [{
 		currentLang,
@@ -39,38 +40,27 @@ function Cards({
 	const currentStartProcPositionYToDate = FormatDate.minutesToDate(
 		currentProcedure.hour * userProcedures.hourHeightInPx,
 		userProcedures.locale,
-		false,
 	);
-	const availableNextAction = (popupName !== "design"
-		&& ((isVisiblePopup && userProcedures.availableTime.length > 0)
+	const availableForOpen = (popupName !== "design"
+		&& ((isVisiblePopup && userProcedures.availableDateTime.length > 0)
 			|| isMouseDown));
-	const currentFinishProcPositionYToDate = FormatDate.minutesToDate(
-		currentProcedure.hour * userProcedures.hourHeightInPx
-		+ currentProcedure.type.duration * userProcedures.hourHeightInPx,
-		userProcedures.locale,
-		false,
-	);
-	const formatedStartCurrProc = FormatDate.stringHourAndMin(
-		currentStartProcPositionYToDate,
-		currentLang,
-	);
-	const formatedFinishCurrProc = FormatDate.stringHourAndMin(
-		currentFinishProcPositionYToDate,
-		currentLang,
-	);
 	const currentStirngHoursAndMinutes = FormatDate.stringHourAndMin(
 		userProcedures.locale,
 		currentLang,
 	);
+	const showAvailableCursor = userProcedures.isCurrentTime
+		&& (userProcedures.currentTimeHeightInPx / userProcedures.hourHeightInPx
+			+ ProcConfig.START_WORK_TIME) < ProcConfig.FINISH_WORK_TIME;
 
 	function setNumericTimeByGrabbing(e, pageY) {
 		const time = (pageY
 			- Math.ceil((parentRef.current.offsetTop + e.currentTarget.parentNode.offsetTop)
-			/ userProcedures.hourHeightInPx) * userProcedures.hourHeightInPx)
+				/ userProcedures.hourHeightInPx) * userProcedures.hourHeightInPx)
 			/ userProcedures.hourHeightInPx;
 
-		const isIt = AllProceduresHelper.isTouchCard(
+		const isIt = AllProceduresHelper.isTouchCardBySelectedTime(
 			time + ProcConfig.START_WORK_TIME,
+			currentProcedure.type.duration,
 			userProcedures,
 		);
 
@@ -91,7 +81,9 @@ function Cards({
 	}
 
 	function onMouseUp(e) {
-		if (!userProcedures.availableTime.length) {
+		setVisiblePopup(true);
+
+		if (!userProcedures.availableDateTime.length) {
 			return;
 		}
 
@@ -102,7 +94,6 @@ function Cards({
 			- ProcConfig.START_WORK_TIME;
 
 		setMouseDown(false);
-		setVisiblePopup(!userProcedures.isPrevTime);
 
 		if (minutesOnMouseUp === userProcedures.currentTimeHeightInPx) {
 			window.scrollTo(0, minutesOnMouseUp);
@@ -110,7 +101,7 @@ function Cards({
 	}
 
 	function onMouseMove(e) {
-		if (!isMouseDown || !userProcedures.availableTime.length) {
+		if (!isMouseDown || !userProcedures.availableDateTime.length) {
 			return;
 		}
 
@@ -129,16 +120,16 @@ function Cards({
 			return;
 		}
 
-		if (!userProcedures.availableTime.length) {
+		setVisiblePopup(false);
+
+		if (!userProcedures.availableDateTime.length) {
 			return;
 		}
 
 		const y = UserProceduresHelper.getDragY(e.pageY, userProcedures);
 
 		setNumericTimeByGrabbing(e, y);
-
 		setMouseDown(!userProcedures.isPrevTime);
-		setVisiblePopup(false);
 	}
 
 	return (
@@ -162,19 +153,18 @@ function Cards({
 					height: `${userProcedures.currentTimeHeightInPx}px`,
 				}}
 			>
-				{userProcedures.isCurrentTime && (
+				{showAvailableCursor && (
 					<div id={style.current}>
 						<span className={style.time}>{currentStirngHoursAndMinutes}</span>
 					</div>
 				)}
 			</div>
-			{availableNextAction && (
+			{availableForOpen && (
 				<Card
-					start={formatedStartCurrProc}
-					finish={formatedFinishCurrProc}
+					date={currentStartProcPositionYToDate}
 					isSelected
 					isExists={false}
-					className={style.newProcedure}
+					className={`${style.newProcedure} ${style.currentCard}`}
 					procedure={currentProcedure}
 					styleAttr={{
 						height: `${currentProcedure.type.duration * userProcedures.hourHeightInPx}px`,
@@ -195,20 +185,16 @@ function Cards({
 						isAvailableRender = !isSelected && isCurrent;
 					}
 
-					const start = FormatDate.stringHourAndMin(card.startProcTime, currentLang);
-					const finish = FormatDate.stringHourAndMin(card.finishProcTime, currentLang);
-
 					return isAvailableRender && (
 						<Card
-							start={start}
-							finish={finish}
+							date={card.startProcTime}
 							key={`${card.type.name}/${top}/newProcedures`}
 							isExists={false}
 							onMouseDown={() => {
 								dispatch(actions.switchCurrentProc(i));
 								changePopupName("edit");
 							}}
-							className={style.newProcedure}
+							className={`${style.newProcedure} ${style[visibledGroup.myAppointments]}`}
 							procedure={card}
 							styleAttr={{
 								height: `${card.type.duration * userProcedures.hourHeightInPx}px`,
@@ -221,13 +207,10 @@ function Cards({
 			{allProcedures.cards.map((card) => {
 				const top = (card.hour - ProcConfig.START_WORK_TIME) * userProcedures.hourHeightInPx;
 
-				const start = FormatDate.stringHourAndMin(card.startProcTime, currentLang);
-				const finish = FormatDate.stringHourAndMin(card.finishProcTime, currentLang);
-
 				return (
 					<Card
-						start={start}
-						finish={finish}
+						className={style[visibledGroup.otherAppointments]}
+						date={card.startProcTime}
 						key={`${card.type.name}/${card.startProcTime}/allProcedures`}
 						procedure={card}
 						styleAttr={{

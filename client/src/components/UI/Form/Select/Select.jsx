@@ -8,7 +8,7 @@ import ArrowSrc from "@/assets/image/arrow.svg";
 import style from "./Select.module.css";
 
 function Select({
-	id, openState, values, onChange, defaultValue, isAbsPos = true,
+	id, className, openState, values, onChange, defaultValue, isAbsPos = true,
 }, ref) {
 	const { t } = useTranslation();
 
@@ -25,7 +25,7 @@ function Select({
 		<div
 			id={id}
 			ref={ref}
-			className={`${style.select} ${isActive ? style.open : ""} ${isAbsPos ? style.absolute : ""}`}
+			className={`${style.select} ${isActive ? style.open : ""} ${isAbsPos ? style.absolute : ""} ${className}`}
 		>
 			<button
 				type="button"

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 import Value from "@/helpers/value.js";
-import { resetPassword } from "@/service/redusers/user.js";
+import { asyncActions } from "@/service/redusers/user.js";
 import config from "@/pages/Auth/config/auth.js";
 
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
@@ -32,7 +32,7 @@ function ResetPassword() {
 		}
 
 		const res = await dispatch(
-			resetPassword({
+			asyncActions.resetPassword({
 				email: queries.get("email"),
 				newPassword: newPassword.password,
 			}),

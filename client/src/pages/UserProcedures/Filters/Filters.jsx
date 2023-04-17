@@ -10,7 +10,7 @@ import Range from "@/components/UI/Form/Range/Range.jsx";
 import Details from "@/components/UI/Details/Details.jsx";
 import Search from "@/components/UI/Form/Search/Search.jsx";
 
-import FilterActions from "./actions.js";
+import FilterActions from "./helpers/filters.js";
 
 import style from "./Filters.module.css";
 

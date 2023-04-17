@@ -3,10 +3,18 @@
 	margin-left: auto;
 }
 
-.cards > div:not(:is(.newProcedure, #elapsedTime)) {
-	--op: 1;
+.cards > div:not(:where(.currentCard, #elapsedTime)) {
+	--opacity: 0.5;
 
-	opacity: var(--op);
+	opacity: var(--opacity);
+}
+
+.cards .newProcedure:not(.currentCard) {
+	transition: 0.3s opacity;
+}
+
+.cards .newProcedure:not(.currentCard):hover {
+	--opacity: 1;
 }
 
 .newProcedure {
@@ -58,4 +66,8 @@
 	left: 0;
 	top: 0;
 	clip-path: polygon(0 50%, 100% 100%, 100% 0);
+}
+
+.cards > div:not(:where(.currentCard, #elapsedTime)):where(.myAppointments, .otherAppointments) {
+	--opacity: 1;
 }

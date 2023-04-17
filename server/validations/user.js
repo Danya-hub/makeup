@@ -45,6 +45,12 @@ class UserValidation {
     .bail()
     .isEmail()
     .withMessage(errors.wrongFormat("wrongEmailFormatValid")),
+    validator
+    .check("birthday")
+    .exists({
+      checkFalsy: true,
+    })
+    .withMessage(errors.required("requiredBirthday")),
   ];
 
   sendLinkForResetingPassword = [
@@ -149,7 +155,7 @@ class UserValidation {
   comparePassword(value, {
     req
   }) {
-    return UserService.foundByChannel(req).then((result) => {
+    return UserService.findByChannel(req).then((result) => {
       const isEquil = bcrypt.compareSync(value, result.password);
 
       if (!isEquil) {

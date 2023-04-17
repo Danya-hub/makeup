@@ -19,7 +19,6 @@ class Value {
   }
 
   toSQLDate(object) {
-    let date = null;
     const rez = {
       ...object,
     };
@@ -33,10 +32,9 @@ class Value {
       }
 
       rez[key] = rez[key].slice(0, 19).replace("T", " ");
-      date = isDate;
     });
 
-    return [rez, date];
+    return rez;
   }
 }
 

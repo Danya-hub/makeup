@@ -12,7 +12,6 @@ const initialState = {
 	cards: [],
 	isLoading: true,
 	states: [],
-	types: [],
 	country: "ua",
 	error: "",
 };

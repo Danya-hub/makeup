@@ -41,7 +41,10 @@
 	background: var(--back);
 	padding: 6px 0 6px 10px;
 	width: 100%;
-	white-space: nowrap;
+}
+
+.select :global(.options) button:not(:last-child) {
+	border-bottom: 1px solid rgba(var(--brown), 0.6);
 }
 
 .select :global(.options) .selected {

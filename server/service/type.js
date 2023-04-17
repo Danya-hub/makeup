@@ -48,23 +48,33 @@ class Type {
       country
     } = req.params;
 
-    MySQL.createQuery(
+    return MySQL.createQuery(
       {
         sql: "SELECT * FROM type WHERE country = ? LIMIT 1",
         values: [country],
       },
-      (error, results) => {
+      (error) => {
         if (error) {
           throw error;
         }
 
-        const defaultType = results[0];
-
-        res.status(200).json(defaultType);
-
         next();
       }
     ).catch(next);
+  }
+
+  findById(id) {
+    return MySQL.createQuery(
+      {
+        sql: "SELECT * FROM type WHERE id = ?",
+        values: [id],
+      },
+      (error) => {
+        if (error) {
+          throw error;
+        }
+      }
+    );
   }
 }
 

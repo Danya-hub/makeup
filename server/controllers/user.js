@@ -4,6 +4,7 @@ import {
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 
+import Value from "../utils/value.js";
 import MySQL from "../utils/db.js";
 import errors from "../config/errors.js";
 import {
@@ -43,9 +44,11 @@ class User {
   }
 
   createUser(req, res, next) {
+    const formated = Value.toSQLDate(req.body);
+
     const accessKey = crypto.randomBytes(COUNT_BYTES).toString("hex");
     const values = {
-      ...req.body,
+      ...formated,
       accessKey,
     };
 
@@ -64,7 +67,7 @@ class User {
         };
         const {
           accessToken,
-          refreshToken
+          refreshToken,
         } = User.token(tokenValue);
 
         res.cookie("refreshToken", refreshToken, {
@@ -82,52 +85,49 @@ class User {
     ).catch(next);
   }
 
-  refresh(req, res, next) {
-    const token = req.cookies.refreshToken;
-
-    if (!token) {
+  async refresh(req, res, next) {
+    if (!req.cookies.refreshToken) {
       const apiError = ApiError.get("unauthorized");
 
       next(apiError);
+      return;
     }
 
     const decoded = TokenService.checkOnValidToken(
-      token,
+      req.cookies.refreshToken,
       process.env.REFRESH_TOKEN_SECRET_KEY
     );
 
-    MySQL.createQuery(
-      {
-        sql: "SELECT * FROM user WHERE id = ?",
-        values: [decoded.id]
-      },
-      (error, results) => {
-        if (error) {
-          ApiError.throw("badRequest", errors.notExist("notExistUserValid"));
-        }
+    const user = await UserService.findById(decoded.id)
+      .catch(next);
 
-        const tokenValue = {
-          id: results[0].id,
-        };
-        const {
-          accessToken,
-          refreshToken
-        } = User.token(tokenValue);
+    if (!user[0]) {
+      const apiError = ApiError.get("unauthorized");
 
-        res
-          .cookie("refreshToken", refreshToken, {
-            maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
-            httpOnly: true,
-          })
-          .status(200)
-          .json({
-            ...results[0],
-            accessToken,
-          });
+      next(apiError);
+      return;
+    }
 
-        next();
-      }
-    ).catch(next);
+    const tokenValue = {
+      id: user[0].id,
+    };
+    const {
+      accessToken,
+      refreshToken
+    } = UserService.token(tokenValue);
+
+    res
+      .cookie("refreshToken", refreshToken, {
+        maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
+        httpOnly: true,
+      })
+      .status(200)
+      .json({
+        ...user[0],
+        accessToken,
+      });
+
+    next();
   }
 
   logout(req, res, next) {
@@ -258,8 +258,8 @@ class User {
     ).catch(next);
   }
 
-  loginUser(req, res, next) {
-    UserService.foundByChannel(req)
+  login(req, res, next) {
+    UserService.findByChannel(req)
       .then((result) => {
         const {
           refreshToken,

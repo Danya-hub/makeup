@@ -2,7 +2,7 @@ import MySQL from "../utils/db.js";
 import errors from "../config/errors.js";
 import {
   JWT_ACCESS_TOKEN_MAX_AGE,
-  JWT_REFRESH_TOKEN_MAX_AGE
+  JWT_REFRESH_TOKEN_MAX_AGE,
 } from "../config/auth.js";
 
 import TokenService from "./token.js";
@@ -26,7 +26,7 @@ class UserService {
     };
   }
 
-  foundByChannel(req) {
+  findByChannel(req) {
     return new Promise((resolve, reject) => {
       const name = this.channels.find((channelName) => req.body[channelName]);
 
@@ -56,6 +56,20 @@ class UserService {
         }
       ).catch(reject);
     });
+  }
+
+  findById(id) {
+    return MySQL.createQuery(
+      {
+        sql: "SELECT * FROM user WHERE id = ?",
+        values: [id]
+      },
+      (error) => {
+        if (error) {
+          ApiError.throw("badRequest", errors.notExist("notExistUserValid"));
+        }
+      }
+    );
   }
 }
 

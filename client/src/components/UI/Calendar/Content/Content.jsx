@@ -11,7 +11,7 @@ function Content({ options }) {
 		locale,
 		strictTimeObject,
 	} = options;
-	const daysOfMonth = FormatDate.allDaysOnMonth(locale);
+	const daysOfMonth = FormatDate.allDaysInMonth(locale);
 
 	function handleClick(d) {
 		if (!d) {

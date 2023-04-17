@@ -18,6 +18,8 @@ const errors = {
 	sentPasswordValid: "Message already is submitted",
 	noAccessRequestValid: "You do not have access",
 	baseUserInfoAlreadyExistsValid: "Phone or name is already registered",
+	requiredBirthday: "Date of birthday is required",
+	availableTimeValid: "There is no free time. Sign up for another time",
 };
 
 export default errors;

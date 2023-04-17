@@ -12,6 +12,7 @@ const router = Router();
 router.get("/byDay/:date", ProcedureController.byDay);
 router.get("/byUser", isAuth, checkOnValid, ProcedureController.byUser);
 router.get("/allTypes/:country", TypeService.all);
+router.get("/default/:country", ProcedureController.defaultValue);
 router.get("/defaultType/:country", TypeService.defaultType);
 router.post("/createProcedure", isAuth, checkOnValid, ProcedureController.createProcedure);
 router.post("/createType", isAuth, roleAccess(["admin"]), checkOnValid, TypeService.create);

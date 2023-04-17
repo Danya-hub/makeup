@@ -7,7 +7,7 @@ import Main from "./components/Main/Main.jsx";
 import Offline from "./pages/Error/Offline/Offline.jsx";
 
 import useLang from "./hooks/useLang.js";
-import { refresh } from "./service/redusers/user.js";
+import { asyncActions } from "./service/redusers/user.js";
 import routes from "./routes/index.jsx";
 import LangContext from "./context/lang.js";
 
@@ -24,7 +24,7 @@ function App() {
 	const path = routes.find((route) => route.path === location.pathname || route.path === "*");
 
 	function init() {
-		dispatch(refresh());
+		dispatch(asyncActions.refresh());
 	}
 
 	useEffect(() => {

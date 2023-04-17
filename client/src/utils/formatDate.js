@@ -37,6 +37,23 @@ const formatDate = {
 		}).format(date);
 	},
 
+	stringHourAndMinWithRange(date, hourRange, locale = "default") {
+		const startDate = date;
+		const numericStart = this.numericHoursFromDate(startDate);
+		const finishDate = this.minutesToDate(numericStart * 60 + hourRange * 60, startDate);
+
+		const formatedStartTime = Intl.DateTimeFormat(locale, {
+			hour: "numeric",
+			minute: "numeric",
+		}).format(date);
+		const formatedFinishTime = Intl.DateTimeFormat(locale, {
+			hour: "numeric",
+			minute: "numeric",
+		}).format(finishDate);
+
+		return `${formatedStartTime} - ${formatedFinishTime}`;
+	},
+
 	unitTimeFromOtherDate(units, toDate, fromDate) {
 		const date = new Date(toDate.getTime());
 
@@ -47,7 +64,7 @@ const formatDate = {
 		return date;
 	},
 
-	minutesToDate(value, originDate, withCurrent = true) {
+	minutesToDate(value, originDate, withCurrent) {
 		const date = new Date(originDate?.getTime() || Date.now());
 
 		if (!withCurrent) {
@@ -96,60 +113,18 @@ const formatDate = {
 		return d;
 	},
 
-	availableTimeByRange({
-		initialState = {
-			minutes: 0,
-			hours: 0,
-		},
-		step = 1,
-		minHour = 0,
-		maxHour = 24,
-		skipCondition,
-	}) {
-		const rez = {
-			dates: [],
-			hours: [],
-		};
-
-		let ind = minHour || Math.ceil((initialState.hours + initialState.minutes / 60) / step) * step;
-
-		while (maxHour >= ind) {
-			const date = new Date();
-
-			date.setHours(0);
-			date.setMinutes(ind * 60);
-
-			if (skipCondition) {
-				const skip = skipCondition(ind);
-
-				if (skip) {
-					ind += step;
-
-					// eslint-disable-next-line no-continue
-					continue;
-				}
-			}
-
-			rez.dates.push(date);
-			rez.hours.push(ind);
-			ind += step;
-		}
-
-		return rez;
-	},
-
-	allDaysOnMonth(date) {
+	allDaysInMonth(date) {
 		const d = new Date(date?.getTime() || Date.now());
 		const year = d.getFullYear();
 		const month = d.getMonth() + 1;
 
 		const days = [];
 		const lastMonth = 32
-		- generateDate({
-			year,
-			month,
-			day: 32,
-		}).getDate();
+			- generateDate({
+				year,
+				month,
+				day: 32,
+			}).getDate();
 		const firstWeekday = generateDate({
 			year,
 			month,
@@ -170,6 +145,38 @@ const formatDate = {
 		}
 
 		return days;
+	},
+
+	allMonthsInYear(locale) {
+		const date = new Date();
+		const monthsInYear = 12;
+
+		const rez = [];
+
+		for (let i = 0; i < monthsInYear; i += 1) {
+			date.setMonth(i);
+
+			const longMonth = Intl.DateTimeFormat(locale, {
+				month: "long",
+			}).format(date);
+
+			rez.push(longMonth);
+		}
+
+		return rez;
+	},
+
+	allYears(date, range) {
+		const end = date.getFullYear();
+		const start = end - range;
+
+		const rez = [];
+
+		for (let i = start; i < end; i += 1) {
+			rez.push(i);
+		}
+
+		return rez;
 	},
 };
 

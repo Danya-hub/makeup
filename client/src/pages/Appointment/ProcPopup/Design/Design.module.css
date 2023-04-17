@@ -1,20 +1,11 @@
 #design {
 	--order: 1;
-	--back: rgb(var(--gray));
+	--back: var(--brown);
+	--o: 0.2;
 
 	grid-column-start: calc(var(--col) * var(--order));
-	background: var(--back);
 	border-radius: var(--def-radius);
 	padding: 10px 20px;
-}
-
-#design:disabled {
-	--back: rgb(var(--gray)) !important;
-	cursor: unset;
-}
-
-#design:hover {
-	--back: rgba(var(--brown), 0.6);
 }
 
 .buttons {
@@ -35,6 +26,10 @@
 	text-transform: uppercase;
 	white-space: nowrap;
 	width: 100%;
+}
+
+#add {
+	--o: 0.2;
 }
 
 #add img {

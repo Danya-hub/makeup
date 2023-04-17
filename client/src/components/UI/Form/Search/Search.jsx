@@ -31,8 +31,8 @@ function Search({
 		onSearch(e.target.value);
 	}
 
-	function handleClick(_options) {
-		onSelectOption(_options);
+	function handleClick(selectedOptions) {
+		onSelectOption(selectedOptions);
 	}
 
 	useEffect(() => {

@@ -6,6 +6,7 @@ import Popup from "@/components/UI/Popup/Popup.jsx";
 import Select from "@/components/UI/Form/Select/Select.jsx";
 import TimeInput from "@/pages/Appointment/ProcPopup/TimeInput/TimeInput.jsx";
 
+import ProcConfig from "@/config/procedures.js";
 import PropsContext from "@/pages/Appointment/context.js";
 import FormatDate from "@/utils/formatDate.js";
 import useOutsideEvent from "@/hooks/useOutsideEvent";
@@ -22,7 +23,6 @@ function EditProc() {
 	const dispatch = useDispatch();
 	const {
 		userProcedures,
-		allProcedures,
 	} = useSelector((state) => state);
 
 	const [currentProcedure, indexSelectedProcedure] = userProcedures.currentProcedure;
@@ -48,21 +48,26 @@ function EditProc() {
 		e.preventDefault();
 
 		dispatch(actions.updateProcStateByIndex([indexSelectedProcedure, false, currentProcedure]));
+
+		const scrollYInPx = (currentProcedure.hour - ProcConfig.START_WORK_TIME)
+			* userProcedures.hourHeightInPx;
+		window.scrollTo(0, scrollYInPx);
+
 		changePopupName("make");
 	}
 
 	function handleCancel() {
-		dispatch(actions.updateProcStateByIndex([indexSelectedProcedure, false]));
 		dispatch(actions.updateCurrProc([
 			[userProcedures.defaultProcedure, userProcedures.newProcedures.length],
 			false,
 		]));
+		dispatch(actions.updateProcStateByIndex([indexSelectedProcedure, false]));
 		changePopupName("make");
 	}
 
 	function handleChangeProcName(ind) {
 		const startProcMinutes = currentProcedure.hour * userProcedures.hourHeightInPx;
-		const finishProcMinutes = startProcMinutes + allProcedures.types[ind].duration
+		const finishProcMinutes = startProcMinutes + userProcedures.availableTypes[ind].duration
 			* userProcedures.hourHeightInPx;
 
 		const newProc = {
@@ -70,9 +75,8 @@ function EditProc() {
 			finishProcTime: FormatDate.minutesToDate(
 				finishProcMinutes,
 				currentProcedure.finishProcTime,
-				false,
 			),
-			type: allProcedures.types[ind],
+			type: userProcedures.availableTypes[ind],
 		};
 
 		dispatch(actions.updateCurrProc([
@@ -113,7 +117,7 @@ function EditProc() {
 					<Select
 						ref={ref}
 						defaultValue={currentProcedure.type?.name}
-						values={allProcedures.types.map((obj) => obj.name)}
+						values={userProcedures.availableTypes.map((obj) => t(obj.name))}
 						onChange={handleChangeProcName}
 						openState={[
 							isOpenSelectProcedure,

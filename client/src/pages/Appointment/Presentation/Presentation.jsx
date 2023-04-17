@@ -6,6 +6,7 @@ import FormatDate from "@/utils/formatDate.js";
 import ProcConfig from "@/config/procedures.js";
 import LangContext from "@/context/lang.js";
 import Value from "@/helpers/value.js";
+import userProcedureHelpers from "@/service/helpers/userProcedures.js";
 import { asyncActions as allProceduresAsyncActions } from "@/service/redusers/allProcedures.js";
 import { actions as userProceduresActions } from "@/service/redusers/userProcedures.js";
 import { COLUMN_NAMES } from "@/pages/Appointment/constants";
@@ -30,7 +31,7 @@ function Presentation() {
 	const weekdayAndMonth = FormatDate.weekdayAndMonth(currentProcedure.startProcTime, currentLang, {
 		weekday: "short",
 	});
-	const times = useRef(FormatDate.availableTimeByRange({
+	const times = useRef(userProcedureHelpers.availableTimeByScrolling({
 		minHour: ProcConfig.START_WORK_TIME,
 		maxHour: ProcConfig.FINISH_WORK_TIME - 1,
 	}).dates);

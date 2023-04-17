@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
-import Calendar from "@/components/Calendar/Calendar.jsx";
+import Calendar from "@/components/UI/Calendar/Calendar.jsx";
+import Filters from "./Filters/Filters.jsx";
 
 import { actions } from "@/service/redusers/userProcedures.js";
 import PropsContext from "@/pages/Appointment/context.js";
+import ProcConfig from "@/config/procedures.js";
 
 import style from "./ControlPanel.module.css";
 
@@ -17,12 +19,14 @@ function ControlPanel() {
 	const {
 		strictTimeObject,
 		currentProcedure: [currentProcedure],
-		minDayTime,
 		locale,
 		hourHeightInPx,
+		availableHoursTime,
+		newProcedures,
 	} = useSelector((state) => state.userProcedures);
 	const {
 		visiblePopupState: [, setVisiblePopupState],
+		changePopupNameState: [, changePopupName],
 	} = useContext(PropsContext);
 
 	const calendarOptions = {
@@ -33,7 +37,8 @@ function ControlPanel() {
 		strictTimeObject,
 	};
 	const isAuth = localStorage.getItem("token");
-	function handleClick() {
+
+	function handleMake() {
 		if (!isAuth) {
 			navigate("/signin", {
 				state: {
@@ -43,27 +48,48 @@ function ControlPanel() {
 			return;
 		}
 
-		const minutes = currentProcedure.minDayTime * hourHeightInPx;
-
-		dispatch(actions.changeHour(minDayTime));
+		dispatch(actions.changeHour(availableHoursTime[0] - ProcConfig.START_WORK_TIME));
 		setVisiblePopupState(true);
 
-		window.scrollTo(0, minutes);
+		const scrollYInPx = (availableHoursTime[0] - ProcConfig.START_WORK_TIME)
+			* hourHeightInPx;
+		window.scrollTo(0, scrollYInPx);
+	}
+
+	function handleDesign() {
+		changePopupName("design");
+		setVisiblePopupState(true);
 	}
 
 	return (
 		<aside id={style.controlPanel}>
-			<button
-				type="button"
-				id={style.createNewProcedure}
-				className="button border"
-				onClick={handleClick}
+			<div
+				className={style.buttons}
 			>
-				{t("book")}
-			</button>
+				{Boolean(newProcedures.length) && (
+					<button
+						type="button"
+						id={style.designProcedure}
+						className="button border"
+						onClick={handleDesign}
+					>
+						<span id={style.countProcedures}>{newProcedures.length}</span>
+						{t("appointmentList")}
+					</button>
+				)}
+				<button
+					type="button"
+					id={style.makeNewProcedure}
+					className="button border"
+					onClick={handleMake}
+				>
+					{t("book")}
+				</button>
+			</div>
 			<Calendar
 				options={calendarOptions}
 			/>
+			<Filters />
 		</aside>
 	);
 }
