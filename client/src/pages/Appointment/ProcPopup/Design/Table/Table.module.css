@@ -2,9 +2,12 @@
 	--o: 0.4;
 
 	background: var(--back);
-	min-width: 20px;
 	margin: 0 1vw;
 	opacity: var(--o);
+}
+
+.buttons i {
+	font-size: var(--step-4);
 }
 
 .buttons button:hover {

@@ -65,8 +65,9 @@ function UserProcedures() {
 				<PlaceholderLoader width="300px" />
 			) : (
 				<Filters
-					placeholderLoaderState={[isLoading, setLoadState]}
-					tempCardsState={[tempCards, setTempCard]}
+					setPlaceholderLoaderState={setLoadState}
+					tempCards={tempCards}
+					setTempCard={setTempCard}
 					initialCards={initialCards}
 				/>
 			)}

@@ -1,0 +1,37 @@
+.button:hover {
+	--back: var(--brown);
+	--o: 0.2;
+}
+
+.button {
+	position: relative;
+}
+
+.point {
+	position: absolute;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	border-radius: 50%;
+	background: rgba(var(--brown));
+	color: rgb(var(--white));
+	letter-spacing: 0;
+	font-size: 12px;
+	width: 20px;
+	height: 20px;
+	pointer-events: none;
+}
+
+@keyframes pulse {
+	0% {
+		box-shadow: 0 0 0 0px rgba(var(--brown), 1);
+	}
+
+	50% {
+		box-shadow: 0 0 0 10px rgba(var(--brown), 0);
+	}
+
+	100% {
+		box-shadow: 0 0 0 0px rgba(var(--brown), 0);
+	}
+}

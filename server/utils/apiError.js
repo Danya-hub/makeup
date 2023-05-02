@@ -16,9 +16,14 @@ export const errorList = {
       error: message,
     }];
   },
-  badRequest(arrErrors) {
+  badRequest(message) {
     return [400, {
-      error: arrErrors,
+      error: message,
+    }];
+  },
+  wrongSignin(message) {
+    return [400, {
+      error: message,
     }];
   }
 };

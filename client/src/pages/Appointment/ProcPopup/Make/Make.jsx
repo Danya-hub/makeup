@@ -1,4 +1,4 @@
-import { useState, useContext, useMemo } from "react";
+import { useState, useContext, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 
@@ -9,11 +9,10 @@ import TimeInput from "@/pages/Appointment/ProcPopup/TimeInput/TimeInput.jsx";
 
 import RightArrowSrc from "@/assets/image/rightArrow.svg";
 import MessageHelper from "./helpers/message.js";
-import PropsContext from "@/pages/Appointment/context.js";
+import GlobalContext from "@/context/global.js";
 import FormatDate from "@/utils/formatDate.js";
-import useOutsideEvent from "@/hooks/useOutsideEvent";
 import ProcConfig from "@/config/procedures.js";
-import docs from "@/helpers/docs.js";
+import docs from "@/utils/docs.js";
 import {
 	actions as userProceduresActions,
 } from "@/service/redusers/userProcedures.js";
@@ -27,9 +26,10 @@ function MakeProc() {
 	} = useSelector((state) => state);
 	const dispatch = useDispatch();
 	const {
-		visiblePopupState: [isVisible, setVisible],
-		changePopupNameState: [, changePopupName],
-	} = useContext(PropsContext);
+		isVisiblePopup,
+		setVisiblePopup,
+		setPopupName,
+	} = useContext(GlobalContext);
 	const Message = useMemo(
 		() => MessageHelper.check(userProcedures),
 		[userProcedures.availableTypes, userProcedures.newProcedures],
@@ -38,14 +38,7 @@ function MakeProc() {
 	const [currentProcedure, indexSelectedProcedure] = userProcedures.currentProcedure;
 	const isValidForAdding = (!currentProcedure.contract && currentProcedure.type.contract);
 
-	const [isOpenSelectProcedure, setOpenSelectProcedure] = useState(false);
 	const [isOpenCalendar, setOpenCalendar] = useState(false);
-
-	function onCloseSelectProcedure() {
-		setOpenSelectProcedure(false);
-	}
-
-	const ref = useOutsideEvent(onCloseSelectProcedure);
 
 	function handleSubmitForm(e) {
 		e.preventDefault();
@@ -87,25 +80,22 @@ function MakeProc() {
 			[userProcedures.defaultProcedure, userProcedures.newProcedures.length],
 			false,
 		]));
+		setPopupName("");
 	}
 
-	function handleConirmContract(isConfirm) {
+	const handleConirmContract = useCallback((isConfirm) => {
 		dispatch(userProceduresActions.setCurrProcValue(
 			["contract", isConfirm ? docs[currentProcedure.type.contract] : null],
 		));
-	}
+	}, []);
 
 	return (
 		<Popup
 			id={style.makeProc}
 			onClose={onClose}
 			isSimple={false}
-			strictSwitch={[
-				isVisible,
-				(bln) => {
-					setVisible(bln);
-				},
-			]}
+			isStrictActive={isVisiblePopup}
+			strictSwitch={setVisiblePopup}
 		>
 			<form onSubmit={handleSubmitForm}>
 				{Message.component}
@@ -115,23 +105,17 @@ function MakeProc() {
 				>
 					<h3 className={style.title}>{t("procedure")}</h3>
 					<Select
-						ref={ref}
+						id="procedureName"
 						defaultValue={t(currentProcedure.type?.name)}
 						values={userProcedures.availableTypes.map((obj) => t(obj.name))}
 						onChange={handleChangeProcName}
-						openState={[
-							isOpenSelectProcedure,
-							(bln) => {
-								setOpenSelectProcedure(bln);
-							},
-						]}
-						id="procedureName"
 					/>
 				</div>
 				<div id="time">
 					<h3 className={style.title}>{t("time")}</h3>
 					<TimeInput
-						openCalendarState={[isOpenCalendar, setOpenCalendar]}
+						isOpenCalendar={isOpenCalendar}
+						setOpenCalendar={setOpenCalendar}
 					/>
 				</div>
 				{currentProcedure.type.contract && (
@@ -163,7 +147,7 @@ function MakeProc() {
 						type="button"
 						id={style.design}
 						className="button border"
-						onClick={() => changePopupName("design")}
+						onClick={() => setPopupName("design")}
 						disabled={!userProcedures.newProcedures.length}
 					>
 						{Boolean(userProcedures.newProcedures.length)

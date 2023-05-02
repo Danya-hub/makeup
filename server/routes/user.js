@@ -22,8 +22,6 @@ router.post("/signin", userValidation.signin, checkOnValid, UserController.login
 router.post("/logout", isAuth, checkOnValid, UserController.logout);
 router.post(
   "/sendPasswordForCompare",
-  userValidation.sendPasswordForCompare,
-  checkOnValid,
   UserController.sendPasswordForCompare
 );
 router.post("/comparePassword", UserController.comparePassword);
@@ -34,5 +32,6 @@ router.post(
   UserController.sendLinkForResetingPassword
 );
 router.post("/resetPassword", UserController.resetPassword);
+router.get("/unique/:key/:value", UserController.isUnique);
 
 export default router;

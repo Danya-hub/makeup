@@ -1,13 +1,19 @@
-import express, { urlencoded } from "express";
+import express, {
+  urlencoded
+} from "express";
 import cookieSession from "cookie-session";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import { config } from "dotenv";
+import rateLimit from "express-rate-limit";
+import {
+  config
+} from "dotenv";
 
-import server from "./config/server.js";
-
+import {
+  server,
+  request,
+} from "./config/server.js";
 import Router from "./routes/index.js";
-
 import errorsGather from "./middleware/errorsGather.js";
 
 const app = express();
@@ -38,7 +44,7 @@ app.use(
   })
 );
 app.use(cookieParser());
-
+app.use(rateLimit(request));
 app.use("/auth", Router.auth);
 app.use("/procedure", Router.procedure);
 app.use(errorsGather);

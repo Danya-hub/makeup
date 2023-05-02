@@ -4,8 +4,8 @@ import {
 	createAsyncThunk,
 } from "@reduxjs/toolkit";
 
-import Check from "@/helpers/check.js";
-import Value from "@/helpers/value.js";
+import Check from "@/utils/check.js";
+import Value from "@/utils/value.js";
 
 import axios from "@/http/axios.js";
 

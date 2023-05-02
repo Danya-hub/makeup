@@ -5,25 +5,34 @@ import CloseSrc from "@/assets/image/close.svg";
 
 import style from "./Popup.module.css";
 
-function Popup({ id, isSimple, strictSwitch, onClose, styleAttr, children }) {
-	const [isActive, setActive] = strictSwitch;
-
+function Popup({
+	id,
+	className,
+	isSimple,
+	isStrictActive,
+	strictSwitch,
+	onClose,
+	styleAttr,
+	children,
+}) {
 	useEffect(() => {
-		document.body.style.overflowY = isActive ? "hidden" : "scroll";
-	}, [isActive]);
+		document.body.style.overflowY = isStrictActive ? "hidden" : "scroll";
+	}, [isStrictActive]);
 
 	function handleCloseOnClick() {
-		setActive(false);
+		document.body.style.overflowY = "scroll";
+
+		strictSwitch(false);
 		onClose();
 	}
 
 	return (
 		<div
 			id={id}
-			className={style.popup}
+			className={`${style.popup} ${className}`}
 			style={{
 				...styleAttr,
-				display: isActive ? "unset" : "none",
+				display: isStrictActive ? "unset" : "none",
 			}}
 		>
 			<div className={style.popupContent}>
@@ -56,14 +65,17 @@ function Popup({ id, isSimple, strictSwitch, onClose, styleAttr, children }) {
 
 Popup.defaultProps = {
 	id: "",
+	className: "",
 	isSimple: true,
 	styleAttr: {},
 };
 
 Popup.propTypes = {
 	id: types.string,
+	className: types.string,
 	isSimple: types.bool,
-	strictSwitch: types.instanceOf(Array).isRequired,
+	isStrictActive: types.bool.isRequired,
+	strictSwitch: types.func.isRequired,
 	onClose: types.func.isRequired,
 	styleAttr: types.instanceOf(Object),
 	children: types.node.isRequired,

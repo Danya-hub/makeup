@@ -1,6 +1,17 @@
-const server = {
+export const server = {
   origin: "http://localhost:3000",
   port: 3001,
 };
 
-export default server;
+export const request = {
+  windowMs: 60 * 1000,
+  max: 20,
+  message: {
+    error: {
+      key: "manyRequestsValid",
+      args: {
+        delay: 1,
+      },
+    },
+  },
+};

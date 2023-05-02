@@ -4,12 +4,18 @@
 
 .select button {
 	text-align: left;
-	background: unset;
+	padding: 0 1vw;
+}
+
+.select.open button,
+.select button:hover {
+    --back: var(--brown);
+    --o: 0.2;
 }
 
 .select h3 {
 	display: block;
-	padding: 6px 0;
+	padding: 10px 0;
 	user-select: none;
 }
 
@@ -72,4 +78,8 @@
 	display: flex !important;
 	align-items: center;
 	cursor: pointer;
+}
+
+.placeholder h3 {
+	color: rgba(var(--black), 0.4);
 }

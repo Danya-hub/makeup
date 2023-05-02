@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import Output from "./Output/Output.jsx";
-import Confirm from "./Confirm/Confirm.jsx";
+import SignupForm from "./SignupForm/SignupForm.jsx";
+import ConfirmForm from "./ConfirmForm/ConfirmForm.jsx";
 
 import { asyncActions } from "@/service/redusers/user.js";
 
@@ -21,19 +21,20 @@ function Signup() {
 			return;
 		}
 
-		navigate(-1);
+		navigate("/appointment");
 	}
 
 	return isValidForm ? (
-		<Confirm
-			formState={[isValidForm, setFormState]}
-			userState={[user, setUser]}
+		<ConfirmForm
+			setFormState={setFormState}
+			user={user}
 			onSuccess={onSuccess}
 		/>
 	) : (
-		<Output
-			formState={[isValidForm, setFormState]}
-			userState={[user, setUser]}
+		<SignupForm
+			setFormState={setFormState}
+			user={user}
+			setUser={setUser}
 		/>
 	);
 }

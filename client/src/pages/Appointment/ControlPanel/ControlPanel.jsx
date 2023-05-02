@@ -1,14 +1,15 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
 import Calendar from "@/components/UI/Calendar/Calendar.jsx";
 import Filters from "./Filters/Filters.jsx";
+import DesignButton from "@/pages/Appointment/components/DesignButton/DesignButton.jsx";
 
 import { actions } from "@/service/redusers/userProcedures.js";
-import PropsContext from "@/pages/Appointment/context.js";
-import ProcConfig from "@/config/procedures.js";
+import GlobalContext from "@/context/global.js";
+import ProcConfig from "@/pages/Appointment/context/context.js";
 
 import style from "./ControlPanel.module.css";
 
@@ -25,17 +26,19 @@ function ControlPanel() {
 		newProcedures,
 	} = useSelector((state) => state.userProcedures);
 	const {
-		visiblePopupState: [, setVisiblePopupState],
-		changePopupNameState: [, changePopupName],
-	} = useContext(PropsContext);
+		setPopupName,
+		setVisiblePopup,
+	} = useContext(GlobalContext);
 
-	const calendarOptions = {
+	const calendarOptions = useMemo(() => ({
 		year: currentProcedure.year,
-		month: [currentProcedure.month, (m) => dispatch(actions.switchMonth(m))],
-		day: [currentProcedure.day, (d) => dispatch(actions.switchDay(d))],
+		month: currentProcedure.month,
+		setMonth: (m) => dispatch(actions.switchMonth(m)),
+		day: currentProcedure.day,
+		setDay: (d) => dispatch(actions.switchDay(d)),
 		locale,
 		strictTimeObject,
-	};
+	}), [currentProcedure]);
 	const isAuth = localStorage.getItem("token");
 
 	function handleMake() {
@@ -49,7 +52,8 @@ function ControlPanel() {
 		}
 
 		dispatch(actions.changeHour(availableHoursTime[0] - ProcConfig.START_WORK_TIME));
-		setVisiblePopupState(true);
+		setVisiblePopup(true);
+		setPopupName("make");
 
 		const scrollYInPx = (availableHoursTime[0] - ProcConfig.START_WORK_TIME)
 			* hourHeightInPx;
@@ -57,8 +61,8 @@ function ControlPanel() {
 	}
 
 	function handleDesign() {
-		changePopupName("design");
-		setVisiblePopupState(true);
+		setVisiblePopup(true);
+		setPopupName("design");
 	}
 
 	return (
@@ -67,15 +71,17 @@ function ControlPanel() {
 				className={style.buttons}
 			>
 				{Boolean(newProcedures.length) && (
-					<button
-						type="button"
-						id={style.designProcedure}
-						className="button border"
+					<DesignButton
+						countProcedures={newProcedures.length}
+						pulseAnimation
+						pointStyles={{
+							transform: "translate(50%, -50%)",
+							top: 0,
+							right: 0,
+						}}
 						onClick={handleDesign}
-					>
-						<span id={style.countProcedures}>{newProcedures.length}</span>
-						{t("appointmentList")}
-					</button>
+						text={t("appointmentList")}
+					/>
 				)}
 				<button
 					type="button"

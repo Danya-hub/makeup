@@ -4,7 +4,7 @@ import {
 	createAsyncThunk,
 } from "@reduxjs/toolkit";
 
-import Value from "@/helpers/value.js";
+import Value from "@/utils/value.js";
 import axios from "@/http/axios.js";
 
 export const actions = {
@@ -83,40 +83,6 @@ export const asyncActions = {
 		}
 	}),
 
-	sendPasswordForCompare: createAsyncThunk(
-		"user/sendPasswordForCompare",
-		async (value, {
-			rejectWithValue,
-		}) => {
-			try {
-				const {
-					passwordToken,
-				} = await axios
-					.indPost("/auth/sendPasswordForCompare", value)
-					.then((res) => res.data);
-
-				return passwordToken;
-			} catch (error) {
-				return rejectWithValue(error.response.data);
-			}
-		},
-	),
-
-	comparePassword: createAsyncThunk(
-		"user/comparePassword",
-		async (value, {
-			rejectWithValue,
-		}) => {
-			try {
-				const user = await axios.indPost("/auth/comparePassword", value).then((res) => res.data);
-
-				return user;
-			} catch (error) {
-				return rejectWithValue(error.response.data);
-			}
-		},
-	),
-
 	sendLinkForResetingPassword: createAsyncThunk(
 		"user/sendLinkForResetingPassword",
 		async (value, {
@@ -150,36 +116,15 @@ export const asyncActions = {
 };
 
 export const extraReducers = {
-	[asyncActions.sendPasswordForCompare.fulfilled]: (state) => {
-		state.error = "";
-	},
-	[asyncActions.sendPasswordForCompare.rejected]: (state, action) => {
-		const msg = action.payload?.error[0].msg;
-
-		state.error = msg;
-	},
 	[asyncActions.signin.fulfilled]: (state, action) => {
 		state.error = "";
 
 		actions.setUser(state, action);
 	},
 	[asyncActions.signin.rejected]: (state, action) => {
-		const object = action.payload?.error[0];
-		let msg = "";
+		const object = action.payload?.error;
 
-		if (object.nestedErrors) {
-			msg = object.nestedErrors[0].msg;
-		} else {
-			msg = object.msg;
-		}
-
-		state.error = msg;
-	},
-	[asyncActions.comparePassword.fulfilled]: (state) => {
-		state.error = "";
-	},
-	[asyncActions.comparePassword.rejected]: (state, action) => {
-		state.error = action.payload?.error;
+		state.error = object;
 	},
 	[asyncActions.sendLinkForResetingPassword.fulfilled]: (state) => {
 		state.error = "";

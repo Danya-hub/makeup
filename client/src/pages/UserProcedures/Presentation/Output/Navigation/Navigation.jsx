@@ -1,23 +1,25 @@
-import { t } from "i18next";
+import { useTranslation } from "react-i18next";
 import types from "prop-types";
 
 import LeftArrowSrc from "@/assets/image/leftArrow.svg";
 import RightArrowSrc from "@/assets/image/rightArrow.svg";
 import WidthInput from "@/components/UI/Form/WidthInput/WidthInput.jsx";
 
-import Check from "@/helpers/check.js";
-
+import Check from "@/utils/check.js";
 import constants from "./constants.js";
 
 import style from "./Navigation.module.css";
 
-function Navigation({ countPages, numberPageState }) {
+function Navigation({
+	countPages,
+	numberPage,
+	changeNumberPage,
+}) {
+	const { t } = useTranslation();
+
 	const minPage = 1;
 	const maxPage = countPages;
-
-	const [numberPage, setNumberPage] = numberPageState;
 	const countBtns = constants.MAX_COUNT_BUTTONS > maxPage ? maxPage : constants.MAX_COUNT_BUTTONS;
-
 	const minCountChangeableBtns = 0;
 	const maxCountChangeableBtns = maxPage - countBtns;
 	const integer = numberPage < maxCountChangeableBtns ? numberPage : maxCountChangeableBtns;
@@ -27,14 +29,14 @@ function Navigation({ countPages, numberPageState }) {
 			return;
 		}
 
-		setNumberPage((page) => page + i);
+		changeNumberPage((page) => page + i);
 	}
 
 	function handleChangePage(e, callback) {
 		const { value } = e.currentTarget;
 		const isValid = Check.isNumber(value) && callback(value);
 
-		setNumberPage((_val) => (isValid ? value - 1 : _val));
+		changeNumberPage((_val) => (isValid ? value - 1 : _val));
 	}
 
 	function clearField(e) {
@@ -77,7 +79,7 @@ function Navigation({ countPages, numberPageState }) {
 						key={current}
 						id={current}
 						className={current === numberPage ? style.selectPage : ""}
-						onClick={() => setNumberPage(i)}
+						onClick={() => changeNumberPage(i)}
 					>
 						{current + 1}
 					</button>
@@ -118,7 +120,8 @@ function Navigation({ countPages, numberPageState }) {
 
 Navigation.propTypes = {
 	countPages: types.number.isRequired,
-	numberPageState: types.instanceOf(Array).isRequired,
+	numberPage: types.number.isRequired,
+	changeNumberPage: types.func.isRequired,
 };
 
 export default Navigation;

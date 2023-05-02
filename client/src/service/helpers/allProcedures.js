@@ -23,26 +23,26 @@ const allProceduresHelper = {
 	},
 
 	hasFreeSpaceByCards(type, state) {
-		// const [currentProcedure] = state.currentProcedure;
-		// let hasSpace = false;
+		const [currentProcedure] = state.currentProcedure;
+		let hasSpace = false;
 
-		// state.newProcedures
-		// 	.filter(([card, isSelected]) => card.day === currentProcedure.day && !isSelected)
-		// 	.forEach(([a], i, array) => {
-		// 		if (hasSpace) {
-		// 			return;
-		// 		}
+		state.newProcedures
+			.filter(([card, isSelected]) => card.day === currentProcedure.day && !isSelected)
+			.forEach(([a], i, array) => {
+				if (hasSpace) {
+					return;
+				}
 
-		// 		const startSegment = a.hour - type.duration;
-		// 		const finishSegment = a.hour + a.type.duration + type.duration;
+				const startSegment = a.hour - type.duration;
+				const finishSegment = a.hour + a.type.duration + type.duration;
 
-		// 		hasSpace = array.some(([b]) => {
-		// 			const f = (!(finishSegment > b.hour) && finishSegment <= config.FINISH_WORK_TIME)
-		// 		|| (!(startSegment < b.hour + b.type.duration) && startSegment >= config.START_WORK_TIME);
+				hasSpace = array.some(([b]) => {
+					const f = (!(finishSegment > b.hour) && finishSegment <= config.FINISH_WORK_TIME)
+				|| (!(startSegment < b.hour + b.type.duration) && startSegment >= config.START_WORK_TIME);
 
-		// 			return f;
-		// 		});
-		// 	});
+					return f;
+				});
+			});
 
 		return true;
 	},

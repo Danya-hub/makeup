@@ -1,7 +1,7 @@
 import { memo, useEffect, useState } from "react";
 import types from "prop-types";
 
-import Check from "@/helpers/check.js";
+import Check from "@/utils/check.js";
 import WidthInput from "@/components/UI/Form/WidthInput/WidthInput.jsx";
 
 import style from "./Range.module.css";
@@ -147,6 +147,7 @@ function Range({ id, min, max, onChange }) {
 					max={INPUT_MAX_VALUE}
 					defaultValue={0}
 					onChange={handleGrab}
+					autoComplete="off"
 				/>
 				<div className={style.track}>
 					<span

@@ -27,10 +27,8 @@
 }
 
 #edit {
-	--order: 1;
 	--back: rgb(var(--gray));
 
-	grid-column-start: calc(var(--col) * var(--order));
 	background: var(--back);
 	border-radius: var(--def-radius);
 	padding: 10px 20px;
@@ -63,4 +61,28 @@
 
 .buttons button {
 	width: 100%;
+}
+
+.buttons .column {
+	--order: 1;
+
+	display: flex;
+	grid-column-start: calc(var(--col) * var(--order));
+}
+
+#delete {
+	--borderColor: var(--red);
+
+	position: relative;
+	background: rgba(var(--red), 0.2);
+	margin-right: 1vw;
+}
+
+#delete i {
+	position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: var(--step-4);
+    color: rgb(var(--red));
 }

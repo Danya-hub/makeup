@@ -8,8 +8,8 @@ class Type {
 
     MySQL.createQuery(
       {
-        sql: "SELECT * FROM type WHERE country = ?",
-        values: [country],
+        sql: "SELECT * FROM type WHERE ?? = ?",
+        values: ["country", country],
       },
       (error, results) => {
         if (error) {
@@ -45,13 +45,13 @@ class Type {
 
   defaultType(req, res, next) {
     const {
-      country
+      country,
     } = req.params;
 
     return MySQL.createQuery(
       {
-        sql: "SELECT * FROM type WHERE country = ? LIMIT 1",
-        values: [country],
+        sql: "SELECT * FROM type WHERE ?? = ? LIMIT 1",
+        values: ["country", country],
       },
       (error) => {
         if (error) {

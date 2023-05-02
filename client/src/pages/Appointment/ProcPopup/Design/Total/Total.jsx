@@ -1,25 +1,26 @@
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
-import types from "prop-types";
+import { useSelector } from "react-redux";
 
-import LangContext from "@/context/lang.js";
+import GlobalContext from "@/context/global.js";
 import FormatDate from "@/utils/formatDate.js";
 
 import style from "./Total.module.css";
 
-function Total({
-	procedures,
-}) {
+function Total() {
+	const {
+		newProcedures,
+	} = useSelector((state) => state.userProcedures);
 	const { t } = useTranslation();
-	const [{
+	const {
 		currentLang,
-	}] = useContext(LangContext);
+	} = useContext(GlobalContext);
 
-	const sum = procedures
+	const sum = newProcedures
 		.map(([proc]) => proc.type.price)
 		.reduce((prev, curr) => prev + curr, 0);
 
-	const hours = procedures.map(([proc]) => proc.type.duration)
+	const hours = newProcedures.map(([proc]) => proc.type.duration)
 		.reduce((prev, curr) => prev + curr, 0);
 	const date = FormatDate.minutesToDate(hours * 60);
 	const formatedStringDate = FormatDate.stringHourAndMin(date, currentLang);
@@ -42,9 +43,5 @@ function Total({
 		</div>
 	);
 }
-
-Total.propTypes = {
-	procedures: types.instanceOf(Array).isRequired,
-};
 
 export default Total;

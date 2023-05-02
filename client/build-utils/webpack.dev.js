@@ -19,7 +19,9 @@ const devConfig = {
 		static: {
 			directory: commonPaths.public,
 		},
-		historyApiFallback: true,
+		historyApiFallback: {
+			disableDotRule: true,
+		},
 		port: PORT,
 		open: true,
 		hot: true,

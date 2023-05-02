@@ -1,8 +1,8 @@
-import { useContext, useState } from "react";
+import { useContext, memo, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import types from "prop-types";
 
-import LangContext from "@/context/lang.js";
+import GlobalContext from "@/context/global.js";
 import FormatDate from "@/utils/formatDate.js";
 import useOutsideEvent from "@/hooks/useOutsideEvent.js";
 import { actions } from "@/service/redusers/userProcedures.js";
@@ -13,10 +13,13 @@ import Select from "@/components/UI/Form/Select/Select.jsx";
 
 import style from "./TimeInput.module.css";
 
-function TimeInput({ openCalendarState }) {
-	const [{
+function TimeInput({
+	isOpenCalendar,
+	setOpenCalendar,
+}) {
+	const {
 		currentLang,
-	}] = useContext(LangContext);
+	} = useContext(GlobalContext);
 	const dispatch = useDispatch();
 	const {
 		locale,
@@ -26,10 +29,7 @@ function TimeInput({ openCalendarState }) {
 		hourHeightInPx,
 	} = useSelector((state) => state.userProcedures);
 
-	const [isOpenSelectHours, setOpenSelectHours] = useState(false);
-
 	const [procedure] = currentProcedure;
-	const [isOpenCalendar, setOpenCalendar] = openCalendarState;
 	const currentProcDate = FormatDate.minutesToDate(
 		procedure.hour * hourHeightInPx,
 		locale,
@@ -39,29 +39,31 @@ function TimeInput({ openCalendarState }) {
 		procedure.type.duration,
 		currentLang,
 	);
-	const weekdayAndMonth = FormatDate.weekdayAndMonth(currentProcDate, currentLang);
-	const calendarOptions = {
+	const weekdayAndMonth = FormatDate.weekdayAndMonth(
+		currentProcDate,
+		currentLang,
+	);
+	const formatedAvailableTime = availableDateTime.map(
+		(date) => FormatDate.stringHourAndMin(
+			date,
+			currentLang,
+		),
+	);
+	const calendarOptions = useMemo(() => ({
 		year: procedure.year,
-		month: [procedure.month, (m) => dispatch(actions.switchMonth(m))],
-		day: [procedure.day, (d) => dispatch(actions.switchDay(d))],
+		month: procedure.month,
+		setMonth: (m) => dispatch(actions.switchMonth(m)),
+		day: procedure.day,
+		setDay: (d) => dispatch(actions.switchDay(d)),
 		locale,
 		strictTimeObject,
-	};
-	const formatedAvailableTime = availableDateTime.map((date) => FormatDate.stringHourAndMin(
-		date,
-		currentLang,
-	));
-
-	function onCloseSelectHours() {
-		setOpenSelectHours(false);
-	}
+	}), [procedure]);
 
 	function onCloseCalendar() {
 		setOpenCalendar(false);
 	}
 
 	const calendarRef = useOutsideEvent(onCloseCalendar);
-	const hoursRef = useOutsideEvent(onCloseSelectHours);
 
 	function handleSwitchCalendarVisState() {
 		setOpenCalendar((isOpen) => !isOpen);
@@ -103,24 +105,18 @@ function TimeInput({ openCalendarState }) {
 				)}
 			</div>
 			<Select
-				ref={hoursRef}
 				id="startProcTime"
 				values={formatedAvailableTime}
 				defaultValue={formatedTimeCurrProc}
 				onChange={setStartAndFinishTimes}
-				openState={[
-					isOpenSelectHours,
-					(bln) => {
-						setOpenSelectHours(bln);
-					},
-				]}
 			/>
 		</div>
 	);
 }
 
 TimeInput.propTypes = {
-	openCalendarState: types.instanceOf(Array).isRequired,
+	isOpenCalendar: types.bool.isRequired,
+	setOpenCalendar: types.func.isRequired,
 };
 
-export default TimeInput;
+export default memo(TimeInput);

@@ -5,20 +5,21 @@ import { useSelector, useDispatch } from "react-redux";
 import Popup from "@/components/UI/Popup/Popup.jsx";
 import Select from "@/components/UI/Form/Select/Select.jsx";
 import TimeInput from "@/pages/Appointment/ProcPopup/TimeInput/TimeInput.jsx";
+import DeleteButton from "@/pages/Appointment/components/DeleteButton/DeleteButton.jsx";
 
 import ProcConfig from "@/config/procedures.js";
-import PropsContext from "@/pages/Appointment/context.js";
+import GlobalContext from "@/context/global.js";
 import FormatDate from "@/utils/formatDate.js";
-import useOutsideEvent from "@/hooks/useOutsideEvent";
 import { actions } from "@/service/redusers/userProcedures.js";
 
 import style from "./Edit.module.css";
 
 function EditProc() {
 	const {
-		visiblePopupState,
-		changePopupNameState,
-	} = useContext(PropsContext);
+		isVisiblePopup,
+		setVisiblePopup,
+		setPopupName,
+	} = useContext(GlobalContext);
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
 	const {
@@ -26,23 +27,8 @@ function EditProc() {
 	} = useSelector((state) => state);
 
 	const [currentProcedure, indexSelectedProcedure] = userProcedures.currentProcedure;
-	const [isVisible, setVisible] = visiblePopupState;
-	const [, changePopupName] = changePopupNameState;
 
-	const [isOpenSelectProcedure, setOpenSelectProcedure] = useState(false);
 	const [isOpenCalendar, setOpenCalendar] = useState(false);
-
-	function onCloseSelectProcedure() {
-		setOpenSelectProcedure(false);
-	}
-
-	const ref = useOutsideEvent(onCloseSelectProcedure);
-
-	// function handleDelete() {
-	// 	dispatch(actions.deleteProc(indexSelectedProcedure));
-
-	// 	changePopupName("make");
-	// }
 
 	function handleSubmitForm(e) {
 		e.preventDefault();
@@ -53,7 +39,7 @@ function EditProc() {
 			* userProcedures.hourHeightInPx;
 		window.scrollTo(0, scrollYInPx);
 
-		changePopupName("make");
+		setPopupName("make");
 	}
 
 	function handleCancel() {
@@ -62,7 +48,7 @@ function EditProc() {
 			false,
 		]));
 		dispatch(actions.updateProcStateByIndex([indexSelectedProcedure, false]));
-		changePopupName("make");
+		setPopupName("make");
 	}
 
 	function handleChangeProcName(ind) {
@@ -93,7 +79,7 @@ function EditProc() {
 			[userProcedures.defaultProcedure, userProcedures.newProcedures.length],
 			false,
 		]));
-		changePopupName("make");
+		setPopupName("make");
 	}
 
 	return (
@@ -101,12 +87,8 @@ function EditProc() {
 			id={style.editProc}
 			onClose={onClose}
 			isSimple={false}
-			strictSwitch={[
-				isVisible,
-				(bln) => {
-					setVisible(bln);
-				},
-			]}
+			isStrictActive={isVisiblePopup}
+			strictSwitch={setVisiblePopup}
 		>
 			<form onSubmit={handleSubmitForm}>
 				<div
@@ -115,23 +97,17 @@ function EditProc() {
 				>
 					<h3 className={style.title}>{t("procedure")}</h3>
 					<Select
-						ref={ref}
-						defaultValue={currentProcedure.type?.name}
+						id="procedureName"
+						defaultValue={t(currentProcedure.type?.name)}
 						values={userProcedures.availableTypes.map((obj) => t(obj.name))}
 						onChange={handleChangeProcName}
-						openState={[
-							isOpenSelectProcedure,
-							(bln) => {
-								setOpenSelectProcedure(bln);
-							},
-						]}
-						id="procedureName"
 					/>
 				</div>
 				<div id="time">
 					<h3 className={style.title}>{t("time")}</h3>
 					<TimeInput
-						openCalendarState={[isOpenCalendar, setOpenCalendar]}
+						isOpenCalendar={isOpenCalendar}
+						setOpenCalendar={setOpenCalendar}
 					/>
 				</div>
 				<div className={style.buttons}>
@@ -143,13 +119,20 @@ function EditProc() {
 					>
 						{t("cancel")}
 					</button>
-					<button
-						type="submit"
-						id={style.edit}
-						className="button border"
-					>
-						{t("change")}
-					</button>
+					<div className={style.column}>
+						<DeleteButton
+							id={style.delete}
+							className="border"
+							index={indexSelectedProcedure}
+						/>
+						<button
+							type="submit"
+							id={style.edit}
+							className="button border"
+						>
+							{t("change")}
+						</button>
+					</div>
 				</div>
 			</form>
 		</Popup>

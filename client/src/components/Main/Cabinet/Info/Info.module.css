@@ -1,0 +1,67 @@
+#info {
+	display: flex;
+	padding: 2vh var(--space);
+}
+
+#info span {
+	--size: var(--step-1)
+}
+
+#userAvatar {
+	border-radius: 100vw;
+	margin-right: 2vw;
+	width: 80px;
+	height: 80px;
+}
+
+#info form {
+	margin: 10px var(--space);
+}
+
+#info form > * {
+	display: block;
+	margin: 3px 0;
+}
+
+#username {
+	font-weight: 700;
+}
+
+#resetPassword {
+	background: unset;
+	width: fit-content;
+	font-weight: 700;
+	padding: 0;
+	text-decoration: underline;
+}
+
+.field {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.field:not(:last-child) {
+	margin-bottom: 1vh;
+}
+
+.field span {
+	white-space: nowrap;
+}
+
+.field button {
+	display: none;
+	background: unset;
+	transition: unset;
+	margin-left: 2vw;
+	width: fit-content;
+}
+
+.field button.edit {
+	display: block;
+}
+
+#editProfile {
+	padding: 10px;
+	margin-top: 3vh;
+}

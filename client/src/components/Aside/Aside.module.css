@@ -30,13 +30,8 @@
 }
 
 .content > * {
-	margin-bottom: 2vh;
+	margin: 1vh 0;
 }
-
-/* .aside:global(.lines) .content > *:not(:where(:first-child, :last-child)) {
-	--border: 2px solid rgb(var(--lightGray));
-
-} */
 
 .content button {
 	width: 100%;

@@ -5,7 +5,7 @@ import CheckboxList from "@/components/UI/Form/CheckboxList/CheckboxList.jsx";
 
 import style from "./Search.module.css";
 
-import constants from "./constants.js";
+import strictOptions from "./constants/options.js";
 
 function Search({
 	values,
@@ -51,6 +51,7 @@ function Search({
 				placeholder={placeholder}
 				onChange={handleChange}
 				onFocus={() => handleSwitch(true)}
+				autoComplete="off"
 			/>
 			{hasVisualOptions
 				&& (hasMultipleOption ? (
@@ -62,7 +63,7 @@ function Search({
 				) : (
 					<ul className={`${style.options} ${style.border}`}>
 						{options.map(
-							(value, i) => i < constants.MAX_COLUMN && (
+							(value, i) => i < strictOptions.MAX_COLUMN && (
 								<li key={value}>
 									<button
 										type="button"

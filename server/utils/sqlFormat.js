@@ -29,7 +29,7 @@ class Format {
             return;
         }
 
-        const [value, key] = this.values;
+        const [key, value] = this.values;
         this.query = this.query.replace(/\?{2}|(?<==\s)\?/g, (searchValue) => {
             if (searchValue.length >= 2) {
                 return key;

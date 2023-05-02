@@ -33,11 +33,11 @@ const errors = {
       text,
     },
   }),
-  fullname: () => ({
-    key: "fullnameValid",
+  username: () => ({
+    key: "usernameValid",
   }),
   wrongSignin: () => ({
-    key: "wrongSigninValid",
+    key: "notExistUserValid",
   }),
   wrongChannels: () => ({
     key: "wrongChannelsValid",

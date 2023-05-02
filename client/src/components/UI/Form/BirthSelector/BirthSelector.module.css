@@ -1,0 +1,24 @@
+.birthSelector {
+    display: flex;
+}
+
+.birthSelector > * {
+    --scale: 1px;
+    --lineColor: var(--brown);
+    --opacity: 1;
+
+    border-radius: var(--def-radius);
+}
+
+.birthSelector > *:not(:last-child) {
+    margin-right: 1vw;
+}
+
+.birthSelector h3 {
+    text-transform: capitalize;
+}
+
+.actived button {
+    --back: var(--brown);
+    --o: 0.2;
+}

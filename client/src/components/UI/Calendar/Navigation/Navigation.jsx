@@ -1,25 +1,29 @@
 import { useContext } from "react";
 import types from "prop-types";
 
-import LangContext from "@/context/lang.js";
+import GlobalContext from "@/context/global.js";
 
 import LeftArrowSrc from "@/assets/image/leftArrow.svg";
 import RightArrowSrc from "@/assets/image/rightArrow.svg";
 
 import style from "./Navigation.module.css";
 
-function Navigation({ options }) {
-	const [{ currentLang }] = useContext(LangContext);
+function Navigation({
+	options,
+}) {
+	const {
+		currentLang,
+	} = useContext(GlobalContext);
 
 	const {
-		month: [month, setMonth],
+		month,
+		setMonth,
 		year,
 		locale,
 	} = options;
-
-	const monthName = locale.toLocaleString(currentLang, {
+	const monthName = Intl.DateTimeFormat(currentLang, {
 		month: "long",
-	});
+	}).format(locale);
 
 	function setPrevMonth() {
 		setMonth(month - 1);

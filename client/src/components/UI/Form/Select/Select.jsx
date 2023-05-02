@@ -1,38 +1,53 @@
 /* eslint-disable react/prop-types */
 
-import { useState, useEffect, memo, forwardRef } from "react";
+import { useState, useEffect, memo } from "react";
 import { useTranslation } from "react-i18next";
+import types from "prop-types";
 
 import ArrowSrc from "@/assets/image/arrow.svg";
+
+import useOutsideEvent from "@/hooks/useOutsideEvent.js";
 
 import style from "./Select.module.css";
 
 function Select({
-	id, className, openState, values, onChange, defaultValue, isAbsPos = true,
-}, ref) {
+	id,
+	className,
+	values,
+	onChange,
+	defaultValue,
+	placeholder,
+	isAbsPos,
+}) {
 	const { t } = useTranslation();
 
-	const [selectValue, setSelectValue] = useState(null);
-
-	const [isActive, setActive] = openState;
 	const EMPTY_VALUE_TEXT = `${t("select")}...`;
 
+	const [isOpen, setOpenState] = useState(false);
+	const [selectValue, setSelectValue] = useState(placeholder || EMPTY_VALUE_TEXT);
+
+	function handleCloseSelect() {
+		setOpenState(false);
+	}
+
+	const ref = useOutsideEvent(handleCloseSelect);
+
 	useEffect(() => {
-		setSelectValue(defaultValue);
+		setSelectValue(defaultValue == null ? placeholder : defaultValue);
 	}, [defaultValue]);
 
 	return (
 		<div
 			id={id}
 			ref={ref}
-			className={`${style.select} ${isActive ? style.open : ""} ${isAbsPos ? style.absolute : ""} ${className}`}
+			className={`${style.select} ${isOpen ? style.open : ""} ${isAbsPos ? style.absolute : ""} ${className}`}
 		>
 			<button
 				type="button"
-				onClick={() => setActive(!isActive)}
-				className={style.selectValue}
+				onClick={() => setOpenState(!isOpen)}
+				className={`${style.selectValue} ${placeholder && placeholder === selectValue ? style.placeholder : ""} button`}
 			>
-				<h3>{!selectValue ? EMPTY_VALUE_TEXT : selectValue}</h3>
+				<h3>{selectValue}</h3>
 				<img
 					className={style.arrow}
 					src={ArrowSrc}
@@ -46,7 +61,7 @@ function Select({
 						className="button"
 						onClick={() => {
 							setSelectValue(values[i]);
-							setActive(false);
+							setOpenState(false);
 
 							onChange(i, values[i], values);
 						}}
@@ -60,4 +75,22 @@ function Select({
 	);
 }
 
-export default memo(forwardRef(Select));
+Select.defaultProps = {
+	id: "",
+	className: "",
+	isAbsPos: true,
+	defaultValue: null,
+	placeholder: null,
+};
+
+Select.propTypes = {
+	id: types.string,
+	className: types.string,
+	values: types.instanceOf(Array).isRequired,
+	onChange: types.func.isRequired,
+	defaultValue: types.oneOfType([types.string, types.number]),
+	placeholder: types.string,
+	isAbsPos: types.bool,
+};
+
+export default memo(Select);

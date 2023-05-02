@@ -8,8 +8,7 @@ class Message {
     MySQL.createQuery(
       {
         sql: `INSERT INTO message (email, topic, template, expire)
-            SELECT :email, :topic, :template, NOW() + INTERVAL 3 MINUTE
-            WHERE NOT EXISTS (SELECT * FROM message m WHERE m.email = :email AND m.topic = :topic)`,
+            SELECT :email, :topic, :template, NOW() + INTERVAL 3 MINUTE`,
         values,
       },
       (error) => {

@@ -113,11 +113,7 @@ const formatDate = {
 		return d;
 	},
 
-	allDaysInMonth(date) {
-		const d = new Date(date?.getTime() || Date.now());
-		const year = d.getFullYear();
-		const month = d.getMonth() + 1;
-
+	allDaysInMonth(year, month) {
 		const days = [];
 		const lastMonth = 32
 			- generateDate({
@@ -147,8 +143,8 @@ const formatDate = {
 		return days;
 	},
 
-	allMonthsInYear(locale) {
-		const date = new Date();
+	allMonthsInYear(year, locale) {
+		const date = new Date(year);
 		const monthsInYear = 12;
 
 		const rez = [];
@@ -166,13 +162,12 @@ const formatDate = {
 		return rez;
 	},
 
-	allYears(date, range) {
-		const end = date.getFullYear();
-		const start = end - range;
+	allYears(year, range) {
+		const start = year - range;
 
 		const rez = [];
 
-		for (let i = start; i < end; i += 1) {
+		for (let i = start; i <= year; i += 1) {
 			rez.push(i);
 		}
 

@@ -1,14 +1,12 @@
 import { Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
-import types from "prop-types";
 
 import Cabinet from "./Cabinet/Cabinet.jsx";
+import EditUserPopup from "./Cabinet/EditUserPopup/EditUserPopup.jsx";
 
 import routes from "@/routes/index.jsx";
 
-function Main({ openCabinetState }) {
-	const [isOpenCabinet] = openCabinetState;
-
+function Main() {
 	return (
 		<main>
 			<div className="content">
@@ -24,13 +22,10 @@ function Main({ openCabinetState }) {
 					</Routes>
 				</Suspense>
 			</div>
-			{isOpenCabinet && <Cabinet openCabinetState={openCabinetState} />}
+			<Cabinet />
+			<EditUserPopup />
 		</main>
 	);
 }
-
-Main.propTypes = {
-	openCabinetState: types.instanceOf(Array).isRequired,
-};
 
 export default Main;

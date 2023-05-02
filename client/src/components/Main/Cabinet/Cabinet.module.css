@@ -2,55 +2,28 @@
 	--space: 20px;
 }
 
-#info {
-	display: flex;
-	padding: 2vh var(--space);
+#cabinet > div:first-child {
+	display: grid;
+	grid-template-rows: 1fr 1fr 6fr 2fr;
+	padding-bottom: 0;
 }
 
-#info span {
-	--size: var(--step-1)
+#cabinet li :where(a, button),
+#cabinet h3 {
+	padding: 10px var(--space);
+	text-align: left;
+	font-weight: 400;
 }
 
-#userAvatar {
-	border-radius: 100vw;
-	width: 80px;
-	height: 80px;
-}
-
-.fields {
-	margin: 10px var(--space);
-}
-
-.fields > * {
-	display: block;
-	margin: 3px 0;
-}
-
-#name {
-	font-weight: 700;
-}
-
-#cabinet li a {
-	padding: 1vh var(--space);
-}
-
-#cabinet li a:hover {
+#cabinet li :where(a, button:not(:disabled)):hover {
 	background: rgba(var(--brown), 0.1);
 }
 
-#logout {
-	text-align: left;
-	color: rgb(var(--brown));
-	border-top: 1px solid;
-	padding-left: var(--space);
-	text-transform: uppercase;
+#cabinet li button:disabled {
+	opacity: 0.5;
 }
 
-#resetPassword {
-	background: unset;
-	width: fit-content;
-	font-weight: 700;
-	padding: 0;
-	margin-top: 2vh;
-	text-decoration: underline;
+.bottom {
+	background: rgba(var(--brown), 0.1);
+	margin: 0;
 }

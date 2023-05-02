@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import crypto from "crypto";
 
 class Password {
-  generate(length = 6, wishlist = "0123456789") {
+  generate(length = 6, wishlist = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz") {
     const buffer = new Uint32Array(length);
     const random = crypto.randomFillSync(buffer);
 

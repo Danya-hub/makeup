@@ -1,14 +1,22 @@
-.wrapper {
+.channelInput {
 	display: flex;
-	align-items: center;
-	padding: 0;
+	padding: 0 !important;
 }
 
-.wrapper > * {
-	padding-left: 6px !important;
+.channelInput button {
+	height: 100%;
 }
 
-.wrapper input {
+.channelInput input {
 	padding: var(--inputHeight) 0;
 	width: 100%;
+}
+
+.channelInput:global(.field):has(input:where(:hover, :focus)) {
+	--opacity: 0.8;
+    --scale: 2px;
+}
+
+#code h3 {
+	padding: 0;
 }

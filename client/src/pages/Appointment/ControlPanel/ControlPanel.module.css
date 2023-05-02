@@ -26,49 +26,11 @@
 	margin-bottom: 2vh;
 }
 
-#makeNewProcedure,
-#designProcedure:hover {
+#makeNewProcedure {
 	--back: var(--brown);
 	--o: 0.2;
 }
 
 #controlPanel table :where(td, th) {
 	--space: 1px;
-}
-
-#designProcedure {
-	position: relative;
-}
-
-#countProcedures {
-	position: absolute;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	border-radius: 50%;
-	transform: translate(50%, -50%);
-	background: rgba(var(--brown));
-	color: rgb(var(--white));
-	letter-spacing: 0;
-	font-size: 12px;
-	top: 0;
-	right: 0;
-	width: 20px;
-	height: 20px;
-	pointer-events: none;
-	animation: 2s ease-in pulse infinite;
-}
-
-@keyframes pulse {
-	0% {
-		box-shadow: 0 0 0 0px rgba(var(--brown), 1);
-	}
-
-	50% {
-		box-shadow: 0 0 0 10px rgba(var(--brown), 0);
-	}
-
-	100% {
-		box-shadow: 0 0 0 0px rgba(var(--brown), 0);
-	}
 }

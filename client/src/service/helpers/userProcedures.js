@@ -244,19 +244,41 @@ const userProceduresHelper = {
 		minHour = 0,
 		maxHour = 24,
 	}) {
-		if (minHour >= maxHour) {
-			return [];
-		}
+		// if (minHour >= maxHour) {
+		// 	return [];
+		// }
 
-		if (!state.newProcedures.length) {
-			return state.types;
-		}
+		// if (!state.newProcedures.length) {
+		// 	return state.types;
+		// }
 
-		const availableTypes = state.types.filter(
-			(type) => AllProceduresHelper.hasFreeSpaceByCards(type, state),
-		);
+		// // const availableTypes = state.types.filter(
+		// // 	(type) => AllProceduresHelper.hasFreeSpaceByCards(type, state),
+		// // );
 
-		return availableTypes;
+		// const availableTypes = state.types.filter((type) => {
+		// 	const length = Math.floor((maxHour - minHour) / type.duration);
+		// 	let i = 0;
+		// 	let hasSpace = false;
+
+		// 	while (i < length) {
+		// 		if (hasSpace) {
+		// 			break;
+		// 		}
+
+		// 		hasSpace = !AllProceduresHelper.isTouchCardBySelectedTime(
+		// 			i * type.duration + ProcConfig.START_WORK_TIME,
+		// 			type.duration,
+		// 			state,
+		// 		);
+
+		// 		i += 1;
+		// 	}
+
+		// 	return hasSpace;
+		// });
+
+		return state.types;
 	},
 
 	defaultAvailableTimeByDate(state, fromOrigin = false) {

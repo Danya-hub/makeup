@@ -4,14 +4,14 @@ import { useNavigate } from "react-router-dom";
 import types from "prop-types";
 
 import FormatDate from "@/utils/formatDate.js";
-import PropsContext from "@/pages/Appointment/context.js";
-import LangContext from "@/context/lang.js";
+import PropsContext from "@/pages/Appointment/context/context.js";
+import GlobalContext from "@/context/global.js";
 import { actions } from "@/service/redusers/userProcedures.js";
 import ProcConfig from "@/config/procedures.js";
 import AllProceduresHelper from "@/service/helpers/allProcedures.js";
 import UserProceduresHelper from "@/service/helpers/userProcedures.js";
 
-import Card from "@/pages/Appointment/Card/Card.jsx";
+import Card from "@/pages/Appointment/components/Card/Card.jsx";
 
 import style from "./Cards.module.css";
 
@@ -19,16 +19,19 @@ function Cards({
 	widthCharTime,
 }) {
 	const dispatch = useDispatch();
-	const { allProcedures, userProcedures } = useSelector((state) => state);
+	const { allProcedures, userProcedures, user } = useSelector((state) => state);
 	const {
-		changePopupNameState: [popupName, changePopupName],
-		visiblePopupState: [isVisiblePopup, setVisiblePopup],
-		mouseDownState: [isMouseDown, setMouseDown],
-		visibledGroupProcedures: [visibledGroup],
+		isMouseDown,
+		setMouseDownState,
+		visibledGroups,
 	} = useContext(PropsContext);
-	const [{
+	const {
 		currentLang,
-	}] = useContext(LangContext);
+		popupName,
+		setPopupName,
+		isVisiblePopup,
+		setVisiblePopup,
+	} = useContext(GlobalContext);
 	const navigate = useNavigate();
 	const parentRef = useRef(null);
 
@@ -41,7 +44,8 @@ function Cards({
 		currentProcedure.hour * userProcedures.hourHeightInPx,
 		userProcedures.locale,
 	);
-	const availableForOpen = (popupName !== "design"
+	const availableForOpen = (
+		(popupName === "make" || popupName === "edit")
 		&& ((isVisiblePopup && userProcedures.availableDateTime.length > 0)
 			|| isMouseDown));
 	const currentStirngHoursAndMinutes = FormatDate.stringHourAndMin(
@@ -58,13 +62,13 @@ function Cards({
 				/ userProcedures.hourHeightInPx) * userProcedures.hourHeightInPx)
 			/ userProcedures.hourHeightInPx;
 
-		const isIt = AllProceduresHelper.isTouchCardBySelectedTime(
+		const isTouch = AllProceduresHelper.isTouchCardBySelectedTime(
 			time + ProcConfig.START_WORK_TIME,
 			currentProcedure.type.duration,
 			userProcedures,
 		);
 
-		if (isIt) {
+		if (isTouch) {
 			return;
 		}
 
@@ -93,7 +97,7 @@ function Cards({
 		const minutesOnMouseUp = currentProcedure.hour * userProcedures.hourHeightInPx
 			- ProcConfig.START_WORK_TIME;
 
-		setMouseDown(false);
+		setMouseDownState(false);
 
 		if (minutesOnMouseUp === userProcedures.currentTimeHeightInPx) {
 			window.scrollTo(0, minutesOnMouseUp);
@@ -122,6 +126,10 @@ function Cards({
 
 		setVisiblePopup(false);
 
+		if (!popupName) {
+			setPopupName("make");
+		}
+
 		if (!userProcedures.availableDateTime.length) {
 			return;
 		}
@@ -129,7 +137,7 @@ function Cards({
 		const y = UserProceduresHelper.getDragY(e.pageY, userProcedures);
 
 		setNumericTimeByGrabbing(e, y);
-		setMouseDown(!userProcedures.isPrevTime);
+		setMouseDownState(!userProcedures.isPrevTime);
 	}
 
 	return (
@@ -187,14 +195,12 @@ function Cards({
 
 					return isAvailableRender && (
 						<Card
+							isOwn
+							index={i}
 							date={card.startProcTime}
 							key={`${card.type.name}/${top}/newProcedures`}
 							isExists={false}
-							onMouseDown={() => {
-								dispatch(actions.switchCurrentProc(i));
-								changePopupName("edit");
-							}}
-							className={`${style.newProcedure} ${style[visibledGroup.myAppointments]}`}
+							className={`${style.newProcedure} ${style[visibledGroups.myAppointments]}`}
 							procedure={card}
 							styleAttr={{
 								height: `${card.type.duration * userProcedures.hourHeightInPx}px`,
@@ -204,12 +210,14 @@ function Cards({
 					);
 				})
 			}
-			{allProcedures.cards.map((card) => {
+			{allProcedures.cards.map((card, i) => {
 				const top = (card.hour - ProcConfig.START_WORK_TIME) * userProcedures.hourHeightInPx;
 
 				return (
 					<Card
-						className={style[visibledGroup.otherAppointments]}
+						index={i}
+						isOwn={card.user === user.info?.id}
+						className={style[visibledGroups.otherAppointments]}
 						date={card.startProcTime}
 						key={`${card.type.name}/${card.startProcTime}/allProcedures`}
 						procedure={card}

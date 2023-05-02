@@ -1,4 +1,4 @@
-import { useLayoutEffect, useEffect, useState } from "react";
+import { useLayoutEffect, useEffect, useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 
@@ -9,16 +9,21 @@ import Offline from "./pages/Error/Offline/Offline.jsx";
 import useLang from "./hooks/useLang.js";
 import { asyncActions } from "./service/redusers/user.js";
 import routes from "./routes/index.jsx";
-import LangContext from "./context/lang.js";
+import GlobalContext from "./context/global.js";
 
 import "@/styles/main.css";
 
 function App() {
 	const dispatch = useDispatch();
 	const location = useLocation();
-	const lang = useLang();
+	const [{
+		currentLang,
+		langs,
+	}, changeLanguage] = useLang();
 
-	const openCabinetState = useState(false);
+	const [isOpenCabinet, setOpenCabinet] = useState(false);
+	const [isVisiblePopup, setVisiblePopup] = useState(false);
+	const [popupName, setPopupName] = useState("");
 
 	const onLine = true || window.navigator.onLine;
 	const path = routes.find((route) => route.path === location.pathname || route.path === "*");
@@ -33,15 +38,32 @@ function App() {
 
 	useLayoutEffect(() => init, []);
 
+	const contextValue = useMemo(() => ({
+		currentLang,
+		langs,
+		changeLanguage,
+		isVisiblePopup,
+		setVisiblePopup,
+		popupName,
+		setPopupName,
+		isOpenCabinet,
+		setOpenCabinet,
+	}), [
+		currentLang,
+		isVisiblePopup,
+		popupName,
+		isOpenCabinet,
+	]);
+
 	return (
-		<LangContext.Provider value={lang}>
+		<GlobalContext.Provider value={contextValue}>
 			{onLine ? (
 				<>
-					{path.state.header && <Header openCabinetState={openCabinetState} />}
-					<Main openCabinetState={openCabinetState} />
+					{path.state.header && <Header />}
+					<Main />
 				</>
 			) : <Offline />}
-		</LangContext.Provider>
+		</GlobalContext.Provider>
 	);
 }
 

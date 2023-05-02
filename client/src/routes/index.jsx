@@ -54,7 +54,7 @@ const routes = [
 		},
 	},
 	{
-		path: "/resetPassword",
+		path: "/resetPassword/:email",
 		elem: () => <ResetPassword />,
 		state: {
 			title: "Procedures",

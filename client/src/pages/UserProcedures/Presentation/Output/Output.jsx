@@ -65,7 +65,8 @@ function Output({ cards }) {
 			</div>
 			<Navigation
 				countPages={countPages}
-				numberPageState={[numberPage, handleSwitchPage]}
+				numberPage={numberPage}
+				changeNumberPage={handleSwitchPage}
 			/>
 		</>
 	);

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useTranslation } from "react-i18next";
 import types from "prop-types";
 
@@ -20,6 +21,7 @@ function Checkbox({ className, text, checked, onCheck }) {
 		>
 			<input
 				type="checkbox"
+				autoComplete="off"
 				checked={checked}
 				style={{
 					backgroundImage: `url(${CheckSvg})`,
@@ -43,4 +45,4 @@ Checkbox.propTypes = {
 	checked: types.bool,
 };
 
-export default Checkbox;
+export default memo(Checkbox);

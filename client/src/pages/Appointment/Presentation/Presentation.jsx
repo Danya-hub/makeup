@@ -1,15 +1,15 @@
-import { useRef, useLayoutEffect, useEffect, useContext } from "react";
+import { useRef, useLayoutEffect, useEffect, useContext, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
 import FormatDate from "@/utils/formatDate.js";
 import ProcConfig from "@/config/procedures.js";
-import LangContext from "@/context/lang.js";
-import Value from "@/helpers/value.js";
+import GlobalContext from "@/context/global.js";
+import Value from "@/utils/value.js";
 import userProcedureHelpers from "@/service/helpers/userProcedures.js";
 import { asyncActions as allProceduresAsyncActions } from "@/service/redusers/allProcedures.js";
 import { actions as userProceduresActions } from "@/service/redusers/userProcedures.js";
-import { COLUMN_NAMES } from "@/pages/Appointment/constants";
+import { COLUMN_NAMES } from "@/pages/Appointment/constants/constants.js";
 
 import Cards from "./Cards/Cards.jsx";
 import Diagram from "./Diagram/Diagram.jsx";
@@ -21,27 +21,36 @@ function Presentation() {
 	const dispatch = useDispatch();
 	const { t } = useTranslation();
 	const { allProcedures, userProcedures } = useSelector((state) => state);
-	const [{
+	const {
 		currentLang,
-	}] = useContext(LangContext);
+	} = useContext(GlobalContext);
 
 	const parentRef = useRef(null);
 
 	const [currentProcedure] = userProcedures.currentProcedure;
-	const weekdayAndMonth = FormatDate.weekdayAndMonth(currentProcedure.startProcTime, currentLang, {
-		weekday: "short",
-	});
+	const weekdayAndMonth = useMemo(() => FormatDate.weekdayAndMonth(
+		currentProcedure.startProcTime,
+		currentLang,
+		{
+			weekday: "short",
+		},
+	), [currentLang]);
 	const times = useRef(userProcedureHelpers.availableTimeByScrolling({
 		minHour: ProcConfig.START_WORK_TIME,
 		maxHour: ProcConfig.FINISH_WORK_TIME - 1,
 	}).dates);
-	const formatedTimes = times.current.map((date) => (
+	const formatedTimes = useMemo(() => times.current.map((date) => (
 		FormatDate.stringHourAndMin(
 			date,
 			currentLang,
 		)
-	));
-	const widthCharTime = Value.charWidthInPixels(formatedTimes[formatedTimes.length - 1]);
+	)), [currentLang]);
+	const widthCharTime = useMemo(
+		() => Value.charWidthInPixels(
+			formatedTimes[formatedTimes.length - 1],
+		),
+		[formatedTimes],
+	);
 
 	useLayoutEffect(() => {
 		const updateTime = setInterval(() => {
@@ -106,7 +115,6 @@ function Presentation() {
 				<Diagram
 					formatedTimes={formatedTimes}
 					widthCharTime={widthCharTime}
-					hourHeightInPx={userProcedures.hourHeightInPx}
 				/>
 				<Cards
 					widthCharTime={widthCharTime}

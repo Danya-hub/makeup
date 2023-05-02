@@ -1,34 +1,49 @@
-import { useState } from "react";
+import { useState, memo } from "react";
 import types from "prop-types";
+
+import config from "@/pages/Auth/config/auth.js";
+
+import StateInput from "@/components/UI/Form/StateInput/StateInput.jsx";
 
 import style from "./PasswordInput.module.css";
 
-function PasswordInput({ className, id, name, maxLength, onBlur }) {
-	const [isVisible, setVisible] = useState(false);
+function PasswordInput({
+	className,
+	id,
+	name,
+	onChange,
+	hasSwitch,
+	state,
+}) {
+	const [isVisible, setVisible] = useState(!hasSwitch);
 
 	function handleSwitchVisible() {
 		setVisible(!isVisible);
 	}
 
 	return (
-		<div className={`${style.wrapper} ${className} input`}>
-			<input
+		<div className={`${style.passwordInput} ${className} input`}>
+			{hasSwitch && (
+				<button
+					type="button"
+					id={style.switchVisibleState}
+					onClick={handleSwitchVisible}
+				>
+					<i
+						className={`fa fa-${isVisible ? "eye" : "eye-slash"}`}
+						aria-hidden="true"
+					/>
+				</button>
+			)}
+			<StateInput
 				id={id}
-				name={name}
+				className={style.input}
 				type={isVisible ? "text" : "password"}
-				maxLength={maxLength}
-				onBlur={onBlur}
+				onChange={onChange}
+				maxLength={config.MAX_LENGTH_PASSWORD}
+				name={name}
+				state={state}
 			/>
-			<button
-				type="button"
-				id={style.switchVisibleState}
-				onClick={handleSwitchVisible}
-			>
-				<i
-					className={`fa fa-${isVisible ? "eye" : "eye-slash"}`}
-					aria-hidden="true"
-				/>
-			</button>
 		</div>
 	);
 }
@@ -36,14 +51,16 @@ function PasswordInput({ className, id, name, maxLength, onBlur }) {
 PasswordInput.defaultProps = {
 	className: "",
 	id: "",
+	hasSwitch: true,
 };
 
 PasswordInput.propTypes = {
 	className: types.string,
 	id: types.string,
 	name: types.string.isRequired,
-	maxLength: types.number.isRequired,
-	onBlur: types.func.isRequired,
+	onChange: types.func.isRequired,
+	hasSwitch: types.bool,
+	state: types.instanceOf(Object).isRequired,
 };
 
-export default PasswordInput;
+export default memo(PasswordInput);

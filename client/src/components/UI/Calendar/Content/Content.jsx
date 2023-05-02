@@ -6,12 +6,13 @@ import style from "./Content.module.css";
 
 function Content({ options }) {
 	const {
-		month: [month],
-		day: [day, setDay],
+		month,
+		day,
+		setDay,
 		locale,
 		strictTimeObject,
 	} = options;
-	const daysOfMonth = FormatDate.allDaysInMonth(locale);
+	const daysOfMonth = FormatDate.allDaysInMonth(locale.getYear(), locale.getMonth());
 
 	function handleClick(d) {
 		if (!d) {

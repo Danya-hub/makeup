@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import Value from "@/helpers/value.js";
+import Value from "@/utils/value.js";
 
 function useWarning(warnings) {
 	const [_warnings, setWarning] = useState(warnings);

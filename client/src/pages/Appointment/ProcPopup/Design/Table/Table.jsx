@@ -1,33 +1,23 @@
-import { useContext } from "react";
+import { useContext, memo } from "react";
+import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import types from "prop-types";
 
-import LangContext from "@/context/lang.js";
+import GlobalContext from "@/context/global.js";
 import FormatDate from "@/utils/formatDate.js";
 
-import EditSvg from "@/assets/image/edit.svg";
-import TrashSvg from "@/assets/image/trash.svg";
+import DeleteButton from "@/pages/Appointment/components/DeleteButton/DeleteButton.jsx";
+import EditButton from "@/pages/Appointment/components/EditButton/EditButton.jsx";
 
 import style from "./Table.module.css";
 
-function Table({ procedures, onEdit, onDelete }) {
-	const [{
+function Table() {
+	const {
+		newProcedures,
+	} = useSelector((state) => state.userProcedures);
+	const {
 		currentLang,
-	}] = useContext(LangContext);
+	} = useContext(GlobalContext);
 	const { t } = useTranslation();
-
-	const buttons = [
-		{
-			name: "edit",
-			src: EditSvg,
-			action: onEdit,
-		},
-		{
-			name: "delete",
-			src: TrashSvg,
-			action: onDelete,
-		},
-	];
 
 	return (
 		<table className={style.table}>
@@ -46,7 +36,7 @@ function Table({ procedures, onEdit, onDelete }) {
 						<span />
 					</th>
 				</tr>
-				{procedures.map(([proc, , order], i) => {
+				{newProcedures.map(([proc, , order], i) => {
 					const stringStartTime = FormatDate.stringHourAndMin(proc.startProcTime, currentLang);
 					const stringFinishTime = FormatDate.stringHourAndMin(proc.finishProcTime, currentLang);
 
@@ -65,20 +55,8 @@ function Table({ procedures, onEdit, onDelete }) {
 							</td>
 							<td className={style.buttons}>
 								<div>
-									{buttons.map((btn) => (
-										<button
-											title={t(btn.name)}
-											key={btn.name}
-											type="button"
-											className="button"
-											onClick={() => btn.action(i, proc)}
-										>
-											<img
-												src={btn.src}
-												alt={btn.name}
-											/>
-										</button>
-									))}
+									<DeleteButton index={i} />
+									<EditButton index={i} />
 								</div>
 							</td>
 						</tr>
@@ -89,10 +67,4 @@ function Table({ procedures, onEdit, onDelete }) {
 	);
 }
 
-Table.propTypes = {
-	procedures: types.instanceOf(Array).isRequired,
-	onEdit: types.func.isRequired,
-	onDelete: types.func.isRequired,
-};
-
-export default Table;
+export default memo(Table);

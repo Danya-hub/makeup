@@ -13,7 +13,9 @@ import {
   COOKIE_REFRESH_TOKEN_MAX_AGE,
 }
 from "../config/auth.js";
-import server from "../config/server.js";
+import {
+  server
+} from "../config/server.js";
 
 import UserService from "../service/user.js";
 import TokenService from "../service/token.js";
@@ -149,7 +151,6 @@ class User {
     } = req.body;
 
     const password = Password.generate();
-    console.log(password);
 
     const hashPassword = Password.hash(password);
     const values = {
@@ -159,6 +160,7 @@ class User {
     };
 
     MessageService.send(next, values, () => {
+      console.log(password);
       res.status(200).json({
         passwordToken: hashPassword,
       });
@@ -205,6 +207,24 @@ class User {
     ).catch(next);
   }
 
+  async isUnique(req, res, next) {
+    await UserService.findByValue(req.params)
+    .then(() => res.status(400).json({
+      ...errors.alreadyExist(`${req.params.key}AlreadyExistsValid`),
+      args: {
+        key: req.params.key,
+        value: req.params.value,
+      },
+    }))
+    .catch(() => {
+      res.status(200).json({
+        key: "isUniqueValid",
+      });
+    });
+
+    next();
+  }
+
   sendLinkForResetingPassword(req, res, next) {
     const {
       email
@@ -212,7 +232,7 @@ class User {
     const values = {
       topic: "resetPassword",
       email,
-      template: `${server.origin}/resetPassword?email=${email}`,
+      template: `${server.origin}/resetPassword/${email}`,
     };
 
     MessageService.send(next, values, () => {
@@ -246,7 +266,7 @@ class User {
         }
 
         if (results.affectedRows === 0) {
-          ApiError.throw("noAccess", errors.timeOut("passwordVerification"));
+          ApiError.throw("noAccess", errors.timeOut("resettingPassword"));
         }
 
         res.status(200).json({
@@ -274,9 +294,7 @@ class User {
 
         next();
       })
-      .catch((reason) => {
-        next(reason);
-      });
+      .catch(next);
   }
 }
 

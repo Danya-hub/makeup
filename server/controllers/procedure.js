@@ -4,7 +4,9 @@ import Pdf from "../utils/pdf.js";
 import ApiError from "../utils/apiError.js";
 import TypeService from "../service/type.js";
 import ProcedureService from "../service/procedure.js";
-import server from "../config/server.js";
+import {
+  server
+} from "../config/server.js";
 
 class Procedure {
   async defaultValue(req, res, next) {

@@ -14,9 +14,10 @@ export const actions = {
 		const [currentProcedure] = state.currentProcedure;
 		const newProc = UserProceduresHelper.getRangeProcTime(state, currentProcedure);
 
-		state.newProcedures.push(
+		state.newProcedures = [
+			...state.newProcedures,
 			[newProc, false, state.newProcedures.length],
-		);
+		];
 		state.lastItemAfterAction = state.newProcedures.length - 1;
 		state.currentProcedure = [state.defaultProcedure, state.newProcedures.length];
 

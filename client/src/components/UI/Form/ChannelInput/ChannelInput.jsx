@@ -1,82 +1,84 @@
-import { useState, useEffect } from "react";
+/* eslint-disable react/jsx-props-no-spreading */
+import { memo } from "react";
+import { useController } from "react-hook-form";
 import types from "prop-types";
 
-import format from "@/constants/format.js";
-import useOutsideEvent from "@/hooks/useOutsideEvent.js";
-import Check from "@/helpers/check.js";
+import format, { keys } from "./constants/format.js";
 
 import Select from "@/components/UI/Form/Select/Select.jsx";
+import StateInput from "@/components/UI/Form/StateInput/StateInput.jsx";
 
 import style from "./ChannelInput.module.css";
 
-function ChannelInput({ id, className, onChange, strictIsTel }) {
-	const [inputValue, setValue] = useState("");
-	const [indexCountry, setIndexCountry] = useState(0);
-	const [isOpenSelect, setOpenSelect] = useState(false);
+function ChannelInput({
+	id,
+	className,
+	channelName,
+	defaultValue,
+	control,
+	inputRules,
+	onChange,
+	state,
+	maxLength,
+	...props
+}) {
+	const {
+		field: codeField,
+	} = useController({
+		name: "country",
+		control,
+		defaultValue: format.telephone[defaultValue.country || keys[0]].country,
+		rules: {
+			validate: (value, formValues) => {
+				const max = format.telephone[value].template.length;
 
-	const isTel = strictIsTel == null ? Check.isStrictNumber(inputValue) : strictIsTel;
-	const channelName = isTel ? "telephone" : "email";
-	const telCodes = format.telephone.map((obj) => obj.code);
-	const placeholder = isTel ? format.telephone[indexCountry].template : "name@example.com";
+				if (max > formValues.telephone?.length) {
+					return "lesserTelephoneValid";
+				}
 
-	function handleCloseSelect() {
-		setOpenSelect(false);
-	}
+				if (max < formValues.telephone?.length) {
+					return "largerTelephoneValid";
+				}
 
-	const ref = useOutsideEvent(handleCloseSelect);
+				return true;
+			},
+		},
+	});
+	const {
+		field: inputField,
+	} = useController({
+		name: channelName,
+		control,
+		defaultValue: defaultValue[channelName] || "",
+		rules: inputRules,
+	});
 
-	function changeValueByChannel(val) {
-		onChange((prev) => {
-			const array = prev;
-			if (!strictIsTel) {
-				delete array[isTel ? "email" : "telephone"];
-			}
-
-			return {
-				...array,
-				[channelName]: val,
-			};
-		});
-	}
-
-	function handleChangeTelCode(i) {
-		const val = format.telephone[indexCountry].code + inputValue;
-
-		setIndexCountry(i);
-		changeValueByChannel(val);
-	}
-
-	function handleChangeValue(e) {
-		const val = e.currentTarget.value;
-
-		setValue(val);
-	}
-
-	useEffect(() => {
-		const val = (isTel ? format.telephone[indexCountry].code : "") + inputValue;
-
-		changeValueByChannel(val);
-	}, [inputValue, indexCountry]);
+	const telCodes = keys.map((key) => format.telephone[key].code);
+	const placeholder = channelName === "telephone" ? format.telephone[codeField.value].template : "name@example.com";
 
 	return (
-		<div className={`${style.wrapper} ${className} input`}>
-			{isTel && (
+		<div className={`${style.channelInput} ${className}`}>
+			{channelName === "telephone" && (
 				<Select
 					id={style.code}
-					ref={ref}
-					defaultValue={format.telephone[indexCountry].code}
+					defaultValue={format.telephone[codeField.value].code}
 					values={telCodes}
-					openState={[isOpenSelect, setOpenSelect]}
-					onChange={handleChangeTelCode}
+					onChange={(i) => {
+						codeField.onChange(format.telephone[keys[i]].country);
+					}}
 				/>
 			)}
-			<input
+			<StateInput
 				id={id}
-				type="text"
-				onChange={handleChangeValue}
+				onChange={(e) => {
+					onChange(inputField.onChange, e.currentTarget.value);
+				}}
+				defaultValue={defaultValue[channelName]}
 				placeholder={placeholder}
-				maxLength={isTel ? placeholder.length : null}
+				maxLength={maxLength}
 				name={channelName}
+				state={state}
+				{...props}
 			/>
 		</div>
 	);
@@ -85,14 +87,22 @@ function ChannelInput({ id, className, onChange, strictIsTel }) {
 ChannelInput.defaultProps = {
 	id: "",
 	className: "",
-	strictIsTel: null,
+	defaultValue: {},
+	inputRules: {},
+	onChange: null,
+	maxLength: null,
 };
 
 ChannelInput.propTypes = {
 	id: types.string,
 	className: types.string,
-	onChange: types.func.isRequired,
-	strictIsTel: types.bool,
+	defaultValue: types.instanceOf(Object),
+	channelName: types.string.isRequired,
+	control: types.instanceOf(Object).isRequired,
+	state: types.instanceOf(Object).isRequired,
+	inputRules: types.instanceOf(Object),
+	onChange: types.func,
+	maxLength: types.number,
 };
 
-export default ChannelInput;
+export default memo(ChannelInput);

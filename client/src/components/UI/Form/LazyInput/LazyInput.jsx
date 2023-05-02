@@ -12,6 +12,7 @@ function LazyInput({ className, value, style, onChange, title, placeholder, onBl
 			placeholder={placeholder}
 			className={`${className} input`}
 			value={isTyping ? inputValue : value()}
+			autoComplete="off"
 			onBlur={(e) => {
 				setTyping(false);
 

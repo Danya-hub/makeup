@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import types from "prop-types";
 
-import Value from "@/helpers/value.js";
+import Value from "@/utils/value.js";
 
 import Aside from "@/components/Aside/Aside.jsx";
 import Select from "@/components/UI/Form/Select/Select.jsx";
@@ -14,15 +14,12 @@ import FilterActions from "./helpers/filters.js";
 
 import style from "./Filters.module.css";
 
-function Filters({ tempCardsState, initialCards, placeholderLoaderState }) {
+function Filters({ tempCards, setTempCard, initialCards, setPlaceholderLoaderState }) {
 	const { t } = useTranslation();
 
 	const [selectedOptions, setOption] = useState(FilterActions.default());
 	const [[minPrice, maxPrice], setRangePrice] = useState([]);
-	const [isOpenSelectSort, setOpenSelectSort] = useState(false);
 
-	const [, setPlaceholderLoaderState] = placeholderLoaderState;
-	const [tempCards, setTempCard] = tempCardsState;
 	const translatedOption = FilterActions.sortKeys.map(t);
 	const typeProcNames = useMemo(
 		() => tempCards
@@ -56,7 +53,9 @@ function Filters({ tempCardsState, initialCards, placeholderLoaderState }) {
 	}, [initialCards, selectedOptions.range, selectedOptions.sortBy, selectedOptions.types]);
 
 	return (
-		<Aside id={style.filters}>
+		<Aside
+			id={style.filters}
+		>
 			<button
 				type="button"
 				id={style.reset}
@@ -90,10 +89,6 @@ function Filters({ tempCardsState, initialCards, placeholderLoaderState }) {
 				isAbsPos={false}
 				defaultValue={t("sortBy")}
 				values={translatedOption}
-				openState={[
-					isOpenSelectSort,
-					setOpenSelectSort,
-				]}
 				onChange={(i) => {
 					const key = FilterActions.sortKeys[i];
 
@@ -131,9 +126,10 @@ function Filters({ tempCardsState, initialCards, placeholderLoaderState }) {
 }
 
 Filters.propTypes = {
-	tempCardsState: types.instanceOf(Array).isRequired,
+	tempCards: types.instanceOf(Array).isRequired,
+	setTempCard: types.func.isRequired,
 	initialCards: types.instanceOf(Array).isRequired,
-	placeholderLoaderState: types.instanceOf(Array).isRequired,
+	setPlaceholderLoaderState: types.func.isRequired,
 };
 
 export default Filters;

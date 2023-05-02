@@ -33,7 +33,7 @@ class UserService {
       MySQL.createQuery(
         {
           sql: "SELECT * FROM user WHERE ?? = ?",
-          values: [req.body[name], name],
+          values: [name, req.body[name]],
         },
         (error, results) => {
           if (error) {
@@ -41,7 +41,7 @@ class UserService {
           }
 
           if (results.length === 0) {
-            ApiError.throw("badRequest", errors.wrongSignin());
+            throw errors.wrongSignin();
           }
 
           const tokenValue = {
@@ -61,8 +61,8 @@ class UserService {
   findById(id) {
     return MySQL.createQuery(
       {
-        sql: "SELECT * FROM user WHERE id = ?",
-        values: [id]
+        sql: "SELECT * FROM user WHERE ?? = ?",
+        values: ["id", id]
       },
       (error) => {
         if (error) {
@@ -70,6 +70,28 @@ class UserService {
         }
       }
     );
+  }
+
+  findByValue(params) {
+    return new Promise((resolve, reject) => {
+      MySQL.createQuery(
+        {
+          sql: "SELECT * FROM user WHERE ?? = ?",
+          values: [params.key, params.value],
+        },
+        (error, results) => {
+          if (error) {
+            reject(error);
+          }
+
+          if (results[0]) {
+            resolve(results);
+          } else {
+            reject(results);
+          }
+        }
+      );
+    });
   }
 }
 

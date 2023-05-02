@@ -1,14 +1,13 @@
-import { useSelector } from "react-redux";
+import { memo } from "react";
 import types from "prop-types";
 
 import style from "./Diagram.module.css";
 
 function Diagram({
-	hourHeightInPx,
 	formatedTimes,
 	widthCharTime,
 }) {
-	const { userProcedures } = useSelector((state) => state);
+	// const { userProcedures } = useSelector((state) => state);
 
 	return (
 		<div className={style.hours}>
@@ -17,14 +16,14 @@ function Diagram({
 					key={hour}
 					className={style.cell}
 					style={{
-						height: hourHeightInPx,
+						height: 60,
 						width: widthCharTime,
 					}}
 				>
 					<div
 						className={style.line}
 						style={{
-							top: `${userProcedures.hourHeightInPx * i}px`,
+							top: `${60 * i}px`,
 						}}
 					>
 						<span
@@ -42,9 +41,8 @@ function Diagram({
 }
 
 Diagram.propTypes = {
-	hourHeightInPx: types.number.isRequired,
 	formatedTimes: types.instanceOf(Array).isRequired,
 	widthCharTime: types.number.isRequired,
 };
 
-export default Diagram;
+export default memo(Diagram);

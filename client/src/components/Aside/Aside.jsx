@@ -5,11 +5,16 @@ import CloseSrc from "@/assets/image/close.svg";
 
 import style from "./Aside.module.css";
 
-function Aside({ id, className, openState, ...props }) {
-	const [isOpen = true, setState] = openState || [];
-
+function Aside({
+	id,
+	className,
+	isOpen,
+	isPopup,
+	setOpen,
+	...props
+}) {
 	useEffect(() => {
-		if (!isOpen || !openState) {
+		if (!isOpen || !isPopup) {
 			return;
 		}
 
@@ -17,7 +22,7 @@ function Aside({ id, className, openState, ...props }) {
 	}, [isOpen]);
 
 	function handleClose() {
-		setState(false);
+		setOpen(false);
 
 		document.body.style.overflowY = "scroll";
 	}
@@ -25,13 +30,13 @@ function Aside({ id, className, openState, ...props }) {
 	return (
 		<aside
 			id={id}
-			className={`${style.aside} ${openState ? style.popup : ""} ${className}`}
+			className={`${style.aside} ${isPopup ? style.popup : ""} ${className}`}
 			style={{
 				display: isOpen ? "unset" : "none",
 			}}
 		>
 			<div className={style.content}>
-				{openState && (
+				{isPopup && (
 					<button
 						type="button"
 						id={style.close}
@@ -46,7 +51,7 @@ function Aside({ id, className, openState, ...props }) {
 				)}
 				{props.children}
 			</div>
-			{openState && (
+			{isPopup && (
 				// background for quick exit
 				// eslint-disable-next-line max-len
 				// eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events
@@ -62,13 +67,17 @@ function Aside({ id, className, openState, ...props }) {
 Aside.defaultProps = {
 	id: "",
 	className: "",
-	openState: null,
+	isOpen: true,
+	isPopup: false,
+	setOpen: null,
 };
 
 Aside.propTypes = {
 	id: types.string,
 	className: types.string,
-	openState: types.instanceOf(Array),
+	isOpen: types.bool,
+	setOpen: types.func,
+	isPopup: types.bool,
 	children: types.node.isRequired,
 };
 

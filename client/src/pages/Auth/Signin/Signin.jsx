@@ -1,21 +1,18 @@
 import { useState } from "react";
 
-import Output from "./Output/Output.jsx";
-import Email from "./Email/Email.jsx";
+import SigninForm from "./SigninForm/SigninForm.jsx";
+import EmailForm from "./EmailForm/EmailForm.jsx";
 
 function Signin() {
-	const [user, setUser] = useState({});
-	const [isPasswordForgotten, setPasswordForgotten] = useState(false);
+	const [passwordIsForgot, updatePassword] = useState(false);
 
-	return isPasswordForgotten ? (
-		<Email
-			passwordState={[isPasswordForgotten, setPasswordForgotten]}
-			userState={[user, setUser]}
+	return passwordIsForgot ? (
+		<EmailForm
+			updatePassword={updatePassword}
 		/>
 	) : (
-		<Output
-			passwordState={[isPasswordForgotten, setPasswordForgotten]}
-			userState={[user, setUser]}
+		<SigninForm
+			updatePassword={updatePassword}
 		/>
 	);
 }
