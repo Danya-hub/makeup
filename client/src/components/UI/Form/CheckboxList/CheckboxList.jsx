@@ -9,7 +9,6 @@ function CheckboxList({ className, defaultOptions, values, onChange }) {
 	const [checkedOptions, setOption] = useState(defaultOptions);
 
 	function onCheck(option, isChecked) {
-		// console.log(option);
 		setOption((prev) => {
 			let object = prev;
 

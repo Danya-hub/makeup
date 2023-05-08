@@ -28,6 +28,7 @@ function ControlPanel() {
 	const {
 		setPopupName,
 		setVisiblePopup,
+		isAuth,
 	} = useContext(GlobalContext);
 
 	const calendarOptions = useMemo(() => ({
@@ -39,7 +40,6 @@ function ControlPanel() {
 		locale,
 		strictTimeObject,
 	}), [currentProcedure]);
-	const isAuth = localStorage.getItem("token");
 
 	function handleMake() {
 		if (!isAuth) {

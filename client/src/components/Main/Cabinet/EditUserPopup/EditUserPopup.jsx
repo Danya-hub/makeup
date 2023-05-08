@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { useSelector } from "react-redux";
 
 import GlobalContext from "@/context/global.js";
-import { popups } from "./constants.jsx";
+import popups from "./constants/popups.jsx";
 
 function EditUserPopup() {
 	const {

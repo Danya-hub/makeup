@@ -69,8 +69,8 @@ class Procedure {
 
     MySQL.createQuery(
       {
-        sql: "DELETE FROM service WHERE user = ?",
-        values: [id],
+        sql: "DELETE FROM service WHERE ?? = ?",
+        values: ["user", id],
       },
       (error, results) => {
         if (!results.affectedRows) {
@@ -124,8 +124,8 @@ class Procedure {
 
     MySQL.createQuery(
       {
-        sql: "SELECT * FROM service WHERE user = ?",
-        values: [id],
+        sql: "SELECT * FROM service WHERE ?? = ?",
+        values: ["user", id],
       },
       (error, results) => {
         if (error) {

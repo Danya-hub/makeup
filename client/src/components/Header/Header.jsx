@@ -13,10 +13,9 @@ import style from "./Header.module.css";
 function Header() {
 	const { t } = useTranslation();
 	const {
+		isAuth,
 		setOpenCabinet,
 	} = useContext(GlobalContext);
-
-	const isAuth = localStorage.getItem("token");
 
 	return (
 		<header>

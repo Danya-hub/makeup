@@ -1,8 +1,9 @@
-import { useLayoutEffect, useState, useEffect } from "react";
+import { useLayoutEffect, useState, useEffect, useContext } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import { asyncActions } from "@/service/redusers/userProcedures.js";
+import GlobalContext from "@/context/global.js";
 
 import PlaceholderLoader from "@/components/UI/PlaceholderLoader/PlaceholderLoader.jsx";
 import Filters from "./Filters/Filters.jsx";
@@ -13,8 +14,9 @@ import style from "./UserProcedures.module.css";
 function UserProcedures() {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-
-	const isAuth = localStorage.getItem("token");
+	const {
+		isAuth,
+	} = useContext(GlobalContext);
 
 	const [initialCards, setInitialCards] = useState([]);
 	const [tempCards, setTempCard] = useState([]);

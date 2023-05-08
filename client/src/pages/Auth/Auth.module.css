@@ -25,11 +25,11 @@
 	--back: rgba(var(--brown), 0.6);
 }
 
-:where(.authQueastion, .forgotPassword) > * {
+.forgotPassword > * {
 	display: inline-block;
 }
 
-:where(.authQueastion, .forgotPassword) button {
+.forgotPassword button {
 	background: unset;
 	font-weight: 800;
 	margin-left: 6px;
@@ -43,24 +43,4 @@
 :global(.navigation) button:nth-child(2) {
 	--back: var(--brown);
 	--o: 0.4;
-}
-
-#loader {
-	display: none;
-	align-items: center;
-	position: absolute;
-    background: rgb(var(--white));
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 100%;
-	z-index: 1;
-}
-
-#loader.isLoading {
-	display: flex;
-}
-
-#loader img {
-	height: var(--size);
 }

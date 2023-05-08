@@ -6,6 +6,11 @@ export const errorList = {
       error: errors.notExist(key),
     }]];
   },
+  alreadyExist(message) {
+    return [409, [{
+      error: message,
+    }]];
+  },
   unauthorized() {
     return [401, {
       error: "This user is unauthorized",
@@ -25,7 +30,7 @@ export const errorList = {
     return [400, {
       error: message,
     }];
-  }
+  },
 };
 
 class ApiError extends Error {

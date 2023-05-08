@@ -18,6 +18,7 @@ function ChannelInput({
 	control,
 	inputRules,
 	onChange,
+	onSelect,
 	state,
 	maxLength,
 	...props
@@ -64,7 +65,7 @@ function ChannelInput({
 					defaultValue={format.telephone[codeField.value].code}
 					values={telCodes}
 					onChange={(i) => {
-						codeField.onChange(format.telephone[keys[i]].country);
+						onSelect(codeField.onChange, format.telephone[keys[i]].country);
 					}}
 				/>
 			)}
@@ -90,6 +91,7 @@ ChannelInput.defaultProps = {
 	defaultValue: {},
 	inputRules: {},
 	onChange: null,
+	onSelect: null,
 	maxLength: null,
 };
 
@@ -102,6 +104,7 @@ ChannelInput.propTypes = {
 	state: types.instanceOf(Object).isRequired,
 	inputRules: types.instanceOf(Object),
 	onChange: types.func,
+	onSelect: types.func,
 	maxLength: types.number,
 };
 

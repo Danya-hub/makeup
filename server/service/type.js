@@ -66,8 +66,8 @@ class Type {
   findById(id) {
     return MySQL.createQuery(
       {
-        sql: "SELECT * FROM type WHERE id = ?",
-        values: [id],
+        sql: "SELECT * FROM type WHERE ?? = ?",
+        values: ["id", id],
       },
       (error) => {
         if (error) {

@@ -14,11 +14,11 @@ function Aside({
 	...props
 }) {
 	useEffect(() => {
-		if (!isOpen || !isPopup) {
+		if (!isPopup) {
 			return;
 		}
 
-		document.body.style.overflowY = "hidden";
+		document.body.style.overflowY = isOpen ? "hidden" : "scroll";
 	}, [isOpen]);
 
 	function handleClose() {

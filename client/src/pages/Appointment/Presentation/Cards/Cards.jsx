@@ -31,13 +31,13 @@ function Cards({
 		setPopupName,
 		isVisiblePopup,
 		setVisiblePopup,
+		isAuth,
 	} = useContext(GlobalContext);
 	const navigate = useNavigate();
 	const parentRef = useRef(null);
 
 	const [currentProcedure] = userProcedures.currentProcedure;
 	const classNameByPresentState = (isVisiblePopup && "noActiveGrabbing") || (isMouseDown && "activeGrabbing") || "";
-	const isAuth = localStorage.getItem("token");
 	const currentStartProcPositionY = currentProcedure.hour
 		* userProcedures.hourHeightInPx - ProcConfig.START_WORK_TIME * userProcedures.hourHeightInPx;
 	const currentStartProcPositionYToDate = FormatDate.minutesToDate(

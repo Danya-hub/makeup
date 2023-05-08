@@ -1,8 +1,6 @@
 import { useState, memo } from "react";
 import types from "prop-types";
 
-import config from "@/pages/Auth/config/auth.js";
-
 import StateInput from "@/components/UI/Form/StateInput/StateInput.jsx";
 
 import style from "./PasswordInput.module.css";
@@ -14,6 +12,7 @@ function PasswordInput({
 	onChange,
 	hasSwitch,
 	state,
+	maxLength,
 }) {
 	const [isVisible, setVisible] = useState(!hasSwitch);
 
@@ -40,7 +39,7 @@ function PasswordInput({
 				className={style.input}
 				type={isVisible ? "text" : "password"}
 				onChange={onChange}
-				maxLength={config.MAX_LENGTH_PASSWORD}
+				maxLength={maxLength}
 				name={name}
 				state={state}
 			/>
@@ -60,6 +59,7 @@ PasswordInput.propTypes = {
 	name: types.string.isRequired,
 	onChange: types.func.isRequired,
 	hasSwitch: types.bool,
+	maxLength: types.number.isRequired,
 	state: types.instanceOf(Object).isRequired,
 };
 

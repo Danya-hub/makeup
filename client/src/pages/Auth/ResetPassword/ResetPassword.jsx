@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 
 import { asyncActions } from "@/service/redusers/user.js";
-import config from "@/pages/Auth/config/auth.js";
+import translate from "@/utils/translate.js";
 
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 import PasswordInput from "@/components/UI/Form/PasswordInput/PasswordInput.jsx";
+import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
 
 import style from "@/pages/Auth/Auth.module.css";
 
@@ -20,75 +21,93 @@ function ResetPassword() {
 	const {
 		handleSubmit,
 		control,
+		setError,
 		formState: {
 			errors,
+			isSubmitting,
 		},
 		getFieldState,
 	} = useForm({
 		mode: "onSubmit",
 	});
 
-	const [message, setMessage] = useState(null);
+	const [[message, status], setMessage] = useState([]);
 
 	const passwordState = getFieldState("password");
 	const confirmedPasswordState = getFieldState("confirmedPassword");
 
-	const passwordErrors = {
+	const passwordErrors = useRef({
 		requiredPasswordValid: ["requiredPasswordValid"],
 		requiredConfirmationPasswordValid: ["requiredConfirmationPasswordValid"],
 		largerPasswordValid: ["largerPasswordValid", {
-			min: config.MAX_LENGTH_PASSWORD,
+			min: 8,
 		}],
 		passwordsNotSameValid: ["passwordsNotSameValid"],
-	};
+	});
+
+	const passwordError = passwordErrors.current[errors.password?.message];
+	const confirmedPasswordError = passwordErrors.current[errors.confirmedPassword?.message];
 
 	async function handleSubmitForm(data) {
-		const res = await dispatch(
+		const resultResetPassword = await dispatch(
 			asyncActions.resetPassword({
 				email: params.email,
 				newPassword: data.password,
 			}),
 		);
 
-		if (res.error) {
-			const args = {};
-
-			if (res.payload.error.args) { //! идентичный код с confirmForm
-				const keys = Object.keys(res.payload.error.args);
-
-				keys.forEach((key) => {
-					args[key] = t(res.payload.error.args[key]);
-				});
-			}
+		if (resultResetPassword.error) {
+			const args = translate.object(resultResetPassword.payload.error.args, t);
 
 			setMessage({
-				key: res.payload.error.key,
+				key: resultResetPassword.payload.error.key,
 				args,
 			});
 			return;
 		}
 
-		console.log('1');
-
-		// navigate("/appointment");
+		navigate("/appointment");
 	}
 
-	function handleCancel() {
-		navigate(-1);
+	async function sendAgain() {
+		const res = await dispatch(asyncActions.sendLinkForResetingPassword({
+			email: params.email,
+		}));
+
+		if (res.payload.error?.length) {
+			setError("email", {
+				type: "value",
+				message: res.payload.error[0].msg.key,
+			});
+			return;
+		}
+
+		if (res.payload.error) {
+			setMessage(res.payload.error);
+		}
+	}
+
+	function handleMain() {
+		navigate("/");
 	}
 
 	return (
 		<div id={style.auth}>
 			<div className="form">
+				<div
+					className={`loader ${isSubmitting ? style.isLoading : ""}`}
+				>
+					<SimpleLoader />
+				</div>
 				<h2 className="title">{t("changePassword")}</h2>
 				<p className="message center">{t("enterPasswordAndConfirmIt")}</p>
-				{message && (
-					<Notification
-						content={message}
-						status="error"
-					/>
-				)}
 				<form onSubmit={handleSubmit(handleSubmitForm)}>
+					{message && (
+						<Notification
+							content={message}
+							status={status}
+						/>
+					)}
 					<div>
 						<label htmlFor="password">
 							<h3 className="title">{t("password")}</h3>
@@ -102,7 +121,7 @@ function ResetPassword() {
 									message: "requiredPasswordValid",
 								},
 								minLength: {
-									value: config.MAX_LENGTH_PASSWORD,
+									value: 8,
 									message: "largerPasswordValid",
 								},
 							}}
@@ -110,6 +129,7 @@ function ResetPassword() {
 								field: { onChange },
 							}) => (
 								<PasswordInput
+									maxLength={8}
 									hasSwitch={false}
 									name="password"
 									className="input field"
@@ -121,7 +141,7 @@ function ResetPassword() {
 								/>
 							)}
 						/>
-						{errors.password && <p className="errorMessage">{t(...passwordErrors[errors.password.message])}</p>}
+						{errors.password && <p className="errorMessage">{t(...passwordError)}</p>}
 					</div>
 					<div>
 						<label htmlFor="confirmedPassword">
@@ -136,7 +156,7 @@ function ResetPassword() {
 									message: "requiredConfirmationPasswordValid",
 								},
 								minLength: {
-									value: config.MAX_LENGTH_PASSWORD,
+									value: 8,
 									message: "largerPasswordValid",
 								},
 								validate: (value, formValues) => {
@@ -151,6 +171,7 @@ function ResetPassword() {
 								field: { onChange },
 							}) => (
 								<PasswordInput
+									maxLength={8}
 									hasSwitch={false}
 									name="confirmedPassword"
 									className="input field"
@@ -165,21 +186,35 @@ function ResetPassword() {
 								/>
 							)}
 						/>
-						{errors.confirmedPassword && <p className="errorMessage">{t(...passwordErrors[errors.confirmedPassword.message])}</p>}
+						{errors.confirmedPassword && <p className="errorMessage">{t(...confirmedPasswordError)}</p>}
 					</div>
 					<div className="navigation">
 						<button
-							type="button"
+							id="toMain"
 							className="button border"
-							onClick={handleCancel}
+							type="button"
+							onClick={handleMain}
 						>
-							{t("cancel")}
+							{t("toMain")}
 						</button>
 						<button
 							type="submit"
 							className="button border"
 						>
 							{t("change")}
+						</button>
+					</div>
+					<div className="authQuestion">
+						<p>{t("timeOutQuestion")}</p>
+						<button
+							type="button"
+							onClick={(e) => {
+								e.preventDefault();
+
+								sendAgain();
+							}}
+						>
+							{t("sendMore")}
 						</button>
 					</div>
 				</form>

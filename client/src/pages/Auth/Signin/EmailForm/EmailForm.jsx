@@ -28,8 +28,11 @@ function EmailForm({ updatePassword }) {
 		mode: "onChange",
 	});
 
-	const [message, setMessage] = useState(null);
+	const [[message, status], setMessage] = useState([]);
+
 	const emailState = getFieldState("email");
+
+	const emailError = errors.email?.message;
 
 	async function onSubmit(data) {
 		const res = await dispatch(asyncActions.sendLinkForResetingPassword(data));
@@ -39,6 +42,7 @@ function EmailForm({ updatePassword }) {
 				type: "value",
 				message: res.payload.error[0].msg.key,
 			});
+			setMessage([]);
 			return;
 		}
 
@@ -58,8 +62,7 @@ function EmailForm({ updatePassword }) {
 		<div id={style.auth}>
 			<div className="form">
 				<div
-					id={style.loader}
-					className={isSubmitting ? style.isLoading : ""}
+					className={`loader ${isSubmitting ? style.isLoading : ""}`}
 				>
 					<SimpleLoader />
 				</div>
@@ -69,7 +72,7 @@ function EmailForm({ updatePassword }) {
 					{message && (
 						<Notification
 							content={message}
-							status="error"
+							status={status}
 						/>
 					)}
 					<div>
@@ -90,7 +93,7 @@ function EmailForm({ updatePassword }) {
 							inputRules={{
 								required: {
 									value: true,
-									message: ["requiredEmailValid"],
+									message: ["requiredemailValid"],
 								},
 								pattern: {
 									value: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
@@ -98,7 +101,7 @@ function EmailForm({ updatePassword }) {
 								},
 							}}
 						/>
-						{errors.email && <p className="errorMessage">{t(errors.email.message)}</p>}
+						{errors.email && <p className="errorMessage">{t(emailError)}</p>}
 					</div>
 					<div className="navigation">
 						<button

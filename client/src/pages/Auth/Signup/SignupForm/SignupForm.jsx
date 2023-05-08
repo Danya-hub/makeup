@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
@@ -35,14 +35,30 @@ function SignupForm({ setFormState, user, setUser }) {
 		mode: "onChange",
 		defaultValues: user,
 	});
-	const [message, setMessage] = useState(null);
+
+	const [[message, status], setMessage] = useState([]);
 
 	const usernameState = getFieldState("username");
 	const emailState = getFieldState("email");
-	const countryState = getFieldState("country");
 	const telephoneState = getFieldState("telephone");
 	const countryValue = getValues("country");
+
+	const channelInputErrors = useMemo(() => ({
+		lesserTelephoneValid: ["lesserTelephoneValid", {
+			max: format.telephone[countryValue || keys[0]].template.length,
+		}],
+		largerTelephoneValid: ["largerTelephoneValid", {
+			min: format.telephone[countryValue || keys[0]].template.length,
+		}],
+		requiredtelephoneValid: ["requiredtelephoneValid"],
+		wrongTelFormatValid: ["wrongTelFormatValid"],
+	}), [countryValue]);
+
 	const purpose = locationState?.purpose || "adviceForAuth";
+	const usernameError = errors.username?.message;
+	const emailError = errors.email?.message;
+	const telephoneError = channelInputErrors[(errors.telephone || errors.country)?.message];
+	const birthdayError = errors.birthday?.message;
 
 	async function onSubmit(data) {
 		const isValid = await Promise.allSettled([
@@ -59,7 +75,7 @@ function SignupForm({ setFormState, user, setUser }) {
 						type: "value",
 						message: [object.reason.response.data.key],
 					});
-					setMessage("");
+					setMessage([]);
 
 					return false;
 				}
@@ -72,10 +88,6 @@ function SignupForm({ setFormState, user, setUser }) {
 		if (!isValid) {
 			return;
 		}
-
-		await axios.indPost("/auth/sendPasswordForCompare", data)
-			// eslint-disable-next-line no-console
-			.catch((res) => console.error(res));
 
 		setUser(data);
 		setFormState(true);
@@ -91,26 +103,14 @@ function SignupForm({ setFormState, user, setUser }) {
 	}
 
 	function handleCancel() {
-		navigate("/appointment");
+		navigate(-1);
 	}
-
-	const channelInputErrors = {
-		lesserTelephoneValid: ["lesserTelephoneValid", {
-			max: format.telephone[countryValue || keys[0]].template.length,
-		}],
-		largerTelephoneValid: ["largerTelephoneValid", {
-			min: format.telephone[countryValue || keys[0]].template.length,
-		}],
-		requiredTelephoneValid: ["requiredTelephoneValid"],
-		wrongTelFormatValid: ["wrongTelFormatValid"],
-	};
 
 	return (
 		<div id={style.auth}>
 			<div className="form">
 				<div
-					id={style.loader}
-					className={isSubmitting ? style.isLoading : ""}
+					className={`loader ${isSubmitting ? style.isLoading : ""}`}
 				>
 					<SimpleLoader />
 				</div>
@@ -120,7 +120,7 @@ function SignupForm({ setFormState, user, setUser }) {
 					{message && (
 						<Notification
 							content={message}
-							status="error"
+							status={status}
 						/>
 					)}
 					<div>
@@ -146,27 +146,27 @@ function SignupForm({ setFormState, user, setUser }) {
 							rules={{
 								required: {
 									value: !user.username,
-									message: ["requiredUsernameValid"],
+									message: ["requiredusernameValid"],
 								},
 								pattern: {
-									value: /^\p{L}+(?:\s\p{L}+){0,2}$/u,
+									value: /^\p{L}+(?:\s\p{L}+)?$/u,
 									message: ["usernameValid"],
 								},
 								minLength: {
 									value: 3,
-									message: ["largerUsernameValid", {
+									message: ["largerusernameValid", {
 										min: 3,
 									}],
 								},
 								maxLength: {
-									value: 20,
+									value: 40,
 									message: ["lesserUsernameValid", {
-										max: 20,
+										max: 40,
 									}],
 								},
 							}}
 						/>
-						{errors.username && <p className="errorMessage">{t(...errors.username.message)}</p>}
+						{errors.username && <p className="errorMessage">{t(...usernameError)}</p>}
 					</div>
 					<div>
 						<label htmlFor="email">
@@ -189,7 +189,7 @@ function SignupForm({ setFormState, user, setUser }) {
 							inputRules={{
 								required: {
 									value: !user.email,
-									message: ["requiredEmailValid"],
+									message: ["requiredemailValid"],
 								},
 								pattern: {
 									value: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
@@ -197,7 +197,7 @@ function SignupForm({ setFormState, user, setUser }) {
 								},
 							}}
 						/>
-						{errors.email && <p className="errorMessage">{t(...errors.email.message)}</p>}
+						{errors.email && <p className="errorMessage">{t(...emailError)}</p>}
 					</div>
 					<div>
 						<label htmlFor="telephone">
@@ -212,6 +212,10 @@ function SignupForm({ setFormState, user, setUser }) {
 								country: user.country,
 								telephone: user.telephone,
 							}}
+							onSelect={(callback, value) => {
+								callback(value);
+								trigger();
+							}}
 							onChange={(callback, value) => {
 								callback(value);
 								trigger("country");
@@ -220,7 +224,7 @@ function SignupForm({ setFormState, user, setUser }) {
 							inputRules={{
 								required: {
 									value: !user.telephone,
-									message: "requiredTelephoneValid",
+									message: "requiredtelephoneValid",
 								},
 								minLength: {
 									value: format.telephone[countryValue || keys[0]].template.length,
@@ -232,14 +236,13 @@ function SignupForm({ setFormState, user, setUser }) {
 								},
 							}}
 							state={[
-								["error", telephoneState.invalid || countryState.invalid],
+								["error", telephoneState.invalid],
 								["valid",
-									(telephoneState.isDirty && !telephoneState.invalid)
-									|| (countryState.isDirty && !countryState.invalid),
+									(telephoneState.isDirty && !telephoneState.invalid),
 								],
 							]}
 						/>
-						{(errors.telephone || errors.country) && <p className="errorMessage">{t(...channelInputErrors[(errors.telephone || errors.country)?.message])}</p>}
+						{(errors.telephone || errors.country) && <p className="errorMessage">{t(...telephoneError)}</p>}
 					</div>
 					<div>
 						<label htmlFor="birthday">
@@ -267,7 +270,7 @@ function SignupForm({ setFormState, user, setUser }) {
 								},
 							}}
 						/>
-						{errors.birthday && <p className="errorMessage">{t(...errors.birthday.message)}</p>}
+						{errors.birthday && <p className="errorMessage">{t(...birthdayError)}</p>}
 					</div>
 					<div className="navigation">
 						<button
@@ -287,7 +290,7 @@ function SignupForm({ setFormState, user, setUser }) {
 						</button>
 					</div>
 				</form>
-				<div className={style.authQueastion}>
+				<div className="authQuestion">
 					<p>{t("alreadyExistsAccount")}</p>
 					<button
 						type="button"

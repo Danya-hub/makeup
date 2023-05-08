@@ -54,6 +54,9 @@ const errors = {
   noAccessRequest: () => ({
     key: "noAccessRequestValid",
   }),
+  notMatch: (name) => ({
+    key: `${name}NotMatchValid`,
+  })
 };
 
 export default errors;

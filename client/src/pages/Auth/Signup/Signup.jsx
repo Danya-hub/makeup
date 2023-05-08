@@ -1,15 +1,19 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import SignupForm from "./SignupForm/SignupForm.jsx";
 import ConfirmForm from "./ConfirmForm/ConfirmForm.jsx";
 
+import GlobalContext from "@/context/global.js";
 import { asyncActions } from "@/service/redusers/user.js";
 
 function Signup() {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
+	const {
+		setAuthState,
+	} = useContext(GlobalContext);
 
 	const [user, setUser] = useState({});
 	const [isValidForm, setFormState] = useState(false);
@@ -22,6 +26,7 @@ function Signup() {
 		}
 
 		navigate("/appointment");
+		setAuthState(true);
 	}
 
 	return isValidForm ? (

@@ -6,10 +6,12 @@ import {
 
 import Value from "@/utils/value.js";
 import axios from "@/http/axios.js";
+import format from "@/components/UI/Form/ChannelInput/constants/format.js";
 
 export const actions = {
 	setUser(state, action) {
 		state.info = Value.toDate(action.payload);
+		state.info.fullTel = format.telephone[state.info.country].code + state.info.telephone;
 	},
 
 	clearError(state) {
@@ -113,6 +115,20 @@ export const asyncActions = {
 		},
 	),
 
+	editUserById: createAsyncThunk(
+		"user/editUserById",
+		async (value, {
+			rejectWithValue,
+		}) => {
+			try {
+				await axios.indPost("/auth/editUserById", value);
+
+				return value.data;
+			} catch (error) {
+				return rejectWithValue(error.response.data);
+			}
+		},
+	),
 };
 
 export const extraReducers = {
@@ -154,5 +170,13 @@ export const extraReducers = {
 		action.payload = null;
 
 		actions.setUser(state, action);
+	},
+	[asyncActions.editUserById.fulfilled]: (state, action) => {
+		actions.setUser(state, {
+			payload: {
+				...state.info,
+				...action.payload,
+			},
+		});
 	},
 };

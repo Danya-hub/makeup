@@ -6,52 +6,82 @@ class Format {
     constructor(query, values) {
         this.query = query;
         this.values = values;
-        this.valIsObject = Check.isObject(this.values);
-        this.valIsArray = Array.isArray(this.values);
+        this.isObject = Check.isObject(this.values);
+        this.isArray = Array.isArray(this.values);
+
+        this.operatorGroup = {};
+        this.operatorGroup.is = this.queryHasOperators(["insert", "select"]);
+        this.operatorGroup.u = this.queryHasOperators(["update"]);
     }
 
-    objectRows() {
-        if (!this.values || !this.valIsObject) {
+    queryHasOperators(operators) {
+        return operators.some(
+            (operator) => new RegExp(`^${operator}`, "i").test(this.query)
+        );
+    }
+
+    keysAndValuesObject() {
+        if (!this.values || !this.isObject) {
             return;
         }
 
-        this.query = this.query.replace(/:(\w+)/g, (txt, key) => {
-            if (this.values[key]) {
-                return mysql.escape(this.values[key]);
-            }
+        if (this.operatorGroup.is || this.operatorGroup.u) {
+            this.query = this.query.replace(/:(\w+)/g, (txt, key) => {
+                if (this.values[key]) {
+                    return mysql.escape(this.values[key]);
+                }
 
-            return txt;
-        });
+                return txt;
+            });
+        }
     }
 
-    singleArrayRow() {
-        if (!this.values || !this.valIsArray) {
+    keyAndValueArray() {
+        if (!this.values || !this.isArray) {
             return;
         }
 
-        const [key, value] = this.values;
-        this.query = this.query.replace(/\?{2}|(?<==\s)\?/g, (searchValue) => {
-            if (searchValue.length >= 2) {
-                return key;
-            }
+        if (this.operatorGroup.is) {
+            const [key, value] = this.values;
+            this.query = this.query.replace(/\?{2}|(?<==\s)\?/g, (searchValue) => {
+                if (searchValue.length >= 2) {
+                    return key;
+                }
 
-            return `'${value}'`;
-        });
+                return `'${value}'`;
+            });
+        }
     }
 
-    multipleArrayRows() {
-        if (!this.values || !this.valIsObject) {
+    spreadObject() {
+        if (!this.values || !this.isObject) {
             return;
         }
 
-        const keys = Object.keys(this.values);
-        this.query = this.query.replace(/\*{2}/g, () => {
-            const strKeysLine = keys.join();
-            const strValuesLine = keys.map((key) => `'${this.values[key]}'`).join();
-            const result = `(${strKeysLine}) VALUES (${strValuesLine})`;
+        if (this.operatorGroup.is) {
+            const keys = Object.keys(this.values);
+            this.query = this.query.replace(/\*{2}/g, () => {
+                const strKeysLine = keys.join();
+                const strValuesLine = keys.map((key) => `'${this.values[key]}'`).join();
+                const result = `(${strKeysLine}) VALUES (${strValuesLine})`;
 
-            return result;
-        });
+                return result;
+            });
+        }
+    }
+
+    column() {
+        if (!this.values || !this.isObject) {
+            return;
+        }
+
+        if (this.operatorGroup.u) {
+            const keys = Object.keys(this.values);
+            this.query = this.query.replace(
+                /\*{2}/g,
+                () => keys.map((key) => `${key} = '${this.values[key]}'`).join()
+            );
+        }
     }
 }
 

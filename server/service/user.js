@@ -31,7 +31,7 @@ class UserService {
       const name = this.channels.find((channelName) => req.body[channelName]);
 
       MySQL.createQuery(
-        {
+{
           sql: "SELECT * FROM user WHERE ?? = ?",
           values: [name, req.body[name]],
         },
@@ -60,7 +60,7 @@ class UserService {
 
   findById(id) {
     return MySQL.createQuery(
-      {
+{
         sql: "SELECT * FROM user WHERE ?? = ?",
         values: ["id", id]
       },
@@ -75,7 +75,7 @@ class UserService {
   findByValue(params) {
     return new Promise((resolve, reject) => {
       MySQL.createQuery(
-        {
+{
           sql: "SELECT * FROM user WHERE ?? = ?",
           values: [params.key, params.value],
         },
@@ -89,6 +89,30 @@ class UserService {
           } else {
             reject(results);
           }
+        }
+      );
+    });
+  }
+
+  editById(req) {
+    const {
+      field,
+      data,
+      id,
+    } = req.body;
+
+    return new Promise((resolve, reject) => {
+      MySQL.createQuery(
+        {
+          sql: `UPDATE user SET ** WHERE id = ${id}`,
+          values: data,
+        },
+        (error, results) => {
+          if (error) {
+            reject(ApiError.get("alreadyExist", errors.alreadyExist(`${field}AlreadyExistsValid`)));
+          }
+
+          resolve(results);
         }
       );
     });

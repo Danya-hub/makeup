@@ -14,7 +14,7 @@ const routes = [
 		path: "/",
 		elem: () => <Base />,
 		state: {
-			title: "Main",
+			title: "mainTitle",
 			header: true,
 			footer: true,
 		},
@@ -23,7 +23,7 @@ const routes = [
 		path: "/appointment",
 		elem: () => <Appointment />,
 		state: {
-			title: "Appointment",
+			title: "appointmentTitle",
 			header: true,
 			footer: true,
 		},
@@ -32,7 +32,7 @@ const routes = [
 		path: "/signup",
 		elem: () => <Signup />,
 		state: {
-			title: "Signup",
+			title: "signUpTitle",
 			header: true,
 		},
 	},
@@ -40,7 +40,7 @@ const routes = [
 		path: "/signin",
 		elem: () => <Signin />,
 		state: {
-			title: "Signin",
+			title: "signInTitle",
 			header: true,
 		},
 	},
@@ -48,7 +48,7 @@ const routes = [
 		path: "/myprocedures",
 		elem: () => <UserProcedures />,
 		state: {
-			title: "Procedures",
+			title: "myProceduresTitle",
 			header: true,
 			footer: true,
 		},
@@ -57,7 +57,7 @@ const routes = [
 		path: "/resetPassword/:email",
 		elem: () => <ResetPassword />,
 		state: {
-			title: "Procedures",
+			title: "resetPasswordTitle",
 			header: true,
 		},
 	},
@@ -65,7 +65,7 @@ const routes = [
 		path: "/details",
 		elem: () => <ProcDetails />,
 		state: {
-			title: "Details",
+			title: "procDetailsTitle",
 			header: true,
 			footer: true,
 		},
@@ -74,7 +74,7 @@ const routes = [
 		path: "*",
 		elem: () => <NotFound />,
 		state: {
-			title: "Not found",
+			title: "notFoundTitle",
 		},
 	},
 ];

@@ -1,6 +1,7 @@
 import { useLayoutEffect, useEffect, useState, useMemo } from "react";
 import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 import Header from "./components/Header/Header.jsx";
 import Main from "./components/Main/Main.jsx";
@@ -16,11 +17,13 @@ import "@/styles/main.css";
 function App() {
 	const dispatch = useDispatch();
 	const location = useLocation();
+	const { t } = useTranslation();
 	const [{
 		currentLang,
 		langs,
 	}, changeLanguage] = useLang();
 
+	const [isAuth, setAuthState] = useState(false);
 	const [isOpenCabinet, setOpenCabinet] = useState(false);
 	const [isVisiblePopup, setVisiblePopup] = useState(false);
 	const [popupName, setPopupName] = useState("");
@@ -28,17 +31,29 @@ function App() {
 	const onLine = true || window.navigator.onLine;
 	const path = routes.find((route) => route.path === location.pathname || route.path === "*");
 
-	function init() {
-		dispatch(asyncActions.refresh());
+	async function init() {
+		const refresh = await dispatch(asyncActions.refresh());
+
+		if (refresh.error) {
+			return;
+		}
+
+		setAuthState(true);
 	}
 
 	useEffect(() => {
-		document.title = path.state.title;
-	}, [path]);
+		document.title = t(path.state.title);
+	}, [path, currentLang]);
+
+	useEffect(() => {
+		document.body.style.overflowY = isVisiblePopup ? "hidden" : "scroll";
+	}, [isVisiblePopup]);
 
 	useLayoutEffect(() => init, []);
 
 	const contextValue = useMemo(() => ({
+		isAuth,
+		setAuthState,
 		currentLang,
 		langs,
 		changeLanguage,
@@ -49,6 +64,7 @@ function App() {
 		isOpenCabinet,
 		setOpenCabinet,
 	}), [
+		isAuth,
 		currentLang,
 		isVisiblePopup,
 		popupName,

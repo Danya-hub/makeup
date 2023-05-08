@@ -1,16 +1,17 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import types from "prop-types";
 
 import axios from "@/http/axios.js";
 
 import AvatarCanvas from "@/pages/Auth/helpers/genarateAvatar.js";
-import config from "@/pages/Auth/config/auth.js";
+import translate from "@/utils/translate.js";
 
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
+import PasswordInput from "@/components/UI/Form/PasswordInput/PasswordInput.jsx";
 
 import style from "@/pages/Auth/Auth.module.css";
 
@@ -21,34 +22,33 @@ const defaultMessage = () => ([{
 function ConfirmForm({ setFormState, user, onSuccess }) {
 	const { t } = useTranslation();
 	const {
-		register,
 		handleSubmit,
 		formState: {
 			errors,
 			isSubmitting,
 		},
+		control,
 		setError,
+		getFieldState,
 	} = useForm({
 		mode: "onChange",
 	});
+
 	const [[message, status], setMessage] = useState(defaultMessage);
 
+	const passwordState = getFieldState("password");
+
+	const passwordError = errors.password?.message;
+
 	async function onSubmit(data) {
-		const result = await axios.indPost("/auth/comparePassword", {
-			...user,
-			...data,
+		const result = await axios.indPost("/auth/comparePasswordByEmail", {
+			email: user.email,
+			password: data.password,
+			topic: "comparePassword",
 		})
 			.catch((res) => {
 				if (res.response.status !== 429) {
-					const args = {};
-
-					if (res.response.data.error.args) {
-						const keys = Object.keys(res.response.data.error.args);
-
-						keys.forEach((key) => {
-							args[key] = t(res.response.data.error.args[key]);
-						});
-					}
+					const args = translate.object(res.response.data.error.args, t);
 
 					setError("password", {
 						type: "value",
@@ -68,10 +68,11 @@ function ConfirmForm({ setFormState, user, onSuccess }) {
 			return;
 		}
 
-		const avatar = AvatarCanvas.getUrl(result.data.username, 100);
+		const avatar = AvatarCanvas.getUrl(user.username, 100);
 
 		onSuccess({
-			...result.data,
+			...user,
+			password: result.data.password,
 			avatar,
 		});
 	}
@@ -81,15 +82,22 @@ function ConfirmForm({ setFormState, user, onSuccess }) {
 	}
 
 	async function generateNewPassword() {
-		await axios.indPost("/auth/sendPasswordForCompare", user);
+		await axios.indPost("/auth/sendPasswordForCompare", {
+			email: user.email,
+			topic: "comparePassword",
+			passwordLength: 8,
+		})
+			// eslint-disable-next-line no-console
+			.catch((res) => console.error(res));
 	}
+
+	useEffect(() => generateNewPassword, []);
 
 	return (
 		<div id={style.confirm}>
 			<div className="form">
 				<div
-					id={style.loader}
-					className={isSubmitting ? style.isLoading : ""}
+					className={`loader ${isSubmitting ? style.isLoading : ""}`}
 				>
 					<SimpleLoader />
 				</div>
@@ -108,26 +116,38 @@ function ConfirmForm({ setFormState, user, onSuccess }) {
 						<label htmlFor="password">
 							<h3 className="title">{t("authorizationCode")}</h3>
 						</label>
-						<input
-							id="password"
-							type="text"
-							className="input field"
-							{...register("password", {
+						<Controller
+							name="password"
+							control={control}
+							rules={{
 								required: {
 									value: true,
 									message: ["authorizationCodeRequiredValid"],
 								},
 								minLength: {
-									value: config.MAX_LENGTH_PASSWORD,
-									message: ["fullAuthorizationCodecodeValid", {
-										min: config.MAX_LENGTH_PASSWORD,
+									value: 8,
+									message: ["fullAuthorizationCodeValid", {
+										min: 8,
 									}],
 								},
-							})}
-							maxLength={config.MAX_LENGTH_PASSWORD}
-							autoComplete="off"
+							}}
+							render={({
+								field: { onChange },
+							}) => (
+								<PasswordInput
+									maxLength={8}
+									hasSwitch={false}
+									name="password"
+									className="input field"
+									onChange={(e) => onChange(e.currentTarget.value)}
+									state={[
+										["error", passwordState.invalid || (message && status === "error")],
+										["valid", passwordState.isDirty && !passwordState.invalid],
+									]}
+								/>
+							)}
 						/>
-						{errors?.password && <p className="errorMessage">{t(...errors.password.message)}</p>}
+						{errors.password && <p className="errorMessage">{t(...passwordError)}</p>}
 					</div>
 					<div className="navigation">
 						<button
@@ -147,7 +167,7 @@ function ConfirmForm({ setFormState, user, onSuccess }) {
 						</button>
 					</div>
 				</form>
-				<div className={style.authQueastion}>
+				<div className="authQuestion">
 					<p>{t("forgotPassword")}</p>
 					<button
 						type="button"

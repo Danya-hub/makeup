@@ -9,11 +9,12 @@
 
 .popupContent {
 	position: relative;
+	padding: 20px;
 	z-index: 1;
 }
 
 .popup {
-	position: fixed;
+	position: fixed !important;
 	box-shadow: 0 0 20px rgba(var(--black), 0.6);
 	border-radius: var(--def-radius);
 	transform: translate(-50%, -50%);
@@ -22,7 +23,6 @@
 	width: fit-content;
 	left: 50%;
 	top: 50%;
-	padding: 20px;
 	z-index: 999;
 }
 

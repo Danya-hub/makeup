@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import types from "prop-types";
 
 import CloseSrc from "@/assets/image/close.svg";
@@ -15,13 +14,7 @@ function Popup({
 	styleAttr,
 	children,
 }) {
-	useEffect(() => {
-		document.body.style.overflowY = isStrictActive ? "hidden" : "scroll";
-	}, [isStrictActive]);
-
 	function handleCloseOnClick() {
-		document.body.style.overflowY = "scroll";
-
 		strictSwitch(false);
 		onClose();
 	}

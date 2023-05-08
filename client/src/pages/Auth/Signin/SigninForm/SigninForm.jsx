@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
@@ -8,6 +8,7 @@ import types from "prop-types";
 import { asyncActions, actions } from "@/service/redusers/user.js";
 import Check from "@/utils/check.js";
 import format, { keys } from "@/components/UI/Form/ChannelInput/constants/format.js";
+import GlobalContext from "@/context/global.js";
 
 import ChannelInput from "@/components/UI/Form/ChannelInput/ChannelInput.jsx";
 import PasswordInput from "@/components/UI/Form/PasswordInput/PasswordInput.jsx";
@@ -34,24 +35,27 @@ function SigninForm({
 		setError,
 		getFieldState,
 		control,
+		trigger,
 	} = useForm({
 		mode: "onChange",
 	});
+	const {
+		setAuthState,
+	} = useContext(GlobalContext);
 
 	const [channelInputName, setChannelInputName] = useState("email");
-	const [message, setMessage] = useState(null);
+	const [[message, status], setMessage] = useState([]);
 
 	const emailState = getFieldState("email");
 	const telephoneState = getFieldState("telephone");
-	const countryState = getFieldState("country");
 	const passwordState = getFieldState("password");
 	const countryValue = getValues("country");
 	const purpose = state?.purpose || "adviceForAuth";
-	const inputRules = {
+	const inputRules = useMemo(() => ({
 		email: {
 			required: {
 				value: true,
-				message: "requiredEmailValid",
+				message: "requiredemailValid",
 			},
 			pattern: {
 				value: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
@@ -61,7 +65,7 @@ function SigninForm({
 		telephone: {
 			required: {
 				value: true,
-				message: "requiredTelephoneValid",
+				message: "requiredtelephoneValid",
 			},
 			minLength: {
 				value: format.telephone[countryValue || keys[0]].template.length,
@@ -76,10 +80,10 @@ function SigninForm({
 				message: "wrongTelFormatValid",
 			},
 		},
-	};
-	const channelInputErrors = {
+	}), [countryValue]);
+	const channelInputErrors = useMemo(() => ({
 		telephone: {
-			requiredTelephoneValid: ["requiredTelephoneValid"],
+			requiredtelephoneValid: ["requiredtelephoneValid"],
 			lesserTelephoneValid: ["lesserTelephoneValid", {
 				max: format.telephone[countryValue || keys[0]].template.length,
 			}],
@@ -90,20 +94,24 @@ function SigninForm({
 			notExistUserValid: ["notExistUserValid"],
 		},
 		email: {
-			requiredEmailValid: ["requiredEmailValid"],
+			requiredemailValid: ["requiredemailValid"],
 			wrongEmailFormatValid: ["wrongEmailFormatValid"],
 			notExistUserValid: ["notExistUserValid"],
 		},
-	};
+	}), [countryValue]);
+
+	const passwordError = errors.password?.message;
+	const channelError = channelInputErrors[channelInputName][errors[channelInputName]?.message];
 
 	async function onSubmit(data) {
 		const res = await dispatch(asyncActions.signin(data));
 
 		if (res.payload.error?.length) {
-			setError(channelInputName, {
+			setError(res.payload.error[0].param, {
 				type: "value",
 				message: res.payload.error[0].msg.key,
 			});
+			setMessage([]);
 			return;
 		}
 
@@ -112,9 +120,8 @@ function SigninForm({
 			return;
 		}
 
-		console.log('1');
-
-		// navigate(-1);
+		setAuthState(true);
+		navigate("/appointment");
 	}
 
 	function toSignup() {
@@ -135,15 +142,14 @@ function SigninForm({
 	}
 
 	function handleCancel() {
-		navigate("/appointment");
+		navigate(-1);
 	}
 
 	return (
 		<div id={style.auth}>
 			<div className="form">
 				<div
-					id={style.loader}
-					className={isSubmitting ? style.isLoading : ""}
+					className={`loader ${isSubmitting ? style.isLoading : ""}`}
 				>
 					<SimpleLoader />
 				</div>
@@ -153,7 +159,7 @@ function SigninForm({
 					{message && (
 						<Notification
 							content={message}
-							status="error"
+							status={status}
 						/>
 					)}
 					<div>
@@ -174,21 +180,23 @@ function SigninForm({
 
 								setChannelInputName(channelName);
 							}}
+							onSelect={(callback, value) => {
+								callback(value);
+								trigger();
+							}}
 							control={control}
 							state={[
 								["error", emailState.invalid
 									|| telephoneState.invalid
-									|| countryState.invalid
 									|| message],
 								["valid",
 									(emailState.isDirty && !emailState.invalid)
-									|| (telephoneState.isDirty && !telephoneState.invalid)
-									|| (countryState.isDirty && !countryState.invalid),
+									|| (telephoneState.isDirty && !telephoneState.invalid),
 								],
 							]}
 							inputRules={inputRules[channelInputName]}
 						/>
-						{errors[channelInputName] && <p className="errorMessage">{t(...channelInputErrors[channelInputName][errors[channelInputName]?.message])}</p>}
+						{errors[channelInputName] && <p className="errorMessage">{t(...channelError)}</p>}
 					</div>
 					<div>
 						<label htmlFor="password">
@@ -207,6 +215,7 @@ function SigninForm({
 								field: { onChange },
 							}) => (
 								<PasswordInput
+									maxLength={8}
 									id="password"
 									name="password"
 									className="field input"
@@ -218,7 +227,7 @@ function SigninForm({
 								/>
 							)}
 						/>
-						{errors.password && <p className="errorMessage">{t(...errors.password.message)}</p>}
+						{errors.password && <p className="errorMessage">{t(passwordError)}</p>}
 					</div>
 					<div className={style.forgotPassword}>
 						<p>{t("forgotPassword")}</p>
@@ -247,7 +256,7 @@ function SigninForm({
 						</button>
 					</div>
 				</form>
-				<div className={style.authQueastion}>
+				<div className="authQuestion">
 					<p>{t("notHaveAccount")}</p>
 					<button
 						type="button"

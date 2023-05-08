@@ -19,10 +19,12 @@ function Links() {
 		setVisiblePopup,
 		setPopupName,
 		setOpenCabinet,
+		setAuthState,
 	} = useContext(GlobalContext);
 
 	function handleLogout() {
 		dispatch(asyncActions.logout());
+		setAuthState(false);
 	}
 
 	function handleCloseCabinet() {

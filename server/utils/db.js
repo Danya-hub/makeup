@@ -21,9 +21,10 @@ class MySQL {
       queryFormat: (query, values) => {
         const format = new SqlFormat(query, values);
 
-        format.singleArrayRow();
-        format.multipleArrayRows();
-        format.objectRows();
+        format.keyAndValueArray();
+        format.spreadObject();
+        format.keysAndValuesObject();
+        format.column();
 
         return format.query;
       }

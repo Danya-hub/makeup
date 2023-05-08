@@ -168,7 +168,7 @@ form > *:last-child {
 }
 
 .title {
-	margin-bottom: 8px;
+	padding-bottom: 8px;
 }
 
 input:not(:disabled):where(:hover, :focus) {
@@ -233,4 +233,34 @@ main {
     margin-top: 2vh;
     color: rgb(var(--red));
     font-weight: 900;
+}
+
+.loader {
+	display: none;
+	align-items: center;
+	position: absolute;
+    background: rgb(var(--white));
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+	z-index: 1;
+}
+
+.loader.isLoading {
+	display: flex;
+}
+
+.loader img {
+	height: var(--size);
+}
+
+.authQuestion > * {
+	display: inline-block;
+}
+
+.authQuestion button {
+	background: unset;
+	font-weight: 800;
+	margin-left: 6px;
 }
