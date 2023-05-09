@@ -7,6 +7,8 @@ const htmlComponentValue = {
 	resetPasswordTitle: "Reset password",
 	procDetailsTitle: "Procedure details",
 	notFoundTitle: "Not found",
+	signIn: "Sign in",
+	signUp: "Sign up",
 	resettingPassword: "reset password",
 	manyRequestsValid: "Too many requests. Try in {{delay}} min(-s)",
 	changeUsernameByPassword: "Enter a new username and current password",

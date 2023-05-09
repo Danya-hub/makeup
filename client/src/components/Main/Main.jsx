@@ -14,8 +14,8 @@ function Main() {
 					<Routes>
 						{routes.map((route) => (
 							<Route
-								key={route.path}
-								path={route.path}
+								key={route.url}
+								path={route.url}
 								element={route.elem()}
 							/>
 						))}

@@ -12,6 +12,7 @@ import translate from "@/utils/translate.js";
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
 import PasswordInput from "@/components/UI/Form/PasswordInput/PasswordInput.jsx";
+import Recaptcha from "@/components/UI/Form/Recaptcha/Recaptcha.jsx";
 
 import style from "@/pages/Auth/Auth.module.css";
 
@@ -39,6 +40,7 @@ function ConfirmForm({ setFormState, user, onSuccess }) {
 	const passwordState = getFieldState("password");
 
 	const passwordError = errors.password?.message;
+	const recaptchaError = errors.recaptcha?.message;
 
 	async function onSubmit(data) {
 		const result = await axios.indPost("/auth/comparePasswordByEmail", {
@@ -91,7 +93,9 @@ function ConfirmForm({ setFormState, user, onSuccess }) {
 			.catch((res) => console.error(res));
 	}
 
-	useEffect(() => generateNewPassword, []);
+	useEffect(() => {
+		generateNewPassword();
+	}, []);
 
 	return (
 		<div id={style.confirm}>
@@ -148,6 +152,26 @@ function ConfirmForm({ setFormState, user, onSuccess }) {
 							)}
 						/>
 						{errors.password && <p className="errorMessage">{t(...passwordError)}</p>}
+					</div>
+					<div>
+						<Controller
+							name="recaptcha"
+							control={control}
+							rules={{
+								required: {
+									value: true,
+									message: "requiredRecaptchaValid",
+								},
+							}}
+							render={({
+								field: { onChange },
+							}) => (
+								<Recaptcha
+									onChange={onChange}
+								/>
+							)}
+						/>
+						{errors.recaptcha && <p className="errorMessage">{t(recaptchaError)}</p>}
 					</div>
 					<div className="navigation">
 						<button

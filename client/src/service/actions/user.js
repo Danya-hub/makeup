@@ -11,7 +11,10 @@ import format from "@/components/UI/Form/ChannelInput/constants/format.js";
 export const actions = {
 	setUser(state, action) {
 		state.info = Value.toDate(action.payload);
-		state.info.fullTel = format.telephone[state.info.country].code + state.info.telephone;
+
+		if (action.payload) {
+			state.info.fullTel = format.telephone[state.info.country].code + state.info.telephone;
+		}
 	},
 
 	clearError(state) {

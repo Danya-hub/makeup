@@ -9,6 +9,7 @@ import Popup from "@/components/UI/Popup/Popup.jsx";
 import StateInput from "@/components/UI/Form/StateInput/StateInput.jsx";
 import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
+import Recaptcha from "@/components/UI/Form/Recaptcha/Recaptcha.jsx";
 
 import GlobalContext from "@/context/global.js";
 import translate from "@/utils/translate.js";
@@ -59,6 +60,7 @@ function Password({
 	});
 
 	const passwordError = errors.password?.message;
+	const recaptchaError = errors.recaptcha?.message;
 	const fieldError = editableFieldErrors.current[errors[field]?.message] || errors[field]?.message;
 
 	async function onSubmit(data) {
@@ -218,6 +220,26 @@ function Password({
 						)}
 					/>
 					{errors.password && <p className="errorMessage">{t(...passwordError)}</p>}
+				</div>
+				<div>
+					<Controller
+						name="recaptcha"
+						control={control}
+						rules={{
+							required: {
+								value: true,
+								message: ["requiredRecaptchaValid"],
+							},
+						}}
+						render={({
+							field: { onChange },
+						}) => (
+							<Recaptcha
+								onChange={onChange}
+							/>
+						)}
+					/>
+					{errors.recaptcha && <p className="errorMessage">{t(recaptchaError)}</p>}
 				</div>
 				<div className="navigation">
 					<button

@@ -1,4 +1,5 @@
 const errors = {
+	requiredRecaptchaValid: "Потрібно підтвердження ReCAPTCHA",
 	passwordNotMatchValid: "Пароль не збігається",
 	requiredConfirmationCodeValid: "Потрібен код підтвердження",
 	usernameSameValid: "Будь ласка, напишіть нове ім'я користувача",

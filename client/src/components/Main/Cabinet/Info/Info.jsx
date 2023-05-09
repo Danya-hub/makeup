@@ -28,7 +28,7 @@ function Info() {
 				email: user.info.email,
 			}),
 		);
-		navigate(`/resetPassword/${user.info.email}`);
+		navigate(`/resetPassword?email=${user.info.email}`);
 		setOpenCabinet(false);
 	}
 

@@ -51,7 +51,9 @@ function UserProcedures() {
 		// setInitialCards(paylaod);
 	}
 
-	useLayoutEffect(() => init, []);
+	useLayoutEffect(() => {
+		init();
+	}, []);
 
 	useEffect(() => {
 		if (!isLoading) {

@@ -9,6 +9,7 @@ import ChannelInput from "@/components/UI/Form/ChannelInput/ChannelInput.jsx";
 import PasswordInput from "@/components/UI/Form/PasswordInput/PasswordInput.jsx";
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
+import Recaptcha from "@/components/UI/Form/Recaptcha/Recaptcha.jsx";
 
 import GlobalContext from "@/context/global.js";
 import format, { keys } from "@/components/UI/Form/ChannelInput/constants/format.js";
@@ -72,6 +73,7 @@ function Email({
 	}), [countryValue]);
 
 	const confirmationCodeError = errors.confirmationCode?.message;
+	const recaptchaError = errors.recaptcha?.message;
 	const fieldError = channelInputErrors[errors[field]?.message || errors.country?.message]
 		|| errors[field]?.message;
 
@@ -105,6 +107,7 @@ function Email({
 
 		const {
 			confirmationCode,
+			recaptcha,
 			...newUserInfo
 		} = data;
 
@@ -156,7 +159,9 @@ function Email({
 			.catch((res) => console.error(res));
 	}
 
-	useEffect(() => generateNewConfirmationCode, []);
+	useEffect(() => {
+		generateNewConfirmationCode();
+	}, []);
 
 	return (
 		<Popup
@@ -255,6 +260,26 @@ function Email({
 						)}
 					/>
 					{errors.confirmationCode && <p className="errorMessage">{t(...confirmationCodeError)}</p>}
+				</div>
+				<div>
+					<Controller
+						name="recaptcha"
+						control={control}
+						rules={{
+							required: {
+								value: true,
+								message: "requiredRecaptchaValid",
+							},
+						}}
+						render={({
+							field: { onChange },
+						}) => (
+							<Recaptcha
+								onChange={onChange}
+							/>
+						)}
+					/>
+					{errors.recaptcha && <p className="errorMessage">{t(recaptchaError)}</p>}
 				</div>
 				<div className="navigation">
 					<button

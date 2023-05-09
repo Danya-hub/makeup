@@ -7,6 +7,8 @@ const htmlComponentValue = {
 	resetPasswordTitle: "Сброс пароля",
 	procDetailsTitle: "Детали процедуры",
 	notFoundTitle: "Не найдено",
+	signIn: "Войти",
+	signUp: "Регистрация",
 	resettingPassword: "замену пароля",
 	manyRequestsValid: "Слишком много запросов. Попробуйте через {{delay}} мин",
 	changeUsernameByPassword: "Введите новое имя пользователя и текущий пароль",

@@ -28,6 +28,7 @@
 		"prop-types": "^15.8.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.1.0",
+		"react-google-recaptcha": "^2.1.0",
 		"react-hook-form": "^7.43.9",
 		"react-i18next": "^11.17.3",
 		"react-redux": "^8.0.2",
@@ -72,6 +73,7 @@
 		]
 	},
 	"devDependencies": {
+		"dotenv-webpack": "^8.0.1",
 		"eslint": "^8.2.0",
 		"eslint-config-airbnb": "^19.0.4",
 		"eslint-config-prettier": "^8.6.0",

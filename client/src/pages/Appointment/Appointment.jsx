@@ -32,7 +32,9 @@ function Appointment() {
 		await dispatch(userProcAsyncActions.getDefaultProcValue());
 	}
 
-	useLayoutEffect(() => init, []);
+	useLayoutEffect(() => {
+		init();
+	}, []);
 
 	// eslint-disable-next-line react/jsx-no-constructed-context-values
 	const contextValue = useMemo(() => ({

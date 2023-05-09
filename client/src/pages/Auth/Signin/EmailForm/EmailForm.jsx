@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
@@ -9,6 +9,7 @@ import { asyncActions } from "@/service/redusers/user.js";
 import ChannelInput from "@/components/UI/Form/ChannelInput/ChannelInput.jsx";
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
+import Recaptcha from "@/components/UI/Form/Recaptcha/Recaptcha.jsx";
 
 import style from "@/pages/Auth/Auth.module.css";
 
@@ -33,6 +34,7 @@ function EmailForm({ updatePassword }) {
 	const emailState = getFieldState("email");
 
 	const emailError = errors.email?.message;
+	const recaptchaError = errors.recaptcha?.message;
 
 	async function onSubmit(data) {
 		const res = await dispatch(asyncActions.sendLinkForResetingPassword(data));
@@ -102,6 +104,26 @@ function EmailForm({ updatePassword }) {
 							}}
 						/>
 						{errors.email && <p className="errorMessage">{t(emailError)}</p>}
+					</div>
+					<div>
+						<Controller
+							name="recaptcha"
+							control={control}
+							rules={{
+								required: {
+									value: true,
+									message: "requiredRecaptchaValid",
+								},
+							}}
+							render={({
+								field: { onChange },
+							}) => (
+								<Recaptcha
+									onChange={onChange}
+								/>
+							)}
+						/>
+						{errors.recaptcha && <p className="errorMessage">{t(recaptchaError)}</p>}
 					</div>
 					<div className="navigation">
 						<button

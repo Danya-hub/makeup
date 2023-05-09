@@ -1,4 +1,5 @@
 const errors = {
+	requiredRecaptchaValid: "ReCAPTCHA confirmation is required",
 	passwordNotMatchValid: "Password is not match",
 	requiredConfirmationCodeValid: "Confirmation code is required",
 	usernameSameValid: "Please write new username",

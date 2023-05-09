@@ -1,9 +1,9 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const Dotenv = require("dotenv-webpack");
 
 const commonPaths = require("./common-paths.js");
-const { webpack } = require("webpack");
 
 module.exports = {
 	entry: {
@@ -56,5 +56,8 @@ module.exports = {
 			template: path.resolve(commonPaths.public, "index.html"),
 		}),
 		new CleanWebpackPlugin(),
+		new Dotenv({
+			path: path.resolve(commonPaths.src, ".env")
+		}),
 	],
 };

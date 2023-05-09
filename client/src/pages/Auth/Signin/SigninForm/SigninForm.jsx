@@ -14,6 +14,7 @@ import ChannelInput from "@/components/UI/Form/ChannelInput/ChannelInput.jsx";
 import PasswordInput from "@/components/UI/Form/PasswordInput/PasswordInput.jsx";
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
+import Recaptcha from "@/components/UI/Form/Recaptcha/Recaptcha.jsx";
 
 import style from "@/pages/Auth/Auth.module.css";
 
@@ -102,6 +103,7 @@ function SigninForm({
 
 	const passwordError = errors.password?.message;
 	const channelError = channelInputErrors[channelInputName][errors[channelInputName]?.message];
+	const recaptchaError = errors.recaptcha?.message;
 
 	async function onSubmit(data) {
 		const res = await dispatch(asyncActions.signin(data));
@@ -237,6 +239,26 @@ function SigninForm({
 						>
 							{t("sendToEmail")}
 						</button>
+					</div>
+					<div>
+						<Controller
+							name="recaptcha"
+							control={control}
+							rules={{
+								required: {
+									value: true,
+									message: "requiredRecaptchaValid",
+								},
+							}}
+							render={({
+								field: { onChange },
+							}) => (
+								<Recaptcha
+									onChange={onChange}
+								/>
+							)}
+						/>
+						{errors.recaptcha && <p className="errorMessage">{t(recaptchaError)}</p>}
 					</div>
 					<div className="navigation">
 						<button

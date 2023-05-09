@@ -7,6 +7,8 @@ const htmlComponentValue = {
 	resetPasswordTitle: "Скидання паролю",
 	procDetailsTitle: "Деталі процедури",
 	notFoundTitle: "Не знайдено",
+	signIn: "Увійти",
+	signUp: "Реєстрація",
 	resettingPassword: "зміну паролю",
 	manyRequestsValid: "Забагато запитів. Спробуйте через {{delay}} хв",
 	changeUsernameByPassword: "Введіть нове ім'я користувача та поточний пароль",

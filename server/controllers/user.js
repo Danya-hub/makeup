@@ -267,7 +267,7 @@ class User {
     const values = {
       topic: "resetPassword",
       email,
-      template: `${server.origin}/resetPassword/${email}`,
+      template: `${server.origin}/resetPassword?email=${email}`,
     };
 
     MessageService.send(next, values, () => {

@@ -11,69 +11,78 @@ const ProcDetails = lazy(() => import("@/pages/ProcDetails/ProcDetails.jsx"));
 
 const routes = [
 	{
-		path: "/",
+		url: "/",
 		elem: () => <Base />,
 		state: {
+			pathname: "/",
 			title: "mainTitle",
 			header: true,
 			footer: true,
 		},
 	},
 	{
-		path: "/appointment",
+		url: "/appointment",
 		elem: () => <Appointment />,
 		state: {
+			pathname: "/appointment",
 			title: "appointmentTitle",
 			header: true,
 			footer: true,
 		},
 	},
 	{
-		path: "/signup",
+		url: "/signup",
 		elem: () => <Signup />,
 		state: {
+			pathname: "/signup",
 			title: "signUpTitle",
 			header: true,
 		},
 	},
 	{
-		path: "/signin",
+		url: "/signin",
 		elem: () => <Signin />,
 		state: {
+			pathname: "/signin",
 			title: "signInTitle",
 			header: true,
 		},
 	},
 	{
-		path: "/myprocedures",
+		url: "/myprocedures",
 		elem: () => <UserProcedures />,
 		state: {
+			pathname: "/myprocedures",
 			title: "myProceduresTitle",
 			header: true,
 			footer: true,
 		},
 	},
 	{
-		path: "/resetPassword/:email",
+		url: "/resetPassword", // /:email
 		elem: () => <ResetPassword />,
 		state: {
+			pathname: "/resetPassword",
 			title: "resetPasswordTitle",
 			header: true,
+			footer: true,
 		},
 	},
 	{
-		path: "/details",
+		url: "/details",
 		elem: () => <ProcDetails />,
 		state: {
+			pathname: "/details",
 			title: "procDetailsTitle",
 			header: true,
 			footer: true,
 		},
 	},
 	{
-		path: "*",
+		url: "*",
 		elem: () => <NotFound />,
 		state: {
+			pathname: "*",
 			title: "notFoundTitle",
 		},
 	},

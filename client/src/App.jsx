@@ -29,7 +29,7 @@ function App() {
 	const [popupName, setPopupName] = useState("");
 
 	const onLine = true || window.navigator.onLine;
-	const path = routes.find((route) => route.path === location.pathname || route.path === "*");
+	const path = routes.find((route) => route.state.pathname === location.pathname || route.state.pathname === "*");
 
 	async function init() {
 		const refresh = await dispatch(asyncActions.refresh());
@@ -49,7 +49,9 @@ function App() {
 		document.body.style.overflowY = isVisiblePopup ? "hidden" : "scroll";
 	}, [isVisiblePopup]);
 
-	useLayoutEffect(() => init, []);
+	useLayoutEffect(() => {
+		init();
+	}, []);
 
 	const contextValue = useMemo(() => ({
 		isAuth,

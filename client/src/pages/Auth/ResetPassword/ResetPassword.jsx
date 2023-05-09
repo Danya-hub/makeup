@@ -1,15 +1,16 @@
 import { useState, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
-
-import { asyncActions } from "@/service/redusers/user.js";
-import translate from "@/utils/translate.js";
 
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
 import PasswordInput from "@/components/UI/Form/PasswordInput/PasswordInput.jsx";
 import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
+import Recaptcha from "@/components/UI/Form/Recaptcha/Recaptcha.jsx";
+
+import { asyncActions } from "@/service/redusers/user.js";
+import translate from "@/utils/translate.js";
 
 import style from "@/pages/Auth/Auth.module.css";
 
@@ -17,7 +18,6 @@ function ResetPassword() {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
-	const params = useParams();
 	const {
 		handleSubmit,
 		control,
@@ -31,6 +31,8 @@ function ResetPassword() {
 		mode: "onSubmit",
 	});
 
+	const [searchParams] = useSearchParams();
+	const email = searchParams.get("email");
 	const [[message, status], setMessage] = useState([]);
 
 	const passwordState = getFieldState("password");
@@ -45,13 +47,14 @@ function ResetPassword() {
 		passwordsNotSameValid: ["passwordsNotSameValid"],
 	});
 
+	const recaptchaError = errors.recaptcha?.message;
 	const passwordError = passwordErrors.current[errors.password?.message];
 	const confirmedPasswordError = passwordErrors.current[errors.confirmedPassword?.message];
 
-	async function handleSubmitForm(data) {
+	async function onSubmit(data) {
 		const resultResetPassword = await dispatch(
 			asyncActions.resetPassword({
-				email: params.email,
+				email,
 				newPassword: data.password,
 			}),
 		);
@@ -71,7 +74,7 @@ function ResetPassword() {
 
 	async function sendAgain() {
 		const res = await dispatch(asyncActions.sendLinkForResetingPassword({
-			email: params.email,
+			email,
 		}));
 
 		if (res.payload.error?.length) {
@@ -101,7 +104,7 @@ function ResetPassword() {
 				</div>
 				<h2 className="title">{t("changePassword")}</h2>
 				<p className="message center">{t("enterPasswordAndConfirmIt")}</p>
-				<form onSubmit={handleSubmit(handleSubmitForm)}>
+				<form onSubmit={handleSubmit(onSubmit)}>
 					{message && (
 						<Notification
 							content={message}
@@ -187,6 +190,26 @@ function ResetPassword() {
 							)}
 						/>
 						{errors.confirmedPassword && <p className="errorMessage">{t(...confirmedPasswordError)}</p>}
+					</div>
+					<div>
+						<Controller
+							name="recaptcha"
+							control={control}
+							rules={{
+								required: {
+									value: true,
+									message: "requiredRecaptchaValid",
+								},
+							}}
+							render={({
+								field: { onChange },
+							}) => (
+								<Recaptcha
+									onChange={onChange}
+								/>
+							)}
+						/>
+						{errors.recaptcha && <p className="errorMessage">{t(recaptchaError)}</p>}
 					</div>
 					<div className="navigation">
 						<button
