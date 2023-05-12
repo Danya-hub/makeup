@@ -82,7 +82,7 @@ function SignupForm({ setFormState, user, setUser }) {
 					return false;
 				}
 
-				setMessage(object.reason.response.data);
+				setMessage([object.reason.response.data, "error"]);
 
 				return false;
 			}));
@@ -91,7 +91,12 @@ function SignupForm({ setFormState, user, setUser }) {
 			return;
 		}
 
-		setUser(data);
+		const {
+			recaptcha,
+			...result
+		} = data;
+
+		setUser(result);
 		setFormState(true);
 	}
 

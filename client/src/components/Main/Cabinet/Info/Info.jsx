@@ -1,5 +1,4 @@
 import { useState, useContext, memo } from "react";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
@@ -13,7 +12,6 @@ function Info() {
 	const dispatch = useDispatch();
 	const { user } = useSelector((state) => state);
 	const { t } = useTranslation();
-	const navigate = useNavigate();
 	const {
 		setVisiblePopup,
 		setPopupName,
@@ -23,12 +21,9 @@ function Info() {
 	const [isEdit, setEditState] = useState(false);
 
 	function handleResetPassword() {
-		dispatch(
-			asyncActions.sendLinkForResetingPassword({
-				email: user.info.email,
-			}),
-		);
-		navigate(`/resetPassword?email=${user.info.email}`);
+		dispatch(asyncActions.sendLinkForResetingPassword({
+			email: user.info.email,
+		}));
 		setOpenCabinet(false);
 	}
 

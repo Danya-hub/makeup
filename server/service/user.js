@@ -31,7 +31,7 @@ class UserService {
       const name = this.channels.find((channelName) => req.body[channelName]);
 
       MySQL.createQuery(
-{
+        {
           sql: "SELECT * FROM user WHERE ?? = ?",
           values: [name, req.body[name]],
         },

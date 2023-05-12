@@ -36,6 +36,7 @@
     "fontkit": "^2.0.2",
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^3.2.0",
+    "nodemailer": "^6.9.1",
     "pdf-lib": "^1.17.1"
   },
   "devDependencies": {

@@ -54,8 +54,7 @@ class User {
       accessKey,
     };
 
-    MySQL.createQuery(
-{
+    MySQL.createQuery({
         sql: "INSERT INTO user **",
         values,
       },
@@ -147,8 +146,6 @@ class User {
 
   sendPasswordForCompare(req, res, next) {
     const {
-      email,
-      topic,
       passwordLength,
     } = req.body;
 
@@ -156,17 +153,20 @@ class User {
 
     const hashPassword = Password.hash(password);
     const values = {
-      topic,
-      email,
-      template: hashPassword,
+      value: hashPassword,
+      verificationCode: password,
+      ...req.body
     };
 
-    MessageService.send(next, values, () => {
-      console.log(password);
-      res.status(200).json({
-        passwordToken: hashPassword,
-      });
-    });
+    MessageService.send(values)
+      .then(() => {
+        res.status(200).json({
+          passwordToken: hashPassword,
+        });
+
+        next();
+      })
+      .catch(next);
   }
 
   comparePasswordByUserId(req, res, next) {
@@ -175,8 +175,7 @@ class User {
       password,
     } = req.body;
 
-    MySQL.createQuery(
-      {
+    MySQL.createQuery({
         sql: "SELECT * FROM user WHERE ?? = ?",
         values: ["id", id],
       },
@@ -186,7 +185,6 @@ class User {
         }
 
         const isEquil = bcrypt.compareSync(password, results[0].password);
-
         if (!isEquil) {
           ApiError.throw("badRequest", errors.notMatch("password"));
         }
@@ -212,8 +210,7 @@ class User {
       email,
     };
 
-    MySQL.createQuery(
-{
+    MySQL.createQuery({
         sql: "SELECT * FROM message WHERE topic = :topic AND email = :email",
         values,
       },
@@ -226,7 +223,7 @@ class User {
           ApiError.throw("noAccess", errors.timeOut("comparingPassword"));
         }
 
-        const isEquil = bcrypt.compareSync(password, results[0].template);
+        const isEquil = bcrypt.compareSync(password, results[0].value);
 
         if (!isEquil) {
           ApiError.throw("badRequest", errors.notMatch("password"));
@@ -234,7 +231,7 @@ class User {
 
         res.status(200).json({
           ...req.body,
-          password: results[0].template,
+          password: results[0].value,
         });
 
         next();
@@ -243,38 +240,34 @@ class User {
   }
 
   async isUnique(req, res, next) {
-    await UserService.findByValue(req.params)
-      .then(() => res.status(400).json({
-        ...errors.alreadyExist(`${req.params.key}AlreadyExistsValid`),
-        args: {
-          key: req.params.key,
-          value: req.params.value,
-        },
-      }))
+    return UserService.findByValue(req.params)
+      .then(() => {
+        next(ApiError.get("badRequest", errors.alreadyExist(`${req.params.key}AlreadyExistsValid`)));
+      })
       .catch(() => {
         res.status(200).json({
           key: "isUniqueValid",
         });
+        next();
       });
-
-    next();
   }
 
   sendLinkForResetingPassword(req, res, next) {
-    const {
-      email
-    } = req.body;
     const values = {
       topic: "resetPassword",
-      email,
-      template: `${server.origin}/resetPassword?email=${email}`,
+      value: `${server.origin}/resetPassword?email=${req.body.email}`,
+      ...req.body,
     };
 
-    MessageService.send(next, values, () => {
-      res.status(200).json({
-        success: "There was submited message for reseting password",
-      });
-    });
+    MessageService.send(values)
+      .then(() => {
+        res.status(200).json({
+          success: "There was submited message for reseting password",
+        });
+
+        next();
+      })
+      .catch(next);
   }
 
   resetPassword(req, res, next) {
@@ -290,8 +283,7 @@ class User {
       topic: "resetPassword",
     };
 
-    MySQL.createQuery(
-{
+    MySQL.createQuery({
         sql: `UPDATE user u SET u.password = :password WHERE 
           EXISTS (SELECT * FROM message m WHERE m.email = :email AND m.topic = :topic)`,
         values,

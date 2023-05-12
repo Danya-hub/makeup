@@ -29,6 +29,7 @@ function ConfirmForm({ setFormState, user, onSuccess }) {
 			isSubmitting,
 		},
 		control,
+		clearErrors,
 		setError,
 		getFieldState,
 	} = useForm({
@@ -46,7 +47,7 @@ function ConfirmForm({ setFormState, user, onSuccess }) {
 		const result = await axios.indPost("/auth/comparePasswordByEmail", {
 			email: user.email,
 			password: data.password,
-			topic: "comparePassword",
+			topic: "compareConfirmationCode",
 		})
 			.catch((res) => {
 				if (res.response.status !== 429) {
@@ -85,12 +86,18 @@ function ConfirmForm({ setFormState, user, onSuccess }) {
 
 	async function generateNewPassword() {
 		await axios.indPost("/auth/sendPasswordForCompare", {
-			email: user.email,
-			topic: "comparePassword",
+			...user,
+			topic: "compareConfirmationCode",
 			passwordLength: 8,
 		})
+			.then(() => {
+				setMessage(defaultMessage());
+				clearErrors("password");
+			})
 			// eslint-disable-next-line no-console
-			.catch((res) => console.error(res));
+			.catch((res) => {
+				setMessage([res.response.data.error, "error"]);
+			});
 	}
 
 	useEffect(() => {

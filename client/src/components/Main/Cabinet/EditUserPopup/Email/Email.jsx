@@ -40,6 +40,7 @@ function Email({
 			isSubmitting,
 		},
 		getValues,
+		clearErrors,
 		trigger,
 		setError,
 		control,
@@ -151,12 +152,18 @@ function Email({
 
 	async function generateNewConfirmationCode() {
 		await axios.indPost("/auth/sendPasswordForCompare", {
-			email: userInfo.email,
+			...userInfo,
 			topic: "compareConfirmationCode",
 			passwordLength: 4,
 		})
+			.then(() => {
+				setMessage([]);
+				clearErrors("password");
+			})
 			// eslint-disable-next-line no-console
-			.catch((res) => console.error(res));
+			.catch((res) => {
+				setMessage([res.response.data.error, "error"]);
+			});
 	}
 
 	useEffect(() => {

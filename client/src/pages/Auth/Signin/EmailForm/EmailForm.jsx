@@ -49,7 +49,7 @@ function EmailForm({ updatePassword }) {
 		}
 
 		if (res.payload.error) {
-			setMessage(res.payload.error);
+			setMessage([res.payload.error, "error"]);
 			return;
 		}
 

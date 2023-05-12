@@ -7,9 +7,9 @@ export const errorList = {
     }]];
   },
   alreadyExist(message) {
-    return [409, [{
+    return [409, {
       error: message,
-    }]];
+    }];
   },
   unauthorized() {
     return [401, {

@@ -118,7 +118,7 @@ function SigninForm({
 		}
 
 		if (res.payload.error) {
-			setMessage(res.payload.error);
+			setMessage([res.payload.error, "error"]);
 			return;
 		}
 

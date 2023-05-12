@@ -22,6 +22,15 @@ function PasswordInput({
 
 	return (
 		<div className={`${style.passwordInput} ${className} input`}>
+			<StateInput
+				id={id}
+				className={style.input}
+				type={isVisible ? "text" : "password"}
+				onChange={onChange}
+				maxLength={maxLength}
+				name={name}
+				state={state}
+			/>
 			{hasSwitch && (
 				<button
 					type="button"
@@ -34,15 +43,6 @@ function PasswordInput({
 					/>
 				</button>
 			)}
-			<StateInput
-				id={id}
-				className={style.input}
-				type={isVisible ? "text" : "password"}
-				onChange={onChange}
-				maxLength={maxLength}
-				name={name}
-				state={state}
-			/>
 		</div>
 	);
 }

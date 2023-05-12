@@ -19,6 +19,7 @@
         "import/extensions": "off",
         "quotes": ["error", "double"],
         "func-names": "off",
+        "function-paren-newline": "off",
         "indent": "off",
         "no-tabs": "off",
         "class-methods-use-this": "off",

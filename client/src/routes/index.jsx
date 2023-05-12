@@ -59,7 +59,7 @@ const routes = [
 		},
 	},
 	{
-		url: "/resetPassword", // /:email
+		url: "/resetPassword",
 		elem: () => <ResetPassword />,
 		state: {
 			pathname: "/resetPassword",

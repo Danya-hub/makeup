@@ -86,7 +86,7 @@ function ResetPassword() {
 		}
 
 		if (res.payload.error) {
-			setMessage(res.payload.error);
+			setMessage([res.payload.error, "error"]);
 		}
 	}
 
@@ -175,7 +175,6 @@ function ResetPassword() {
 							}) => (
 								<PasswordInput
 									maxLength={8}
-									hasSwitch={false}
 									name="confirmedPassword"
 									className="input field"
 									onChange={(e) => onChange(e.currentTarget.value)}

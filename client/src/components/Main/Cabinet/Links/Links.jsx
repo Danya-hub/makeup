@@ -42,7 +42,7 @@ function Links() {
 			<ul>
 				<li>
 					<Event callback={handleCloseCabinet}>
-						<Link to="/myprocedures">{t("myProcedures")}</Link>
+						<Link to="/myprocedures">{t("myProceduresTitle")}</Link>
 					</Event>
 				</li>
 				<li>
