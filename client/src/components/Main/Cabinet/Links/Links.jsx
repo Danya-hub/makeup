@@ -17,7 +17,7 @@ function Links() {
 	const navigate = useNavigate();
 	const {
 		setVisiblePopup,
-		setPopupName,
+		setPopup,
 		setOpenCabinet,
 		setAuthState,
 	} = useContext(GlobalContext);
@@ -32,7 +32,7 @@ function Links() {
 	}
 
 	function handleDesign() {
-		setPopupName("design");
+		setPopup(["design", null]);
 		setVisiblePopup(true);
 		navigate("/appointment");
 	}

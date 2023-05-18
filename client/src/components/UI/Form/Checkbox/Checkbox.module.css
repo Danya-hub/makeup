@@ -1,6 +1,7 @@
 .checkbox {
 	--sizeBox: 15px;
 	position: relative;
+	display: flex;
 	cursor: pointer;
 }
 

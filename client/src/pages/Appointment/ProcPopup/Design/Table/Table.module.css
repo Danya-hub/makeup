@@ -27,6 +27,11 @@
 }
 
 .table {
+	max-height: 200px;
+	overflow-y: scroll;
+}
+
+.table table {
 	border-collapse: collapse;
 }
 

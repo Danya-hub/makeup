@@ -1,6 +1,7 @@
 import { useState, useContext, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
+import { useForm, Controller } from "react-hook-form";
 
 import Popup from "@/components/UI/Popup/Popup.jsx";
 import Select from "@/components/UI/Form/Select/Select.jsx";
@@ -28,22 +29,31 @@ function MakeProc() {
 	const {
 		isVisiblePopup,
 		setVisiblePopup,
-		setPopupName,
+		setPopup,
 	} = useContext(GlobalContext);
+	const {
+		control,
+		handleSubmit,
+		formState: {
+			errors,
+		},
+		reset,
+	} = useForm({
+		mode: "onChange",
+	});
+
 	const Message = useMemo(
 		() => MessageHelper.check(userProcedures),
 		[userProcedures.availableTypes, userProcedures.newProcedures],
 	);
 
+	const contractError = errors.contract?.message;
 	const [currentProcedure, indexSelectedProcedure] = userProcedures.currentProcedure;
-	const isValidForAdding = (!currentProcedure.contract && currentProcedure.type.contract);
 
 	const [isOpenCalendar, setOpenCalendar] = useState(false);
 
-	function handleSubmitForm(e) {
-		e.preventDefault();
-
-		if (isValidForAdding) {
+	function onSubmit() {
+		if (Message.component) {
 			return;
 		}
 
@@ -56,6 +66,7 @@ function MakeProc() {
 		const scrollYInPx = (currentProcedure.hour - ProcConfig.START_WORK_TIME)
 			* userProcedures.hourHeightInPx;
 		window.scrollTo(0, scrollYInPx);
+		reset();
 	}
 
 	function handleChangeProcName(ind) {
@@ -80,10 +91,10 @@ function MakeProc() {
 			[userProcedures.defaultProcedure, userProcedures.newProcedures.length],
 			false,
 		]));
-		setPopupName("");
+		setPopup(["", null]);
 	}
 
-	const handleConirmContract = useCallback((isConfirm) => {
+	const onConirmContract = useCallback((isConfirm) => {
 		dispatch(userProceduresActions.setCurrProcValue(
 			["contract", isConfirm ? docs[currentProcedure.type.contract] : null],
 		));
@@ -97,8 +108,8 @@ function MakeProc() {
 			isStrictActive={isVisiblePopup}
 			strictSwitch={setVisiblePopup}
 		>
-			<form onSubmit={handleSubmitForm}>
-				{Message.component}
+			<form onSubmit={handleSubmit(onSubmit)}>
+				{Message.component && Message.component()}
 				<div
 					className={style.input}
 					id="procedureName"
@@ -120,19 +131,41 @@ function MakeProc() {
 				</div>
 				{currentProcedure.type.contract && (
 					<div className={style.signature}>
-						<Checkbox
-							className={style.agreeTerms}
-							text={t("agreeTerms")}
-							onCheck={handleConirmContract}
-							checked={Boolean(currentProcedure.contract)}
+						<Controller
+							name="contract"
+							control={control}
+							render={({
+								field: { onChange },
+							}) => (
+								<>
+									<Checkbox
+										className={style.agreeTerms}
+										text={t("agreeTerms")}
+										onCheck={(confirm) => {
+											onConirmContract(confirm);
+											onChange(confirm);
+										}}
+										checked={Boolean(currentProcedure.contract)}
+									/>
+									<a
+										target="_blank"
+										className={style.pdfLink}
+										href={docs[currentProcedure.type.contract][0]}
+										title={t("more")}
+										rel="noreferrer"
+									>
+										{t("readTerms")}
+									</a>
+								</>
+							)}
+							rules={{
+								required: {
+									value: true,
+									message: "requiredContractValid",
+								},
+							}}
 						/>
-						<a
-							className={style.pdfLink}
-							href={docs[currentProcedure.type.contract][0]}
-							title={t("more")}
-						>
-							{t("readTerms")}
-						</a>
+						{errors.contract && <p className="errorMessage">{t(contractError)}</p>}
 					</div>
 				)}
 				<div className={style.buttons}>
@@ -147,7 +180,7 @@ function MakeProc() {
 						type="button"
 						id={style.design}
 						className="button border"
-						onClick={() => setPopupName("design")}
+						onClick={() => setPopup(["design", null])}
 						disabled={!userProcedures.newProcedures.length}
 					>
 						{Boolean(userProcedures.newProcedures.length)

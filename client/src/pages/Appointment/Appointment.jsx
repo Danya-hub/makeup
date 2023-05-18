@@ -4,9 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import {
 	asyncActions as userProcAsyncActions,
 } from "@/service/redusers/userProcedures.js";
-import {
-	asyncActions as allProcAsyncActions,
-} from "@/service/redusers/allProcedures.js";
 import PropsContext from "./context/context.js";
 
 import ProcPopup from "./ProcPopup/ProcPopup.jsx";
@@ -27,7 +24,7 @@ function Appointment() {
 	const [visibledGroups, setVisibledGroup] = useState({});
 
 	async function init() {
-		await dispatch(allProcAsyncActions.getProcedureByDay(userProcedures.locale));
+		await dispatch(userProcAsyncActions.getProcedureByDay(userProcedures.locale));
 		await dispatch(userProcAsyncActions.getAllTypes());
 		await dispatch(userProcAsyncActions.getDefaultProcValue());
 	}
@@ -47,12 +44,14 @@ function Appointment() {
 	return (
 		<div id={style.allProcedures}>
 			<PropsContext.Provider value={contextValue}>
-				{userProcedures.isLoading ? <PlaceholderLoader width="250px" />
-					: <ControlPanel />}
 				{!userProcedures.currentProcedure ? (
-					<SimpleLoader />
+					<>
+						<PlaceholderLoader width="250px" />
+						<SimpleLoader />
+					</>
 				) : (
 					<>
+						<ControlPanel />
 						<Presentation />
 						<ProcPopup />
 					</>

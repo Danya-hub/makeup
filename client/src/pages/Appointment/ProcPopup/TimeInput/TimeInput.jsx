@@ -5,7 +5,10 @@ import types from "prop-types";
 import GlobalContext from "@/context/global.js";
 import FormatDate from "@/utils/formatDate.js";
 import useOutsideEvent from "@/hooks/useOutsideEvent.js";
-import { actions } from "@/service/redusers/userProcedures.js";
+import {
+	actions as userProcActions,
+	asyncActions as userProcAsyncActions,
+} from "@/service/redusers/userProcedures.js";
 import ProcConfig from "@/config/procedures.js";
 
 import Calendar from "@/components/UI/Calendar/Calendar.jsx";
@@ -49,12 +52,13 @@ function TimeInput({
 			currentLang,
 		),
 	);
+
 	const calendarOptions = useMemo(() => ({
 		year: procedure.year,
 		month: procedure.month,
-		setMonth: (m) => dispatch(actions.switchMonth(m)),
+		setMonth: (m) => dispatch(userProcActions.switchMonth(m)),
 		day: procedure.day,
-		setDay: (d) => dispatch(actions.switchDay(d)),
+		setDay: (d) => dispatch(userProcActions.switchDay(d)),
 		locale,
 		strictTimeObject,
 	}), [procedure]);
@@ -72,10 +76,15 @@ function TimeInput({
 	function setStartAndFinishTimes(_, finalValue) {
 		const time = FormatDate.numericTimeFromChar(finalValue) - ProcConfig.START_WORK_TIME;
 
-		dispatch(actions.changeHour(time));
+		dispatch(userProcActions.changeHour(time));
 
 		const scrollYInPx = time * hourHeightInPx;
 		window.scrollTo(0, scrollYInPx);
+	}
+
+	function handleChangeCalendar(date) {
+		dispatch(userProcAsyncActions.getProcedureByDay(date));
+		setOpenCalendar(false);
 	}
 
 	return (
@@ -101,6 +110,7 @@ function TimeInput({
 					<Calendar
 						id={style.dayAndMonthCalendar}
 						options={calendarOptions}
+						onChange={handleChangeCalendar}
 					/>
 				)}
 			</div>

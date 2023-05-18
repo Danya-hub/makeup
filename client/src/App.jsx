@@ -26,7 +26,7 @@ function App() {
 	const [isAuth, setAuthState] = useState(false);
 	const [isOpenCabinet, setOpenCabinet] = useState(false);
 	const [isVisiblePopup, setVisiblePopup] = useState(false);
-	const [popupName, setPopupName] = useState("");
+	const [popup, setPopup] = useState([]);
 
 	const onLine = true || window.navigator.onLine;
 	const path = routes.find((route) => route.state.pathname === location.pathname || route.state.pathname === "*");
@@ -61,15 +61,15 @@ function App() {
 		changeLanguage,
 		isVisiblePopup,
 		setVisiblePopup,
-		popupName,
-		setPopupName,
+		popup,
+		setPopup,
 		isOpenCabinet,
 		setOpenCabinet,
 	}), [
 		isAuth,
 		currentLang,
 		isVisiblePopup,
-		popupName,
+		popup,
 		isOpenCabinet,
 	]);
 

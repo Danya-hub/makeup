@@ -32,7 +32,10 @@ function Total() {
 				{t("sum")}
 				:
 				{' '}
-				<b>{sum}</b>
+				<b>
+					{sum}
+					{newProcedures[0][0].type.currency}
+				</b>
 			</span>
 			<span>
 				{t("duration")}

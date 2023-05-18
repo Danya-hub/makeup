@@ -19,12 +19,19 @@
 }
 
 .buttons button {
-	margin: 0 1vw;
 	align-self: baseline;
+	padding-left: 1vw;
+	padding-right: 1vw;
+}
+
+.buttons button:hover {
+    --back: var(--gray);
+	--o: 0.8;
 }
 
 .buttons button i {
 	font-size: var(--step-4);
+	pointer-events: none;
 }
 
 .wrapper {

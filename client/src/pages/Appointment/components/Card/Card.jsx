@@ -4,6 +4,7 @@ import types from "prop-types";
 
 import FormatDate from "@/utils/formatDate.js";
 import GlobalContext from "@/context/global.js";
+import { states } from "@/config/procedures.js";
 
 import DeleteButton from "@/pages/Appointment/components/DeleteButton/DeleteButton.jsx";
 import EditButton from "@/pages/Appointment/components/EditButton/EditButton.jsx";
@@ -21,13 +22,15 @@ function Card({
 	isExists,
 	isSelected,
 	onMouseDown,
+	onDelete,
+	onEdit,
 }) {
 	const { t } = useTranslation();
 	const {
 		currentLang,
 	} = useContext(GlobalContext);
 
-	const backColor = isExists ? procedure.state.color : "lightGray";
+	const backColor = isExists ? states[procedure.state].color : "lightGray";
 	const border = isSelected ? "inset 0 0 0 2px rgb(var(--black))" : "";
 	const formatedTimeCurrProc = FormatDate.stringHourAndMinWithRange(
 		date,
@@ -62,8 +65,14 @@ function Card({
 				<div
 					className={style.buttons}
 				>
-					<DeleteButton index={index} />
-					<EditButton index={index} />
+					<DeleteButton
+						index={index}
+						onClick={onDelete}
+					/>
+					<EditButton
+						index={index}
+						onClick={onEdit}
+					/>
 				</div>
 			)}
 		</div>
@@ -78,6 +87,8 @@ Card.defaultProps = {
 	isSelected: false,
 	isOwn: false,
 	onMouseDown: null,
+	onDelete: null,
+	onEdit: null,
 	index: 0,
 };
 
@@ -92,6 +103,8 @@ Card.propTypes = {
 	isOwn: types.bool,
 	onMouseDown: types.func,
 	index: types.number,
+	onDelete: types.func,
+	onEdit: types.func,
 };
 
 export default Card;

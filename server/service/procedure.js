@@ -1,5 +1,9 @@
 import TypeService from "./type.js";
 import UserService from "./user.js";
+import Pdf from "../utils/pdf.js";
+import {
+    server
+} from "../config/server.js";
 
 class Procedure {
     async populate(procedure) {
@@ -13,6 +17,17 @@ class Procedure {
             type,
             user,
         };
+    }
+
+    async urlToPdfBuffer(contract) {
+        const [path, fields] = contract;
+        const newPdfFile = new Pdf();
+
+        await newPdfFile.readFile(server.origin + path);
+        await newPdfFile.setFieldsText(fields);
+        newPdfFile.form.flatten();
+
+        return newPdfFile.getBlob();
     }
 }
 

@@ -5,4 +5,19 @@ const procedures = {
 	MAX_COUNT_PROCEDURE: 3,
 };
 
+export const states = {
+	pending: {
+		name: "pending",
+		color: "blue",
+	},
+	inProcess: {
+		name: "inProcess",
+		color: "red",
+	},
+	finished: {
+		name: "finished",
+		color: "green",
+	},
+};
+
 export default procedures;

@@ -6,7 +6,7 @@ import popups from "./constants/popups.jsx";
 
 function EditUserPopup() {
 	const {
-		popupName,
+		popup: [popupName],
 	} = useContext(GlobalContext);
 	const { info: userInfo } = useSelector((state) => state.user);
 

@@ -1,6 +1,5 @@
 import ProcConfig from "@/config/procedures.js";
 import FormatDate from "@/utils/formatDate.js";
-import AllProceduresHelper from "@/service/helpers/allProcedures.js";
 
 const userProceduresHelper = {
 	setDayRange(state) {
@@ -202,7 +201,7 @@ const userProceduresHelper = {
 			* state.hourHeightInPx * state.dragStep;
 	},
 
-	availableTimeByScrolling({
+	availableTimeByDay({
 		step = 1,
 		minHour = 0,
 		maxHour = 24,
@@ -240,43 +239,51 @@ const userProceduresHelper = {
 		return availableTime;
 	},
 
-	availableTypesByProcedures(state, {
+	availableTypesBySpace(state, { //!
 		minHour = 0,
 		maxHour = 24,
 	}) {
-		// if (minHour >= maxHour) {
-		// 	return [];
-		// }
+		if (minHour >= maxHour) {
+			return [];
+		}
 
-		// if (!state.newProcedures.length) {
-		// 	return state.types;
-		// }
-
-		// // const availableTypes = state.types.filter(
-		// // 	(type) => AllProceduresHelper.hasFreeSpaceByCards(type, state),
-		// // );
+		if (!state.newProcedures.length) {
+			return state.types;
+		}
 
 		// const availableTypes = state.types.filter((type) => {
-		// 	const length = Math.floor((maxHour - minHour) / type.duration);
-		// 	let i = 0;
-		// 	let hasSpace = false;
+		// 	let hasSpace = true;
 
-		// 	while (i < length) {
-		// 		if (hasSpace) {
-		// 			break;
+		// 	for (let i = 0; i < state.newProcedures.length && hasSpace; i += 1) {
+		// 		const a = state.newProcedures[i][0];
+
+		// 		for (let j = 0; j < state.newProcedures.length && hasSpace; j += 1) {
+		// 			const b = state.newProcedures[j][0];
+
+		// 			if (i !== j) {
+		// 				// hasSpace = (a.hour - type.duration <= ProcConfig.START_WORK_TIME ?
+		// 				// 		ProcConfig.START_WORK_TIME : a.hour - type.duration) >
+		// 				// 	b.hour + b.type.duration &&
+		// 				// 	(a.hour + a.type.duration + type.duration >= ProcConfig.FINISH_WORK_TIME ?
+		// 				// 		ProcConfig.FINISH_WORK_TIME : a.hour + a.type.duration + type.duration) <=
+		// 				// 	b.hour;
+
+		// 				const startSegment = (a.hour - type.duration);
+		// 				const finishSegment = a.hour + a.type.duration + type.duration;
+
+		// 				hasSpace = !(startSegment < b.hour && finishSegment > b.hour + type.duration)
+		// 					|| !(b.hour < startSegment && b.hour + type.duration > finishSegment);
+		// 			}
 		// 		}
 
-		// 		hasSpace = !AllProceduresHelper.isTouchCardBySelectedTime(
-		// 			i * type.duration + ProcConfig.START_WORK_TIME,
-		// 			type.duration,
-		// 			state,
-		// 		);
-
-		// 		i += 1;
+		// 		if (!hasSpace) {
+		// 			console.log(hasSpace);
+		// 		}
 		// 	}
 
 		// 	return hasSpace;
 		// });
+		// console.log(availableTypes);
 
 		return state.types;
 	},
@@ -285,7 +292,7 @@ const userProceduresHelper = {
 		const userProcState = state;
 		const [currentProcedure] = userProcState.currentProcedure;
 
-		userProcState.availableTypes = this.availableTypesByProcedures(userProcState, {
+		userProcState.availableTypes = this.availableTypesBySpace(userProcState, {
 			minHour: userProcState.minDayTime,
 			maxHour: ProcConfig.FINISH_WORK_TIME,
 		});
@@ -297,17 +304,14 @@ const userProceduresHelper = {
 			currentProcedure.type = userProcState.availableTypes[0];
 		}
 
-		const availableDateTime = this.availableTimeByScrolling({
+		const availableDateTime = this.availableTimeByDay({
 			step: userProcState.dragStep,
 			minHour: userProcState.minDayTime,
 			maxHour: ProcConfig.FINISH_WORK_TIME - currentProcedure.type.duration,
-			skipCondition: (time) => AllProceduresHelper.isTouchCardBySelectedTime(
+			skipCondition: (time) => this.isTouchCardBySelectedTime(
 				time,
 				currentProcedure.type.duration,
-				{
-					newProcedures: userProcState.newProcedures,
-					currentProcedure: userProcState.currentProcedure,
-				},
+				userProcState,
 			),
 		});
 
@@ -327,6 +331,32 @@ const userProceduresHelper = {
 
 		currentProcedure.hour = availableHour;
 		userProcState.defaultProcedure.hour = currentProcedure.hour;
+	},
+
+	isTouchCardBySelectedTime(selectedTime, duration, state) {
+		const [currentProcedure] = state.currentProcedure;
+		let isTouch = false;
+
+		const newProcedures = state.newProcedures
+			.filter(([card, isSelected]) => !isSelected && card.day === currentProcedure.day)
+			.map(([card]) => card);
+		const proceduresByDay = state.proceduresByDay
+			.filter((card) => currentProcedure.id !== card.id && card.day === currentProcedure.day);
+
+		[...newProcedures, ...proceduresByDay]
+			.forEach((card) => {
+				if (isTouch) {
+					return;
+				}
+
+				const startSegment = (card.hour - duration);
+				const finishSegment = card.hour + card.type.duration + duration;
+
+				isTouch = (startSegment < selectedTime && finishSegment > selectedTime + duration)
+					|| (selectedTime < startSegment && selectedTime + duration > finishSegment);
+			});
+
+		return isTouch;
 	},
 };
 

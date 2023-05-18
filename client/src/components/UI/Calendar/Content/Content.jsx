@@ -4,10 +4,11 @@ import FormatDate, { MAX_COUNT_WEEKDAYS, MAX_COUNT_WEEKS_IN_CALENDAR } from "@/u
 
 import style from "./Content.module.css";
 
-function Content({ options }) {
+function Content({ options, onChange }) {
 	const {
 		month,
 		day,
+		year,
 		setDay,
 		locale,
 		strictTimeObject,
@@ -19,7 +20,10 @@ function Content({ options }) {
 			return;
 		}
 
-		setDay(d);
+		onChange(
+			new Date(year, month, d),
+			() => setDay(d),
+		);
 	}
 
 	return (
@@ -56,6 +60,7 @@ function Content({ options }) {
 
 Content.propTypes = {
 	options: types.instanceOf(Object).isRequired,
+	onChange: types.func.isRequired,
 };
 
 export default Content;

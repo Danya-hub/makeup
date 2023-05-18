@@ -14,7 +14,7 @@ function Info() {
 	const { t } = useTranslation();
 	const {
 		setVisiblePopup,
-		setPopupName,
+		setPopup,
 		setOpenCabinet,
 	} = useContext(GlobalContext);
 
@@ -32,7 +32,7 @@ function Info() {
 	}
 
 	function handleEditProfile(popupName) {
-		setPopupName(popupName);
+		setPopup([popupName, null]);
 		setVisiblePopup(true);
 		setOpenCabinet(false);
 		setEditState(false);

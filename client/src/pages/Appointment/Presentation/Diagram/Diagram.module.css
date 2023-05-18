@@ -18,7 +18,6 @@
 	position: absolute;
 	background: rgb(var(--darkWhite));
 	transform: translateY(-50%);
-	padding: 0 2px;
 	white-space: nowrap;
 }
 

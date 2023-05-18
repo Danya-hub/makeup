@@ -10,7 +10,7 @@ class Format {
         this.isArray = Array.isArray(this.values);
 
         this.operatorGroup = {};
-        this.operatorGroup.is = this.queryHasOperators(["insert", "select"]);
+        this.operatorGroup.isd = this.queryHasOperators(["insert", "select", "delete"]);
         this.operatorGroup.u = this.queryHasOperators(["update"]);
     }
 
@@ -25,7 +25,7 @@ class Format {
             return;
         }
 
-        if (this.operatorGroup.is || this.operatorGroup.u) {
+        if (this.operatorGroup.isd || this.operatorGroup.u) {
             this.query = this.query.replace(/:(\w+)/g, (txt, key) => {
                 if (this.values[key]) {
                     return mysql.escape(this.values[key]);
@@ -41,7 +41,7 @@ class Format {
             return;
         }
 
-        if (this.operatorGroup.is) {
+        if (this.operatorGroup.isd) {
             const [key, value] = this.values;
             this.query = this.query.replace(/\?{2}|(?<==\s)\?/g, (searchValue) => {
                 if (searchValue.length >= 2) {
@@ -58,7 +58,7 @@ class Format {
             return;
         }
 
-        if (this.operatorGroup.is) {
+        if (this.operatorGroup.isd) {
             const keys = Object.keys(this.values);
             this.query = this.query.replace(/\*{2}/g, () => {
                 const strKeysLine = keys.join();
@@ -69,6 +69,10 @@ class Format {
             });
         }
     }
+
+    // columnsAndValues() {
+
+    // }
 
     column() {
         if (!this.values || !this.isObject) {

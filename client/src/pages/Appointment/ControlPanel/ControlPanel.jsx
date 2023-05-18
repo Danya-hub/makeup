@@ -7,7 +7,10 @@ import Calendar from "@/components/UI/Calendar/Calendar.jsx";
 import Filters from "./Filters/Filters.jsx";
 import DesignButton from "@/pages/Appointment/components/DesignButton/DesignButton.jsx";
 
-import { actions } from "@/service/redusers/userProcedures.js";
+import {
+	actions as userProcActions,
+	asyncActions as userProcAsyncActions,
+} from "@/service/redusers/userProcedures.js";
 import GlobalContext from "@/context/global.js";
 import ProcConfig from "@/pages/Appointment/context/context.js";
 
@@ -26,7 +29,7 @@ function ControlPanel() {
 		newProcedures,
 	} = useSelector((state) => state.userProcedures);
 	const {
-		setPopupName,
+		setPopup,
 		setVisiblePopup,
 		isAuth,
 	} = useContext(GlobalContext);
@@ -34,9 +37,9 @@ function ControlPanel() {
 	const calendarOptions = useMemo(() => ({
 		year: currentProcedure.year,
 		month: currentProcedure.month,
-		setMonth: (m) => dispatch(actions.switchMonth(m)),
+		setMonth: (m) => dispatch(userProcActions.switchMonth(m)),
 		day: currentProcedure.day,
-		setDay: (d) => dispatch(actions.switchDay(d)),
+		setDay: (d) => dispatch(userProcActions.switchDay(d)),
 		locale,
 		strictTimeObject,
 	}), [currentProcedure]);
@@ -51,9 +54,9 @@ function ControlPanel() {
 			return;
 		}
 
-		dispatch(actions.changeHour(availableHoursTime[0] - ProcConfig.START_WORK_TIME));
+		dispatch(userProcActions.changeHour(availableHoursTime[0] - ProcConfig.START_WORK_TIME));
 		setVisiblePopup(true);
-		setPopupName("make");
+		setPopup(["make", null]);
 
 		const scrollYInPx = (availableHoursTime[0] - ProcConfig.START_WORK_TIME)
 			* hourHeightInPx;
@@ -62,7 +65,12 @@ function ControlPanel() {
 
 	function handleDesign() {
 		setVisiblePopup(true);
-		setPopupName("design");
+		setPopup(["design", null]);
+	}
+
+	function handleChangeCalendar(date, onSuccess) {
+		dispatch(userProcAsyncActions.getProcedureByDay(date))
+			.then(onSuccess);
 	}
 
 	return (
@@ -94,6 +102,7 @@ function ControlPanel() {
 			</div>
 			<Calendar
 				options={calendarOptions}
+				onChange={handleChangeCalendar}
 			/>
 			<Filters />
 		</aside>

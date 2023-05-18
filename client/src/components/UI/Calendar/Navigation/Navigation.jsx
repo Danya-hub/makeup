@@ -10,12 +10,14 @@ import style from "./Navigation.module.css";
 
 function Navigation({
 	options,
+	onChange,
 }) {
 	const {
 		currentLang,
 	} = useContext(GlobalContext);
 
 	const {
+		day,
 		month,
 		setMonth,
 		year,
@@ -26,11 +28,19 @@ function Navigation({
 	}).format(locale);
 
 	function setPrevMonth() {
-		setMonth(month - 1);
+		const m = month - 1;
+
+		onChange(new Date(year, m, day));
+		setMonth(m);
 	}
 
 	function setNextMonth() {
-		setMonth(month + 1);
+		const m = month + 1;
+
+		onChange(
+			new Date(year, m, day),
+			() => setMonth(m),
+		);
 	}
 
 	return (
@@ -66,6 +76,7 @@ function Navigation({
 
 Navigation.propTypes = {
 	options: types.instanceOf(Object).isRequired,
+	onChange: types.func.isRequired,
 };
 
 export default Navigation;

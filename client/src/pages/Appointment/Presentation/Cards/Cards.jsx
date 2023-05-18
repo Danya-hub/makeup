@@ -6,9 +6,8 @@ import types from "prop-types";
 import FormatDate from "@/utils/formatDate.js";
 import PropsContext from "@/pages/Appointment/context/context.js";
 import GlobalContext from "@/context/global.js";
-import { actions } from "@/service/redusers/userProcedures.js";
+import { actions, asyncActions } from "@/service/redusers/userProcedures.js";
 import ProcConfig from "@/config/procedures.js";
-import AllProceduresHelper from "@/service/helpers/allProcedures.js";
 import UserProceduresHelper from "@/service/helpers/userProcedures.js";
 
 import Card from "@/pages/Appointment/components/Card/Card.jsx";
@@ -19,7 +18,7 @@ function Cards({
 	widthCharTime,
 }) {
 	const dispatch = useDispatch();
-	const { allProcedures, userProcedures, user } = useSelector((state) => state);
+	const { userProcedures, user } = useSelector((state) => state);
 	const {
 		isMouseDown,
 		setMouseDownState,
@@ -27,19 +26,20 @@ function Cards({
 	} = useContext(PropsContext);
 	const {
 		currentLang,
-		popupName,
-		setPopupName,
+		popup: [popupName],
+		setPopup,
 		isVisiblePopup,
 		setVisiblePopup,
 		isAuth,
 	} = useContext(GlobalContext);
 	const navigate = useNavigate();
+
 	const parentRef = useRef(null);
 
 	const [currentProcedure] = userProcedures.currentProcedure;
 	const classNameByPresentState = (isVisiblePopup && "noActiveGrabbing") || (isMouseDown && "activeGrabbing") || "";
-	const currentStartProcPositionY = currentProcedure.hour
-		* userProcedures.hourHeightInPx - ProcConfig.START_WORK_TIME * userProcedures.hourHeightInPx;
+	const currentStartProcPositionY = (currentProcedure.hour - ProcConfig.START_WORK_TIME)
+		* userProcedures.hourHeightInPx;
 	const currentStartProcPositionYToDate = FormatDate.minutesToDate(
 		currentProcedure.hour * userProcedures.hourHeightInPx,
 		userProcedures.locale,
@@ -62,29 +62,14 @@ function Cards({
 				/ userProcedures.hourHeightInPx) * userProcedures.hourHeightInPx)
 			/ userProcedures.hourHeightInPx;
 
-		const isTouch = AllProceduresHelper.isTouchCardBySelectedTime(
-			time + ProcConfig.START_WORK_TIME,
-			currentProcedure.type.duration,
-			userProcedures,
-		);
-
-		if (isTouch) {
-			return;
-		}
-
-		let rez = time;
-
-		if (userProcedures.minDayTime > time + ProcConfig.START_WORK_TIME) {
-			rez = userProcedures.minDayTime - ProcConfig.START_WORK_TIME;
-		} else if (userProcedures.maxDayTime - currentProcedure.type.duration < time
-			+ ProcConfig.START_WORK_TIME) {
-			rez = userProcedures.maxDayTime - ProcConfig.START_WORK_TIME - currentProcedure.type.duration;
-		}
-
-		dispatch(actions.changeHour(rez));
+		dispatch(actions.changeHour(time));
 	}
 
 	function onMouseUp(e) {
+		if (e.target.tagName === "BUTTON") {
+			return;
+		}
+
 		setVisiblePopup(true);
 
 		if (!userProcedures.availableDateTime.length) {
@@ -105,7 +90,9 @@ function Cards({
 	}
 
 	function onMouseMove(e) {
-		if (!isMouseDown || !userProcedures.availableDateTime.length) {
+		if (!isMouseDown
+			|| !userProcedures.availableDateTime.length
+			|| e.target.tagName === "BUTTON") {
 			return;
 		}
 
@@ -124,10 +111,14 @@ function Cards({
 			return;
 		}
 
+		if (e.target.tagName === "BUTTON") {
+			return;
+		}
+
 		setVisiblePopup(false);
 
 		if (!popupName) {
-			setPopupName("make");
+			setPopup(["make", null]);
 		}
 
 		if (!userProcedures.availableDateTime.length) {
@@ -138,6 +129,32 @@ function Cards({
 
 		setNumericTimeByGrabbing(e, y);
 		setMouseDownState(!userProcedures.isPrevTime);
+	}
+
+	async function onCloseEditPopup(res, index) {
+		await dispatch(asyncActions.updateProc(res));
+		dispatch(actions.deleteProc(index));
+		dispatch(actions.updateCurrProc([
+			[userProcedures.defaultProcedure, userProcedures.newProcedures.length],
+			false,
+		]));
+	}
+
+	function handleDeleteProc(id) {
+		dispatch(asyncActions.deleteProc(id));
+	}
+
+	function handleEditProc(index) {
+		dispatch(actions.updateCurrProc([
+			[userProcedures.proceduresByDay[index], userProcedures.newProcedures.length],
+			false,
+		]));
+		dispatch(actions.updateAvailableTimeByDate(false));
+		setPopup(["edit", {
+			delete: (res) => handleDeleteProc(res.id),
+			edit: (res) => onCloseEditPopup(res, index),
+		}]);
+		setVisiblePopup(true);
 	}
 
 	return (
@@ -206,18 +223,35 @@ function Cards({
 								height: `${card.type.duration * userProcedures.hourHeightInPx}px`,
 								top: `${top}px`,
 							}}
+							onDelete={(index) => {
+								dispatch(actions.deleteProc(index));
+
+								if (userProcedures.newProcedures.length - 1 === 0) {
+									setPopup(["make", null]);
+								}
+							}}
+							onEdit={(index) => {
+								dispatch(actions.switchCurrentProc(index));
+								setVisiblePopup(true);
+								setPopup(["edit", null]);
+							}}
 						/>
 					);
 				})
 			}
-			{allProcedures.cards.map((card, i) => {
+			{userProcedures.proceduresByDay.map((card, i) => {
 				const top = (card.hour - ProcConfig.START_WORK_TIME) * userProcedures.hourHeightInPx;
+				const isOwn = card.user.id === user.info?.id;
 
-				return (
+				const isAvailableRender = currentProcedure.id !== card.id;
+
+				return isAvailableRender && (
 					<Card
-						index={i}
-						isOwn={card.user === user.info?.id}
-						className={style[visibledGroups.otherAppointments]}
+						index={card.id}
+						isOwn={isOwn}
+						className={style[isOwn
+							? visibledGroups.myAppointments
+							: visibledGroups.otherAppointments]}
 						date={card.startProcTime}
 						key={`${card.type.name}/${card.startProcTime}/allProcedures`}
 						procedure={card}
@@ -225,6 +259,8 @@ function Cards({
 							height: `${card.type.duration * userProcedures.hourHeightInPx}px`,
 							top: `${top}px`,
 						}}
+						onDelete={handleDeleteProc}
+						onEdit={() => handleEditProc(i)}
 					/>
 				);
 			})}

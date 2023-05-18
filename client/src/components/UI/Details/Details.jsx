@@ -5,7 +5,7 @@ import ArrowSrc from "@/assets/image/arrow.svg";
 
 import style from "./Details.module.css";
 
-function Details({ id, title, isOpen, ...props }) {
+function Details({ id, title, isOpen, render }) {
 	const [_isOpen, setOpen] = useState(isOpen || false);
 	const sublist = useRef(null);
 
@@ -31,7 +31,7 @@ function Details({ id, title, isOpen, ...props }) {
 					alt="arrow"
 				/>
 			</button>
-			<div className={style.content}>{props.children}</div>
+			<div className={style.content}>{render()}</div>
 		</div>
 	);
 }
@@ -43,7 +43,7 @@ Details.defaultProps = {
 Details.propTypes = {
 	id: types.string,
 	title: types.string.isRequired,
-	children: types.oneOfType([types.object, types.array]).isRequired,
+	render: types.func.isRequired,
 	isOpen: types.bool.isRequired,
 };
 

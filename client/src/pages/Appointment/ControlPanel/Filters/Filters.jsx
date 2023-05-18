@@ -1,4 +1,4 @@
-import { useContext, memo, useRef } from "react";
+import { useContext, memo, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 
 import CheckboxList from "@/components/UI/Form/CheckboxList/CheckboxList.jsx";
@@ -17,24 +17,26 @@ function Filters() {
 
 	const values = useRef(FilterHelpers.checkboxListOptions);
 
-	function handleClick(selectedOptions) {
+	const handleClick = useCallback((selectedOptions) => {
 		setVisibledGroup(selectedOptions);
-	}
+	}, []);
+	const listRender = useCallback(() => (
+		<CheckboxList
+			values={values.current}
+			defaultOptions={{
+				myAppointments: "myAppointments",
+			}}
+			onChange={handleClick}
+		/>
+	), []);
 
 	return (
 		<Details
 			id={style.list}
 			title={t("calendars")}
+			render={listRender}
 			isOpen
-		>
-			<CheckboxList
-				values={values.current}
-				defaultOptions={{
-					myAppointments: "myAppointments",
-				}}
-				onChange={handleClick}
-			/>
-		</Details>
+		/>
 	);
 }
 

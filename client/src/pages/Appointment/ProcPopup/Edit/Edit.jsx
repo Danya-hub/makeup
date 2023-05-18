@@ -10,7 +10,7 @@ import DeleteButton from "@/pages/Appointment/components/DeleteButton/DeleteButt
 import ProcConfig from "@/config/procedures.js";
 import GlobalContext from "@/context/global.js";
 import FormatDate from "@/utils/formatDate.js";
-import { actions } from "@/service/redusers/userProcedures.js";
+import { actions as userProceduresActions } from "@/service/redusers/userProcedures.js";
 
 import style from "./Edit.module.css";
 
@@ -18,7 +18,8 @@ function EditProc() {
 	const {
 		isVisiblePopup,
 		setVisiblePopup,
-		setPopupName,
+		popup: [, popupActions],
+		setPopup,
 	} = useContext(GlobalContext);
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
@@ -33,22 +34,42 @@ function EditProc() {
 	function handleSubmitForm(e) {
 		e.preventDefault();
 
-		dispatch(actions.updateProcStateByIndex([indexSelectedProcedure, false, currentProcedure]));
+		dispatch(userProceduresActions.updateProcStateByIndex([
+			indexSelectedProcedure,
+			false,
+			currentProcedure,
+		]));
 
 		const scrollYInPx = (currentProcedure.hour - ProcConfig.START_WORK_TIME)
 			* userProcedures.hourHeightInPx;
 		window.scrollTo(0, scrollYInPx);
 
-		setPopupName("make");
+		setPopup(["make", null]);
+
+		if (popupActions) {
+			popupActions.edit(currentProcedure);
+		}
 	}
 
 	function handleCancel() {
-		dispatch(actions.updateCurrProc([
+		dispatch(userProceduresActions.updateCurrProc([
 			[userProcedures.defaultProcedure, userProcedures.newProcedures.length],
 			false,
 		]));
-		dispatch(actions.updateProcStateByIndex([indexSelectedProcedure, false]));
-		setPopupName("make");
+		dispatch(userProceduresActions.updateProcStateByIndex([indexSelectedProcedure, false]));
+		setPopup(["make", null]);
+	}
+
+	function handleDelete(index) {
+		dispatch(userProceduresActions.deleteProc(index));
+
+		if (userProcedures.newProcedures.length - 1 === 0) {
+			setPopup(["make", null]);
+		}
+
+		if (popupActions) {
+			popupActions.delete(currentProcedure);
+		}
 	}
 
 	function handleChangeProcName(ind) {
@@ -65,7 +86,7 @@ function EditProc() {
 			type: userProcedures.availableTypes[ind],
 		};
 
-		dispatch(actions.updateCurrProc([
+		dispatch(userProceduresActions.updateCurrProc([
 			[
 				newProc,
 				indexSelectedProcedure,
@@ -74,12 +95,12 @@ function EditProc() {
 	}
 
 	function onClose() {
-		dispatch(actions.updateProcStateByIndex([indexSelectedProcedure, false]));
-		dispatch(actions.updateCurrProc([
+		dispatch(userProceduresActions.updateCurrProc([
 			[userProcedures.defaultProcedure, userProcedures.newProcedures.length],
 			false,
 		]));
-		setPopupName("make");
+		dispatch(userProceduresActions.updateProcStateByIndex([indexSelectedProcedure, false]));
+		setPopup(["make", null]);
 	}
 
 	return (
@@ -124,6 +145,7 @@ function EditProc() {
 							id={style.delete}
 							className="border"
 							index={indexSelectedProcedure}
+							onClick={handleDelete}
 						/>
 						<button
 							type="submit"

@@ -1,12 +1,8 @@
 import MySQL from "../utils/db.js";
 import Value from "../utils/value.js";
-import Pdf from "../utils/pdf.js";
 import ApiError from "../utils/apiError.js";
 import TypeService from "../service/type.js";
 import ProcedureService from "../service/procedure.js";
-import {
-  server
-} from "../config/server.js";
 
 class Procedure {
   async defaultValue(req, res, next) {
@@ -24,7 +20,7 @@ class Procedure {
   }
 
   createProcedure(req, res, next) {
-    req.body.forEach(async (proc) => {
+    req.body.forEach(async (proc) => { //!
       const values = Value.toSQLDate({
         ...proc,
         type: proc.type.id,
@@ -32,18 +28,10 @@ class Procedure {
       });
 
       if (proc.type.contract) {
-        const [path, fields] = proc.contract;
-        const newPdfFile = new Pdf();
-
-        await newPdfFile.readFile(server.origin + path);
-        await newPdfFile.setFieldsText(fields);
-        newPdfFile.form.flatten();
-
-        values.contract = newPdfFile.getBlob();
+        values.contract = await ProcedureService.urlToPdfBuffer(proc.contract);
       }
 
-      MySQL.createQuery(
-        {
+      MySQL.createQuery({
           sql: "INSERT INTO service **",
           values,
         },
@@ -56,10 +44,32 @@ class Procedure {
     });
 
     res.status(200).json({
-      msg: "New procedures created",
+      msg: "New procedures were created",
     });
-
     next();
+  }
+
+  removeById(req, res, next) {
+    const {
+      id,
+    } = req.params;
+
+    MySQL.createQuery({
+          sql: "DELETE FROM service WHERE ?? = ?",
+          values: ["id", id],
+        },
+        (error) => {
+          if (error) {
+            throw error;
+          }
+
+          res.status(200).json({
+            success: "The procedure is deleted",
+          });
+
+          next();
+        })
+      .catch(next);
   }
 
   removeByUserId(req, res, next) {
@@ -67,8 +77,7 @@ class Procedure {
       id
     } = req.params;
 
-    MySQL.createQuery(
-      {
+    MySQL.createQuery({
         sql: "DELETE FROM service WHERE ?? = ?",
         values: ["user", id],
       },
@@ -86,7 +95,7 @@ class Procedure {
     ).catch(next);
   }
 
-  async byDay(req, res, next) {
+  async getByDay(req, res, next) {
     const {
       date,
     } = req.params;
@@ -98,8 +107,7 @@ class Procedure {
       day: newDate.getDate(),
     };
 
-    const proceduresByDay = await MySQL.createQuery(
-      {
+    const proceduresByDay = await MySQL.createQuery({
         sql: "SELECT * FROM service WHERE year = :year and month = :month and day = :day",
         values,
       },
@@ -117,15 +125,37 @@ class Procedure {
     next();
   }
 
-  byUser(req, res, next) {
+  getByUser(req, res, next) {
     const {
       user: id
     } = req.params;
 
-    MySQL.createQuery(
-      {
+    MySQL.createQuery({
         sql: "SELECT * FROM service WHERE ?? = ?",
         values: ["user", id],
+      },
+      (error, results) => {
+        if (error) {
+          throw error;
+        }
+
+        res.status(200).json(results);
+
+        next();
+      }
+    ).catch(next);
+  }
+
+  update(req, res, next) {
+    const values = Value.toSQLDate({
+      ...req.body,
+      type: req.body.type.id,
+      user: req.body.user.id,
+    });
+
+    MySQL.createQuery({
+        sql: `UPDATE service SET ** WHERE id = ${values.id}`,
+        values,
       },
       (error, results) => {
         if (error) {

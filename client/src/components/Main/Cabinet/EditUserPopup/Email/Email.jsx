@@ -30,7 +30,7 @@ function Email({
 	const {
 		isVisiblePopup,
 		setVisiblePopup,
-		setPopupName,
+		setPopup,
 		setOpenCabinet,
 	} = useContext(GlobalContext);
 	const {
@@ -127,7 +127,7 @@ function Email({
 		}
 
 		setVisiblePopup(false);
-		setPopupName("");
+		setPopup([]);
 
 		if (onSuccess) {
 			onSuccess({
@@ -141,13 +141,13 @@ function Email({
 	}
 
 	function onClose() {
-		setPopupName("");
+		setPopup([]);
 	}
 
 	function handleCancel() {
 		setOpenCabinet(true);
 		setVisiblePopup(false);
-		setPopupName("");
+		setPopup([]);
 	}
 
 	async function generateNewConfirmationCode() {

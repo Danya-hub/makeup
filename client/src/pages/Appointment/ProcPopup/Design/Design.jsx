@@ -1,10 +1,13 @@
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
+import { useForm, Controller } from "react-hook-form";
 
 import Popup from "@/components/UI/Popup/Popup.jsx";
 import Table from "./Table/Table.jsx";
 import Total from "./Total/Total.jsx";
+import Recaptcha from "@/components/UI/Form/Recaptcha/Recaptcha.jsx";
+import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
 
 import { asyncActions } from "@/service/redusers/userProcedures.js";
 import ProcConfig from "@/config/procedures.js";
@@ -16,29 +19,46 @@ function DesignProc() {
 	const {
 		isVisiblePopup,
 		setVisiblePopup,
-		setPopupName,
+		setPopup,
 	} = useContext(GlobalContext);
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
 	const {
 		newProcedures,
 	} = useSelector((state) => state.userProcedures);
+	const {
+		control,
+		handleSubmit,
+		formState: {
+			errors,
+			isSubmitting,
+		},
+	} = useForm({
+		mode: "onSubmit",
+	});
 
-	function handleSubmitForm(e) {
-		e.preventDefault();
+	const recaptchaError = errors.recaptcha?.message;
 
+	function onSubmit() {
 		dispatch(asyncActions.createNewProcedures(newProcedures));
+		setVisiblePopup(false);
+		setPopup(["", null]);
 	}
 
 	return (
 		<Popup
 			id={style.designProc}
-			onClose={() => setPopupName("make")}
+			onClose={() => setPopup(["make", null])}
 			isSimple={false}
 			isStrictActive={isVisiblePopup}
 			strictSwitch={setVisiblePopup}
 		>
-			<form onSubmit={handleSubmitForm}>
+			<form onSubmit={handleSubmit(onSubmit)}>
+				<div
+					className={`loader ${isSubmitting ? "isLoading" : ""}`}
+				>
+					<SimpleLoader />
+				</div>
 				<div className={style.top}>
 					<p>
 						<b>
@@ -50,12 +70,30 @@ function DesignProc() {
 				</div>
 				<Table />
 				<Total />
+				<Controller
+					name="recaptcha"
+					control={control}
+					rules={{
+						required: {
+							value: true,
+							message: "requiredRecaptchaValid",
+						},
+					}}
+					render={({
+						field: { onChange },
+					}) => (
+						<Recaptcha
+							onChange={onChange}
+						/>
+					)}
+				/>
+				{errors.recaptcha && <p className="errorMessage">{t(recaptchaError)}</p>}
 				<div className={style.buttons}>
 					<button
 						type="button"
 						id={style.add}
 						className="button border"
-						onClick={() => setPopupName("make")}
+						onClick={() => setPopup(["make", null])}
 					>
 						{t("addMore")}
 					</button>

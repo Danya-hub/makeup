@@ -7,8 +7,6 @@ function Diagram({
 	formatedTimes,
 	widthCharTime,
 }) {
-	// const { userProcedures } = useSelector((state) => state);
-
 	return (
 		<div className={style.hours}>
 			{formatedTimes.map((hour, i, arr) => (

@@ -11,7 +11,7 @@ function Aside({
 	isOpen,
 	isPopup,
 	setOpen,
-	...props
+	render,
 }) {
 	useEffect(() => {
 		if (!isPopup) {
@@ -49,7 +49,7 @@ function Aside({
 						/>
 					</button>
 				)}
-				{props.children}
+				{render()}
 			</div>
 			{isPopup && (
 				// background for quick exit
@@ -78,7 +78,7 @@ Aside.propTypes = {
 	isOpen: types.bool,
 	setOpen: types.func,
 	isPopup: types.bool,
-	children: types.node.isRequired,
+	render: types.func.isRequired,
 };
 
 export default Aside;

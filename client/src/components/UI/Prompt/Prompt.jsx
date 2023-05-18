@@ -1,8 +1,15 @@
+import { memo } from "react";
 import types from "prop-types";
 
 import style from "./Prompt.module.css";
 
-function Prompt({ id, iconName, children, text, direction }) {
+function Prompt({
+	id,
+	iconName,
+	text,
+	direction,
+	render,
+}) {
 	return (
 		<div
 			id={id}
@@ -21,7 +28,7 @@ function Prompt({ id, iconName, children, text, direction }) {
 					[direction]: 0,
 				}}
 			>
-				{children}
+				{render()}
 			</div>
 		</div>
 	);
@@ -35,12 +42,9 @@ Prompt.defaultProps = {
 Prompt.propTypes = {
 	id: types.string,
 	iconName: types.string.isRequired,
-	children: types.oneOfType([
-		types.array,
-		types.object,
-	]).isRequired,
+	render: types.func.isRequired,
 	text: types.string.isRequired,
 	direction: types.string,
 };
 
-export default Prompt;
+export default memo(Prompt);

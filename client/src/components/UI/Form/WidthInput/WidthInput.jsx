@@ -1,6 +1,6 @@
 import types from "prop-types";
 
-import Global from "@/utils/global.js";
+import GlobalHelper from "@/utils/global.js";
 
 import LazyInput from "@/components/UI/Form/LazyInput/LazyInput.jsx";
 
@@ -14,7 +14,7 @@ function WidthInput({
 	onBlur,
 	className,
 }) {
-	const widthInput = Global.getWidthByChar(value.toString() || "");
+	const widthInput = GlobalHelper.getWidthByChar(value.toString() || "");
 
 	return (
 		<LazyInput

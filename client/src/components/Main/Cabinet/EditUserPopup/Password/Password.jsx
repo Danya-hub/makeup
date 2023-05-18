@@ -29,7 +29,7 @@ function Password({
 	const {
 		isVisiblePopup,
 		setVisiblePopup,
-		setPopupName,
+		setPopup,
 		setOpenCabinet,
 	} = useContext(GlobalContext);
 	const {
@@ -107,7 +107,7 @@ function Password({
 		}
 
 		setVisiblePopup(false);
-		setPopupName("");
+		setPopup([]);
 
 		if (onSuccess) {
 			onSuccess({
@@ -122,13 +122,13 @@ function Password({
 
 	function onClose() {
 		setVisiblePopup(false);
-		setPopupName("");
+		setPopup([]);
 	}
 
 	function handleCancel() {
 		setOpenCabinet(true);
 		setVisiblePopup(false);
-		setPopupName("");
+		setPopup([]);
 	}
 
 	return (

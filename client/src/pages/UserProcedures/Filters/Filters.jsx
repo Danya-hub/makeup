@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import types from "prop-types";
 
@@ -41,21 +41,8 @@ function Filters({ tempCards, setTempCard, initialCards, setPlaceholderLoaderSta
 		setTempCard(foundProcs);
 	}
 
-	useEffect(() => {
-		if (!initialCards.length) {
-			return;
-		}
-
-		const filters = FilterActions.apply(initialCards, selectedOptions);
-
-		setRangePrice([filters.minSelectedPrice, filters.maxSelectedPrice]);
-		setTempCard(filters.procedures);
-	}, [initialCards, selectedOptions.range, selectedOptions.sortBy, selectedOptions.types]);
-
-	return (
-		<Aside
-			id={style.filters}
-		>
+	const asideRender = useCallback(() => (
+		<>
 			<button
 				type="button"
 				id={style.reset}
@@ -121,7 +108,25 @@ function Filters({ tempCards, setTempCard, initialCards, setPlaceholderLoaderSta
 					}}
 				/>
 			</Details>
-		</Aside>
+		</>
+	), []);
+
+	useEffect(() => {
+		if (!initialCards.length) {
+			return;
+		}
+
+		const filters = FilterActions.apply(initialCards, selectedOptions);
+
+		setRangePrice([filters.minSelectedPrice, filters.maxSelectedPrice]);
+		setTempCard(filters.procedures);
+	}, [initialCards, selectedOptions.range, selectedOptions.sortBy, selectedOptions.types]);
+
+	return (
+		<Aside
+			id={style.filters}
+			render={asideRender}
+		/>
 	);
 }
 

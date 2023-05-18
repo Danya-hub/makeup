@@ -1,15 +1,17 @@
-import { useRef, useLayoutEffect, useEffect, useContext, useMemo } from "react";
+import { useRef, useLayoutEffect, useEffect, useContext, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
 import FormatDate from "@/utils/formatDate.js";
-import ProcConfig from "@/config/procedures.js";
 import GlobalContext from "@/context/global.js";
 import Value from "@/utils/value.js";
 import userProcedureHelpers from "@/service/helpers/userProcedures.js";
-import { asyncActions as allProceduresAsyncActions } from "@/service/redusers/allProcedures.js";
-import { actions as userProceduresActions } from "@/service/redusers/userProcedures.js";
+import {
+	actions as userProceduresActions,
+	asyncActions as userProceduresAsyncActions,
+} from "@/service/redusers/userProcedures.js";
 import { COLUMN_NAMES } from "@/pages/Appointment/constants/constants.js";
+import ProcConfig, { states } from "@/config/procedures.js";
 
 import Cards from "./Cards/Cards.jsx";
 import Diagram from "./Diagram/Diagram.jsx";
@@ -17,25 +19,26 @@ import Prompt from "@/components/UI/Prompt/Prompt.jsx";
 
 import style from "./Presentation.module.css";
 
+const stateArray = Object.values(states);
+
 function Presentation() {
 	const dispatch = useDispatch();
 	const { t } = useTranslation();
-	const { allProcedures, userProcedures } = useSelector((state) => state);
+	const { userProcedures } = useSelector((state) => state);
 	const {
 		currentLang,
 	} = useContext(GlobalContext);
 
 	const parentRef = useRef(null);
 
-	const [currentProcedure] = userProcedures.currentProcedure;
 	const weekdayAndMonth = useMemo(() => FormatDate.weekdayAndMonth(
-		currentProcedure.startProcTime,
+		userProcedures.locale,
 		currentLang,
 		{
 			weekday: "short",
 		},
-	), [currentLang]);
-	const times = useRef(userProcedureHelpers.availableTimeByScrolling({
+	), [currentLang, userProcedures.locale]);
+	const times = useRef(userProcedureHelpers.availableTimeByDay({
 		minHour: ProcConfig.START_WORK_TIME,
 		maxHour: ProcConfig.FINISH_WORK_TIME - 1,
 	}).dates);
@@ -51,13 +54,31 @@ function Presentation() {
 		),
 		[formatedTimes],
 	);
+	const promptRender = useCallback(() => (
+		stateArray.map((obj) => (
+			<div
+				className={style.row}
+				key={obj.name}
+			>
+				<i
+					className="fa fa-bookmark color"
+					aria-hidden="true"
+					style={{
+						WebkitTextStroke: obj.color === "white" ? "1px rgb(var(--black))" : "",
+						color: `rgb(var(--${obj.color}))`,
+					}}
+				/>
+				<p className="text">{t(obj.name)}</p>
+			</div>
+		))
+	), []);
 
 	useLayoutEffect(() => {
 		const updateTime = setInterval(() => {
 			dispatch(userProceduresActions.switchDay(userProcedures.locale.getDate()));
 
 			if (!userProcedures.currentTimeHeightInPx && userProcedures.isCurrentTime) {
-				dispatch(allProceduresAsyncActions.getProcedureByDay(userProcedures.locale));
+				dispatch(userProceduresAsyncActions.getProcedureByDay(userProcedures.locale));
 			}
 		}, (60 - new Date().getSeconds()) * 1000);
 
@@ -79,24 +100,8 @@ function Presentation() {
 					iconName="question-circle-o"
 					text={t("status")}
 					direction="right"
-				>
-					{allProcedures.states.map((obj) => (
-						<div
-							className={style.row}
-							key={obj.name}
-						>
-							<i
-								className="fa fa-bookmark color"
-								aria-hidden="true"
-								style={{
-									WebkitTextStroke: obj.color === "white" ? "1px rgb(var(--black))" : "",
-									color: `rgb(var(--${obj.color}))`,
-								}}
-							/>
-							<p className="text">{t(obj.name)}</p>
-						</div>
-					))}
-				</Prompt>
+					render={promptRender}
+				/>
 			</div>
 			<div
 				ref={parentRef}

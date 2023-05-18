@@ -102,7 +102,7 @@ const htmlComponentValue = {
 	edit: "Edit",
 	total: "Total",
 	sum: "Sum",
-	duration: "Duration (hh:mm)",
+	duration: "Duration (h:m)",
 	inSocMedias: "I am in social medias",
 	editProfile: "Edit profile",
 	availableCountAppointments: "Available number of appointments",

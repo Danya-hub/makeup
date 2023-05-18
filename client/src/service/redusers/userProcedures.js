@@ -33,7 +33,11 @@ function initialState(date) {
 	this.isLoading = true;
 	this.maxTimeRangeProc = 0;
 	this.lastItemAfterAction = 0;
+	this.proceduresByDay = [];
+	this.proceduresByUser = [];
+	this.states = [];
 	this.error = "";
+	this.country = "ua";
 
 	helper.setViewDate(newDate, this);
 	helper.setDayRange(this);

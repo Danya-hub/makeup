@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useCallback } from "react";
 import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
@@ -18,6 +18,16 @@ function Cabinet() {
 		isOpenCabinet,
 		setOpenCabinet,
 	} = useContext(GlobalContext);
+	const asideRender = useCallback(() => (
+		<>
+			<Info />
+			<Links />
+			<div className={style.bottom}>
+				<h3>{t("inSocMedias")}</h3>
+				<SocialMedia />
+			</div>
+		</>
+	), []);
 
 	return (
 		user.info && (
@@ -27,14 +37,8 @@ function Cabinet() {
 				isPopup
 				isOpen={isOpenCabinet}
 				setOpen={setOpenCabinet}
-			>
-				<Info />
-				<Links />
-				<div className={style.bottom}>
-					<h3>{t("inSocMedias")}</h3>
-					<SocialMedia />
-				</div>
-			</Aside>
+				render={asideRender}
+			/>
 		)
 	);
 }

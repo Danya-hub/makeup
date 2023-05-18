@@ -5,7 +5,7 @@ export const server = {
 
 export const request = {
   windowMs: 60 * 1000,
-  max: 20,
+  max: 100,
   message: {
     error: {
       key: "manyRequestsValid",

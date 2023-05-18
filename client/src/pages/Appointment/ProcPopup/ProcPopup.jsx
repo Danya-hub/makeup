@@ -5,7 +5,7 @@ import popups from "./constants.jsx";
 
 function ProcPopup() {
 	const {
-		popupName,
+		popup: [popupName],
 	} = useContext(GlobalContext);
 
 	function switchPopup(name) {

@@ -1,3 +1,4 @@
+import { memo } from "react";
 import types from "prop-types";
 
 import style from "./DesignButton.module.css";
@@ -41,4 +42,4 @@ DesignButton.propTypes = {
 	text: types.string.isRequired,
 };
 
-export default DesignButton;
+export default memo(DesignButton);

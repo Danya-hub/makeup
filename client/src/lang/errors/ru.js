@@ -39,6 +39,9 @@ const errors = {
 	availableTimeValid: "Свободного времени нет. Запишитесь на другое время",
 	fullAuthorizationCodeValid: "Введите полный код",
 	authorizationCodeRequiredValid: "Требуется код авторизации",
+	requiredContractValid: "Требуеться соглашение",
+	notFullAccessProceduresWarning: "Вы не можете записаться сегодня на некоторые процедуры. Если хотите больше выбор, выберете другой день",
+	noAccessProceduresError: "На сегодня нет свободного времени, выберите другой свободный день",
 };
 
 export default errors;

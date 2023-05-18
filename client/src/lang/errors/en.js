@@ -39,6 +39,9 @@ const errors = {
 	availableTimeValid: "There is no free time. Sign up for another time",
 	fullAuthorizationCodeValid: "Enter full code",
 	authorizationCodeRequiredValid: "Authorization code is required",
+	requiredContractValid: "Agreement is required",
+	notFullAccessProceduresWarning: "You can't book some treatments today. If you want more choice, choose another day",
+	noAccessProceduresError: "There is no free time for today, choose another free day",
 };
 
 export default errors;

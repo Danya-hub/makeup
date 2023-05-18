@@ -102,7 +102,7 @@ const htmlComponentValue = {
 	edit: "Редактировать",
 	total: "Итог",
 	sum: "Сумма",
-	duration: "Длительность (чч:мм)",
+	duration: "Длительность (ч:м)",
 	inSocMedias: "Я в социальных сетях",
 	editProfile: "Редактировать профиль",
 	availableCountAppointments: "Доступное кол. записей",
