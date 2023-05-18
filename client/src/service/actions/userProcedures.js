@@ -163,17 +163,18 @@ export const asyncActions = {
 						createdAt: new Date(),
 					};
 
-					const result = {};
-					const [file, values] = object.contract;
+					if (object.contract) {
+						const result = {};
+						const [file, values] = object.contract;
 
-					Object.keys(values).forEach((key) => {
-						result[key] = values[key](object);
-					});
+						Object.keys(values).forEach((key) => {
+							result[key] = values[key](object);
+						});
 
-					return {
-						...object,
-						contract: [file, result],
-					};
+						object.contract = [file, result];
+					}
+
+					return object;
 				});
 
 				await axios.post("/procedure/createProcedure", newProcedures);
@@ -242,9 +243,13 @@ export const asyncActions = {
 
 	updateProc: createAsyncThunk("procedure/updateProcedure", async (value, {
 		rejectWithValue,
+		getState,
 	}) => {
 		try {
-			const result = await axios.post("/procedure/updateProcedure", value);
+			const state = getState();
+
+			const formatedValue = UserProceduresHelper.getRangeProcTime(state.userProcedures, value);
+			const result = await axios.post("/procedure/updateProcedure", formatedValue);
 
 			return result;
 		} catch (error) {

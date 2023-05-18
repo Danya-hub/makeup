@@ -32,7 +32,10 @@ class UserService {
 
       MySQL.createQuery({
           sql: "SELECT * FROM user WHERE ?? = ?",
-          values: [name, req.body[name]],
+          values: {
+            columns: [name, req.body[name]],
+            formatName: "keyAndValueArray",
+          },
         },
         (error, results) => {
           if (error) {
@@ -60,7 +63,10 @@ class UserService {
   findById(id) {
     return MySQL.createQuery({
         sql: "SELECT * FROM user WHERE ?? = ?",
-        values: ["id", id]
+        values: {
+          columns: ["id", id],
+          formatName: "keyAndValueArray",
+        },
       },
       (error) => {
         if (error) {
@@ -74,7 +80,10 @@ class UserService {
     return new Promise((resolve, reject) => {
       MySQL.createQuery({
           sql: "SELECT * FROM user WHERE ?? = ?",
-          values: [params.key, params.value],
+          values: {
+            columns: [params.key, params.value],
+            formatName: "keyAndValueArray",
+          },
         },
         (error, results) => {
           if (error) {
@@ -101,7 +110,10 @@ class UserService {
     return new Promise((resolve, reject) => {
       MySQL.createQuery({
           sql: `UPDATE user SET ** WHERE id = ${id}`,
-          values: data,
+          values: {
+            columns: data,
+            formatName: "column",
+          },
         },
         (error, results) => {
           if (error) {

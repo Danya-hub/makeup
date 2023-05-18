@@ -19,12 +19,9 @@ class MySQL {
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
       queryFormat: (query, values) => {
-        const format = new SqlFormat(query, values);
+        const format = new SqlFormat(query, values.columns);
 
-        format.keyAndValueArray();
-        format.spreadObject();
-        format.keysAndValuesObject();
-        format.column();
+        format[values.formatName]();
 
         return format.query;
       }

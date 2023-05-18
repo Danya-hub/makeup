@@ -24,12 +24,15 @@ class Message {
     return transport;
   }
 
-  send(values) {
+  send(columns) {
     return new Promise((resolve, reject) => {
       MySQL.createQuery({
           sql: `INSERT INTO message (email, topic, value, expire)
               SELECT :email, :topic, :value, NOW() + INTERVAL 3 MINUTE`,
-          values,
+          values: {
+            columns,
+            formatName: "keysAndValuesObject",
+          },
         },
         async (error) => {
           if (error) {
@@ -37,10 +40,10 @@ class Message {
             return;
           }
 
-          let options = values;
+          let options = columns;
 
           await UserService.findByChannel({
-              body: values,
+              body: columns,
             })
             .then((res) => {
               options = {
@@ -52,11 +55,11 @@ class Message {
             .catch(console.error);
 
           const transporter = await this.createTransport();
-          const messageInfo = EmailTemplates[values.topic][options.country](options);
+          const messageInfo = EmailTemplates[columns.topic][options.country](options);
 
           await transporter.sendMail({
             from: process.env.BOT_EMAIL,
-            to: values.email,
+            to: columns.email,
             ...messageInfo,
           });
 

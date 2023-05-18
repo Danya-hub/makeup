@@ -49,14 +49,17 @@ class User {
     const formated = Value.toSQLDate(req.body);
 
     const accessKey = crypto.randomBytes(COUNT_BYTES).toString("hex");
-    const values = {
+    const columns = {
       ...formated,
       accessKey,
     };
 
     MySQL.createQuery({
         sql: "INSERT INTO user **",
-        values,
+        values: {
+          columns,
+          formatName: "spreadObject",
+        },
       },
       (error, results) => {
         if (error) {
@@ -177,7 +180,10 @@ class User {
 
     MySQL.createQuery({
         sql: "SELECT * FROM user WHERE ?? = ?",
-        values: ["id", id],
+        values: {
+          columns: ["id", id],
+          formatName: "keyAndValueArray",
+        },
       },
       (error, results) => {
         if (error) {
@@ -205,14 +211,17 @@ class User {
       password,
       topic,
     } = req.body;
-    const values = {
+    const columns = {
       topic,
       email,
     };
 
     MySQL.createQuery({
         sql: "SELECT * FROM message WHERE topic = :topic AND email = :email",
-        values,
+        values: {
+          columns,
+          formatName: "keysAndValuesObject",
+        },
       },
       (error, results) => {
         if (error) {
@@ -277,7 +286,7 @@ class User {
     } = req.body;
 
     const hashPassword = Password.hash(newPassword);
-    const values = {
+    const columns = {
       password: hashPassword,
       email,
       topic: "resetPassword",
@@ -286,7 +295,10 @@ class User {
     MySQL.createQuery({
         sql: `UPDATE user u SET u.password = :password WHERE 
           EXISTS (SELECT * FROM message m WHERE m.email = :email AND m.topic = :topic)`,
-        values,
+        values: {
+          columns,
+          formatName: "keysAndValuesObject",
+        },
       },
       (error, results) => {
         if (error) {

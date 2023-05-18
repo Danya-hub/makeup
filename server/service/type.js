@@ -9,7 +9,10 @@ class Type {
     MySQL.createQuery(
       {
         sql: "SELECT * FROM type WHERE ?? = ?",
-        values: ["country", country],
+        values: {
+          columns: ["country", country],
+          formatName: "keyAndValueArray",
+        },
       },
       (error, results) => {
         if (error) {
@@ -24,12 +27,13 @@ class Type {
   }
 
   create(req, res, next) {
-    const doc = req.body;
-
     MySQL.createQuery(
       {
         sql: "INSERT INTO type **",
-        values: doc,
+        values: {
+          columns: req.body,
+          formatName: "spreadObject",
+        },
       },
       (error, results) => {
         if (error) {
@@ -51,7 +55,10 @@ class Type {
     return MySQL.createQuery(
       {
         sql: "SELECT * FROM type WHERE ?? = ? LIMIT 1",
-        values: ["country", country],
+        values: {
+          columns: ["country", country],
+          formatName: "keyAndValueArray",
+        },
       },
       (error) => {
         if (error) {
@@ -67,7 +74,10 @@ class Type {
     return MySQL.createQuery(
       {
         sql: "SELECT * FROM type WHERE ?? = ?",
-        values: ["id", id],
+        values: {
+          columns: ["id", id],
+          formatName: "keyAndValueArray",
+        },
       },
       (error) => {
         if (error) {

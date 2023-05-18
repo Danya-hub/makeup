@@ -1,91 +1,60 @@
 import mysql from "mysql2";
 
-import Check from "./check.js";
-
 class Format {
     constructor(query, values) {
         this.query = query;
         this.values = values;
-        this.isObject = Check.isObject(this.values);
-        this.isArray = Array.isArray(this.values);
-
-        this.operatorGroup = {};
-        this.operatorGroup.isd = this.queryHasOperators(["insert", "select", "delete"]);
-        this.operatorGroup.u = this.queryHasOperators(["update"]);
-    }
-
-    queryHasOperators(operators) {
-        return operators.some(
-            (operator) => new RegExp(`^${operator}`, "i").test(this.query)
-        );
     }
 
     keysAndValuesObject() {
-        if (!this.values || !this.isObject) {
-            return;
-        }
+        this.query = this.query.replace(/:(\w+)/g, (txt, key) => {
+            if (this.values[key]) {
+                return mysql.escape(this.values[key]);
+            }
 
-        if (this.operatorGroup.isd || this.operatorGroup.u) {
-            this.query = this.query.replace(/:(\w+)/g, (txt, key) => {
-                if (this.values[key]) {
-                    return mysql.escape(this.values[key]);
-                }
-
-                return txt;
-            });
-        }
+            return txt;
+        });
     }
 
     keyAndValueArray() {
-        if (!this.values || !this.isArray) {
-            return;
-        }
+        const [key, value] = this.values;
+        this.query = this.query.replace(/\?{2}|(?<==\s)\?/g, (searchValue) => {
+            if (searchValue.length >= 2) {
+                return key;
+            }
 
-        if (this.operatorGroup.isd) {
-            const [key, value] = this.values;
-            this.query = this.query.replace(/\?{2}|(?<==\s)\?/g, (searchValue) => {
-                if (searchValue.length >= 2) {
-                    return key;
-                }
-
-                return `'${value}'`;
-            });
-        }
+            return mysql.escape(value);
+        });
     }
 
     spreadObject() {
-        if (!this.values || !this.isObject) {
-            return;
-        }
+        const keys = Object.keys(this.values);
+        this.query = this.query.replace(/\*{2}/g, () => {
+            const strKeysLine = keys.join();
+            const strValuesLine = keys.map((key) => mysql.escape(this.values[key])).join();
+            const result = `(${strKeysLine}) VALUES (${strValuesLine})`;
 
-        if (this.operatorGroup.isd) {
-            const keys = Object.keys(this.values);
-            this.query = this.query.replace(/\*{2}/g, () => {
-                const strKeysLine = keys.join();
-                const strValuesLine = keys.map((key) => `'${this.values[key]}'`).join();
-                const result = `(${strKeysLine}) VALUES (${strValuesLine})`;
-
-                return result;
-            });
-        }
+            return result;
+        });
     }
 
-    // columnsAndValues() {
+    columnsAndValues() {
+        const {
+            keys,
+            values,
+        } = this.values;
 
-    // }
+        this.query = this.query
+            .replace(/:keys/g, () => `(${keys.join()})`)
+            .replace(/:values/g, () => values.map((arr) => `(${arr.map(mysql.escape).join()})`).join());
+    }
 
     column() {
-        if (!this.values || !this.isObject) {
-            return;
-        }
-
-        if (this.operatorGroup.u) {
-            const keys = Object.keys(this.values);
-            this.query = this.query.replace(
-                /\*{2}/g,
-                () => keys.map((key) => `${key} = '${this.values[key]}'`).join()
-            );
-        }
+        const keys = Object.keys(this.values);
+        this.query = this.query.replace(
+            /\*{2}/g,
+            () => keys.map((key) => `${key} = ${mysql.escape(this.values[key])}`).join()
+        );
     }
 }
 

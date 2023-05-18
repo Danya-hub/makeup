@@ -24,7 +24,10 @@ class UserValidation {
     return MySQL.createQuery(
       {
         sql: "SELECT * FROM user WHERE ?? = ?",
-        values: [path, value]
+        values: {
+          columns: [path, value],
+          formatName: "keyAndValueArray",
+        },
       },
       (error, results) => {
         if (error) {
