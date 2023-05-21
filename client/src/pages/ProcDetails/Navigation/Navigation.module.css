@@ -1,0 +1,21 @@
+.navigation {
+    box-shadow: 0 0 2px rgb(var(--black));
+    margin: 1vh 0;
+}
+
+.list {
+    display: grid;
+    grid-auto-flow: column;
+    width: fit-content;
+    margin: 0 3vw;
+}
+
+.list a {
+    padding: 2vh 2vw;
+    font-weight: 600;
+}
+
+.active,
+.list a:hover {
+    background: rgba(var(--brown), 0.2);
+}

@@ -1,23 +1,19 @@
 import { useLayoutEffect, useEffect, useState, useMemo } from "react";
-import { useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { useTranslation } from "react-i18next";
+import { Helmet } from "react-helmet";
 
-import Header from "./components/Header/Header.jsx";
-import Main from "./components/Main/Main.jsx";
-import Offline from "./pages/Error/Offline/Offline.jsx";
+import Body from "./components/Body/Body.jsx";
 
+import LogoSrc from "@/assets/image/logo.svg";
 import useLang from "./hooks/useLang.js";
 import { asyncActions } from "./service/redusers/user.js";
-import routes from "./routes/index.jsx";
 import GlobalContext from "./context/global.js";
 
 import "@/styles/main.css";
 
 function App() {
 	const dispatch = useDispatch();
-	const location = useLocation();
-	const { t } = useTranslation();
+
 	const [{
 		currentLang,
 		langs,
@@ -27,9 +23,6 @@ function App() {
 	const [isOpenCabinet, setOpenCabinet] = useState(false);
 	const [isVisiblePopup, setVisiblePopup] = useState(false);
 	const [popup, setPopup] = useState([]);
-
-	const onLine = true || window.navigator.onLine;
-	const path = routes.find((route) => route.state.pathname === location.pathname || route.state.pathname === "*");
 
 	async function init() {
 		const refresh = await dispatch(asyncActions.refresh());
@@ -41,9 +34,9 @@ function App() {
 		setAuthState(true);
 	}
 
-	useEffect(() => {
-		document.title = t(path.state.title);
-	}, [path, currentLang]);
+	// useEffect(() => {
+	// 	document.title = t(path.state.title);
+	// }, [path, currentLang]);
 
 	useEffect(() => {
 		document.body.style.overflowY = isVisiblePopup ? "hidden" : "scroll";
@@ -75,12 +68,10 @@ function App() {
 
 	return (
 		<GlobalContext.Provider value={contextValue}>
-			{onLine ? (
-				<>
-					{path.state.header && <Header />}
-					<Main />
-				</>
-			) : <Offline />}
+			<Helmet>
+				<link rel="icon" type="image/x-icon" href={LogoSrc} />
+			</Helmet>
+			<Body />
 		</GlobalContext.Provider>
 	);
 }

@@ -27,16 +27,25 @@
 	height: var(--size);
 }
 
-.vertical .userProcedure {
+.horizontal .userProcedure {
+	position: relative;
 	display: inline-block;
 	width: var(--size);
 }
 
-.vertical .userProcedure img {
+.horizontal .userProcedure img {
 	transition: unset;
 }
 
-.horizontal .userProcedure img {
+.vertical .userProcedure img {
 	max-width: var(--size);
 	width: 100%;
+}
+
+.horizontal :global(.favourite) {
+	--pos: absolute;
+}
+
+.vertical :global(.favourite) {
+	--pos: relative;
 }

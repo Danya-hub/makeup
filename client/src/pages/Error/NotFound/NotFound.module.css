@@ -1,0 +1,27 @@
+#notFound {
+    margin: 5vh;
+}
+
+#notFound h1 {
+    font-size: var(--step-6);
+}
+
+#notFound h3 {
+    font-size: var(--step-4);
+    text-transform: capitalize;
+    font-weight: 700;
+}
+
+#notFound > * {
+    text-align: center;
+}
+
+#notFound > *:not(:last-child) {
+    margin-bottom: 1vh;
+}
+
+#notFound a {
+    --back: var(--brown);
+    --o: 0.4;
+    margin: 3vh auto;
+}

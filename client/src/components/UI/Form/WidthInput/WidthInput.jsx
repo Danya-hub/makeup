@@ -13,6 +13,7 @@ function WidthInput({
 	placeholder,
 	onBlur,
 	className,
+	name,
 }) {
 	const widthInput = GlobalHelper.getWidthByChar(value.toString() || "");
 
@@ -29,6 +30,7 @@ function WidthInput({
 			}}
 			onChange={onChange}
 			value={() => value}
+			name={name}
 		/>
 	);
 }
@@ -58,6 +60,7 @@ WidthInput.propTypes = {
 		types.number,
 	]),
 	onBlur: types.func,
+	name: types.string.isRequired,
 };
 
 export default WidthInput;

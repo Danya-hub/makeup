@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
 import { asyncActions } from "@/service/redusers/user.js";
-import fields from "@/components/Main/Cabinet/EditUserPopup/constants/fields.js";
+import fields from "@/components/Body/Cabinet/EditUserPopup/constants/fields.js";
 import GlobalContext from "@/context/global.js";
 
 import style from "./Info.module.css";

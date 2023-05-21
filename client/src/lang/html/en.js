@@ -1,4 +1,5 @@
 const htmlComponentValue = {
+	loading: "Loading...",
 	mainTitle: "Main",
 	appointmentTitle: "Appointment",
 	signInTitle: "Sign in",
@@ -7,6 +8,8 @@ const htmlComponentValue = {
 	resetPasswordTitle: "Reset password",
 	procDetailsTitle: "Procedure details",
 	notFoundTitle: "Not found",
+	notFoundPageTitle: "Page not found",
+	notFoundPageText: "The page you are looking for does not seem to exist",
 	signIn: "Sign in",
 	signUp: "Sign up",
 	resettingPassword: "reset password",
@@ -17,6 +20,9 @@ const htmlComponentValue = {
 	usernameEditTitle: "Change a username",
 	telephoneEditTitle: "Change a telephone",
 	emailEditTitle: "Change a email",
+	procCommentsTitle: "Comments about a procedure",
+	aboutProcedure: "About procedure",
+	comments: "Comments",
 	day: "Day",
 	month: "Month",
 	year: "Year",
@@ -110,6 +116,12 @@ const htmlComponentValue = {
 	confirmationCode: "Confirmation code",
 	authorizationCode: "Authorization code",
 	authorizationCodeAsPasswordSignup: "The authorization code will be the your password of the account. If you are not sure about the reliability, then we advise you to change after registration",
+	noPhotos: "No photos yet",
+	toFavourites: "To favorites",
+	start: "Start",
+	finish: "Finish",
+	reviews: "Reviews",
+	writeReview: "Write a review",
 };
 
 export default htmlComponentValue;

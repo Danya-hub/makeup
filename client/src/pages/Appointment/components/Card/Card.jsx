@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import types from "prop-types";
 
 import FormatDate from "@/utils/formatDate.js";
@@ -19,6 +20,7 @@ function Card({
 	procedure,
 	styleAttr,
 	isOwn,
+	isBook,
 	isExists,
 	isSelected,
 	onMouseDown,
@@ -75,6 +77,15 @@ function Card({
 					/>
 				</div>
 			)}
+			{isBook && (
+				<Link
+					id={style.more}
+					className="button border"
+					to={`/details/${procedure.id}`}
+				>
+					{t("more")}
+				</Link>
+			)}
 		</div>
 	);
 }
@@ -86,6 +97,7 @@ Card.defaultProps = {
 	isExists: true,
 	isSelected: false,
 	isOwn: false,
+	isBook: false,
 	onMouseDown: null,
 	onDelete: null,
 	onEdit: null,
@@ -101,6 +113,7 @@ Card.propTypes = {
 	isExists: types.bool,
 	isSelected: types.bool,
 	isOwn: types.bool,
+	isBook: types.bool,
 	onMouseDown: types.func,
 	index: types.number,
 	onDelete: types.func,

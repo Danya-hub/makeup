@@ -5,7 +5,12 @@ import Checkbox from "@/components/UI/Form/Checkbox/Checkbox.jsx";
 
 import style from "./CheckboxList.module.css";
 
-function CheckboxList({ className, defaultOptions, values, onChange }) {
+function CheckboxList({
+	className,
+	defaultOptions,
+	values,
+	onChange,
+}) {
 	const [checkedOptions, setOption] = useState(defaultOptions);
 
 	function onCheck(option, isChecked) {
@@ -21,13 +26,19 @@ function CheckboxList({ className, defaultOptions, values, onChange }) {
 				delete object[option];
 			}
 
-			return {
+			const result = {
 				...object,
 			};
+
+			return result;
 		}, []);
 	}
 
 	useEffect(() => {
+		if (checkedOptions.length) {
+			return;
+		}
+
 		onChange(checkedOptions);
 	}, [checkedOptions]);
 
@@ -35,10 +46,13 @@ function CheckboxList({ className, defaultOptions, values, onChange }) {
 		<div className={`${className} ${style.list}`}>
 			{values.map((value) => (
 				<Checkbox
-					checked={Boolean(checkedOptions[value])}
 					key={value}
+					checked={Boolean(checkedOptions[value])}
 					text={value}
-					onCheck={(isChecked) => onCheck(value, isChecked)}
+					onCheck={(isChecked) => {
+						onCheck(value, isChecked);
+						// onChange(checkedOptions);
+					}}
 				/>
 			))}
 		</div>

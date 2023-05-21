@@ -132,7 +132,7 @@ function Cards({
 	}
 
 	async function onCloseEditPopup(res, index) {
-		await dispatch(asyncActions.updateProc(res));
+		await dispatch(asyncActions.updateProc([res, true]));
 		dispatch(actions.deleteProc(index));
 		dispatch(actions.updateCurrProc([
 			[userProcedures.defaultProcedure, userProcedures.newProcedures.length],
@@ -249,6 +249,7 @@ function Cards({
 					<Card
 						index={card.id}
 						isOwn={isOwn}
+						isBook={isOwn}
 						className={style[isOwn
 							? visibledGroups.myAppointments
 							: visibledGroups.otherAppointments]}

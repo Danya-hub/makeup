@@ -117,7 +117,10 @@ class UserService {
         },
         (error, results) => {
           if (error) {
-            reject(ApiError.get("alreadyExist", errors.alreadyExist(`${field}AlreadyExistsValid`)));
+            reject(ApiError.get("alreadyExist", {
+              ...errors.alreadyExist(`${field}AlreadyExistsValid`),
+              name: field,
+            }));
           }
 
           resolve(results);

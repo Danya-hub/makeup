@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import types from "prop-types";
@@ -73,9 +74,9 @@ function SignupForm({ setFormState, user, setUser }) {
 				}
 
 				if (object.reason.response.status !== 429) {
-					setError(object.reason.response.data.args.key, {
+					setError(object.reason.response.data.error.name, {
 						type: "value",
-						message: [object.reason.response.data.key],
+						message: [object.reason.response.data.error.key],
 					});
 					setMessage([]);
 
@@ -114,7 +115,10 @@ function SignupForm({ setFormState, user, setUser }) {
 	}
 
 	return (
-		<div id={style.auth}>
+		<section id={style.auth}>
+			<Helmet>
+				<title>{t(isSubmitting ? "loading" : "signUpTitle")}</title>
+			</Helmet>
 			<div className="form">
 				<div
 					className={`loader ${isSubmitting ? style.isLoading : ""}`}
@@ -327,7 +331,7 @@ function SignupForm({ setFormState, user, setUser }) {
 					</button>
 				</div>
 			</div>
-		</div>
+		</section>
 	);
 }
 

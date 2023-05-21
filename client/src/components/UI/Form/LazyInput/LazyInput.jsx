@@ -1,7 +1,16 @@
 import { useState } from "react";
 import types from "prop-types";
 
-function LazyInput({ className, value, style, onChange, title, placeholder, onBlur }) {
+function LazyInput({
+	className,
+	value,
+	style,
+	onChange,
+	title,
+	placeholder,
+	onBlur,
+	name,
+}) {
 	const [isTyping, setTyping] = useState(false);
 	const [inputValue, setValue] = useState(value);
 
@@ -9,6 +18,7 @@ function LazyInput({ className, value, style, onChange, title, placeholder, onBl
 		<input
 			type="text"
 			title={title}
+			name={name}
 			placeholder={placeholder}
 			className={`${className} input`}
 			value={isTyping ? inputValue : value()}
@@ -20,7 +30,9 @@ function LazyInput({ className, value, style, onChange, title, placeholder, onBl
 					onChange(e, inputValue);
 				}
 
-				onBlur();
+				if (onBlur) {
+					onBlur();
+				}
 			}}
 			onChange={(e) => {
 				setValue(e.target.value);
@@ -51,6 +63,7 @@ LazyInput.propTypes = {
 		types.number,
 	]),
 	onBlur: types.func,
+	name: types.string.isRequired,
 };
 
 export default LazyInput;

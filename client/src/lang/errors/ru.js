@@ -40,7 +40,7 @@ const errors = {
 	fullAuthorizationCodeValid: "Введите полный код",
 	authorizationCodeRequiredValid: "Требуется код авторизации",
 	requiredContractValid: "Требуеться соглашение",
-	notFullAccessProceduresWarning: "Вы не можете записаться сегодня на некоторые процедуры. Если хотите больше выбор, выберете другой день",
+	notFullAccessProceduresWarning: "Вы не можете записаться сегодня на некоторые услуги. Если хотите больше выбор, выберете другой день",
 	noAccessProceduresError: "На сегодня нет свободного времени, выберите другой свободный день",
 };
 

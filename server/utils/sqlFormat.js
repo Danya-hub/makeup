@@ -53,7 +53,7 @@ class Format {
         const keys = Object.keys(this.values);
         this.query = this.query.replace(
             /\*{2}/g,
-            () => keys.map((key) => `${key} = ${mysql.escape(this.values[key])}`).join()
+            () => keys.map((key) => `${key} = '${this.values[key]}'`).join()
         );
     }
 }

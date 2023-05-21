@@ -63,7 +63,10 @@ class User {
       },
       (error, results) => {
         if (error) {
-          ApiError.throw("badRequest", errors.alreadyExist("userAlreadyExistsValid"));
+          ApiError.throw("badRequest", {
+            ...errors.alreadyExist("userAlreadyExistsValid"),
+            name: "user",
+          });
         }
 
         const tokenValue = {
@@ -251,7 +254,10 @@ class User {
   async isUnique(req, res, next) {
     return UserService.findByValue(req.params)
       .then(() => {
-        next(ApiError.get("badRequest", errors.alreadyExist(`${req.params.key}AlreadyExistsValid`)));
+        next(ApiError.get("badRequest", {
+          ...errors.alreadyExist(`${req.params.key}AlreadyExistsValid`),
+          name: req.params.key,
+        }));
       })
       .catch(() => {
         res.status(200).json({

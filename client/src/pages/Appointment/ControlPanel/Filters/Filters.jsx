@@ -35,7 +35,7 @@ function Filters() {
 			id={style.list}
 			title={t("calendars")}
 			render={listRender}
-			isOpen
+			defaultOpen
 		/>
 	);
 }

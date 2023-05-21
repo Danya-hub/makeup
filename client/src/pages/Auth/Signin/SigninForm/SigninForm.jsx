@@ -1,6 +1,7 @@
 import { useState, useContext, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { Helmet } from "react-helmet";
 import { useDispatch } from "react-redux";
 import { useForm, Controller } from "react-hook-form";
 import types from "prop-types";
@@ -148,7 +149,10 @@ function SigninForm({
 	}
 
 	return (
-		<div id={style.auth}>
+		<section id={style.auth}>
+			<Helmet>
+				<title>{t(isSubmitting ? "loading" : "signInTitle")}</title>
+			</Helmet>
 			<div className="form">
 				<div
 					className={`loader ${isSubmitting ? style.isLoading : ""}`}
@@ -288,7 +292,7 @@ function SigninForm({
 					</button>
 				</div>
 			</div>
-		</div>
+		</section>
 	);
 }
 

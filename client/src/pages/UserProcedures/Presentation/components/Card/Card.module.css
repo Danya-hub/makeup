@@ -1,9 +1,9 @@
 .card {
+	position: relative;
 	display: flex;
 	background: rgb(var(--white));
 	box-shadow: 0 0 10px rgba(var(--brown), 0.1);
 	margin: 0 1vw 3vh;
-	cursor: pointer;
 }
 
 .name {
@@ -14,14 +14,23 @@
 }
 
 .procImage {
-	background: rgb(var(--gray));
+	background: rgb(var(--lightBrown));
+    color: rgb(var(--brown));
 	height: var(--sizeCard);
+    width: var(--sizeCard);
+    text-align: center;
+    line-height: 10vh;
+    font-weight: 600;
 }
 
 .content {
 	display: grid;
 	padding: 2vh 1vw;
 	width: 100%;
+}
+
+.content > *:not(:last-child) {
+	margin-bottom: 3vh;
 }
 
 .state {
@@ -39,26 +48,36 @@
 	justify-content: space-between;
 }
 
-.favourite {
-	background: unset;
-	margin-right: 1vw;
+:global(.favourite) {
+	--back: var(--white);
+
+	position: var(--pos);
+	padding: calc(var(--step-5) + 4px);
+    top: 0;
+    right: 0;
 }
 
-.favourite i {
-	--clr: rgb(var(--brown));
-	--size: var(--step-1);
-
-	color: var(--clr);
+:global(.favourite) i {
+	position: absolute;
+	color: rgb(var(--brown));
+	font-size: var(--step-5);
+    transform: translate(-50%, -50%);
+	left: 50%;
+    top: 50%;
 }
 
 .bottomPanel {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	margin-top: 3vh;
 }
 
 .price {
+	font-size: var(--step-5);
 	font-weight: 800;
 	margin-right: 1vw;
+}
+
+#more {
+	align-self: center;
 }

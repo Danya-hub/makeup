@@ -12,9 +12,16 @@
 
 .search.open .options {
 	display: block;
+	max-height: 200px;
+	overflow-y: scroll;
 }
 
-.border > *:not(:last-child) {
+.checkboxList {
+	max-height: 200px;
+	overflow-y: scroll;
+}
+
+.checkboxList > *:not(:last-child) {
 	box-shadow: var(--bottomLine);
 }
 

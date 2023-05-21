@@ -1,0 +1,37 @@
+.content {
+    width: 100%;
+}
+
+.content > *:not(:last-child) {
+    margin-bottom: 3vh;
+}
+
+.price {
+    font-size: calc(var(--step-5) + 10px);
+    display: block;
+}
+
+.state {
+    display: flex;
+    align-items: center;
+}
+
+.state i {
+    margin-right: 1vh;
+    width: 8px;
+    height: 8px;
+}
+
+.time span {
+    display: block;
+    margin-bottom: 0.5vh;
+}
+
+.buttons {
+    display: flex;
+    margin-top: 1vh;
+}
+
+.buttons button:not(:last-child) {
+    margin-right: 2vw;
+}

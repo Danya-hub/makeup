@@ -20,6 +20,7 @@ class Procedure {
 
   async createProcedure(req, res, next) {
     const keys = Object.keys(req.body[0]);
+
     const values = await Promise.all(req.body.map(async (object) => {
       const formatedValues = Value.toSQLDate({
         ...object,
@@ -27,9 +28,9 @@ class Procedure {
         user: object.user.id,
       });
 
-      if (object.type.contract) {
-        formatedValues.contract = await ProcedureService.urlToPdfBuffer(object.contract);
-      }
+      formatedValues.contract = object.type.contract
+        ? await ProcedureService.urlToPdfBuffer(object.contract)
+        : null;
 
       return Object.values(formatedValues);
     }));
@@ -109,6 +110,36 @@ class Procedure {
     ).catch(next);
   }
 
+  getById(req, res, next) {
+    const {
+      id,
+    } = req.params;
+
+    MySQL.createQuery({
+        sql: "SELECT * FROM service WHERE ?? = ?",
+        values: {
+          columns: ["id", id],
+          formatName: "keyAndValueArray",
+        },
+      },
+      async (error, results) => {
+        if (error) {
+          throw error;
+        }
+
+        if (!results.length) {
+          ApiError.throw("notExist", "procedure");
+        }
+
+        const populated = await Promise.all(results.map(ProcedureService.populate));
+
+        res.status(200).json(populated);
+
+        next();
+      }
+    ).catch(next);
+  }
+
   async getByDay(req, res, next) {
     const {
       date,
@@ -121,25 +152,24 @@ class Procedure {
       day: newDate.getDate(),
     };
 
-    const proceduresByDay = await MySQL.createQuery({
+    await MySQL.createQuery({
         sql: "SELECT * FROM service WHERE year = :year and month = :month and day = :day",
         values: {
           columns,
           formatName: "keysAndValuesObject",
         },
       },
-      (error) => {
+      async (error, results) => {
         if (error) {
           throw error;
         }
+
+        const populated = await Promise.all(results.map(ProcedureService.populate));
+
+        res.status(200).json(populated);
+        next();
       }
     ).catch(next);
-
-    const populated = await Promise.all(proceduresByDay.map(ProcedureService.populate));
-
-    res.status(200).json(populated);
-
-    next();
   }
 
   getByUser(req, res, next) {
@@ -154,13 +184,14 @@ class Procedure {
           formatName: "keyAndValueArray",
         },
       },
-      (error, results) => {
+      async (error, results) => {
         if (error) {
           throw error;
         }
 
-        res.status(200).json(results);
+        const populated = await Promise.all(results.map(ProcedureService.populate));
 
+        res.status(200).json(populated);
         next();
       }
     ).catch(next);

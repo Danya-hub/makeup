@@ -1,5 +1,7 @@
 import { useState, useLayoutEffect, useMemo } from "react";
+import { Helmet } from "react-helmet";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 import {
 	asyncActions as userProcAsyncActions,
@@ -19,6 +21,7 @@ function Appointment() {
 	const {
 		userProcedures,
 	} = useSelector((state) => state);
+	const { t } = useTranslation();
 
 	const [isMouseDown, setMouseDownState] = useState(false);
 	const [visibledGroups, setVisibledGroup] = useState({});
@@ -42,22 +45,25 @@ function Appointment() {
 	}), [isMouseDown, visibledGroups]);
 
 	return (
-		<div id={style.allProcedures}>
+		<section id={style.allProcedures}>
+			<Helmet>
+				<title>{t(userProcedures.currentProcedure ? "appointmentTitle" : "loading")}</title>
+			</Helmet>
 			<PropsContext.Provider value={contextValue}>
-				{!userProcedures.currentProcedure ? (
-					<>
-						<PlaceholderLoader width="250px" />
-						<SimpleLoader />
-					</>
-				) : (
+				{userProcedures.currentProcedure ? (
 					<>
 						<ControlPanel />
 						<Presentation />
 						<ProcPopup />
 					</>
+				) : (
+					<>
+						<PlaceholderLoader width="250px" />
+						<SimpleLoader />
+					</>
 				)}
 			</PropsContext.Provider>
-		</div>
+		</section>
 	);
 }
 

@@ -36,7 +36,10 @@ class Message {
         },
         async (error) => {
           if (error) {
-            reject(ApiError.get("alreadyExist", errors.alreadyExist("submitedMessageValid")));
+            reject(ApiError.get("alreadyExist", {
+              ...errors.alreadyExist("submitedMessageValid"),
+              name: "message",
+            }));
             return;
           }
 
@@ -54,8 +57,8 @@ class Message {
             // eslint-disable-next-line no-console
             .catch(console.error);
 
-          const transporter = await this.createTransport();
-          const messageInfo = EmailTemplates[columns.topic][options.country](options);
+            const transporter = await this.createTransport();
+            const messageInfo = EmailTemplates[columns.topic][options.country](options);
 
           await transporter.sendMail({
             from: process.env.BOT_EMAIL,

@@ -17,3 +17,7 @@
 .alphabetList {
 	margin-top: 1vh;
 }
+
+#sort > button {
+	padding: 0;
+}

@@ -11,6 +11,7 @@
 	height: fit-content;
 	right: 0;
 	overflow: hidden;
+	cursor: default;
 	z-index: var(--ind);
 }
 
@@ -49,4 +50,18 @@
 
 	margin: 6px;
 	user-select: none;
+}
+
+#more {
+	--back: var(--white);
+	--o: 1;
+	
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	margin: 6px;
+}
+
+#more:hover {
+	--back: var(--gray);
 }

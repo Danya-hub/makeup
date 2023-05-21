@@ -1,4 +1,5 @@
 import { useForm, Controller } from "react-hook-form";
+import { Helmet } from "react-helmet";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
@@ -61,7 +62,10 @@ function EmailForm({ updatePassword }) {
 	}
 
 	return (
-		<div id={style.auth}>
+		<section id={style.auth}>
+			<Helmet>
+				<title>{t(isSubmitting ? "loading" : "resetPassword")}</title>
+			</Helmet>
 			<div className="form">
 				<div
 					className={`loader ${isSubmitting ? style.isLoading : ""}`}
@@ -144,7 +148,7 @@ function EmailForm({ updatePassword }) {
 					</div>
 				</form>
 			</div>
-		</div>
+		</section>
 	);
 }
 

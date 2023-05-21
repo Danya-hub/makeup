@@ -1,4 +1,6 @@
 import { useLayoutEffect, useState, useEffect, useContext } from "react";
+import { useTranslation } from "react-i18next";
+import { Helmet } from "react-helmet";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -17,38 +19,37 @@ function UserProcedures() {
 	const {
 		isAuth,
 	} = useContext(GlobalContext);
+	const { t } = useTranslation();
 
 	const [initialCards, setInitialCards] = useState([]);
 	const [tempCards, setTempCard] = useState([]);
 	const [isLoading, setLoadState] = useState(true);
 
 	async function init() {
-		dispatch(asyncActions.getAllTypes());
+		if (!isAuth) {
+			navigate("/signin", {
+				state: {
+					purpose: "noAccessToPage",
+				},
+			});
+			return;
+		}
 
-		// if (!isAuth) {
-		// 	navigate("/signin", {
-		// 		state: {
-		// 			purpose: "noAccessToPage",
-		// 		},
-		// 	});
-		// 	return;
-		// }
+		const proceduresByUserId = await dispatch(asyncActions.getProceduresByUserId());
 
-		// const res = await dispatch(asyncActions.getProcedureByUserId());
+		if (proceduresByUserId.error) {
+			navigate("/signin", {
+				state: {
+					purpose: "noAccessToPage",
+				},
+			});
+			return;
+		}
 
-		// if (res.error) {
-		// 	navigate("/signin", {
-		// 		state: {
-		// 			purpose: "noAccessToPage",
-		// 		},
-		// 	});
-		// 	return;
-		// }
+		const paylaod = proceduresByUserId.payload || [];
 
-		// const paylaod = res.payload || [];
-
-		// setTempCard(paylaod);
-		// setInitialCards(paylaod);
+		setTempCard(paylaod);
+		setInitialCards(paylaod);
 	}
 
 	useLayoutEffect(() => {
@@ -64,7 +65,10 @@ function UserProcedures() {
 	}, [initialCards, isLoading]);
 
 	return (
-		<div id={style.userProcedures}>
+		<section id={style.userProcedures}>
+			<Helmet>
+				<title>{t(isLoading ? "loading" : "myProceduresTitle")}</title>
+			</Helmet>
 			{isLoading ? (
 				<PlaceholderLoader width="300px" />
 			) : (
@@ -79,7 +83,7 @@ function UserProcedures() {
 				tempCards={tempCards}
 				initialCards={initialCards}
 			/>
-		</div>
+		</section>
 	);
 }
 

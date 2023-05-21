@@ -16,19 +16,11 @@ function Search({
 	isOpen,
 	hasMultipleOption,
 }) {
-	const [options, setOption] = useState([]);
+	const [options, setOption] = useState(values);
 	const [_isOpen, setBoolOpen] = useState(isOpen);
 
 	function handleSwitch(state) {
 		setBoolOpen(state);
-	}
-
-	function handleChange(e) {
-		const query = e.target.value.toLowerCase();
-		const res = values.filter((value) => value.toLowerCase().includes(query));
-
-		setOption(res);
-		onSearch(e.target.value);
 	}
 
 	function handleClick(selectedOptions) {
@@ -49,14 +41,14 @@ function Search({
 				className="border input"
 				type="text"
 				placeholder={placeholder}
-				onChange={handleChange}
+				onChange={(e) => onSearch(e.target.value, setOption)}
 				onFocus={() => handleSwitch(true)}
 				autoComplete="off"
 			/>
 			{hasVisualOptions
 				&& (hasMultipleOption ? (
 					<CheckboxList
-						className={style.border}
+						className={style.checkboxList}
 						values={options}
 						onChange={handleClick}
 					/>

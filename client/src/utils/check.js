@@ -20,6 +20,10 @@ const checkActions = {
 	isStrictNumber(value) {
 		return /^\d+$/.test(value);
 	},
+
+	isEmptyObject(object) {
+		return Object.keys(object).length === 0;
+	},
 };
 
 export default checkActions;

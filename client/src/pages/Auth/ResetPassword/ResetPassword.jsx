@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { Helmet } from "react-helmet";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -95,7 +96,10 @@ function ResetPassword() {
 	}
 
 	return (
-		<div id={style.auth}>
+		<section id={style.auth}>
+			<Helmet>
+				<title>{t(isSubmitting ? "loading" : "resetPasswordTitle")}</title>
+			</Helmet>
 			<div className="form">
 				<div
 					className={`loader ${isSubmitting ? style.isLoading : ""}`}
@@ -241,7 +245,7 @@ function ResetPassword() {
 					</div>
 				</form>
 			</div>
-		</div>
+		</section>
 	);
 }
 

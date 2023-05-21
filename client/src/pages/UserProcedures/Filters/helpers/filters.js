@@ -1,3 +1,5 @@
+import Check from "@/utils/check.js";
+
 function sortWithCallback(procedures, callback) {
 	return procedures.length ? Array(...procedures).sort(callback) : procedures;
 }
@@ -40,8 +42,8 @@ class FilterHelpers {
 
 	static default = () => ({
 		sortBy: null,
-		range: null,
-		types: null,
+		range: [],
+		types: {},
 	});
 
 	static sortKeys = Object.keys(this.sortOptions);
@@ -78,15 +80,14 @@ class FilterHelpers {
 	}
 
 	changeRangeProcedureOnSelect() {
-		if (!this.options.range?.length || !this.options.types?.length) {
+		const selectedRange = !this.options.range?.length;
+
+		if (selectedRange) {
 			return this.procedures;
 		}
 
-		this.minSelectedPrice = minObject((obj) => obj.type.price, this.procedures);
-		this.maxSelectedPrice = maxObject((obj) => obj.type.price, this.procedures);
-
 		const rez = FilterHelpers.byRange(
-			[this.minSelectedPrice.type.price, this.maxSelectedPrice.type.price],
+			this.options.range,
 			this.procedures,
 		);
 
@@ -94,19 +95,22 @@ class FilterHelpers {
 			return this.procedures;
 		}
 
+		this.minSelectedPrice = minObject((obj) => obj.type.price, this.procedures);
+		this.maxSelectedPrice = maxObject((obj) => obj.type.price, this.procedures);
+
 		this.procedures = rez;
 
 		return rez;
 	}
 
 	changeRangePriceOnGrabbing() {
-		if (!this.options.range?.length) {
+		const selectedRange = !this.options.range?.length;
+
+		if (!selectedRange) {
 			return this.procedures;
 		}
 
-		const [min, max] = this.options.range;
-
-		const rez = FilterHelpers.byRange([min, max], this.procedures);
+		const rez = FilterHelpers.byRange(this.options.range, this.procedures);
 
 		if (!rez.length) {
 			return this.procedures;
@@ -118,18 +122,13 @@ class FilterHelpers {
 	}
 
 	selectType() {
-		if (!this.options.types?.length) {
-			return this.procedures;
+		const selectedTypes = !Check.isEmptyObject(this.options.types);
+
+		if (selectedTypes) {
+			this.procedures = this.procedures.filter((obj) => this.options.types[obj.type.name]);
 		}
 
-		let rez = this.procedures;
-		if (this.options.types.length) {
-			rez = this.procedures.filter((obj) => this.options.types.includes(obj.type.name));
-		}
-
-		this.procedures = rez;
-
-		return rez;
+		return this.procedures;
 	}
 
 	sort() {

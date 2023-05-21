@@ -114,8 +114,8 @@ export const actions = {
 };
 
 export const asyncActions = {
-	getProcedureByUserId: createAsyncThunk(
-		"procedure/getProcedureByUserId",
+	getProceduresByUserId: createAsyncThunk(
+		"procedure/getProceduresByUserId",
 		async (_, {
 			rejectWithValue,
 		}) => {
@@ -123,6 +123,23 @@ export const asyncActions = {
 				const userProcedures = await axios
 					.get("/procedure/byUser")
 					.then((res) => res.data.map(Value.toDate));
+
+				return userProcedures;
+			} catch (error) {
+				return rejectWithValue(error.message);
+			}
+		},
+	),
+
+	getProcedureById: createAsyncThunk(
+		"procedure/getProcedureById",
+		async (id, {
+			rejectWithValue,
+		}) => {
+			try {
+				const userProcedures = await axios
+					.indGet(`/procedure/byId/${id}`)
+					.then((res) => Value.toDate(res.data[0]));
 
 				return userProcedures;
 			} catch (error) {
@@ -246,12 +263,19 @@ export const asyncActions = {
 		getState,
 	}) => {
 		try {
+			const [newProcedure, updateTime] = value;
 			const state = getState();
 
-			const formatedValue = UserProceduresHelper.getRangeProcTime(state.userProcedures, value);
-			const result = await axios.post("/procedure/updateProcedure", formatedValue);
+			let body = newProcedure;
 
-			return result;
+			if (updateTime) {
+				body = UserProceduresHelper.getRangeProcTime(
+					state.userProcedures,
+					body,
+				);
+			}
+
+			return await axios.post("/procedure/updateProcedure", body);
 		} catch (error) {
 			return rejectWithValue(error.message);
 		}
@@ -300,15 +324,15 @@ export const extraReducers = {
 		state.isLoading = false;
 		state.error = action.payload;
 	},
-	[asyncActions.getProcedureByUserId.payload]: (state) => {
+	[asyncActions.getProceduresByUserId.payload]: (state) => {
 		state.isLoading = true;
 		state.proceduresByUser = [];
 	},
-	[asyncActions.getProcedureByUserId.fulfilled]: (state, action) => {
+	[asyncActions.getProceduresByUserId.fulfilled]: (state, action) => {
 		state.isLoading = false;
 		state.proceduresByUser = action.payload.data;
 	},
-	[asyncActions.getProcedureByUserId.rejected]: (state, action) => {
+	[asyncActions.getProceduresByUserId.rejected]: (state, action) => {
 		state.isLoading = false;
 		state.proceduresByUser = action.error;
 	},

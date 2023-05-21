@@ -1,22 +1,23 @@
-import { Fragment, useState } from "react";
+import { useEffect, useState } from "react";
 import types from "prop-types";
 
-import Card from "@/pages/UserProcedures/Presentation/Card/Card.jsx";
+import Card from "@/pages/UserProcedures/Presentation/components/Card/Card.jsx";
 import Navigation from "./Navigation/Navigation.jsx";
 
-import { MAX_COUNT_CARDS_ON_PAGE, visualStyle, DEFAULT_STYLE_CARDS } from "./constants.js";
+import { MAX_COUNT_CARDS_ON_PAGE, visualStyle, DEFAULT_CARDS_STYLE } from "./constants.js";
 
 import style from "./Output.module.css";
 
 function Output({ cards }) {
-	const [[direction], setDirection] = useState(visualStyle[DEFAULT_STYLE_CARDS]);
-	const [numberPage, setNumberPage] = useState(0);
-
 	const countPages = Math.ceil(cards.length / MAX_COUNT_CARDS_ON_PAGE);
-	const remainder =			MAX_COUNT_CARDS_ON_PAGE < cards.length
+
+	const [[direction], setDirection] = useState(visualStyle[DEFAULT_CARDS_STYLE]);
+	const [numberPage, setNumberPage] = useState(countPages - 1);
+
+	const remainder = MAX_COUNT_CARDS_ON_PAGE < cards.length
 		? cards.length - MAX_COUNT_CARDS_ON_PAGE * (numberPage + 1)
 		: cards.length;
-	const countCardsOnPage =			remainder >= 0 && MAX_COUNT_CARDS_ON_PAGE < cards.length
+	const countCardsOnPage = remainder >= 0 && MAX_COUNT_CARDS_ON_PAGE < cards.length
 		? MAX_COUNT_CARDS_ON_PAGE
 		: Math.abs(remainder);
 
@@ -27,6 +28,10 @@ function Output({ cards }) {
 	function handleSwitchPage(i) {
 		setNumberPage(i);
 	}
+
+	useEffect(() => {
+		window.scrollTo(0, document.body.scrollHeight);
+	}, [cards]);
 
 	return (
 		<>
@@ -57,7 +62,7 @@ function Output({ cards }) {
 						<Card
 							id={viewIndex}
 							className={style.userProcedure}
-							key={cards[viewIndex].type.name}
+							key={cards[viewIndex].id}
 							procedure={cards[viewIndex]}
 						/>
 					);

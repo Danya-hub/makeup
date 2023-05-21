@@ -1,6 +1,7 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Helmet } from "react-helmet";
 import { useForm, Controller } from "react-hook-form";
 import types from "prop-types";
 
@@ -105,7 +106,10 @@ function ConfirmForm({ setFormState, user, onSuccess }) {
 	}, []);
 
 	return (
-		<div id={style.confirm}>
+		<section id={style.confirm}>
+			<Helmet>
+				<title>{t(isSubmitting ? "loading" : "confirmAuthorizationCode")}</title>
+			</Helmet>
 			<div className="form">
 				<div
 					className={`loader ${isSubmitting ? style.isLoading : ""}`}
@@ -212,7 +216,7 @@ function ConfirmForm({ setFormState, user, onSuccess }) {
 					</button>
 				</div>
 			</div>
-		</div>
+		</section>
 	);
 }
 

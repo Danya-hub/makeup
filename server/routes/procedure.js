@@ -12,6 +12,7 @@ import TypeService from "../service/type.js";
 const router = Router();
 
 router.get("/byDay/:date", ProcedureController.getByDay);
+router.get("/byId/:id", ProcedureController.getById);
 router.get("/byUser", isAuth, checkOnValid, ProcedureController.getByUser);
 router.get("/allTypes/:country", TypeService.all);
 router.get("/default/:country", ProcedureController.defaultValue);

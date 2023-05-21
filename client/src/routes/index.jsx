@@ -1,5 +1,8 @@
 import { lazy } from "react";
 
+import HMFLayout from "@/components/Layouts/HMFLayout/HMFLayout.jsx";
+import HMLayout from "@/components/Layouts/HMLayout/HMLayout.jsx";
+
 const Base = lazy(() => import("@/pages/Base/Base.jsx"));
 const Appointment = lazy(() => import("@/pages/Appointment/Appointment.jsx"));
 const NotFound = lazy(() => import("@/pages/Error/NotFound/NotFound.jsx"));
@@ -7,84 +10,81 @@ const Signup = lazy(() => import("@/pages/Auth/Signup/Signup.jsx"));
 const Signin = lazy(() => import("@/pages/Auth/Signin/Signin.jsx"));
 const ResetPassword = lazy(() => import("@/pages/Auth/ResetPassword/ResetPassword.jsx"));
 const UserProcedures = lazy(() => import("@/pages/UserProcedures/UserProcedures.jsx"));
-const ProcDetails = lazy(() => import("@/pages/ProcDetails/ProcDetails.jsx"));
+const AboutProcedure = lazy(() => import("@/pages/ProcDetails/About/About.jsx"));
+const ProcComments = lazy(() => import("@/pages/ProcDetails/Comments/Comments.jsx"));
 
 const routes = [
 	{
 		url: "/",
-		elem: () => <Base />,
-		state: {
-			pathname: "/",
-			title: "mainTitle",
-			header: true,
-			footer: true,
-		},
+		elem: () => (
+			<HMFLayout>
+				<Base />
+			</HMFLayout>
+		),
 	},
 	{
 		url: "/appointment",
-		elem: () => <Appointment />,
-		state: {
-			pathname: "/appointment",
-			title: "appointmentTitle",
-			header: true,
-			footer: true,
-		},
+		elem: () => (
+			<HMLayout>
+				<Appointment />
+			</HMLayout>
+		),
 	},
 	{
 		url: "/signup",
-		elem: () => <Signup />,
-		state: {
-			pathname: "/signup",
-			title: "signUpTitle",
-			header: true,
-		},
+		elem: () => (
+			<HMLayout>
+				<Signup />
+			</HMLayout>
+		),
 	},
 	{
 		url: "/signin",
-		elem: () => <Signin />,
-		state: {
-			pathname: "/signin",
-			title: "signInTitle",
-			header: true,
-		},
+		elem: () => (
+			<HMLayout>
+				<Signin />
+			</HMLayout>
+		),
 	},
 	{
 		url: "/myprocedures",
-		elem: () => <UserProcedures />,
-		state: {
-			pathname: "/myprocedures",
-			title: "myProceduresTitle",
-			header: true,
-			footer: true,
-		},
+		elem: () => (
+			<HMFLayout>
+				<UserProcedures />
+			</HMFLayout>
+		),
 	},
 	{
 		url: "/resetPassword",
-		elem: () => <ResetPassword />,
-		state: {
-			pathname: "/resetPassword",
-			title: "resetPasswordTitle",
-			header: true,
-			footer: true,
-		},
+		elem: () => (
+			<HMLayout>
+				<ResetPassword />
+			</HMLayout>
+		),
 	},
 	{
-		url: "/details",
-		elem: () => <ProcDetails />,
-		state: {
-			pathname: "/details",
-			title: "procDetailsTitle",
-			header: true,
-			footer: true,
-		},
+		url: "/details/:id",
+		elem: () => (
+			<HMFLayout>
+				<AboutProcedure />
+			</HMFLayout>
+		),
+	},
+	{
+		url: "details/comments/:id",
+		elem: () => (
+			<HMFLayout>
+				<ProcComments />
+			</HMFLayout>
+		),
 	},
 	{
 		url: "*",
-		elem: () => <NotFound />,
-		state: {
-			pathname: "*",
-			title: "notFoundTitle",
-		},
+		elem: () => (
+			<HMLayout>
+				<NotFound />
+			</HMLayout>
+		),
 	},
 ];
 

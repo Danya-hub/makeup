@@ -6,6 +6,7 @@
 	display: flex;
 	align-items: center;
 	background: unset;
+	width: 100%;
 	padding: 10px 0;
 	user-select: none;
 	cursor: pointer;
@@ -30,4 +31,8 @@
 
 .details.open .content {
 	display: block;
+}
+
+.open {
+	background: rgba(var(--gray), 0.4);
 }

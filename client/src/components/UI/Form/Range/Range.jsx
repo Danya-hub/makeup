@@ -76,7 +76,7 @@ function Range({ id, min, max, onChange }) {
 				if (percent < INPUT_MIN_VALUE) {
 					rez = INPUT_MIN_VALUE;
 				} else if ((percent / INPUT_MAX_VALUE) * inputValue > options.max.percent) {
-					rez = options.max.percent;
+					rez = options.max.percent - 0.1;
 				} else {
 					rez = percent;
 				}

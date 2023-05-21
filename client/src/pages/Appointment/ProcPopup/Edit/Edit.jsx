@@ -34,12 +34,6 @@ function EditProc() {
 	function handleSubmitForm(e) {
 		e.preventDefault();
 
-		dispatch(userProceduresActions.updateProcStateByIndex([
-			indexSelectedProcedure,
-			false,
-			currentProcedure,
-		]));
-
 		const scrollYInPx = (currentProcedure.hour - ProcConfig.START_WORK_TIME)
 			* userProcedures.hourHeightInPx;
 		window.scrollTo(0, scrollYInPx);
@@ -49,6 +43,16 @@ function EditProc() {
 		if (popupActions) {
 			popupActions.edit(currentProcedure);
 		}
+
+		dispatch(userProceduresActions.updateCurrProc([
+			[userProcedures.defaultProcedure, userProcedures.newProcedures.length],
+			false,
+		]));
+		dispatch(userProceduresActions.updateProcStateByIndex([
+			indexSelectedProcedure,
+			false,
+			currentProcedure,
+		]));
 	}
 
 	function handleCancel() {

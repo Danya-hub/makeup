@@ -82,8 +82,9 @@ function TimeInput({
 		window.scrollTo(0, scrollYInPx);
 	}
 
-	function handleChangeCalendar(date) {
-		dispatch(userProcAsyncActions.getProcedureByDay(date));
+	function handleChangeCalendar(date, onSuccess) {
+		dispatch(userProcAsyncActions.getProcedureByDay(date))
+			.then(onSuccess);
 		setOpenCalendar(false);
 	}
 

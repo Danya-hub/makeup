@@ -1,30 +1,41 @@
 import { memo, useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import types from "prop-types";
 
+import { asyncActions } from "@/service/redusers/userProcedures.js";
 import GlobalContext from "@/context/global.js";
-import FormatDate from "@/utils/formatDate.js";
+import { states } from "@/config/procedures.js";
 
 import style from "./Card.module.css";
 
 function Card({ key, id, className, procedure }) {
 	const { t } = useTranslation();
-	const navigate = useNavigate();
 	const {
 		currentLang,
 	} = useContext(GlobalContext);
+	const dispatch = useDispatch();
 
-	const shortDate = FormatDate.dateStyle(procedure.startProcTime, currentLang);
-	const stringStartTime = FormatDate.stringHourAndMin(procedure.startProcTime, currentLang);
-	const stringFinishTime = FormatDate.stringHourAndMin(procedure.finishProcTime, currentLang);
+	const shortDate = Intl.DateTimeFormat(currentLang, {
+		month: "2-digit",
+		day: "2-digit",
+		year: "2-digit",
+	}).format(procedure.startProcTime);
+	const stringStartTime = Intl.DateTimeFormat(currentLang, {
+		minute: "numeric",
+		hour: "numeric",
+	}).format(procedure.startProcTime);
+	const stringFinishTime = Intl.DateTimeFormat(currentLang, {
+		minute: "numeric",
+		hour: "numeric",
+	}).format(procedure.startProcTime);
 
-	function handleClick() {
-		// navigate("/details", {
-		// 	state: {
-		// 		procedure,
-		// 	},
-		// });
+	async function handleFavourite() {
+		await dispatch(asyncActions.updateProc([{
+			...procedure,
+			favourite: procedure.favourite ? 0 : 1,
+		}, false]));
 	}
 
 	return (
@@ -34,36 +45,34 @@ function Card({ key, id, className, procedure }) {
 			key={key}
 			id={id}
 			className={`${style.card} ${className}`}
-			onMouseDown={handleClick}
 		>
 			<img
 				src=""
-				alt="procedure"
+				alt={t("noPhotos")}
 				className={style.procImage}
 			/>
 			<div className={style.content}>
 				<div className={style.topPanel}>
 					<div>
-						<p className={style.name}>{procedure.type.name}</p>
+						<h2 className={style.name}>{t(procedure.type.name)}</h2>
 						<div className={style.state}>
 							<i
 								className="fa fa-bookmark color"
 								aria-hidden="true"
 								style={{
-									WebkitTextStroke:
-										procedure.state.color === "white" ? "1px rgb(var(--black))" : "",
-									color: `rgb(var(--${procedure.state.color}))`,
+									color: `rgb(var(--${states[procedure.state].color}))`,
 								}}
 							/>
-							<span>{t(procedure.state.name)}</span>
+							<span>{t(procedure.state)}</span>
 						</div>
 					</div>
 					<button
 						type="button"
-						className={style.favourite}
+						className="favourite"
+						onClick={handleFavourite}
 					>
 						<i
-							className="fa fa-heart-o"
+							className={procedure.favourite ? "fa fa-heart" : "fa fa-heart-o"}
 							aria-hidden="true"
 						/>
 					</button>
@@ -84,6 +93,13 @@ function Card({ key, id, className, procedure }) {
 						</b>
 					</span>
 				</div>
+				<Link
+					id={style.more}
+					className="button border"
+					to={`/details/${procedure.id}`}
+				>
+					{t("more")}
+				</Link>
 			</div>
 		</div>
 	);

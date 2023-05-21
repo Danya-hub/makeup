@@ -1,0 +1,19 @@
+#description {
+    margin: 3vh 5vw;
+}
+
+#description h2 {
+    font-size: var(--step-5);
+}
+
+#description p {
+    margin-top: 2vh;
+}
+
+#description ul {
+    padding-left: 4vw;
+}
+
+#description li {
+    list-style: decimal-leading-zero;
+}
