@@ -1,4 +1,5 @@
 const htmlComponentValue = {
+	saveContract: "Зберегти договір",
 	loading: "Завантаження...",
 	mainTitle: "Головна",
 	appointmentTitle: "Запис на послуги",

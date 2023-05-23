@@ -1,9 +1,11 @@
+import { useCallback } from "react";
 import types from "prop-types";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 
 import Image from "./Image/Image.jsx";
 import Content from "./Content/Content.jsx";
+import OptionButton from "@/pages/ProcDetails/components/OptionButton/OptionButton.jsx";
 import { asyncActions } from "@/service/redusers/userProcedures.js";
 
 import style from "./Info.module.css";
@@ -21,6 +23,10 @@ function Info({
 		}, false]));
 	}
 
+	const optionsRender = useCallback(() => [
+		<a href={procedure.contract}>{t("saveContract")}</a>,
+	], []);
+
 	return (
 		<div id={style.info}>
 			<Image />
@@ -28,7 +34,7 @@ function Info({
 				<Content
 					procedure={procedure}
 				/>
-				<div>
+				<div className={style.buttons}>
 					<button
 						type="button"
 						className={`button ${style.heart}`}
@@ -40,6 +46,9 @@ function Info({
 							aria-hidden="true"
 						/>
 					</button>
+					<OptionButton
+						render={optionsRender}
+					/>
 				</div>
 			</div>
 		</div>

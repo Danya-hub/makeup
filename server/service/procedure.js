@@ -27,7 +27,7 @@ class Procedure {
         await newPdfFile.setFieldsText(fields);
         newPdfFile.form.flatten();
 
-        return newPdfFile.getBlob();
+        return newPdfFile.getBuffer();
     }
 }
 

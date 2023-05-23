@@ -1,0 +1,28 @@
+.optionButton {
+    position: relative;
+}
+
+.options {
+    display: none;
+    position: absolute;
+    box-shadow: 0 0 2px rgb(var(--black));
+    border-radius: var(--def-radius);
+    background: rgb(var(--white));
+    padding: 1vh 0;
+    transform: translateY(100%);
+    bottom: 0;
+    right: 0;
+}
+
+.options.visible {
+    display: block;
+}
+
+.options>* {
+    white-space: nowrap;
+    padding: 6px 1vw;
+}
+
+.options>*:hover {
+    background: rgba(var(--brown), 0.2);
+}

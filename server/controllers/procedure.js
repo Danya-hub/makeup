@@ -1,6 +1,8 @@
 import MySQL from "../utils/db.js";
 import Value from "../utils/value.js";
 import ApiError from "../utils/apiError.js";
+import Firebase from "../utils/firebase.js";
+
 import TypeService from "../service/type.js";
 import ProcedureService from "../service/procedure.js";
 
@@ -28,9 +30,14 @@ class Procedure {
         user: object.user.id,
       });
 
-      formatedValues.contract = object.type.contract
-        ? await ProcedureService.urlToPdfBuffer(object.contract)
-        : null;
+      if (object.type.contract) {
+        const file = await ProcedureService.urlToPdfBuffer(object.contract);
+
+        formatedValues.contract = await Firebase.store(
+          `pdf/${object.user.username}/${object.startProcTime}/${object.startProcTime}_${object.user.username}_${object.type.name}.pdf`,
+          file,
+        );
+      }
 
       return Object.values(formatedValues);
     }));

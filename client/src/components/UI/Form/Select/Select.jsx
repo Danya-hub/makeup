@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import types from "prop-types";
 
 import ArrowSrc from "@/assets/image/arrow.svg";
-
 import useOutsideEvent from "@/hooks/useOutsideEvent.js";
 
 import style from "./Select.module.css";

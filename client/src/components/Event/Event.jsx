@@ -5,7 +5,10 @@ function Event({ callback, eventName, children }) {
 	const childProps = {
 		...children.props,
 		[`on${eventName}`]: () => {
-			children.props[`on${eventName}`]();
+			if (children.props[`on${eventName}`]) {
+				children.props[`on${eventName}`]();
+			}
+
 			callback();
 		},
 	};

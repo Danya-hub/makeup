@@ -1,4 +1,5 @@
 const htmlComponentValue = {
+	saveContract: "Save the contract",
 	loading: "Loading...",
 	mainTitle: "Main",
 	appointmentTitle: "Appointment",

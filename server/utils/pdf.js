@@ -3,9 +3,6 @@ import {
 } from "pdf-lib";
 import fs from "fs/promises";
 import http from "http";
-import {
-    Blob
-} from "buffer";
 import * as fontkit from "fontkit";
 
 class Pdf {
@@ -17,12 +14,8 @@ class Pdf {
 
     form = null;
 
-    getBlob() {
-        const blob = new Blob([this.bytes], {
-            type: "application/pdf"
-        });
-
-        return blob;
+    getBuffer() {
+        return Buffer.from(this.bytes);
     }
 
     async readFile(url) {
