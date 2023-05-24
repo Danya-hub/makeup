@@ -117,35 +117,35 @@ class Procedure {
     ).catch(next);
   }
 
-  getById(req, res, next) {
-    const {
-      id,
-    } = req.params;
+  // getById(req, res, next) {
+  //   const {
+  //     id,
+  //   } = req.params;
 
-    MySQL.createQuery({
-        sql: "SELECT * FROM service WHERE ?? = ?",
-        values: {
-          columns: ["id", id],
-          formatName: "keyAndValueArray",
-        },
-      },
-      async (error, results) => {
-        if (error) {
-          throw error;
-        }
+  //   MySQL.createQuery({
+  //       sql: "SELECT * FROM service WHERE ?? = ?",
+  //       values: {
+  //         columns: ["id", id],
+  //         formatName: "keyAndValueArray",
+  //       },
+  //     },
+  //     async (error, results) => {
+  //       if (error) {
+  //         throw error;
+  //       }
 
-        if (!results.length) {
-          ApiError.throw("notExist", "procedure");
-        }
+  //       if (!results.length) {
+  //         ApiError.throw("notExist", "procedure");
+  //       }
 
-        const populated = await Promise.all(results.map(ProcedureService.populate));
+  //       const populated = await Promise.all(results.map(ProcedureService.populate));
 
-        res.status(200).json(populated);
+  //       res.status(200).json(populated);
 
-        next();
-      }
-    ).catch(next);
-  }
+  //       next();
+  //     }
+  //   ).catch(next);
+  // }
 
   async getByDay(req, res, next) {
     const {
@@ -179,15 +179,16 @@ class Procedure {
     ).catch(next);
   }
 
-  getByUser(req, res, next) {
+  getByColumn(req, res, next) {
     const {
-      user: id
+      column,
+      value,
     } = req.params;
 
     MySQL.createQuery({
         sql: "SELECT * FROM service WHERE ?? = ?",
         values: {
-          columns: ["user", id],
+          columns: [column, value],
           formatName: "keyAndValueArray",
         },
       },
@@ -203,6 +204,31 @@ class Procedure {
       }
     ).catch(next);
   }
+
+  // getByUser(req, res, next) {
+  //   const {
+  //     user: id
+  //   } = req.params;
+
+  //   MySQL.createQuery({
+  //       sql: "SELECT * FROM service WHERE ?? = ?",
+  //       values: {
+  //         columns: ["user", id],
+  //         formatName: "keyAndValueArray",
+  //       },
+  //     },
+  //     async (error, results) => {
+  //       if (error) {
+  //         throw error;
+  //       }
+
+  //       const populated = await Promise.all(results.map(ProcedureService.populate));
+
+  //       res.status(200).json(populated);
+  //       next();
+  //     }
+  //   ).catch(next);
+  // }
 
   update(req, res, next) {
     const columns = Value.toSQLDate({

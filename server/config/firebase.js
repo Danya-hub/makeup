@@ -1,4 +1,9 @@
 import firebase from "firebase";
+import {
+    config
+} from "dotenv";
+
+config();
 
 const app = firebase.initializeApp({
     apiKey: process.env.FIREBASE_API_KEY,

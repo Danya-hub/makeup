@@ -7,7 +7,7 @@
   "proxy": "http://localhost:3001",
   "scripts": {
     "dev": "nodemon app.js",
-    "prod": "nodemon app.js",
+    "prod": "node app.js",
     "lint": "eslint .",
     "lint:fix": "npx eslint . --ext .js",
     "format": "prettier --write ./**/*.js --config ./.prettierrc.json"
@@ -37,6 +37,7 @@
     "fontkit": "^2.0.2",
     "jsonwebtoken": "^8.5.1",
     "mysql2": "^3.2.0",
+    "node-telegram-bot-api": "^0.61.0",
     "nodemailer": "^6.9.1",
     "pdf-lib": "^1.17.1"
   },

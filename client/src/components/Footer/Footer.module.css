@@ -1,0 +1,17 @@
+footer {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background: rgb(var(--lightBrown));
+    padding: 4vh 3vw;
+}
+
+footer > *:not(:last-child) {
+    margin-right: 4vw;
+}
+
+footer nav a {
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 5px 0;
+}

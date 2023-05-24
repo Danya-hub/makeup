@@ -31,7 +31,7 @@ function Output({ cards }) {
 
 	useEffect(() => {
 		window.scrollTo(0, document.body.scrollHeight);
-	}, [cards]);
+	}, []);
 
 	return (
 		<>

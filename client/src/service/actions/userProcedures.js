@@ -116,12 +116,12 @@ export const actions = {
 export const asyncActions = {
 	getProceduresByUserId: createAsyncThunk(
 		"procedure/getProceduresByUserId",
-		async (_, {
+		async (id, {
 			rejectWithValue,
 		}) => {
 			try {
 				const userProcedures = await axios
-					.get("/procedure/byUser")
+					.get(`/procedure/byColumn/user/${id}`)
 					.then((res) => res.data.map(Value.toDate));
 
 				return userProcedures;
@@ -138,7 +138,7 @@ export const asyncActions = {
 		}) => {
 			try {
 				const userProcedures = await axios
-					.indGet(`/procedure/byId/${id}`)
+					.get(`/procedure/byColumn/id/${id}`)
 					.then((res) => Value.toDate(res.data[0]));
 
 				return userProcedures;
@@ -205,7 +205,7 @@ export const asyncActions = {
 
 	getDefaultProcValue: createAsyncThunk(
 		"procedure/getDefaultProcValue",
-		async (_, {
+		async (addition, {
 			getState,
 			rejectWithValue,
 		}) => {
@@ -223,6 +223,7 @@ export const asyncActions = {
 						true,
 					),
 					...defaultValue,
+					...addition,
 				};
 
 				return object;
@@ -283,57 +284,31 @@ export const asyncActions = {
 };
 
 export const extraReducers = {
-	[asyncActions.getDefaultProcValue.pending]: (state) => {
-		state.isLoading = true;
-	},
 	[asyncActions.getDefaultProcValue.fulfilled]: (state, action) => {
 		const value = action.payload;
 
 		state.defaultProcedure = {
 			...state.defaultProcedure,
 			...value,
+			contract: null,
 		};
 		state.currentProcedure = [state.defaultProcedure, 0];
 
 		UserProceduresHelper.defaultAvailableTimeByDate(state);
-
-		state.isLoading = false;
-	},
-	[asyncActions.createNewProcedures.pending]: (state) => {
-		state.isLoading = true;
-	},
-	[asyncActions.createNewProcedures.fulfilled]: (state) => {
-		state.isLoading = false;
-	},
-	[asyncActions.createNewProcedures.rejected]: (state, action) => {
-		state.error = action.payload;
-		state.isLoading = false;
 	},
 	[asyncActions.getAllTypes.fulfilled]: (state, action) => {
 		state.types = action.payload.data;
 	},
 	[asyncActions.getProcedureByDay.pending]: (state) => {
-		state.isLoading = true;
 		state.proceduresByDay = [];
 	},
 	[asyncActions.getProcedureByDay.fulfilled]: (state, action) => {
-		state.isLoading = false;
 		state.proceduresByDay = action.payload;
 	},
-	[asyncActions.getProcedureByDay.rejected]: (state, action) => {
-		state.isLoading = false;
-		state.error = action.payload;
-	},
 	[asyncActions.getProceduresByUserId.payload]: (state) => {
-		state.isLoading = true;
 		state.proceduresByUser = [];
 	},
 	[asyncActions.getProceduresByUserId.fulfilled]: (state, action) => {
-		state.isLoading = false;
 		state.proceduresByUser = action.payload.data;
-	},
-	[asyncActions.getProceduresByUserId.rejected]: (state, action) => {
-		state.isLoading = false;
-		state.proceduresByUser = action.error;
 	},
 };

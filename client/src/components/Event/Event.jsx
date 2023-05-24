@@ -12,12 +12,12 @@ function Event({ callback, eventName, children }) {
 			callback();
 		},
 	};
-	const el = {
+	const component = {
 		...children,
 		props: childProps,
 	};
 
-	return el;
+	return component;
 }
 
 Event.defaultProps = {

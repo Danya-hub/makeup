@@ -1,0 +1,13 @@
+.icon {
+    font-size: var(--step-3);
+}
+
+.workerName {
+    margin-left: 5px;
+    font-weight: 600;
+}
+
+#commMethods ul li a {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}

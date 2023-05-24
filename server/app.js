@@ -9,6 +9,7 @@ import {
   config
 } from "dotenv";
 
+import Telegram from "./utils/telegram.js";
 import {
   server,
   request,
@@ -50,3 +51,7 @@ app.use("/procedure", Router.procedure);
 app.use(errorsGather);
 
 app.listen(server.port);
+
+Telegram.bot.on("message", (msg) => {
+  console.log(msg);
+});

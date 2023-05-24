@@ -1,7 +1,7 @@
 import { useContext } from "react";
 
 import GlobalContext from "@/context/global.js";
-import popups from "./constants.jsx";
+import popups from "@/pages/Appointment/constants/popups.jsx";
 
 function ProcPopup() {
 	const {

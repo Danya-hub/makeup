@@ -1,0 +1,45 @@
+:global(#myServices) {
+    padding: 4vh 0;
+    background: rgb(var(--white));
+}
+
+:global(#myServices) a {
+    position: relative;
+    width: 100vh;
+    margin: 0 auto;
+}
+
+:global(#myServices) a::before {
+    --o: 0;
+    
+    content: "";
+    position: absolute;
+    background: rgba(var(--black), var(--o));
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+:global(#myServices) a:hover::before {
+    --o: 0.5;
+}
+
+:global(#myServices) a:hover i {
+    --o: 0.5;
+
+    opacity: var(--o);
+}
+
+:global(#myServices) i {
+    --o: 0;
+
+    position: absolute;
+    font-size: calc(var(--step-6) - 10px);
+    text-shadow: 2px 2px 5px rgb(var(--white));
+    transform: translate(-50%, -50%);
+    opacity: var(--o);
+    left: 50%;
+    top: 50%;
+    pointer-events: none;
+}

@@ -13,7 +13,7 @@ function Content({ options, onChange }) {
 		locale,
 		strictTimeObject,
 	} = options;
-	const daysOfMonth = FormatDate.allDaysInMonth(locale.getYear(), locale.getMonth());
+	const daysOfMonth = FormatDate.allDaysInMonth(locale.getYear(), locale.getMonth() - 1);
 
 	function handleClick(d) {
 		if (!d) {

@@ -39,8 +39,9 @@ function DesignProc() {
 
 	const recaptchaError = errors.recaptcha?.message;
 
-	function onSubmit() {
-		dispatch(asyncActions.createNewProcedures(newProcedures));
+	async function onSubmit() {
+		await dispatch(asyncActions.createNewProcedures(newProcedures));
+
 		setVisiblePopup(false);
 		setPopup(["", null]);
 	}

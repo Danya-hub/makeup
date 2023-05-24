@@ -1,0 +1,96 @@
+.description {
+    position: relative;
+    max-height: 150px;
+    overflow-y: scroll;
+    user-select: none;
+}
+
+.description::-webkit-scrollbar {
+	background: inherit;
+}
+
+.description::-webkit-scrollbar-thumb {
+	background: rgb(var(--brown));
+	border: 4px solid rgb(var(--lightBrown));
+	border-radius: 100vw;
+}
+
+.description p {
+    margin-top: 2vh;
+}
+
+.description ul {
+    padding-left: 4vw;
+}
+
+.description li {
+    list-style: decimal-leading-zero;
+}
+
+.card {
+    display: flex;
+    background: rgb(var(--lightBrown));
+    height: 400px;
+}
+
+.procImage img {
+    --size: clamp(200px, 40vw, 400px);
+
+    background: rgb(var(--gray));
+    width: var(--size);
+}
+
+.content {
+    display: flex;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 40px 2vw;
+}
+
+.wrapper > *:not(:last-child) {
+    margin-bottom: 3vh;
+}
+
+.content > button {
+    opacity: 0.5;
+    max-width: 50px;
+    padding: 0 10px;
+}
+
+.content > button:hover {
+    --back: var(--brown);
+    --o: 0.4;
+    opacity: 1;
+}
+
+.buttons {
+    display: flex;
+}
+
+.buttons > *:not(:last-child) {
+    margin-right: 2vw;
+}
+
+.book {
+    --back: var(--brown);
+    --o: 0.4;
+}
+
+.price {
+    font-size: calc(var(--step-5) + 10px);
+    font-weight: 600;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.finishDate {
+    font-size: var(--step-1);
+}

@@ -1,4 +1,4 @@
-import PermanentMakeupRu from "@/assets/docs/permanent_makeup_ru.pdf";
+import PermanentMakeupRu from "@/assets/pdf/permanent_makeup_ru.pdf";
 
 const docs = {
 	1: [

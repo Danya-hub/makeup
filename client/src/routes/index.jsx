@@ -23,6 +23,14 @@ const routes = [
 		),
 	},
 	{
+		url: "/:section",
+		elem: () => (
+			<HMFLayout>
+				<Base />
+			</HMFLayout>
+		),
+	},
+	{
 		url: "/appointment",
 		elem: () => (
 			<HMLayout>

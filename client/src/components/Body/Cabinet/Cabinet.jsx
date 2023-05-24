@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
 import Aside from "@/components/Aside/Aside.jsx";
-import SocialMedia from "@/components/UI/SocialMedia/SocialMedia.jsx";
+import CommMethods from "@/components/UI/CommMethods/CommMethods.jsx";
 import Info from "./Info/Info.jsx";
 import Links from "./Links/Links.jsx";
 
@@ -24,7 +24,7 @@ function Cabinet() {
 			<Links />
 			<div className={style.bottom}>
 				<h3>{t("inSocMedias")}</h3>
-				<SocialMedia />
+				<CommMethods />
 			</div>
 		</>
 	), []);

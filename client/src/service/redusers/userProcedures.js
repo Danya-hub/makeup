@@ -30,13 +30,11 @@ function initialState(date) {
 	this.newProcedures = [];
 	this.currentProcedure = null;
 	this.minTimeRangeProc = 0;
-	this.isLoading = true;
 	this.maxTimeRangeProc = 0;
 	this.lastItemAfterAction = 0;
 	this.proceduresByDay = [];
 	this.proceduresByUser = [];
 	this.states = [];
-	this.error = "";
 	this.country = "ua";
 
 	helper.setViewDate(newDate, this);

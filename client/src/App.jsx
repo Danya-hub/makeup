@@ -1,4 +1,4 @@
-import { useLayoutEffect, useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { Helmet } from "react-helmet";
 
@@ -34,15 +34,11 @@ function App() {
 		setAuthState(true);
 	}
 
-	// useEffect(() => {
-	// 	document.title = t(path.state.title);
-	// }, [path, currentLang]);
-
 	useEffect(() => {
 		document.body.style.overflowY = isVisiblePopup ? "hidden" : "scroll";
 	}, [isVisiblePopup]);
 
-	useLayoutEffect(() => {
+	useEffect(() => {
 		init();
 	}, []);
 

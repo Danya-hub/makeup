@@ -1,9 +1,11 @@
 header {
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-	width: 100%;
-	padding: 2vh 5%;
+    display: grid;
+    grid-auto-flow: column;
+    padding: 2vh 5%;
+}
+
+header > * {
+	margin: 0 auto;
 }
 
 header nav {
@@ -11,8 +13,29 @@ header nav {
 	align-items: center;
 }
 
+header nav ul {
+	display: flex;
+	height: 100%;
+}
+
+header nav a {
+	--o: 0;
+	
+	display: flex;
+	align-items: center;
+	background: rgba(var(--brown), var(--o));
+	height: 100%;
+	padding: 0 1vw;
+	text-transform: uppercase;
+	font-weight: 700;
+}
+
+header nav a:hover {
+	--o: 0.4;
+}
+
 header nav > * {
-	margin: 0 2vw;
+	margin: 0 1vw;
 }
 
 #userInfo {

@@ -1,4 +1,7 @@
 const htmlComponentValue = {
+	bestWorks: "Найкращі роботи",
+	myServices: "Мої послуги",
+	dateCompletion: "Дата завершення",
 	saveContract: "Зберегти договір",
 	loading: "Завантаження...",
 	mainTitle: "Головна",

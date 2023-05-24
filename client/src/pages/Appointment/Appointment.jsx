@@ -1,12 +1,15 @@
-import { useState, useLayoutEffect, useMemo } from "react";
+import { useState, useLayoutEffect, useMemo, useContext } from "react";
 import { Helmet } from "react-helmet";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
+import { useSearchParams } from "react-router-dom";
 
 import {
 	asyncActions as userProcAsyncActions,
 } from "@/service/redusers/userProcedures.js";
 import PropsContext from "./context/context.js";
+import GlobalContext from "@/context/global.js";
+import popups from "@/pages/Appointment/constants/popups.jsx";
 
 import ProcPopup from "./ProcPopup/ProcPopup.jsx";
 import ControlPanel from "./ControlPanel/ControlPanel.jsx";
@@ -22,14 +25,36 @@ function Appointment() {
 		userProcedures,
 	} = useSelector((state) => state);
 	const { t } = useTranslation();
+	const {
+		setVisiblePopup,
+		setPopup,
+	} = useContext(GlobalContext);
+	const [searchParams] = useSearchParams();
 
 	const [isMouseDown, setMouseDownState] = useState(false);
 	const [visibledGroups, setVisibledGroup] = useState({});
 
 	async function init() {
+		const body = {};
+		const searchParamType = Number.parseInt(searchParams.get("type"), 10);
+		const popupName = searchParams.get("action");
+
 		await dispatch(userProcAsyncActions.getProcedureByDay(userProcedures.locale));
-		await dispatch(userProcAsyncActions.getAllTypes());
-		await dispatch(userProcAsyncActions.getDefaultProcValue());
+		const allTypes = await dispatch(userProcAsyncActions.getAllTypes())
+			.then((res) => res.payload.data);
+
+		const foundType = allTypes.find((type) => searchParamType === type.id);
+
+		if (foundType) {
+			body.type = foundType;
+		}
+
+		await dispatch(userProcAsyncActions.getDefaultProcValue(body));
+
+		if (popups[popupName]) {
+			setPopup([popupName]);
+			setVisiblePopup(true);
+		}
 	}
 
 	useLayoutEffect(() => {

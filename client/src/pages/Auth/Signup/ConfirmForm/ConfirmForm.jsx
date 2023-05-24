@@ -112,7 +112,7 @@ function ConfirmForm({ setFormState, user, onSuccess }) {
 			</Helmet>
 			<div className="form">
 				<div
-					className={`loader ${isSubmitting ? style.isLoading : ""}`}
+					className={`loader ${isSubmitting ? "isLoading" : ""}`}
 				>
 					<SimpleLoader />
 				</div>
