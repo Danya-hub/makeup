@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import Calendar from "@/components/UI/Calendar/Calendar.jsx";
 import Filters from "./Filters/Filters.jsx";
-import DesignButton from "@/pages/Appointment/components/DesignButton/DesignButton.jsx";
+import DesignButton from "@/components/UI/Form/DesignButton/DesignButton.jsx";
 
 import {
 	actions as userProcActions,

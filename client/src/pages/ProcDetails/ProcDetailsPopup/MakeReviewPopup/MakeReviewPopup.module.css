@@ -1,0 +1,19 @@
+#makeReview h3 {
+    font-size: var(--step-4);
+    color: rgb(var(--brown));
+    margin-bottom: 2vh;
+    text-align: center;
+}
+
+#makeReview p {
+    font-weight: 500;
+}
+
+.stars {
+    margin: 1vh auto;
+}
+
+#makeReview i {
+    font-size: calc(var(--step-5) + 5px);
+    margin: 0 2px;
+}

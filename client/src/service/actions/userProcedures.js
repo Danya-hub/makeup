@@ -148,6 +148,42 @@ export const asyncActions = {
 		},
 	),
 
+	getReviewsByProcId: createAsyncThunk(
+		"procedure/getReviewsByProcId",
+		async (query, {
+			rejectWithValue,
+		}) => {
+			try {
+				const userProcedures = await axios
+					.get(`/procedure/reviews?${query}`)
+					.then((res) => res.data.map(Value.toDate));
+
+				return userProcedures;
+			} catch (error) {
+				return rejectWithValue(error.message);
+			}
+		},
+	),
+
+	makeReview: createAsyncThunk(
+		"procedure/getReviewsByProcId",
+		async (value, {
+			rejectWithValue,
+		}) => {
+			try {
+				const newReview = await axios
+					.post("/procedure/makeReview", {
+						...value,
+						createdAt: new Date(),
+					});
+
+				return newReview;
+			} catch (error) {
+				return rejectWithValue(error.response);
+			}
+		},
+	),
+
 	getProcedureByDay: createAsyncThunk(
 		"procedure/getProcedureByDay",
 		async (date, {

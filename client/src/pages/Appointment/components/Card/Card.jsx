@@ -7,8 +7,8 @@ import FormatDate from "@/utils/formatDate.js";
 import GlobalContext from "@/context/global.js";
 import { states } from "@/config/procedures.js";
 
-import DeleteButton from "@/pages/Appointment/components/DeleteButton/DeleteButton.jsx";
-import EditButton from "@/pages/Appointment/components/EditButton/EditButton.jsx";
+import DeleteButton from "@/components/UI/Form/DeleteButton/DeleteButton.jsx";
+import EditButton from "@/components/UI/Form/EditButton/EditButton.jsx";
 
 import style from "./Card.module.css";
 

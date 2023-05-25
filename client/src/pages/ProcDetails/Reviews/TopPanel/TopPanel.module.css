@@ -1,0 +1,8 @@
+.topPanel {
+    margin: 2vh 4vw 0 4vw;
+}
+
+.procName {
+    display: block;
+    font-size: var(--step-4);
+}

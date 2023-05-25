@@ -2,9 +2,9 @@ import { memo } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-import style from "./EmptyProc.module.css";
+import style from "./Empty.module.css";
 
-function EmptyProc() {
+function Empty() {
 	const { t } = useTranslation();
 
 	return (
@@ -27,4 +27,4 @@ function EmptyProc() {
 	);
 }
 
-export default memo(EmptyProc);
+export default memo(Empty);

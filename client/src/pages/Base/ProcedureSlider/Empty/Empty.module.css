@@ -1,0 +1,24 @@
+.empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgb(var(--lightBrown));
+    height: 400px;
+}
+
+.empty i {
+    font-size: var(--step-6);
+    color: rgb(var(--brown));
+    opacity: 0.5;
+}
+
+.empty p {
+    color: rgb(var(--brown));
+    font-size: var(--step-2);
+    font-weight: 600;
+}
+
+.empty > *:not(:last-child) {
+    margin-bottom: 3vh;
+}

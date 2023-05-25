@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import types from "prop-types";
 
 import GlobalContext from "@/context/global.js";
@@ -7,7 +8,7 @@ import { states } from "@/config/procedures.js";
 
 import style from "./Content.module.css";
 
-// const COUNT_STARS = 5;
+const COUNT_STARS = 5;
 
 function Content({
 	procedure,
@@ -35,10 +36,10 @@ function Content({
 	return (
 		<div className={style.content}>
 			<h2>{t(procedure.type.name)}</h2>
-			{/* <div
+			<div
 				title={procedure.stars}
 			>
-				{[...Array(countCardsOnPage)].map((_, i) => (
+				{[...Array(COUNT_STARS)].map((_, i) => (
 					<i
 						// eslint-disable-next-line react/no-array-index-key
 						key={`${i}/star`}
@@ -46,11 +47,7 @@ function Content({
 						aria-hidden="true"
 					/>
 				))}
-			</div> */}
-			<b className={style.price}>
-				{procedure.type.price}
-				{procedure.type.currency}
-			</b>
+			</div>
 			<div className={style.state}>
 				<i
 					className="fa fa-bookmark color"
@@ -61,6 +58,10 @@ function Content({
 				/>
 				<span>{t(procedure.state)}</span>
 			</div>
+			<b className={style.price}>
+				{procedure.type.price}
+				{procedure.type.currency}
+			</b>
 			<div className={style.time}>
 				<span>
 					{t("start")}
@@ -75,17 +76,13 @@ function Content({
 					<b>{finishDate}</b>
 				</span>
 			</div>
-			<div>
-				<span>Instagram: </span>
-				<div className={style.buttons}>
-					<button
-						type="button"
-						className="button border"
-					>
-						{t("writeReview")}
-					</button>
-				</div>
-			</div>
+			<span>Instagram: </span>
+			<Link
+				to={`/details/reviews/${procedure.id}`}
+				className={`${style.buttons} button border`}
+			>
+				{t("writeReviewButton")}
+			</Link>
 		</div>
 	);
 }

@@ -4,8 +4,8 @@ const routes = [
 		text: "aboutProcedure",
 	},
 	{
-		path: (procedure) => `/details/comments/${procedure.id}`,
-		text: "comments",
+		path: (procedure) => `/details/reviews/${procedure.id}`,
+		text: "reviews",
 	},
 ];
 

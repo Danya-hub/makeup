@@ -1,4 +1,10 @@
 const htmlComponentValue = {
+	evaluateResultTitle: "Оценить результат работы",
+	evaluateResultBeforeAddText: "Перед добавлением, оцените результат работы от 1 до 5",
+	description: "Описание",
+	writeReviewInput: "Написать отзыв...",
+	writeReviewButton: "Написать отзыв",
+	bestWorksNotAdded: "Лучшие работы еще не добавлены",
 	bestWorks: "Лучшие работы",
 	myServices: "Мои услуги",
 	dateCompletion: "Дата завершения",
@@ -24,9 +30,9 @@ const htmlComponentValue = {
 	usernameEditTitle: "Изменить имя пользователя",
 	telephoneEditTitle: "Изменить телефон",
 	emailEditTitle: "Изменить адрес электронной почты",
-	procCommentsTitle: "Комментарии о услуге",
+	procReviewTitle: "Отзывы о услуге",
 	aboutProcedure: "Все о услуге",
-	comments: "Комментарии",
+	reviews: "Отзывы",
 	day: "День",
 	month: "Месяц",
 	year: "Год",
@@ -124,8 +130,6 @@ const htmlComponentValue = {
 	toFavourites: "В избранное",
 	start: "Начало",
 	finish: "Конец",
-	reviews: "Отзывы",
-	writeReview: "Написать отзыв",
 };
 
 export default htmlComponentValue;

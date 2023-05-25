@@ -28,6 +28,7 @@ header nav a {
 	padding: 0 1vw;
 	text-transform: uppercase;
 	font-weight: 700;
+	white-space: nowrap;
 }
 
 header nav a:hover {

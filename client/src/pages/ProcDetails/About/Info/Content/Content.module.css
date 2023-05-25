@@ -3,6 +3,7 @@
 }
 
 .content > *:not(:last-child) {
+    display: block;
     margin-bottom: 3vh;
 }
 

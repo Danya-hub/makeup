@@ -1,6 +1,6 @@
 import types from "prop-types";
 
-import EmptyProc from "./EmptyProc/EmptyProc.jsx";
+import Empty from "./Empty/Empty.jsx";
 import Output from "./Output/Output.jsx";
 
 import style from "./Presentation.module.css";
@@ -9,7 +9,7 @@ function Presentation({ tempCards, initialCards }) {
 	return (
 		<div id={style.presentation}>
 			{initialCards.length === 0
-				? <EmptyProc />
+				? <Empty />
 				: <Output cards={tempCards} />}
 		</div>
 	);

@@ -15,6 +15,8 @@ router.get("/byDay/:date", ProcedureController.getByDay);
 router.get("/byColumn/:column/:value", ProcedureController.getByColumn);
 router.get("/allTypes/:country", TypeService.all);
 router.get("/default/:country", ProcedureController.defaultValue);
+router.get("/reviews", ProcedureController.getReviewsByProcId);
+router.post("/makeReview", ProcedureController.makeReview);
 router.get("/defaultType/:country", TypeService.defaultType);
 router.post("/createProcedure", isAuth, checkOnValid, ProcedureController.createProcedure);
 router.post("/createType", isAuth, roleAccess(["admin"]), checkOnValid, TypeService.create);

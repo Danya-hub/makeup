@@ -6,6 +6,8 @@ import Firebase from "../utils/firebase.js";
 import TypeService from "../service/type.js";
 import ProcedureService from "../service/procedure.js";
 
+import errors from "../config/errors.js";
+
 class Procedure {
   async defaultValue(req, res, next) {
     try {
@@ -117,36 +119,6 @@ class Procedure {
     ).catch(next);
   }
 
-  // getById(req, res, next) {
-  //   const {
-  //     id,
-  //   } = req.params;
-
-  //   MySQL.createQuery({
-  //       sql: "SELECT * FROM service WHERE ?? = ?",
-  //       values: {
-  //         columns: ["id", id],
-  //         formatName: "keyAndValueArray",
-  //       },
-  //     },
-  //     async (error, results) => {
-  //       if (error) {
-  //         throw error;
-  //       }
-
-  //       if (!results.length) {
-  //         ApiError.throw("notExist", "procedure");
-  //       }
-
-  //       const populated = await Promise.all(results.map(ProcedureService.populate));
-
-  //       res.status(200).json(populated);
-
-  //       next();
-  //     }
-  //   ).catch(next);
-  // }
-
   async getByDay(req, res, next) {
     const {
       date,
@@ -164,6 +136,59 @@ class Procedure {
         values: {
           columns,
           formatName: "keysAndValuesObject",
+        },
+      },
+      async (error, results) => {
+        if (error) {
+          throw error;
+        }
+
+        const populated = await Promise.all(results.map(ProcedureService.populate));
+
+        res.status(200).json(populated);
+        next();
+      }
+    ).catch(next);
+  }
+
+  makeReview(req, res, next) {
+    const formated = Value.toSQLDate(req.body);
+
+    MySQL.createQuery({
+        sql: "INSERT INTO reviews **",
+        values: {
+          columns: formated,
+          formatName: "spreadObject",
+        },
+      },
+      (error) => {
+        if (error) {
+          ApiError.throw("badRequest", {
+            ...errors.alreadyExist("reviewAlreadyExistsValid"),
+            name: "review",
+          });
+        }
+
+        res.status(200).json({
+          msg: "New reviews were created",
+        });
+
+        next();
+      }
+    ).catch(next);
+  }
+
+  getReviewsByProcId(req, res, next) {
+    const {
+      id,
+      limit,
+    } = req.query;
+
+    MySQL.createQuery({
+        sql: `SELECT * FROM reviews WHERE ?? = ?${limit ? ` LIMIT ${limit}` : ""}`,
+        values: {
+          columns: ["service", id],
+          formatName: "keyAndValueArray",
         },
       },
       async (error, results) => {
@@ -204,31 +229,6 @@ class Procedure {
       }
     ).catch(next);
   }
-
-  // getByUser(req, res, next) {
-  //   const {
-  //     user: id
-  //   } = req.params;
-
-  //   MySQL.createQuery({
-  //       sql: "SELECT * FROM service WHERE ?? = ?",
-  //       values: {
-  //         columns: ["user", id],
-  //         formatName: "keyAndValueArray",
-  //       },
-  //     },
-  //     async (error, results) => {
-  //       if (error) {
-  //         throw error;
-  //       }
-
-  //       const populated = await Promise.all(results.map(ProcedureService.populate));
-
-  //       res.status(200).json(populated);
-  //       next();
-  //     }
-  //   ).catch(next);
-  // }
 
   update(req, res, next) {
     const columns = Value.toSQLDate({

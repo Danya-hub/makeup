@@ -25,14 +25,14 @@ function Header() {
 				<ul>
 					<li>
 						<Link
-							to="/bestWorks"
+							to="/%23bestWorks"
 						>
 							{t("bestWorks")}
 						</Link>
 					</li>
 					<li>
 						<Link
-							to="/myServices"
+							to="/%23myServices"
 						>
 							{t("myServices")}
 						</Link>
@@ -44,7 +44,6 @@ function Header() {
 				<Lang />
 				{!isAuth && (
 					<Link
-						className="button"
 						to="/signin"
 					>
 						{t("signIn")}

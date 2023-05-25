@@ -65,6 +65,13 @@ button {
 	cursor: pointer;
 }
 
+.content {
+	display: grid;
+    grid-auto-flow: row;
+    grid-auto-rows: 0.1fr 1fr 0.1fr;
+    min-height: 100vh;
+}
+
 .button {
 	--back: var(--transp);
 	--o: 0;
@@ -234,7 +241,7 @@ main {
 
 .errorMessage {
 	line-height: unset;
-    margin-top: 2vh;
+    margin-top: 2vh !important;
     color: rgb(var(--red));
     font-weight: 900;
 }

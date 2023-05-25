@@ -1,5 +1,11 @@
 #description {
+    display: flex;
     margin: 3vh 5vw;
+}
+
+#description > * {
+    margin: 0 1vw;
+    padding: 2vh 0;
 }
 
 #description h2 {
@@ -16,4 +22,10 @@
 
 #description li {
     list-style: decimal-leading-zero;
+}
+
+.paragraph {
+    position: sticky;
+    align-self: flex-start;
+    top: 0;
 }

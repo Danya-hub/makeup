@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Popup from "@/components/UI/Popup/Popup.jsx";
 import Select from "@/components/UI/Form/Select/Select.jsx";
 import TimeInput from "@/pages/Appointment/ProcPopup/TimeInput/TimeInput.jsx";
-import DeleteButton from "@/pages/Appointment/components/DeleteButton/DeleteButton.jsx";
+import DeleteButton from "@/components/UI/Form/DeleteButton/DeleteButton.jsx";
 
 import ProcConfig from "@/config/procedures.js";
 import GlobalContext from "@/context/global.js";

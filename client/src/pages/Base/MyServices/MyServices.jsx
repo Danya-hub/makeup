@@ -1,11 +1,11 @@
 import MenuPdf from "@/assets/pdf/menu.pdf";
 import MenuSrc from "@/assets/image/menu.svg";
 
-import "./MyServices.module.css";
+import style from "./MyServices.module.css";
 
 function MyServices() {
 	return (
-		<div>
+		<div className={style.services}>
 			<a
 				href={MenuPdf}
 				target="_blank"

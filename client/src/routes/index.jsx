@@ -11,7 +11,7 @@ const Signin = lazy(() => import("@/pages/Auth/Signin/Signin.jsx"));
 const ResetPassword = lazy(() => import("@/pages/Auth/ResetPassword/ResetPassword.jsx"));
 const UserProcedures = lazy(() => import("@/pages/UserProcedures/UserProcedures.jsx"));
 const AboutProcedure = lazy(() => import("@/pages/ProcDetails/About/About.jsx"));
-const ProcComments = lazy(() => import("@/pages/ProcDetails/Comments/Comments.jsx"));
+const ProcReviews = lazy(() => import("@/pages/ProcDetails/Reviews/Reviews.jsx"));
 
 const routes = [
 	{
@@ -79,15 +79,15 @@ const routes = [
 		),
 	},
 	{
-		url: "details/comments/:id",
+		url: "details/reviews/:id",
 		elem: () => (
-			<HMFLayout>
-				<ProcComments />
-			</HMFLayout>
+			<HMLayout>
+				<ProcReviews />
+			</HMLayout>
 		),
 	},
 	{
-		url: "*",
+		url: "/notFound",
 		elem: () => (
 			<HMLayout>
 				<NotFound />

@@ -9,7 +9,7 @@ import { asyncActions } from "@/service/actions/userProcedures.js";
 import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
 import Info from "./Info/Info.jsx";
 import Description from "./Description/Description.jsx";
-import Navigation from "@/pages/ProcDetails/Navigation/Navigation.jsx";
+import Navigation from "@/pages/ProcDetails/components/Navigation/Navigation.jsx";
 
 function ProcDetails() {
 	const navigate = useNavigate();
@@ -19,19 +19,25 @@ function ProcDetails() {
 	const params = useParams();
 
 	const [procedure, setProcedure] = useState(null);
+	const [reviews, setReviews] = useState(null);
 
 	async function init() {
 		const procedureById = await dispatch(asyncActions.getProcedureById(params.id))
 			.then((res) => {
 				if (res.payload.user.id !== userInfo.id) {
-					return navigate("/*");
+					return navigate("/notFound");
 				}
 
 				return res.payload;
 			})
-			.catch(() => navigate("/*"));
+			.catch(() => navigate("/notFound"));
+
+		const reviewsById = await dispatch(asyncActions.getReviewsByProcId(`id=${params.id}&limit=6`))
+			.then((res) => res.payload)
+			.catch(() => navigate("/notFound"));
 
 		setProcedure(procedureById);
+		setReviews(reviewsById);
 	}
 
 	useEffect(() => {
@@ -53,6 +59,7 @@ function ProcDetails() {
 					/>
 					<Description
 						procedure={procedure}
+						reviews={reviews}
 					/>
 
 				</>

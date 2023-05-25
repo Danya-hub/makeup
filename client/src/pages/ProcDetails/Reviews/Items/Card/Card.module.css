@@ -1,0 +1,42 @@
+.card {
+    position: relative;
+    display: flex;
+    padding: 1vh 1vw;
+    width: fit-content;
+}
+
+.avatar {
+    box-shadow: 0 0 8px rgba(var(--brown), 0.3);
+    border-radius: 100vw;
+    min-width: 50px;
+    height: 50px;
+    overflow: hidden;
+}
+
+.content {
+    margin-left: 14px;
+}
+
+.text {
+    margin-top: 1vh;
+    line-height: 15px;
+}
+
+.topPanel b {
+    font-size: var(--step-2);
+    white-space: nowrap;
+    margin-right: 2vh;
+}
+
+.buttons {
+    display: flex;
+    position: absolute;
+    transform: translateX(100%);
+    top: 0;
+    right: 0;
+}
+
+.buttons button {
+    padding-left: 1vw;
+    padding-right: 1vw;
+}

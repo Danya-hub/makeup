@@ -1,4 +1,10 @@
 const htmlComponentValue = {
+	evaluateResultTitle: "Evaluate the result of work",
+	evaluateResultBeforeAddText: "Before adding a review rate the result of the work from 1 to 5",
+	description: "Description",
+	writeReviewInput: "Write a review...",
+	writeReviewButton: "Write a review",
+	bestWorksNotAdded: "Best works have not yet been added",
 	bestWorks: "Best works",
 	myServices: "My services",
 	dateCompletion: "Date of completion",
@@ -24,9 +30,9 @@ const htmlComponentValue = {
 	usernameEditTitle: "Change a username",
 	telephoneEditTitle: "Change a telephone",
 	emailEditTitle: "Change a email",
-	procCommentsTitle: "Comments about a procedure",
+	procReviewsTitle: "Reviews about a procedure",
 	aboutProcedure: "About procedure",
-	comments: "Comments",
+	reviews: "Reviews",
 	day: "Day",
 	month: "Month",
 	year: "Year",
@@ -124,8 +130,6 @@ const htmlComponentValue = {
 	toFavourites: "To favorites",
 	start: "Start",
 	finish: "Finish",
-	reviews: "Reviews",
-	writeReview: "Write a review",
 };
 
 export default htmlComponentValue;

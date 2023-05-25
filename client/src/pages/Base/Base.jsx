@@ -35,14 +35,14 @@ function Base() {
 			{bestWorks ? (
 				<>
 					<ScrollTo
-						sectionName="bestWorks"
+						sectionName="#bestWorks"
 					>
 						<ProcedureSlider
 							procedures={bestWorks}
 						/>
 					</ScrollTo>
 					<ScrollTo
-						sectionName="myServices"
+						sectionName="#myServices"
 					>
 						<MyServices />
 					</ScrollTo>

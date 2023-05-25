@@ -1,15 +1,15 @@
-:global(#myServices) {
+.services {
     padding: 4vh 0;
     background: rgb(var(--white));
 }
 
-:global(#myServices) a {
+.services a {
     position: relative;
     width: 100vh;
     margin: 0 auto;
 }
 
-:global(#myServices) a::before {
+.services a::before {
     --o: 0;
     
     content: "";
@@ -21,17 +21,17 @@
     height: 100%;
 }
 
-:global(#myServices) a:hover::before {
+.services a:hover::before {
     --o: 0.5;
 }
 
-:global(#myServices) a:hover i {
+.services a:hover i {
     --o: 0.5;
 
     opacity: var(--o);
 }
 
-:global(#myServices) i {
+.services i {
     --o: 0;
 
     position: absolute;

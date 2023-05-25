@@ -6,8 +6,8 @@ import GlobalContext from "@/context/global.js";
 import FormatDate from "@/utils/formatDate.js";
 import { actions } from "@/service/redusers/userProcedures.js";
 
-import DeleteButton from "@/pages/Appointment/components/DeleteButton/DeleteButton.jsx";
-import EditButton from "@/pages/Appointment/components/EditButton/EditButton.jsx";
+import DeleteButton from "@/components/UI/Form/DeleteButton/DeleteButton.jsx";
+import EditButton from "@/components/UI/Form/EditButton/EditButton.jsx";
 
 import style from "./Table.module.css";
 
