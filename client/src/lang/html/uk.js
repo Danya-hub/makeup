@@ -1,4 +1,5 @@
 const htmlComponentValue = {
+	signinToAddReview: "Увійдіть до свого облікового запису, щоб додати коментар",
 	evaluateResultTitle: "Оцініть результат роботи",
 	evaluateResultBeforeAddText: "Перед додаванням, оцініть результат роботи від 1 до 5",
 	description: "Опис",

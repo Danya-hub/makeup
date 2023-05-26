@@ -1,10 +1,13 @@
 import { useContext } from "react";
 import types from "prop-types";
+import { useDispatch } from "react-redux";
 
 import DeleteButton from "@/components/UI/Form/DeleteButton/DeleteButton.jsx";
 import EditButton from "@/components/UI/Form/EditButton/EditButton.jsx";
 
 import GlobalContext from "@/context/global.js";
+import ReviewContext from "@/pages/ProcDetails/context/reviews.js";
+import { asyncActions } from "@/service/actions/userProcedures.js";
 
 import style from "./Card.module.css";
 
@@ -17,6 +20,9 @@ function Card({
 	const {
 		currentLang,
 	} = useContext(GlobalContext);
+	const reviewContextState = useContext(ReviewContext);
+	const dispatch = useDispatch();
+
 	const createdAt = Intl.DateTimeFormat(currentLang, {
 		month: "2-digit",
 		day: "2-digit",
@@ -25,12 +31,13 @@ function Card({
 		hour: "numeric",
 	}).format(content.createdAt);
 
-	function onDelete(index) {
-		console.log(index);
+	function onDelete(id) {
+		dispatch(asyncActions.deleteReview(id));
 	}
 
-	function onEdit(index) {
-		console.log(index);
+	function onEdit() {
+		// eslint-disable-next-line react/destructuring-assignment
+		reviewContextState.setReviewFormValue([content, "edit"]);
 	}
 
 	return (

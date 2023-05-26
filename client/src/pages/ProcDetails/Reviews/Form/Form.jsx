@@ -1,10 +1,15 @@
+import { useContext } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
 import types from "prop-types";
 
 import StateInput from "@/components/UI/Form/StateInput/StateInput.jsx";
+import Notification from "@/components/UI/Form/Notification/Notification.jsx";
+
+import ReviewContext from "@/pages/ProcDetails/context/reviews.js";
+import GlobalContext from "@/context/global.js";
 
 import style from "./Form.module.css";
 
@@ -12,7 +17,12 @@ function Form({
 	onSubmit,
 }) {
 	const params = useParams();
+	const navigate = useNavigate();
 	const { info: userInfo } = useSelector((state) => state.user);
+	const {
+		reviewFormValue,
+		actionName,
+	} = useContext(ReviewContext);
 	const {
 		handleSubmit,
 		control,
@@ -22,28 +32,52 @@ function Form({
 		getFieldState,
 	} = useForm({
 		mode: "onSubmit",
+		defaultValues: reviewFormValue,
 	});
+	const {
+		isAuth,
+	} = useContext(GlobalContext);
+
 	const { t } = useTranslation();
 
-	const reviewState = getFieldState("review");
-	const reviewError = errors.review?.message;
+	const reviewState = getFieldState("text");
+	const reviewError = errors.text?.message;
 
 	return (
 		<div
 			className={style.form}
 		>
+			{!isAuth && (
+				<Notification
+					content={{
+						key: t("signinToAddReview"),
+					}}
+					status="warning"
+				/>
+			)}
 			<form
+				className={style[actionName]}
 				onSubmit={handleSubmit((data) => {
+					if (!isAuth) {
+						navigate("/signin", {
+							state: {
+								purpose: "warningAuthToMakeAppointment",
+							},
+						});
+						return;
+					}
+
 					onSubmit({
 						service: parseInt(params.id, 10),
 						user: userInfo.id,
-						text: data.review,
+						...reviewFormValue,
+						...data,
 					});
 				})}
 			>
 				<div>
 					<Controller
-						name="review"
+						name="text"
 						control={control}
 						render={({
 							field: { onChange },
@@ -55,11 +89,13 @@ function Form({
 								state={[
 									["error", reviewState.invalid],
 								]}
+								defaultValue={reviewFormValue.text}
+								disabled={!isAuth}
 							/>
 						)}
 						rules={{
 							required: {
-								value: true,
+								value: !reviewFormValue.text,
 								message: ["requiredReviewValid"],
 							},
 							minLength: {
@@ -79,6 +115,7 @@ function Form({
 					<button
 						type="submit"
 						className="button"
+						disabled={!isAuth}
 					>
 						<i
 							className="fa fa-location-arrow"
@@ -86,7 +123,7 @@ function Form({
 						/>
 					</button>
 				</div>
-				{errors.review && <p className="errorMessage">{t(...reviewError)}</p>}
+				{errors.text && <p className="errorMessage">{t(...reviewError)}</p>}
 			</form>
 		</div>
 	);

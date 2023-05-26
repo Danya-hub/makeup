@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 
+import Value from "@/utils/value.js";
 import { asyncActions } from "@/service/actions/userProcedures.js";
 
 import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
@@ -15,7 +16,6 @@ function ProcDetails() {
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 	const { t } = useTranslation();
-	const { info: userInfo } = useSelector((state) => state.user);
 	const params = useParams();
 
 	const [procedure, setProcedure] = useState(null);
@@ -24,7 +24,9 @@ function ProcDetails() {
 	async function init() {
 		const procedureById = await dispatch(asyncActions.getProcedureById(params.id))
 			.then((res) => {
-				if (res.payload.user.id !== userInfo.id) {
+				const isEmpty = Value.isEmptyObject(res.payload);
+
+				if (isEmpty) {
 					return navigate("/notFound");
 				}
 
@@ -61,7 +63,6 @@ function ProcDetails() {
 						procedure={procedure}
 						reviews={reviews}
 					/>
-
 				</>
 			)
 				: <SimpleLoader />}

@@ -1,4 +1,4 @@
-:global(.field):has(input:where(:hover, :focus)) {
+:global(.field):has(input:not(:disabled):where(:hover, :focus)) {
 	--opacity: 0.8;
     --scale: 2px;
 }

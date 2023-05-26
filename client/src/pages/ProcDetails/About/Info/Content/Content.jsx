@@ -76,7 +76,13 @@ function Content({
 					<b>{finishDate}</b>
 				</span>
 			</div>
-			<span>Instagram: </span>
+			{procedure.instagram && (
+				<p id={style.instagram}>
+					Instagram:
+					{' '}
+					<a href={procedure.instagram}>{procedure.instagram}</a>
+				</p>
+			)}
 			<Link
 				to={`/details/reviews/${procedure.id}`}
 				className={`${style.buttons} button border`}

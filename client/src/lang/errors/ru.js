@@ -1,4 +1,8 @@
 const errors = {
+	requiredReviewValid: "Требуеться отзыв",
+	largerReviewValid: "Отзыв должен быть больше, чем {{min}} символа",
+	lesserReviewValid: "Отзыв должен быть до {{max}} символов",
+	reviewAlreadyExistsValid: "Вы уже написали отзыв. Вы не можете повторно написать отзыв этой услуги",
 	requiredRecaptchaValid: "Требуеться подтверждение ReCAPTCHA",
 	passwordNotMatchValid: "Пароль не совпадает",
 	requiredConfirmationCodeValid: "Требуется код подтверждения",

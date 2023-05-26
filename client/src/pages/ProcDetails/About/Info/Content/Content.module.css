@@ -36,3 +36,12 @@
 .buttons button:not(:last-child) {
     margin-right: 2vw;
 }
+
+#instagram {
+    display: flex;
+}
+
+#instagram a {
+    font-weight: 600;
+    margin-left: 6px;
+}

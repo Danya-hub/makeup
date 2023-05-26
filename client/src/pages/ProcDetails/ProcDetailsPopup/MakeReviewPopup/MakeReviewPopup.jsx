@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Controller, useForm } from "react-hook-form";
 
 import GlobalContext from "@/context/global.js";
+import ReviewContext from "@/pages/ProcDetails/context/reviews.js";
 
 import Popup from "@/components/UI/Popup/Popup.jsx";
 import Recaptcha from "@/components/UI/Form/Recaptcha/Recaptcha.jsx";
@@ -20,6 +21,10 @@ function MakeReviewPopup() {
 		setPopup,
 	} = useContext(GlobalContext);
 	const {
+		actionName,
+		setReviewFormValue,
+	} = useContext(ReviewContext);
+	const {
 		handleSubmit,
 		formState: {
 			errors,
@@ -27,6 +32,7 @@ function MakeReviewPopup() {
 		},
 		control,
 		getValues,
+		trigger,
 	} = useForm({
 		mode: "onSubmit",
 	});
@@ -35,12 +41,16 @@ function MakeReviewPopup() {
 	function onClose() {
 		setPopup([]);
 		setVisiblePopup(false);
+		setReviewFormValue([{}, "make"]);
 	}
 
 	async function onSubmit(data) {
-		await popupActions.make({
-			stars: data.stars,
-		});
+		if (popupActions[actionName]) {
+			await popupActions[actionName]({
+				stars: data.stars,
+			});
+		}
+
 		setPopup([]);
 		setVisiblePopup(false);
 	}
@@ -48,12 +58,18 @@ function MakeReviewPopup() {
 	function handleSelectStars(e, onChange) {
 		const stars = parseInt(e.target.id, 10) + 1;
 
+		if (Number.isNaN(stars)) {
+			return;
+		}
+
 		onChange(stars);
+		trigger("stars");
 	}
 
 	function handleCancel() {
-		setVisiblePopup(false);
 		setPopup([]);
+		setVisiblePopup(false);
+		setReviewFormValue([{}, "make"]);
 	}
 
 	const recaptchaError = errors.recaptcha?.message;

@@ -1,6 +1,10 @@
 import Check from "@/utils/check.js";
 
 const valueActions = {
+	isEmptyObject(object) {
+		return Object.keys(object).length === 0;
+	},
+
 	changeObject(props, callback) {
 		callback((prev) => ({
 			...prev,

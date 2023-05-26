@@ -1,4 +1,8 @@
 const errors = {
+	requiredReviewValid: "Потрібно відгук",
+	largerReviewValid: "Відгук повинен бути більшим, ніж {{min}} символу",
+	lesserReviewValid: "Відгук повинен бути до {{max}} символів",
+	reviewAlreadyExistsValid: "Ви вже написали відгук. Ви не можете повторно написати відгук на цю послугу",
 	requiredRecaptchaValid: "Потрібно підтвердження ReCAPTCHA",
 	passwordNotMatchValid: "Пароль не збігається",
 	requiredConfirmationCodeValid: "Потрібен код підтвердження",

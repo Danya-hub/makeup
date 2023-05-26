@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import types from "prop-types";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
 import Image from "./Image/Image.jsx";
@@ -15,6 +15,7 @@ function Info({
 }) {
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
+	const { info: userInfo } = useSelector((state) => state.user);
 
 	async function handleFavourite() {
 		await dispatch(asyncActions.updateProc([{
@@ -46,9 +47,11 @@ function Info({
 							aria-hidden="true"
 						/>
 					</button>
-					<OptionButton
-						render={optionsRender}
-					/>
+					{userInfo.id === procedure.user.id && (
+						<OptionButton
+							render={optionsRender}
+						/>
+					)}
 				</div>
 			</div>
 		</div>

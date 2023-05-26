@@ -16,12 +16,14 @@ router.get("/byColumn/:column/:value", ProcedureController.getByColumn);
 router.get("/allTypes/:country", TypeService.all);
 router.get("/default/:country", ProcedureController.defaultValue);
 router.get("/reviews", ProcedureController.getReviewsByProcId);
-router.post("/makeReview", ProcedureController.makeReview);
+router.post("/makeReview", isAuth, checkOnValid, ProcedureController.makeReview);
+router.post("/deleteReview/:id", isAuth, checkOnValid, ProcedureController.deleteReviewById);
+router.post("/updateReview", isAuth, checkOnValid, ProcedureController.updateReview);
 router.get("/defaultType/:country", TypeService.defaultType);
 router.post("/createProcedure", isAuth, checkOnValid, ProcedureController.createProcedure);
 router.post("/createType", isAuth, roleAccess(["admin"]), checkOnValid, TypeService.create);
-router.post("/removeProcedureByUser/:id", isAuth, checkOnValid, ProcedureController.removeByUserId);
-router.post("/deleteProcedureById/:id", isAuth, checkOnValid, ProcedureController.removeById);
-router.post("/updateProcedure", isAuth, checkOnValid, ProcedureController.update);
+router.post("/deleteProcedureByUser/:id", isAuth, checkOnValid, ProcedureController.deleteByUserId);
+router.post("/deleteProcedureById/:id", isAuth, checkOnValid, ProcedureController.deleteById);
+router.post("/updateProcedure", isAuth, checkOnValid, ProcedureController.updateProc);
 
 export default router;

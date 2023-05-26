@@ -67,7 +67,7 @@ class Procedure {
     ).catch(next);
   }
 
-  removeById(req, res, next) {
+  deleteById(req, res, next) {
     const {
       id,
     } = req.params;
@@ -93,7 +93,7 @@ class Procedure {
       .catch(next);
   }
 
-  removeByUserId(req, res, next) {
+  deleteByUserId(req, res, next) {
     const {
       id
     } = req.params;
@@ -155,7 +155,7 @@ class Procedure {
     const formated = Value.toSQLDate(req.body);
 
     MySQL.createQuery({
-        sql: "INSERT INTO reviews **",
+        sql: "INSERT INTO review **",
         values: {
           columns: formated,
           formatName: "spreadObject",
@@ -170,7 +170,7 @@ class Procedure {
         }
 
         res.status(200).json({
-          msg: "New reviews were created",
+          msg: "New review were created",
         });
 
         next();
@@ -185,7 +185,7 @@ class Procedure {
     } = req.query;
 
     MySQL.createQuery({
-        sql: `SELECT * FROM reviews WHERE ?? = ?${limit ? ` LIMIT ${limit}` : ""}`,
+        sql: `SELECT * FROM review WHERE ?? = ?${limit ? ` LIMIT ${limit}` : ""}`,
         values: {
           columns: ["service", id],
           formatName: "keyAndValueArray",
@@ -230,7 +230,7 @@ class Procedure {
     ).catch(next);
   }
 
-  update(req, res, next) {
+  updateProc(req, res, next) {
     const columns = Value.toSQLDate({
       ...req.body,
       type: req.body.type.id,
@@ -239,6 +239,57 @@ class Procedure {
 
     MySQL.createQuery({
         sql: `UPDATE service SET ** WHERE id = ${columns.id}`,
+        values: {
+          columns,
+          formatName: "column",
+        },
+      },
+      (error, results) => {
+        if (error) {
+          throw error;
+        }
+
+        res.status(200).json(results);
+
+        next();
+      }
+    ).catch(next);
+  }
+
+  deleteReviewById(req, res, next) {
+    const {
+      id,
+    } = req.params;
+
+    MySQL.createQuery({
+          sql: "DELETE FROM review WHERE ?? = ?",
+          values: {
+            columns: ["id", id],
+            formatName: "keyAndValueArray",
+          },
+        },
+        (error) => {
+          if (error) {
+            throw error;
+          }
+
+          res.status(200).json({
+            success: "The review is deleted",
+          });
+
+          next();
+        })
+      .catch(next);
+  }
+
+  updateReview(req, res, next) {
+    const columns = Value.toSQLDate({
+      ...req.body,
+      user: req.body.user.id,
+    });
+
+    MySQL.createQuery({
+        sql: `UPDATE review SET ** WHERE id = ${columns.id}`,
         values: {
           columns,
           formatName: "column",

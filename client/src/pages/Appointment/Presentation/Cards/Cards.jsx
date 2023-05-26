@@ -102,16 +102,16 @@ function Cards({
 	}
 
 	function onMouseDown(e) {
+		if (e.target.tagName === "BUTTON") {
+			return;
+		}
+
 		if (!isAuth) {
 			navigate("/signin", {
 				state: {
 					purpose: "warningAuthToMakeAppointment",
 				},
 			});
-			return;
-		}
-
-		if (e.target.tagName === "BUTTON") {
 			return;
 		}
 
@@ -249,7 +249,7 @@ function Cards({
 					<Card
 						index={card.id}
 						isOwn={isOwn}
-						isBook={isOwn}
+						isBook
 						className={style[isOwn
 							? visibledGroups.myAppointments
 							: visibledGroups.otherAppointments]}

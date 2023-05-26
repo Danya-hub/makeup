@@ -295,6 +295,30 @@ export const asyncActions = {
 		}
 	}),
 
+	deleteReview: createAsyncThunk("procedure/deleteReview", async (value, {
+		rejectWithValue,
+	}) => {
+		try {
+			const result = await axios.post(`/procedure/deleteReview/${value}`);
+
+			return result;
+		} catch (error) {
+			return rejectWithValue(error.message);
+		}
+	}),
+
+	updateReview: createAsyncThunk("procedure/updateReview", async (value, {
+		rejectWithValue,
+	}) => {
+		try {
+			const result = await axios.post("/procedure/updateReview", value);
+
+			return result;
+		} catch (error) {
+			return rejectWithValue(error.response);
+		}
+	}),
+
 	updateProc: createAsyncThunk("procedure/updateProcedure", async (value, {
 		rejectWithValue,
 		getState,
@@ -312,7 +336,9 @@ export const asyncActions = {
 				);
 			}
 
-			return await axios.post("/procedure/updateProcedure", body);
+			const result = await axios.post("/procedure/updateProcedure", body);
+
+			return result;
 		} catch (error) {
 			return rejectWithValue(error.message);
 		}

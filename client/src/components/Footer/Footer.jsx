@@ -17,14 +17,14 @@ function Footer() {
 				<ul>
 					<li>
 						<Link
-							to="/bestWorks"
+							to="/%23bestWorks"
 						>
 							{t("bestWorks")}
 						</Link>
 					</li>
 					<li>
 						<Link
-							to="/myServices"
+							to="/%23myServices"
 						>
 							{t("myServices")}
 						</Link>

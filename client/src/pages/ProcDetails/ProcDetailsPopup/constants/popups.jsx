@@ -4,6 +4,9 @@ const popups = {
 	make: () => (
 		<MakeReviewPopup />
 	),
+	edit: () => (
+		<MakeReviewPopup />
+	),
 };
 
 export default popups;

@@ -7,7 +7,11 @@ function ProcedureSlider({
 	procedures,
 }) {
 	return (
-		procedures.length ? <Output /> : <Empty />
+		procedures.length ? (
+			<Output
+				procedures={procedures}
+			/>
+		) : <Empty />
 	);
 }
 

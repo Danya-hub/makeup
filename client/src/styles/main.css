@@ -197,7 +197,10 @@ main {
 }
 
 .field {
+	--back: var(--gray);
+	--backOpacity: 0;
 	box-shadow: 0 0 0 var(--scale) rgba(var(--lineColor), var(--opacity));
+	background: rgba(var(--back), var(--backOpacity));
 }
 
 .form form {
@@ -209,6 +212,11 @@ main {
 	text-transform: uppercase;
 	color: rgb(var(--brown));
 	margin-bottom: 1vh;
+}
+
+button:disabled {
+	opacity: 0.4;
+	cursor: unset;
 }
 
 .form .navigation {

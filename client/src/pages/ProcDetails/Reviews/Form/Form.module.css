@@ -7,8 +7,9 @@
     padding-bottom: 5vh;
 }
 
-.form form {
-    margin: 0 4vw;
+.form {
+    padding-left: 4vw;
+    padding-right: 4vw;
 }
 
 .form form > div {
@@ -22,7 +23,7 @@
     padding: 0 2vw;
 }
 
-.form form button[type="submit"]:hover {
+.form form button[type="submit"]:not(:disabled):hover {
     --back: var(--brown);
     --o: 0.2;
 }
@@ -30,4 +31,11 @@
 .form form button[type="submit"] i {
     color: rgb(var(--brown));
     font-size: var(--step-4);
+}
+
+.form .edit :global(.field) {
+    --lineColor: var(--brown);
+    --opacity: 1;
+    --scale: 2px;
+    --backOpacity: 0.5;
 }

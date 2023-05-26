@@ -1,4 +1,8 @@
 const errors = {
+	requiredReviewValid: "Review Required",
+	largerReviewValid: "Review must be larger than {{min}} characters",
+	lesserReviewValid: "Review must be up to {{max}} characters",
+	reviewAlreadyExistsValid: "You have already reviewed. You cannot review this service again",
 	requiredRecaptchaValid: "ReCAPTCHA confirmation is required",
 	passwordNotMatchValid: "Password is not match",
 	requiredConfirmationCodeValid: "Confirmation code is required",

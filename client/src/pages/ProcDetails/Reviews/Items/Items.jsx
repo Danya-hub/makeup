@@ -19,7 +19,7 @@ function Items({
 				<Card
 					key={review.id}
 					content={review}
-					isOwn={review.user.id === userInfo.id && hasActions}
+					isOwn={review.user.id === userInfo?.id && hasActions}
 				/>
 			))}
 		</div>

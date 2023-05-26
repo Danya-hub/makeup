@@ -1,6 +1,7 @@
 const htmlComponentValue = {
+	signinToAddReview: "Войдите в свой аккаунт, чтоб добавить отзыв",
 	evaluateResultTitle: "Оценить результат работы",
-	evaluateResultBeforeAddText: "Перед добавлением, оцените результат работы от 1 до 5",
+	evaluateResultBeforeAddText: "Перед созданием нового отзыва, оцените результат работы от 1 до 5",
 	description: "Описание",
 	writeReviewInput: "Написать отзыв...",
 	writeReviewButton: "Написать отзыв",
@@ -30,7 +31,7 @@ const htmlComponentValue = {
 	usernameEditTitle: "Изменить имя пользователя",
 	telephoneEditTitle: "Изменить телефон",
 	emailEditTitle: "Изменить адрес электронной почты",
-	procReviewTitle: "Отзывы о услуге",
+	procReviewsTitle: "Отзывы о услуге",
 	aboutProcedure: "Все о услуге",
 	reviews: "Отзывы",
 	day: "День",

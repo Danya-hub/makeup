@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import types from "prop-types";
 
-import { useSelector } from "react-redux";
 import GlobalContext from "@/context/global.js";
 import LeftArrowSrc from "@/assets/image/leftArrow.svg";
 import RightArrowSrc from "@/assets/image/rightArrow.svg";
@@ -17,7 +16,6 @@ function Output({
 	const {
 		currentLang,
 	} = useContext(GlobalContext);
-	const { info: userInfo } = useSelector((state) => state.user);
 
 	const [procIndex, setProcIndex] = useState(0);
 
@@ -88,15 +86,13 @@ function Output({
 							>
 								{t("book")}
 							</Link>
-							{procedures[procIndex].user.id === userInfo?.id && (
-								<Link
-									id={style.more}
-									className="button border"
-									to={`/details/${procedures[procIndex].id}`}
-								>
-									{t("more")}
-								</Link>
-							)}
+							<Link
+								id={style.more}
+								className="button border"
+								to={`/details/${procedures[procIndex].id}`}
+							>
+								{t("more")}
+							</Link>
 						</div>
 					</div>
 					<button

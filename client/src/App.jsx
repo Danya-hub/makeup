@@ -63,9 +63,15 @@ function App() {
 	]);
 
 	return (
-		<GlobalContext.Provider value={contextValue}>
+		<GlobalContext.Provider
+			value={contextValue}
+		>
 			<Helmet>
-				<link rel="icon" type="image/x-icon" href={LogoSrc} />
+				<link
+					rel="icon"
+					type="image/x-icon"
+					href={LogoSrc}
+				/>
 			</Helmet>
 			<Body />
 		</GlobalContext.Provider>

@@ -1,4 +1,5 @@
 const htmlComponentValue = {
+	signinToAddReview: "Login to your account to add a review",
 	evaluateResultTitle: "Evaluate the result of work",
 	evaluateResultBeforeAddText: "Before adding a review rate the result of the work from 1 to 5",
 	description: "Description",
