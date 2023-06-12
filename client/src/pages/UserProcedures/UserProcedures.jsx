@@ -1,11 +1,13 @@
-import { useLayoutEffect, useState, useEffect, useContext } from "react";
+import { useLayoutEffect, useState, useEffect, useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
-import { asyncActions } from "@/service/redusers/userProcedures.js";
+import { asyncActions as userProcedureAsyncActions } from "@/service/actions/userProcedures.js";
 import GlobalContext from "@/context/global.js";
+import UserProceduresContext from "./context/userProcedures.js";
+import routes from "./Presentation/Output/TopNavigation/constants/routes.js";
 
 import PlaceholderLoader from "@/components/UI/PlaceholderLoader/PlaceholderLoader.jsx";
 import Filters from "./Filters/Filters.jsx";
@@ -17,7 +19,8 @@ import style from "./UserProcedures.module.css";
 function UserProcedures() {
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
-	const { info: userInfo } = useSelector((state) => state.user);
+	const { state: locationState } = useLocation();
+	const { user, userProcedures } = useSelector((state) => state);
 	const {
 		isAuth,
 	} = useContext(GlobalContext);
@@ -26,6 +29,7 @@ function UserProcedures() {
 	const [initialCards, setInitialCards] = useState([]);
 	const [tempCards, setTempCard] = useState([]);
 	const [isLoading, setLoadState] = useState(true);
+	const [currentPath, setCurrentPath] = useState(locationState?.path || routes[0]);
 
 	async function init() {
 		if (!isAuth) {
@@ -37,21 +41,10 @@ function UserProcedures() {
 			return;
 		}
 
-		const proceduresByUserId = await dispatch(asyncActions.getProceduresByUserId(userInfo.id));
-
-		if (proceduresByUserId.error) {
-			navigate("/signin", {
-				state: {
-					purpose: "noAccessToPage",
-				},
-			});
-			return;
-		}
-
-		const paylaod = proceduresByUserId.payload || [];
-
-		setTempCard(paylaod);
-		setInitialCards(paylaod);
+		await dispatch(
+			userProcedureAsyncActions.getProceduresByUserId(user.info.id),
+		);
+		setLoadState(true);
 	}
 
 	useLayoutEffect(() => {
@@ -64,33 +57,52 @@ function UserProcedures() {
 		}
 
 		setLoadState(false);
-	}, [initialCards, isLoading]);
+	}, [isLoading]);
+
+	useEffect(() => {
+		const proceduresByPath = {
+			allServices: userProcedures.proceduresByUser,
+			myFavorites: userProcedures.favoriteProcedurs,
+		};
+
+		setTempCard(proceduresByPath[currentPath]);
+		setInitialCards(proceduresByPath[currentPath]);
+	}, [currentPath, isLoading]);
+
+	const contextValue = useMemo(() => ({
+		currentPath,
+		setCurrentPath,
+	}), [currentPath]);
 
 	return (
-		<section id={style.userProcedures}>
-			<Helmet>
-				<title>{t(isLoading ? "loading" : "myProceduresTitle")}</title>
-			</Helmet>
-			{isLoading ? (
-				<>
-					<PlaceholderLoader width="300px" />
-					<SimpleLoader />
-				</>
-			) : (
-				<>
-					<Filters
-						setPlaceholderLoaderState={setLoadState}
-						tempCards={tempCards}
-						setTempCard={setTempCard}
-						initialCards={initialCards}
-					/>
-					<Presentation
-						tempCards={tempCards}
-						initialCards={initialCards}
-					/>
-				</>
-			)}
-		</section>
+		<UserProceduresContext.Provider
+			value={contextValue}
+		>
+			<section id={style.appointments}>
+				<Helmet>
+					<title>{t(isLoading ? "loading" : "appointmentHistory")}</title>
+				</Helmet>
+				{isLoading ? (
+					<>
+						<PlaceholderLoader width="300px" />
+						<SimpleLoader />
+					</>
+				) : (
+					<>
+						<Filters
+							setPlaceholderLoaderState={setLoadState}
+							tempCards={tempCards}
+							setTempCard={setTempCard}
+							initialCards={initialCards}
+						/>
+						<Presentation
+							tempCards={tempCards}
+							initialCards={initialCards}
+						/>
+					</>
+				)}
+			</section>
+		</UserProceduresContext.Provider>
 	);
 }
 

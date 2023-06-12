@@ -5,6 +5,7 @@
 .select button {
 	text-align: left;
 	padding: 0 1vw;
+	height: 100%;
 }
 
 .select.open button,

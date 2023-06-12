@@ -9,7 +9,7 @@ import {
   config
 } from "dotenv";
 
-import Telegram from "./utils/telegram.js";
+// import Telegram from "./utils/telegram.js";
 import {
   server,
   request,
@@ -19,7 +19,9 @@ import errorsGather from "./middleware/errorsGather.js";
 
 const app = express();
 
-config();
+config({
+  path: "./env/.env.server",
+});
 
 app.use(
   urlencoded({
@@ -52,6 +54,6 @@ app.use(errorsGather);
 
 app.listen(server.port);
 
-Telegram.bot.on("message", (msg) => {
-  console.log(msg);
-});
+// Telegram.bot.on("message", (msg) => { //!
+//   console.log(msg);
+// });

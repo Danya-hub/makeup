@@ -1,0 +1,24 @@
+.empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2vh 2vw;
+}
+
+.empty i {
+    font-size: calc(var(--step-6) - 10px);
+    color: rgb(var(--brown));
+    opacity: 0.5;
+}
+
+.empty p {
+    color: rgb(var(--brown));
+    font-size: var(--step-2);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.empty > *:not(:last-child) {
+    margin-bottom: 3vh;
+}

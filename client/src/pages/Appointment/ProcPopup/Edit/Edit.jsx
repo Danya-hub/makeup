@@ -10,7 +10,7 @@ import DeleteButton from "@/components/UI/Form/DeleteButton/DeleteButton.jsx";
 import ProcConfig from "@/config/procedures.js";
 import GlobalContext from "@/context/global.js";
 import FormatDate from "@/utils/formatDate.js";
-import { actions as userProceduresActions } from "@/service/redusers/userProcedures.js";
+import { actions as appointmentsActions } from "@/service/redusers/appointments.js";
 
 import style from "./Edit.module.css";
 
@@ -24,10 +24,10 @@ function EditProc() {
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
 	const {
-		userProcedures,
+		appointments,
 	} = useSelector((state) => state);
 
-	const [currentProcedure, indexSelectedProcedure] = userProcedures.currentProcedure;
+	const [currentProcedure, indexSelectedProcedure] = appointments.currentProcedure;
 
 	const [isOpenCalendar, setOpenCalendar] = useState(false);
 
@@ -35,7 +35,7 @@ function EditProc() {
 		e.preventDefault();
 
 		const scrollYInPx = (currentProcedure.hour - ProcConfig.START_WORK_TIME)
-			* userProcedures.hourHeightInPx;
+			* appointments.hourHeightInPx;
 		window.scrollTo(0, scrollYInPx);
 
 		setPopup(["make", null]);
@@ -44,11 +44,11 @@ function EditProc() {
 			popupActions.edit(currentProcedure);
 		}
 
-		dispatch(userProceduresActions.updateCurrProc([
-			[userProcedures.defaultProcedure, userProcedures.newProcedures.length],
+		dispatch(appointmentsActions.updateCurrProc([
+			[appointments.defaultProcedure, appointments.newProcedures.length],
 			false,
 		]));
-		dispatch(userProceduresActions.updateProcStateByIndex([
+		dispatch(appointmentsActions.updateProcStateByIndex([
 			indexSelectedProcedure,
 			false,
 			currentProcedure,
@@ -56,18 +56,18 @@ function EditProc() {
 	}
 
 	function handleCancel() {
-		dispatch(userProceduresActions.updateCurrProc([
-			[userProcedures.defaultProcedure, userProcedures.newProcedures.length],
+		dispatch(appointmentsActions.updateCurrProc([
+			[appointments.defaultProcedure, appointments.newProcedures.length],
 			false,
 		]));
-		dispatch(userProceduresActions.updateProcStateByIndex([indexSelectedProcedure, false]));
+		dispatch(appointmentsActions.updateProcStateByIndex([indexSelectedProcedure, false]));
 		setPopup(["make", null]);
 	}
 
 	function handleDelete(index) {
-		dispatch(userProceduresActions.deleteProc(index));
+		dispatch(appointmentsActions.deleteProc(index));
 
-		if (userProcedures.newProcedures.length - 1 === 0) {
+		if (appointments.newProcedures.length - 1 === 0) {
 			setPopup(["make", null]);
 		}
 
@@ -77,9 +77,9 @@ function EditProc() {
 	}
 
 	function handleChangeProcName(ind) {
-		const startProcMinutes = currentProcedure.hour * userProcedures.hourHeightInPx;
-		const finishProcMinutes = startProcMinutes + userProcedures.availableTypes[ind].duration
-			* userProcedures.hourHeightInPx;
+		const startProcMinutes = currentProcedure.hour * appointments.hourHeightInPx;
+		const finishProcMinutes = startProcMinutes + appointments.availableTypes[ind].duration
+			* appointments.hourHeightInPx;
 
 		const newProc = {
 			...currentProcedure,
@@ -87,10 +87,10 @@ function EditProc() {
 				finishProcMinutes,
 				currentProcedure.finishProcTime,
 			),
-			type: userProcedures.availableTypes[ind],
+			type: appointments.availableTypes[ind],
 		};
 
-		dispatch(userProceduresActions.updateCurrProc([
+		dispatch(appointmentsActions.updateCurrProc([
 			[
 				newProc,
 				indexSelectedProcedure,
@@ -99,11 +99,11 @@ function EditProc() {
 	}
 
 	function onClose() {
-		dispatch(userProceduresActions.updateCurrProc([
-			[userProcedures.defaultProcedure, userProcedures.newProcedures.length],
+		dispatch(appointmentsActions.updateCurrProc([
+			[appointments.defaultProcedure, appointments.newProcedures.length],
 			false,
 		]));
-		dispatch(userProceduresActions.updateProcStateByIndex([indexSelectedProcedure, false]));
+		dispatch(appointmentsActions.updateProcStateByIndex([indexSelectedProcedure, false]));
 		setPopup(["make", null]);
 	}
 
@@ -124,7 +124,7 @@ function EditProc() {
 					<Select
 						id="procedureName"
 						defaultValue={t(currentProcedure.type?.name)}
-						values={userProcedures.availableTypes.map((obj) => t(obj.name))}
+						values={appointments.availableTypes.map((obj) => t(obj.name))}
 						onChange={handleChangeProcName}
 					/>
 				</div>

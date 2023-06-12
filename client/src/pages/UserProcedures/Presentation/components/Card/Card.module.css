@@ -3,7 +3,7 @@
 	display: flex;
 	background: rgb(var(--white));
 	box-shadow: 0 0 10px rgba(var(--brown), 0.1);
-	margin: 0 1vw 3vh;
+	margin: 0 auto 3vw auto;
 }
 
 .name {
@@ -19,7 +19,6 @@
 	height: var(--sizeCard);
     width: var(--sizeCard);
     text-align: center;
-    line-height: 10vh;
     font-weight: 600;
 }
 
@@ -48,7 +47,7 @@
 	justify-content: space-between;
 }
 
-:global(.favourite) {
+:global(.favorite) {
 	--back: var(--white);
 
 	position: var(--pos);
@@ -57,7 +56,7 @@
     right: 0;
 }
 
-:global(.favourite) i {
+:global(.favorite) i {
 	position: absolute;
 	color: rgb(var(--brown));
 	font-size: var(--step-5);

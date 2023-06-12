@@ -1,7 +1,6 @@
 export function html(text) {
     return `<!DOCTYPE html>
 <html lang="en">
-
 <head>
     <style>
         :root {
@@ -22,7 +21,6 @@ export function html(text) {
         }
     </style>
 </head>
-
 <body style="
     margin: 3vh 2vw;
     background: rgb(239, 239, 239);
@@ -72,28 +70,27 @@ export function html(text) {
         </footer>
     </div>
 </body>
-
 </html>`;
 }
 
 const content = {
-    ua: (user) => ({
+    ua: (options) => ({
         subject: "Код підтвердження для акаунту",
         html: html({
-            ...user,
+            ...options,
             title: "Код підтвердження",
             purpose: "Щоб зареєструватися, вам потрібно ввести код підтвердження, вказаний нижче на нашому сайті",
-            verificationCode: user.verificationCode,
+            verificationCode: options.verificationCode,
             warning: "Якщо ви не запитували код підтвердження, ви можете проігнорувати це повідомлення",
         })
     }),
-    at: (user) => ({
+    at: (options) => ({
         subject: "Confirmation code for account",
         html: html({
-            ...user,
+            ...options,
             title: "Confirmation code",
             purpose: "To register, you need to enter the verification code below on our website",
-            verificationCode: user.verificationCode,
+            verificationCode: options.verificationCode,
             warning: "If you did not request a verification code, you can ignore this message",
         })
     }),

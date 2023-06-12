@@ -2,14 +2,16 @@ import { useContext } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
 import { useForm, Controller } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 import Popup from "@/components/UI/Popup/Popup.jsx";
 import Table from "./Table/Table.jsx";
 import Total from "./Total/Total.jsx";
 import Recaptcha from "@/components/UI/Form/Recaptcha/Recaptcha.jsx";
 import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
+import Empty from "./Empty/Empty.jsx";
 
-import { asyncActions } from "@/service/redusers/userProcedures.js";
+import { asyncActions } from "@/service/redusers/appointments.js";
 import ProcConfig from "@/config/procedures.js";
 import GlobalContext from "@/context/global.js";
 
@@ -23,9 +25,10 @@ function DesignProc() {
 	} = useContext(GlobalContext);
 	const { t } = useTranslation();
 	const dispatch = useDispatch();
+	const navigate = useNavigate();
 	const {
 		newProcedures,
-	} = useSelector((state) => state.userProcedures);
+	} = useSelector((state) => state.appointments);
 	const {
 		control,
 		handleSubmit,
@@ -44,6 +47,7 @@ function DesignProc() {
 
 		setVisiblePopup(false);
 		setPopup(["", null]);
+		navigate("me");
 	}
 
 	return (
@@ -54,59 +58,63 @@ function DesignProc() {
 			isStrictActive={isVisiblePopup}
 			strictSwitch={setVisiblePopup}
 		>
-			<form onSubmit={handleSubmit(onSubmit)}>
-				<div
-					className={`loader ${isSubmitting ? "isLoading" : ""}`}
-				>
-					<SimpleLoader />
-				</div>
-				<div className={style.top}>
-					<p>
-						<b>
-							{t("availableCountAppointments")}
-							:
-						</b>
-						{ProcConfig.MAX_COUNT_PROCEDURE}
-					</p>
-				</div>
-				<Table />
-				<Total />
-				<Controller
-					name="recaptcha"
-					control={control}
-					rules={{
-						required: {
-							value: true,
-							message: "requiredRecaptchaValid",
-						},
-					}}
-					render={({
-						field: { onChange },
-					}) => (
-						<Recaptcha
-							onChange={onChange}
-						/>
-					)}
-				/>
-				{errors.recaptcha && <p className="errorMessage">{t(recaptchaError)}</p>}
-				<div className={style.buttons}>
-					<button
-						type="button"
-						id={style.add}
-						className="button border"
-						onClick={() => setPopup(["make", null])}
+			{newProcedures.length ? (
+				<form onSubmit={handleSubmit(onSubmit)}>
+					<div
+						className={`loader ${isSubmitting ? "isLoading" : ""}`}
 					>
-						{t("addMore")}
-					</button>
-					<button
-						type="submit"
-						id={style.design}
-						className="button border"
+						<SimpleLoader />
+					</div>
+					<div className={style.top}>
+						<p>
+							<b>
+								{t("availableCountAppointments")}
+								:
+							</b>
+							{ProcConfig.MAX_COUNT_PROCEDURE}
+						</p>
+					</div>
+					<Table />
+					<Total />
+					<Controller
+						name="recaptcha"
+						control={control}
+						rules={{
+							required: {
+								value: true,
+								message: "requiredRecaptchaValid",
+							},
+						}}
+						render={({
+							field: { onChange },
+						}) => (
+							<Recaptcha
+								onChange={onChange}
+							/>
+						)}
+					/>
+					{errors.recaptcha && <p className="errorMessage">{t(recaptchaError)}</p>}
+					<div
+						className={style.buttons}
 					>
-						{t("continue")}
-					</button>
-				</div>
-			</form>
+						<button
+							type="button"
+							id={style.add}
+							className="button border"
+							onClick={() => setPopup(["make", null])}
+						>
+							{t("addMore")}
+						</button>
+						<button
+							type="submit"
+							id={style.design}
+							className="button border"
+						>
+							{t("continue")}
+						</button>
+					</div>
+				</form>
+			) : <Empty />}
 		</Popup>
 	);
 }

@@ -1,5 +1,5 @@
 import { useState, useContext, useMemo } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 import { useDispatch } from "react-redux";
@@ -127,25 +127,10 @@ function SigninForm({
 		navigate("/appointment");
 	}
 
-	function toSignup() {
-		dispatch(actions.clearError());
-
-		navigate("/signup", {
-			state: {
-				purpose,
-			},
-			replace: true,
-		});
-	}
-
 	function handleResetPassword() {
 		dispatch(actions.clearError());
 
 		updatePassword(true);
-	}
-
-	function handleCancel() {
-		navigate(-1);
 	}
 
 	return (
@@ -265,14 +250,13 @@ function SigninForm({
 						{errors.recaptcha && <p className="errorMessage">{t(recaptchaError)}</p>}
 					</div>
 					<div className="navigation">
-						<button
-							type="button"
+						<Link
+							to="/appointment"
 							id={style.cancel}
 							className="button border"
-							onClick={handleCancel}
 						>
 							{t("cancel")}
-						</button>
+						</Link>
 						<button
 							type="submit"
 							id={style.signin}
@@ -284,12 +268,17 @@ function SigninForm({
 				</form>
 				<div className="authQuestion">
 					<p>{t("notHaveAccount")}</p>
-					<button
-						type="button"
-						onClick={toSignup}
+					<Link
+						to="/signup"
+						state={{
+							state: {
+								purpose,
+							},
+							replace: true,
+						}}
 					>
 						{t("signUp")}
-					</button>
+					</Link>
 				</div>
 			</div>
 		</section>

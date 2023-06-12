@@ -25,8 +25,8 @@ router.post(
   UserController.sendPasswordForCompare
 );
 router.post("/comparePasswordByEmail", UserController.comparePasswordByEmail);
-router.post("/comparePasswordByUserId", UserController.comparePasswordByUserId);
-router.post("/editUserById", UserController.editUserById);
+router.post("/comparePasswordByUserId", isAuth, checkOnValid, UserController.comparePasswordByUserId);
+router.post("/editUserById", isAuth, checkOnValid, UserController.editUserById);
 router.post(
   "/sendLinkForResetingPassword",
   userValidation.sendLinkForResetingPassword,

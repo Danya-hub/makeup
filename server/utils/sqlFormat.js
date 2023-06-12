@@ -7,13 +7,7 @@ class Format {
     }
 
     keysAndValuesObject() {
-        this.query = this.query.replace(/:(\w+)/g, (txt, key) => {
-            if (this.values[key]) {
-                return mysql.escape(this.values[key]);
-            }
-
-            return txt;
-        });
+        this.query = this.query.replace(/:(\w+)/g, (_, key) => mysql.escape(this.values[key]));
     }
 
     keyAndValueArray() {

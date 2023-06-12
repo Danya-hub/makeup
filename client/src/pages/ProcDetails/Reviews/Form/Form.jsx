@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -18,6 +18,7 @@ function Form({
 }) {
 	const params = useParams();
 	const navigate = useNavigate();
+	const { t } = useTranslation();
 	const { info: userInfo } = useSelector((state) => state.user);
 	const {
 		reviewFormValue,
@@ -38,14 +39,19 @@ function Form({
 		isAuth,
 	} = useContext(GlobalContext);
 
-	const { t } = useTranslation();
+	const formRef = useRef(null);
 
 	const reviewState = getFieldState("text");
 	const reviewError = errors.text?.message;
 
+	useEffect(() => {
+		formRef.current.parentNode.style.paddingBottom = `${formRef.current.offsetHeight}px`;
+	}, [formRef.current]);
+
 	return (
 		<div
 			className={style.form}
+			ref={formRef}
 		>
 			{!isAuth && (
 				<Notification

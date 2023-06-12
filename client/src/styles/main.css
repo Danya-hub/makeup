@@ -65,13 +65,6 @@ button {
 	cursor: pointer;
 }
 
-.content {
-	display: grid;
-    grid-auto-flow: row;
-    grid-auto-rows: 0.1fr 1fr 0.1fr;
-    min-height: 100vh;
-}
-
 .button {
 	--back: var(--transp);
 	--o: 0;
@@ -111,7 +104,6 @@ img {
 	user-select: none;
 	color: rgb(var(--brown));
     text-align: center;
-    line-height: 10vh;
     font-weight: 600;
 }
 
@@ -214,6 +206,7 @@ main {
 	margin-bottom: 1vh;
 }
 
+
 button:disabled {
 	opacity: 0.4;
 	cursor: unset;
@@ -230,6 +223,7 @@ button:disabled {
 .form .navigation > * {
 	--order: 0;
 
+	text-align: center;
 	margin: 0;
 	width: 100%;
 	grid-column-start: calc(var(--col) * var(--order));
@@ -278,7 +272,7 @@ button:disabled {
 	display: inline-block;
 }
 
-.authQuestion button {
+.authQuestion a {
 	background: unset;
 	font-weight: 800;
 	margin-left: 6px;

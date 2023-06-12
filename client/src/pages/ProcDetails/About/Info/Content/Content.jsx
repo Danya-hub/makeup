@@ -76,7 +76,7 @@ function Content({
 					<b>{finishDate}</b>
 				</span>
 			</div>
-			{procedure.instagram && (
+			{procedure.instagram !== "null" && (
 				<p id={style.instagram}>
 					Instagram:
 					{' '}

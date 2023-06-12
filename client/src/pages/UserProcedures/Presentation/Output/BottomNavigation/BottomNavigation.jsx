@@ -8,9 +8,9 @@ import WidthInput from "@/components/UI/Form/WidthInput/WidthInput.jsx";
 import Check from "@/utils/check.js";
 import constants from "./constants.js";
 
-import style from "./Navigation.module.css";
+import style from "./BottomNavigation.module.css";
 
-function Navigation({
+function BottomNavigation({
 	countPages,
 	numberPage,
 	changeNumberPage,
@@ -118,10 +118,10 @@ function Navigation({
 	);
 }
 
-Navigation.propTypes = {
+BottomNavigation.propTypes = {
 	countPages: types.number.isRequired,
 	numberPage: types.number.isRequired,
 	changeNumberPage: types.func.isRequired,
 };
 
-export default Navigation;
+export default BottomNavigation;

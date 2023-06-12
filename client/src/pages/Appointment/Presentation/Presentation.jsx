@@ -5,13 +5,14 @@ import { useTranslation } from "react-i18next";
 import FormatDate from "@/utils/formatDate.js";
 import GlobalContext from "@/context/global.js";
 import Value from "@/utils/value.js";
-import userProcedureHelpers from "@/service/helpers/userProcedures.js";
+import userProcedureHelpers from "@/service/helpers/appointments.js";
 import {
-	actions as userProceduresActions,
-	asyncActions as userProceduresAsyncActions,
-} from "@/service/redusers/userProcedures.js";
+	actions as appointmentsActions,
+	asyncActions as appointmentsAsyncActions,
+} from "@/service/redusers/appointments.js";
 import { COLUMN_NAMES } from "@/pages/Appointment/constants/constants.js";
 import ProcConfig, { states } from "@/config/procedures.js";
+import PropsContext from "@/pages/Appointment/context/context.js";
 
 import Cards from "./Cards/Cards.jsx";
 import Diagram from "./Diagram/Diagram.jsx";
@@ -24,20 +25,24 @@ const stateArray = Object.values(states);
 function Presentation() {
 	const dispatch = useDispatch();
 	const { t } = useTranslation();
-	const { userProcedures } = useSelector((state) => state);
+	const { appointments } = useSelector((state) => state);
 	const {
 		currentLang,
 	} = useContext(GlobalContext);
+	const {
+		fadeAnimation,
+		setFadeAnimation,
+	} = useContext(PropsContext);
 
 	const parentRef = useRef(null);
 
 	const weekdayAndMonth = useMemo(() => FormatDate.weekdayAndMonth(
-		userProcedures.locale,
+		appointments.locale,
 		currentLang,
 		{
 			weekday: "short",
 		},
-	), [currentLang, userProcedures.locale]);
+	), [currentLang, appointments.locale]);
 	const times = useRef(userProcedureHelpers.availableTimeByDay({
 		minHour: ProcConfig.START_WORK_TIME,
 		maxHour: ProcConfig.FINISH_WORK_TIME - 1,
@@ -73,20 +78,28 @@ function Presentation() {
 		))
 	), []);
 
+	function handleAnimationStart() {
+		dispatch(appointmentsAsyncActions.getProcedureByDay(appointments.locale));
+	}
+
+	function handleAnimationEnd() {
+		setFadeAnimation(false);
+	}
+
 	useLayoutEffect(() => {
 		const updateTime = setInterval(() => {
-			dispatch(userProceduresActions.switchDay(userProcedures.locale.getDate()));
+			dispatch(appointmentsActions.switchDay(appointments.locale.getDate()));
 
-			if (!userProcedures.currentTimeHeightInPx && userProcedures.isCurrentTime) {
-				dispatch(userProceduresAsyncActions.getProcedureByDay(userProcedures.locale));
+			if (!appointments.currentTimeHeightInPx && appointments.isCurrentTime) {
+				dispatch(appointmentsAsyncActions.getProcedureByDay(appointments.locale));
 			}
 		}, (60 - new Date().getSeconds()) * 1000);
 
 		return () => clearInterval(updateTime);
-	}, [userProcedures.locale]);
+	}, [appointments.locale]);
 
 	useEffect(() => {
-		window.scrollTo(0, userProcedures.minDayTime * userProcedures.hourHeightInPx);
+		window.scrollTo(0, appointments.minDayTime * appointments.hourHeightInPx);
 	}, []);
 
 	return (
@@ -117,13 +130,20 @@ function Presentation() {
 						<h3 key={name}>{t(name)}</h3>
 					))}
 				</div>
-				<Diagram
-					formatedTimes={formatedTimes}
-					widthCharTime={widthCharTime}
-				/>
-				<Cards
-					widthCharTime={widthCharTime}
-				/>
+				<div
+					className={fadeAnimation ? style.fade : ""}
+					onAnimationStart={handleAnimationStart}
+					onAnimationEnd={handleAnimationEnd}
+				>
+					<Diagram
+						formatedTimes={formatedTimes}
+						widthCharTime={widthCharTime}
+					/>
+					<Cards
+						widthCharTime={widthCharTime}
+						ref={parentRef}
+					/>
+				</div>
 			</div>
 		</div>
 	);

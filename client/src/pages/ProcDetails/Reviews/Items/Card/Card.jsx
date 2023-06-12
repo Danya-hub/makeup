@@ -7,13 +7,14 @@ import EditButton from "@/components/UI/Form/EditButton/EditButton.jsx";
 
 import GlobalContext from "@/context/global.js";
 import ReviewContext from "@/pages/ProcDetails/context/reviews.js";
-import { asyncActions } from "@/service/actions/userProcedures.js";
+import { asyncActions } from "@/service/actions/appointments.js";
 
 import style from "./Card.module.css";
 
 const COUNT_STARS = 5;
 
 function Card({
+	procedure,
 	content,
 	isOwn,
 }) {
@@ -33,6 +34,10 @@ function Card({
 
 	function onDelete(id) {
 		dispatch(asyncActions.deleteReview(id));
+		dispatch(asyncActions.updateProc([{
+			...procedure,
+			stars: 0,
+		}, false]));
 	}
 
 	function onEdit() {
@@ -106,6 +111,7 @@ Card.defaultProps = {
 };
 
 Card.propTypes = {
+	procedure: types.instanceOf(Object).isRequired,
 	content: types.instanceOf(Object).isRequired,
 	isOwn: types.bool,
 };

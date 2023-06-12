@@ -7,6 +7,7 @@ import style from "./Items.module.css";
 
 function Items({
 	reviews,
+	procedure,
 	hasActions,
 }) {
 	const { info: userInfo } = useSelector((state) => state.user);
@@ -18,6 +19,7 @@ function Items({
 			{reviews.map((review) => (
 				<Card
 					key={review.id}
+					procedure={procedure}
 					content={review}
 					isOwn={review.user.id === userInfo?.id && hasActions}
 				/>
@@ -31,6 +33,7 @@ Items.defaultProps = {
 };
 
 Items.propTypes = {
+	procedure: types.instanceOf(Object).isRequired,
 	reviews: types.instanceOf(Array).isRequired,
 	hasActions: types.bool,
 };

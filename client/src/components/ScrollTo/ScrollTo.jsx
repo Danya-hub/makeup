@@ -1,14 +1,16 @@
 import { useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import types from "prop-types";
 
 function ScrollTo({
 	sectionName,
 	children,
 }) {
-	const params = useParams();
+	const {
+		state: locationState,
+		key: updatedKey,
+	} = useLocation();
 	const componentRef = useRef(null);
-
 	const component = children;
 
 	useEffect(() => {
@@ -16,10 +18,10 @@ function ScrollTo({
 			return;
 		}
 
-		if (componentRef.current.id === params.section) {
+		if (componentRef.current.id === locationState?.section) { //!
 			componentRef.current.scrollIntoView();
 		}
-	}, [componentRef.current, params.section]);
+	}, [updatedKey]);
 
 	return (
 		<section

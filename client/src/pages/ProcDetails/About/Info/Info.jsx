@@ -6,7 +6,7 @@ import { useTranslation } from "react-i18next";
 import Image from "./Image/Image.jsx";
 import Content from "./Content/Content.jsx";
 import OptionButton from "@/pages/ProcDetails/components/OptionButton/OptionButton.jsx";
-import { asyncActions } from "@/service/redusers/userProcedures.js";
+import { asyncActions } from "@/service/redusers/appointments.js";
 
 import style from "./Info.module.css";
 
@@ -17,10 +17,10 @@ function Info({
 	const dispatch = useDispatch();
 	const { info: userInfo } = useSelector((state) => state.user);
 
-	async function handleFavourite() {
+	async function handleFavorite() {
 		await dispatch(asyncActions.updateProc([{
 			...procedure,
-			favourite: procedure.favourite ? 0 : 1,
+			favorite: procedure.favorite ? 0 : 1,
 		}, false]));
 	}
 
@@ -39,11 +39,11 @@ function Info({
 					<button
 						type="button"
 						className={`button ${style.heart}`}
-						title={t("toFavourites")}
-						onClick={handleFavourite}
+						title={t("toFavorites")}
+						onClick={handleFavorite}
 					>
 						<i
-							className={procedure.favourite ? "fa fa-heart" : "fa fa-heart-o"}
+							className={procedure.favorite ? "fa fa-heart" : "fa fa-heart-o"}
 							aria-hidden="true"
 						/>
 					</button>

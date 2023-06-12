@@ -8,8 +8,12 @@
 }
 
 .form {
+    position: fixed;
+    width: 100%;
     padding-left: 4vw;
     padding-right: 4vw;
+    left: 0;
+    bottom: 0;
 }
 
 .form form > div {

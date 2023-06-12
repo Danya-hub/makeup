@@ -11,7 +11,7 @@ module.exports = {
 	},
 	output: {
 		path: commonPaths.build,
-		filename: "static/[name].[hash].js",
+		filename: "static/[name].[contenthash].js",
 		publicPath: "/",
 	},
 	module: {

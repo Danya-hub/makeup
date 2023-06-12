@@ -8,12 +8,6 @@ import Value from "../utils/value.js";
 import MySQL from "../utils/db.js";
 import errors from "../config/errors.js";
 import {
-  JWT_ACCESS_TOKEN_MAX_AGE,
-  JWT_REFRESH_TOKEN_MAX_AGE,
-  COOKIE_REFRESH_TOKEN_MAX_AGE,
-}
-from "../config/auth.js";
-import {
   server
 } from "../config/server.js";
 
@@ -24,7 +18,12 @@ import MessageService from "../service/message.js";
 import Password from "../utils/password.js";
 import ApiError from "../utils/apiError.js";
 
-config();
+config({
+  path: "./env/.env.auth",
+});
+config({
+  path: "./env/.env.email_bot",
+});
 
 const COUNT_BYTES = 32;
 
@@ -32,12 +31,16 @@ class User {
   static channels = ["email", "telephone"];
 
   static token(value) {
-    const accessToken = TokenService.generateToken(value, process.env.ACCESS_TOKEN_SECRET_KEY, {
-      expiresIn: JWT_ACCESS_TOKEN_MAX_AGE,
-    });
-    const refreshToken = TokenService.generateToken(value, process.env.REFRESH_TOKEN_SECRET_KEY, {
-      expiresIn: JWT_REFRESH_TOKEN_MAX_AGE,
-    });
+    const accessToken = TokenService.generateToken(
+      value,
+      process.env.JWT_AUTH_ACCESS_TOKEN_SECRET_KEY, {
+        expiresIn: process.env.JWT_AUTH_ACCESS_TOKEN_MAX_AGE,
+      });
+    const refreshToken = TokenService.generateToken(
+      value,
+      process.env.JWT_AUTH_REFRESH_TOKEN_SECRET_KEY, {
+        expiresIn: process.env.JWT_AUTH_REFRESH_TOKEN_MAX_AGE,
+      });
 
     return {
       accessToken,
@@ -78,12 +81,13 @@ class User {
         } = User.token(tokenValue);
 
         res.cookie("refreshToken", refreshToken, {
-            maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
+            maxAge: process.env.AUTH_COOKIE_REFRESH_TOKEN_MAX_AGE,
             httpOnly: true,
           })
           .status(201)
           .json({
             ...req.body,
+            id: results.insertId,
             accessToken,
           });
 
@@ -93,48 +97,46 @@ class User {
   }
 
   async refresh(req, res, next) {
-    if (!req.cookies.refreshToken) {
-      const apiError = ApiError.get("unauthorized");
+    try {
+      if (!req.cookies.refreshToken) {
+        ApiError.throw("unauthorized");
+      }
 
-      next(apiError);
-      return;
-    }
+      const decoded = TokenService.checkOnValidToken(
+        req.cookies.refreshToken,
+        process.env.JWT_AUTH_REFRESH_TOKEN_SECRET_KEY,
+        "unauthorized",
+      );
 
-    const decoded = TokenService.checkOnValidToken(
-      req.cookies.refreshToken,
-      process.env.REFRESH_TOKEN_SECRET_KEY
-    );
+      const user = await UserService.findById(decoded.id);
 
-    const user = await UserService.findById(decoded.id)
-      .catch(next);
+      if (!user[0]) {
+        ApiError.throw("unauthorized");
+      }
 
-    if (!user[0]) {
-      const apiError = ApiError.get("unauthorized");
-
-      next(apiError);
-      return;
-    }
-
-    const tokenValue = {
-      id: user[0].id,
-    };
-    const {
-      accessToken,
-      refreshToken
-    } = UserService.token(tokenValue);
-
-    res
-      .cookie("refreshToken", refreshToken, {
-        maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
-        httpOnly: true,
-      })
-      .status(200)
-      .json({
-        ...user[0],
+      const tokenValue = {
+        id: user[0].id,
+      };
+      const {
         accessToken,
-      });
+        refreshToken
+      } = UserService.token(tokenValue);
 
-    next();
+      res
+        .cookie("refreshToken", refreshToken, {
+          maxAge: process.env.AUTH_COOKIE_REFRESH_TOKEN_MAX_AGE,
+          httpOnly: true,
+        })
+        .status(200)
+        .json({
+          ...user[0],
+          accessToken,
+        });
+
+      next();
+    } catch (error) {
+      next(error);
+    }
   }
 
   logout(req, res, next) {
@@ -156,11 +158,16 @@ class User {
     } = req.body;
 
     const password = Password.generate(passwordLength);
-
     const hashPassword = Password.hash(password);
+    const accessKey = MessageService.generateMessageKey();
+    const body = JSON.stringify({
+      hashPassword,
+    });
+
     const values = {
-      value: hashPassword,
+      accessKey,
       verificationCode: password,
+      body,
       ...req.body
     };
 
@@ -177,14 +184,13 @@ class User {
 
   comparePasswordByUserId(req, res, next) {
     const {
-      id,
       password,
     } = req.body;
 
     MySQL.createQuery({
         sql: "SELECT * FROM user WHERE ?? = ?",
         values: {
-          columns: ["id", id],
+          columns: ["id", req.params.user],
           formatName: "keyAndValueArray",
         },
       },
@@ -235,7 +241,8 @@ class User {
           ApiError.throw("noAccess", errors.timeOut("comparingPassword"));
         }
 
-        const isEquil = bcrypt.compareSync(password, results[0].value);
+        const parseBody = JSON.parse(results[0].body);
+        const isEquil = bcrypt.compareSync(password, parseBody.hashPassword);
 
         if (!isEquil) {
           ApiError.throw("badRequest", errors.notMatch("password"));
@@ -243,7 +250,7 @@ class User {
 
         res.status(200).json({
           ...req.body,
-          password: results[0].value,
+          password: parseBody.hashPassword,
         });
 
         next();
@@ -268,9 +275,11 @@ class User {
   }
 
   sendLinkForResetingPassword(req, res, next) {
+    const accessKey = MessageService.generateMessageKey();
     const values = {
       topic: "resetPassword",
-      value: `${server.origin}/resetPassword?email=${req.body.email}`,
+      url: `${server.origin}/resetPassword?email=${req.body.email}&accessKey=${accessKey}`,
+      accessKey,
       ...req.body,
     };
 
@@ -285,22 +294,24 @@ class User {
       .catch(next);
   }
 
-  resetPassword(req, res, next) {
+  async resetPassword(req, res, next) {
     const {
       newPassword,
-      email
+      accessKey,
+      email,
     } = req.body;
 
     const hashPassword = Password.hash(newPassword);
     const columns = {
       password: hashPassword,
+      accessKey,
       email,
       topic: "resetPassword",
     };
 
     MySQL.createQuery({
         sql: `UPDATE user u SET u.password = :password WHERE 
-          EXISTS (SELECT * FROM message m WHERE m.email = :email AND m.topic = :topic)`,
+          EXISTS (SELECT * FROM message m WHERE m.email = :email AND m.topic = :topic AND m.accessKey = :accessKey)`,
         values: {
           columns,
           formatName: "keysAndValuesObject",
@@ -325,7 +336,7 @@ class User {
   }
 
   login(req, res, next) {
-    UserService.findByChannel(req)
+    UserService.findByChannelThrow(req)
       .then((result) => {
         const {
           refreshToken,
@@ -333,7 +344,7 @@ class User {
         } = result;
 
         res.cookie("refreshToken", refreshToken, {
-          maxAge: COOKIE_REFRESH_TOKEN_MAX_AGE,
+          maxAge: process.env.AUTH_COOKIE_REFRESH_TOKEN_MAX_AGE,
           httpOnly: true,
         });
         res.status(201).json(object);

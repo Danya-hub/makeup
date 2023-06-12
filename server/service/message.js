@@ -1,4 +1,8 @@
 import nodemailer from "nodemailer";
+import {
+  config,
+} from "dotenv";
+import crypto from "crypto";
 
 import errors from "../config/errors.js";
 
@@ -7,28 +11,38 @@ import MySQL from "../utils/db.js";
 import ApiError from "../utils/apiError.js";
 import EmailTemplates from "../lang/email/index.js";
 
+config({
+  path: "./env/.env.email_bot",
+});
+
 class Message {
-  oAuth2Client = null;
+  COUNT_BYTES = 32;
 
   async createTransport() {
     const transport = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 587,
+      host: process.env.BOT_EMAIL_HOST,
+      port: process.env.BOT_EMAIL_PORT,
       secure: false,
       auth: {
-        user: process.env.BOT_EMAIL,
-        pass: process.env.BOT_APP_PASSWORD,
+        user: process.env.BOT_EMAIL_LOGIN,
+        pass: process.env.BOT_EMAIL_APP_PASSWORD,
       },
     });
 
     return transport;
   }
 
+  generateMessageKey() {
+    const key = crypto.randomBytes(this.COUNT_BYTES).toString("hex");
+
+    return key;
+  }
+
   send(columns) {
     return new Promise((resolve, reject) => {
       MySQL.createQuery({
-          sql: `INSERT INTO message (email, topic, value, expire)
-              SELECT :email, :topic, :value, NOW() + INTERVAL 3 MINUTE`,
+          sql: `INSERT INTO message (email, topic, accessKey, body, expire)
+              SELECT :email, :topic, :accessKey, :body, NOW() + INTERVAL 3 MINUTE `,
           values: {
             columns,
             formatName: "keysAndValuesObject",
@@ -43,26 +57,21 @@ class Message {
             return;
           }
 
-          let options = columns;
+          const foundUserByChannel = await UserService.findByChannelGet({
+            body: columns,
+          });
 
-          await UserService.findByChannel({
-              body: columns,
-            })
-            .then((res) => {
-              options = {
-                ...options,
-                ...res,
-              };
-            })
-            // eslint-disable-next-line no-console
-            .catch(console.error);
+          const body = {
+            ...columns,
+            ...foundUserByChannel,
+          };
 
-            const transporter = await this.createTransport();
-            const messageInfo = EmailTemplates[columns.topic][options.country](options);
+          const transporter = await this.createTransport();
+          const messageInfo = EmailTemplates[body.topic][body.country](body);
 
           await transporter.sendMail({
             from: process.env.BOT_EMAIL,
-            to: columns.email,
+            to: body.email,
             ...messageInfo,
           });
 

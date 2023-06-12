@@ -11,11 +11,11 @@ import TypeService from "../service/type.js";
 
 const router = Router();
 
+router.get("/:query", ProcedureController.getProceduresByQuery);
 router.get("/byDay/:date", ProcedureController.getByDay);
-router.get("/byColumn/:column/:value", ProcedureController.getByColumn);
 router.get("/allTypes/:country", TypeService.all);
 router.get("/default/:country", ProcedureController.defaultValue);
-router.get("/reviews", ProcedureController.getReviewsByProcId);
+router.get("/reviews", ProcedureController.getReviewsByQuery);
 router.post("/makeReview", isAuth, checkOnValid, ProcedureController.makeReview);
 router.post("/deleteReview/:id", isAuth, checkOnValid, ProcedureController.deleteReviewById);
 router.post("/updateReview", isAuth, checkOnValid, ProcedureController.updateReview);

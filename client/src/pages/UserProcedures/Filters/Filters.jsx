@@ -40,7 +40,6 @@ function Filters({
 	function handleReset() {
 		setOption(FilterActions.default());
 		setPlaceholderLoaderState(true);
-		setTempCard(initialCards);
 	}
 
 	function handleSearch(typeName, setState) {

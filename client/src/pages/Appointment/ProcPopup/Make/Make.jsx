@@ -15,15 +15,15 @@ import FormatDate from "@/utils/formatDate.js";
 import ProcConfig from "@/config/procedures.js";
 import docs from "@/utils/docs.js";
 import {
-	actions as userProceduresActions,
-} from "@/service/redusers/userProcedures.js";
+	actions as appointmentsActions,
+} from "@/service/redusers/appointments.js";
 
 import style from "./Make.module.css";
 
 function MakeProc() {
 	const { t } = useTranslation();
 	const {
-		userProcedures,
+		appointments,
 	} = useSelector((state) => state);
 	const dispatch = useDispatch();
 	const {
@@ -43,12 +43,12 @@ function MakeProc() {
 	});
 
 	const Message = useMemo(
-		() => MessageHelper.check(userProcedures),
-		[userProcedures.availableTypes, userProcedures.newProcedures],
+		() => MessageHelper.check(appointments),
+		[appointments.availableTypes, appointments.newProcedures],
 	);
 
 	const contractError = errors.contract?.message;
-	const [currentProcedure, indexSelectedProcedure] = userProcedures.currentProcedure;
+	const [currentProcedure, indexSelectedProcedure] = appointments.currentProcedure;
 
 	const [isOpenCalendar, setOpenCalendar] = useState(false);
 
@@ -57,22 +57,22 @@ function MakeProc() {
 			return;
 		}
 
-		if (userProcedures.newProcedures[indexSelectedProcedure]) {
-			dispatch(userProceduresActions.updateProcStateByIndex([indexSelectedProcedure, false]));
+		if (appointments.newProcedures[indexSelectedProcedure]) {
+			dispatch(appointmentsActions.updateProcStateByIndex([indexSelectedProcedure, false]));
 		} else {
-			dispatch(userProceduresActions.addProc());
+			dispatch(appointmentsActions.addProc());
 		}
 
 		const scrollYInPx = (currentProcedure.hour - ProcConfig.START_WORK_TIME)
-			* userProcedures.hourHeightInPx;
+			* appointments.hourHeightInPx;
 		window.scrollTo(0, scrollYInPx);
 		reset();
 	}
 
 	function handleChangeProcName(ind) {
-		const startProcMinutes = currentProcedure.hour * userProcedures.hourHeightInPx;
-		const finishProcMinutes = startProcMinutes + userProcedures.availableTypes[ind].duration
-			* userProcedures.hourHeightInPx;
+		const startProcMinutes = currentProcedure.hour * appointments.hourHeightInPx;
+		const finishProcMinutes = startProcMinutes + appointments.availableTypes[ind].duration
+			* appointments.hourHeightInPx;
 
 		const newCurrProc = {
 			...currentProcedure,
@@ -80,22 +80,22 @@ function MakeProc() {
 				finishProcMinutes,
 				currentProcedure.finishProcTime,
 			),
-			type: userProcedures.availableTypes[ind],
+			type: appointments.availableTypes[ind],
 		};
 
-		dispatch(userProceduresActions.updateCurrProc([[newCurrProc, indexSelectedProcedure]]));
+		dispatch(appointmentsActions.updateCurrProc([[newCurrProc, indexSelectedProcedure]]));
 	}
 
 	function onClose() {
-		dispatch(userProceduresActions.updateCurrProc([
-			[userProcedures.defaultProcedure, userProcedures.newProcedures.length],
+		dispatch(appointmentsActions.updateCurrProc([
+			[appointments.defaultProcedure, appointments.newProcedures.length],
 			false,
 		]));
 		setPopup(["", null]);
 	}
 
 	const onConirmContract = useCallback((isConfirm) => {
-		dispatch(userProceduresActions.setCurrProcValue(
+		dispatch(appointmentsActions.setCurrProcValue(
 			["contract", isConfirm ? docs[currentProcedure.type.contract] : null],
 		));
 	}, []);
@@ -118,7 +118,7 @@ function MakeProc() {
 					<Select
 						id="procedureName"
 						defaultValue={t(currentProcedure.type?.name)}
-						values={userProcedures.availableTypes.map((obj) => t(obj.name))}
+						values={appointments.availableTypes.map((obj) => t(obj.name))}
 						onChange={handleChangeProcName}
 					/>
 				</div>
@@ -181,10 +181,10 @@ function MakeProc() {
 						id={style.design}
 						className="button border"
 						onClick={() => setPopup(["design", null])}
-						disabled={!userProcedures.newProcedures.length}
+						disabled={!appointments.newProcedures.length}
 					>
-						{Boolean(userProcedures.newProcedures.length)
-							&& <span id={style.countProcedures}>{userProcedures.newProcedures.length}</span>}
+						{Boolean(appointments.newProcedures.length)
+							&& <span id={style.countProcedures}>{appointments.newProcedures.length}</span>}
 						{t("design")}
 						<img
 							className={style.arrow}

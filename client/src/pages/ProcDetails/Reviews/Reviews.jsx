@@ -1,23 +1,22 @@
-import { useState, useEffect, useContext, useMemo } from "react";
+import { useState, useLayoutEffect, useContext, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { Helmet } from "react-helmet";
 
-import { asyncActions } from "@/service/actions/userProcedures.js";
+import { asyncActions } from "@/service/actions/appointments.js";
 import GlobalContext from "@/context/global.js";
 import ReviewContext from "@/pages/ProcDetails/context/reviews.js";
 import Value from "@/utils/value.js";
 
 import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
-import Navigation from "@/pages/ProcDetails/components/Navigation/Navigation.jsx";
+import TopNavigation from "@/pages/ProcDetails/components/TopNavigation/TopNavigation.jsx";
 import Form from "./Form/Form.jsx";
 import Items from "./Items/Items.jsx";
-import TopPanel from "./TopPanel/TopPanel.jsx";
+import ProcInfo from "./ProcInfo/ProcInfo.jsx";
 import ProcDetailsPopup from "@/pages/ProcDetails/ProcDetailsPopup/ProcDetailsPopup.jsx";
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
-
-import style from "./Reviews.module.css";
+import Empty from "@/pages/ProcDetails/components/Empty/Empty.jsx";
 
 function Reviews() {
 	const params = useParams();
@@ -48,7 +47,7 @@ function Reviews() {
 			})
 			.catch(() => navigate("/notFound"));
 
-		const reviewsById = await dispatch(asyncActions.getReviewsByProcId(`id=${params.id}`))
+		const reviewsById = await dispatch(asyncActions.getReviewsByQuery(`id=${params.id}`))
 			.then((res) => res.payload)
 			.catch(() => navigate("/notFound"));
 
@@ -88,7 +87,7 @@ function Reviews() {
 		}
 	}
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		init();
 	}, []);
 
@@ -113,12 +112,12 @@ function Reviews() {
 				</Helmet>
 				{reviews ? (
 					<>
-						<Navigation
+						<TopNavigation
 							procedure={{
 								id: params.id,
 							}}
 						/>
-						<TopPanel
+						<ProcInfo
 							procedure={procedure}
 						/>
 						{message && (
@@ -127,13 +126,14 @@ function Reviews() {
 								status={status}
 							/>
 						)}
-						<div
-							className={style.wrapper}
-						>
-							<Items
-								reviews={reviews}
-								hasActions
-							/>
+						<div>
+							{reviews.length ? (
+								<Items
+									procedure={procedure}
+									reviews={reviews}
+									hasActions
+								/>
+							) : <Empty />}
 							<Form
 								onSubmit={(data) => {
 									setVisiblePopup(true);

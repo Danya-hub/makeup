@@ -4,9 +4,9 @@ import { useTranslation } from "react-i18next";
 
 import GlobalContext from "@/context/global.js";
 
-import style from "./TopPanel.module.css";
+import style from "./ProcInfo.module.css";
 
-function TopPanel({
+function ProcInfo({
 	procedure,
 }) {
 	const { t } = useTranslation();
@@ -37,8 +37,8 @@ function TopPanel({
 	);
 }
 
-TopPanel.propTypes = {
+ProcInfo.propTypes = {
 	procedure: types.instanceOf(Object).isRequired,
 };
 
-export default TopPanel;
+export default ProcInfo;

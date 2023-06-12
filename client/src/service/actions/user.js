@@ -124,7 +124,7 @@ export const asyncActions = {
 			rejectWithValue,
 		}) => {
 			try {
-				await axios.indPost("/auth/editUserById", value);
+				await axios.post("/auth/editUserById", value);
 
 				return value.data;
 			} catch (error) {

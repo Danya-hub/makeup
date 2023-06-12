@@ -1,6 +1,7 @@
 .navigation {
     box-shadow: 0 0 2px rgb(var(--black));
-    margin: 1vh 0;
+    margin-top: 1vh;
+    margin-bottom: 3vh;
 }
 
 .list {
@@ -11,6 +12,9 @@
 }
 
 .list a {
+    --back: var(--gray);
+    --o: 0.5;
+    white-space: nowrap;
     padding: 2vh 2vw;
     font-weight: 600;
 }

@@ -1,5 +1,5 @@
 import { useContext, memo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
@@ -12,9 +12,8 @@ import style from "./Links.module.css";
 
 function Links() {
 	const dispatch = useDispatch();
-	const { userProcedures } = useSelector((state) => state);
+	const { appointments } = useSelector((state) => state);
 	const { t } = useTranslation();
-	const navigate = useNavigate();
 	const {
 		setVisiblePopup,
 		setPopup,
@@ -34,7 +33,6 @@ function Links() {
 	function handleDesign() {
 		setPopup(["design", null]);
 		setVisiblePopup(true);
-		navigate("/appointment");
 	}
 
 	return (
@@ -42,7 +40,7 @@ function Links() {
 			<ul>
 				<li>
 					<Event callback={handleCloseCabinet}>
-						<Link to="/myprocedures">{t("myProceduresTitle")}</Link>
+						<Link to="/appointment/me">{t("appointmentHistory")}</Link>
 					</Event>
 				</li>
 				<li>
@@ -55,16 +53,14 @@ function Links() {
 			<ul>
 				<li>
 					<Event callback={handleCloseCabinet}>
-						<button
+						<Link
+							to="/appointment"
 							id={style.design}
-							type="button"
-							className="button"
 							onClick={handleDesign}
-							disabled={!userProcedures.newProcedures.length}
 						>
-							{t("appointmentList")}
-							<span id={style.countProcedures}>{userProcedures.newProcedures.length}</span>
-						</button>
+							{t("myCurrentServices")}
+							<span id={style.countProcedures}>{appointments.newProcedures.length}</span>
+						</Link>
 					</Event>
 				</li>
 			</ul>

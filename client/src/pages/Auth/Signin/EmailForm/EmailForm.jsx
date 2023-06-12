@@ -38,7 +38,10 @@ function EmailForm({ updatePassword }) {
 	const recaptchaError = errors.recaptcha?.message;
 
 	async function onSubmit(data) {
-		const res = await dispatch(asyncActions.sendLinkForResetingPassword(data));
+		const res = await dispatch(asyncActions.sendLinkForResetingPassword({
+			topic: "resetPassword",
+			...data,
+		}));
 
 		if (res.payload.error?.length) {
 			setError("email", {

@@ -8,11 +8,11 @@ import Filters from "./Filters/Filters.jsx";
 import DesignButton from "@/components/UI/Form/DesignButton/DesignButton.jsx";
 
 import {
-	actions as userProcActions,
-	asyncActions as userProcAsyncActions,
-} from "@/service/redusers/userProcedures.js";
+	actions as appointmentsActions,
+} from "@/service/redusers/appointments.js";
 import GlobalContext from "@/context/global.js";
-import ProcConfig from "@/pages/Appointment/context/context.js";
+import PropsContext from "@/pages/Appointment/context/context.js";
+import ProcConfig from "@/config/procedures.js";
 
 import style from "./ControlPanel.module.css";
 
@@ -27,19 +27,22 @@ function ControlPanel() {
 		hourHeightInPx,
 		availableHoursTime,
 		newProcedures,
-	} = useSelector((state) => state.userProcedures);
+	} = useSelector((state) => state.appointments);
 	const {
 		setPopup,
 		setVisiblePopup,
 		isAuth,
 	} = useContext(GlobalContext);
+	const {
+		setFadeAnimation,
+	} = useContext(PropsContext);
 
 	const calendarOptions = useMemo(() => ({
 		year: currentProcedure.year,
 		month: currentProcedure.month,
-		setMonth: (m) => dispatch(userProcActions.switchMonth(m)),
+		setMonth: (m) => dispatch(appointmentsActions.switchMonth(m)),
 		day: currentProcedure.day,
-		setDay: (d) => dispatch(userProcActions.switchDay(d)),
+		setDay: (d) => dispatch(appointmentsActions.switchDay(d)),
 		locale,
 		strictTimeObject,
 	}), [currentProcedure]);
@@ -54,7 +57,7 @@ function ControlPanel() {
 			return;
 		}
 
-		dispatch(userProcActions.changeHour(availableHoursTime[0] - ProcConfig.START_WORK_TIME));
+		dispatch(appointmentsActions.changeHour(availableHoursTime[0] - ProcConfig.START_WORK_TIME));
 		setVisiblePopup(true);
 		setPopup(["make", null]);
 
@@ -69,8 +72,8 @@ function ControlPanel() {
 	}
 
 	function handleChangeCalendar(date, onSuccess) {
-		dispatch(userProcAsyncActions.getProcedureByDay(date))
-			.then(onSuccess);
+		onSuccess();
+		setFadeAnimation(true);
 	}
 
 	return (
@@ -88,7 +91,7 @@ function ControlPanel() {
 							right: 0,
 						}}
 						onClick={handleDesign}
-						text={t("appointmentList")}
+						text={t("myCurrentServices")}
 					/>
 				)}
 				<button

@@ -1,0 +1,51 @@
+.navigation {
+    position: sticky;
+    display: flex;
+    align-items: center;
+    background: rgb(var(--darkWhite));
+    box-shadow: 0 0 2px rgb(var(--black));
+    margin-bottom: 3vh;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.navigation > * {
+    margin: 0 2vw;
+}
+
+.visualStyle {
+	display: flex;
+	box-shadow: 0 0 0 1px rgb(var(--brown));
+	width: fit-content;
+	margin-left: auto;
+}
+
+.visualStyle button {
+	background: unset;
+	width: 30px;
+	padding: 5px;
+}
+
+.visualStyle button.selectDir {
+	background: rgba(var(--brown), 0.4);
+}
+
+.list {
+    display: grid;
+    grid-auto-flow: column;
+    width: fit-content;
+}
+
+.list button {
+    --back: var(--gray);
+    --o: 0.5;
+    white-space: nowrap;
+    padding: 2vh 2vw;
+    font-weight: 600;
+}
+
+.active,
+.list button:hover {
+    background: rgba(var(--brown), 0.2);
+}

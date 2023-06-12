@@ -11,7 +11,9 @@ import errors from "../config/errors.js";
 class Procedure {
   async defaultValue(req, res, next) {
     try {
-      const rez = {};
+      const rez = {
+        state: "pending",
+      };
       rez.type = await TypeService.defaultType(req, res, next)
         .then((value) => value[0]);
 
@@ -178,7 +180,7 @@ class Procedure {
     ).catch(next);
   }
 
-  getReviewsByProcId(req, res, next) {
+  getReviewsByQuery(req, res, next) {
     const {
       id,
       limit,
@@ -204,17 +206,12 @@ class Procedure {
     ).catch(next);
   }
 
-  getByColumn(req, res, next) {
-    const {
-      column,
-      value,
-    } = req.params;
-
+  getProceduresByQuery(req, res, next) {
     MySQL.createQuery({
-        sql: "SELECT * FROM service WHERE ?? = ?",
+        sql: `SELECT * FROM service WHERE ${req.params.query}`,
         values: {
-          columns: [column, value],
-          formatName: "keyAndValueArray",
+          columns: req.query,
+          formatName: "spreadObject",
         },
       },
       async (error, results) => {

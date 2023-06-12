@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { Helmet } from "react-helmet";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 
 import Notification from "@/components/UI/Form/Notification/Notification.jsx";
@@ -33,9 +33,10 @@ function ResetPassword() {
 	});
 
 	const [searchParams] = useSearchParams();
-	const email = searchParams.get("email");
 	const [[message, status], setMessage] = useState([]);
 
+	const accessKey = searchParams.get("accessKey");
+	const email = searchParams.get("email");
 	const passwordState = getFieldState("password");
 	const confirmedPasswordState = getFieldState("confirmedPassword");
 
@@ -55,6 +56,7 @@ function ResetPassword() {
 	async function onSubmit(data) {
 		const resultResetPassword = await dispatch(
 			asyncActions.resetPassword({
+				accessKey,
 				email,
 				newPassword: data.password,
 			}),
@@ -63,10 +65,10 @@ function ResetPassword() {
 		if (resultResetPassword.error) {
 			const args = translate.object(resultResetPassword.payload.error.args, t);
 
-			setMessage({
+			setMessage([{
 				key: resultResetPassword.payload.error.key,
 				args,
-			});
+			}, "error"]);
 			return;
 		}
 
@@ -75,6 +77,7 @@ function ResetPassword() {
 
 	async function sendAgain() {
 		const res = await dispatch(asyncActions.sendLinkForResetingPassword({
+			topic: "resetPassword",
 			email,
 		}));
 
@@ -89,10 +92,6 @@ function ResetPassword() {
 		if (res.payload.error) {
 			setMessage([res.payload.error, "error"]);
 		}
-	}
-
-	function handleMain() {
-		navigate("/");
 	}
 
 	return (
@@ -215,14 +214,14 @@ function ResetPassword() {
 						{errors.recaptcha && <p className="errorMessage">{t(recaptchaError)}</p>}
 					</div>
 					<div className="navigation">
-						<button
+						<Link
+							to="/"
 							id="toMain"
 							className="button border"
 							type="button"
-							onClick={handleMain}
 						>
 							{t("toMain")}
-						</button>
+						</Link>
 						<button
 							type="submit"
 							className="button border"

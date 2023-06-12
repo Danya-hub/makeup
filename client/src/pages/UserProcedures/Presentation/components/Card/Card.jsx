@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import types from "prop-types";
 
-import { asyncActions } from "@/service/redusers/userProcedures.js";
+import { asyncActions } from "@/service/redusers/appointments.js";
 import GlobalContext from "@/context/global.js";
 import { states } from "@/config/procedures.js";
 
@@ -29,12 +29,12 @@ function Card({ key, id, className, procedure }) {
 	const stringFinishTime = Intl.DateTimeFormat(currentLang, {
 		minute: "numeric",
 		hour: "numeric",
-	}).format(procedure.startProcTime);
+	}).format(procedure.finishProcTime);
 
-	async function handleFavourite() {
+	async function handleFavorite() {
 		await dispatch(asyncActions.updateProc([{
 			...procedure,
-			favourite: procedure.favourite ? 0 : 1,
+			favorite: procedure.favorite ? 0 : 1,
 		}, false]));
 	}
 
@@ -68,11 +68,11 @@ function Card({ key, id, className, procedure }) {
 					</div>
 					<button
 						type="button"
-						className="favourite"
-						onClick={handleFavourite}
+						className="favorite"
+						onClick={handleFavorite}
 					>
 						<i
-							className={procedure.favourite ? "fa fa-heart" : "fa fa-heart-o"}
+							className={procedure.favorite ? "fa fa-heart" : "fa fa-heart-o"}
 							aria-hidden="true"
 						/>
 					</button>

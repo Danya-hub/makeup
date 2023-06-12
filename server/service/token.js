@@ -1,5 +1,7 @@
 import jsonwebtoken from "jsonwebtoken";
 
+import errors from "../config/errors.js";
+
 import ApiError from "../utils/apiError.js";
 
 class TokenService {
@@ -9,12 +11,12 @@ class TokenService {
     return token;
   }
 
-  checkOnValidToken(token, secretKey) {
+  checkOnValidToken(token, secretKey, message) {
     let decodedToken = null;
 
     jsonwebtoken.verify(token, secretKey, (err, decoded) => {
       if (err) {
-        ApiError.throw("unauthorized");
+        ApiError.throw("noAccess", errors.timeOut(message));
       } else {
         decodedToken = decoded;
       }

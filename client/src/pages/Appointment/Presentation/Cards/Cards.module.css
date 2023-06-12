@@ -21,6 +21,10 @@
 	box-shadow: 0 0 16px rgba(var(--black), 0.4);
 }
 
+.cards > div:not(:where(.currentCard, #elapsedTime)):where(.myAppointments, .otherAppointments) {
+	--opacity: 1;
+}
+
 #elapsedTime {
 	position: absolute;
 	background: rgba(var(--brown), 0.1);
@@ -66,8 +70,4 @@
 	left: 0;
 	top: 0;
 	clip-path: polygon(0 50%, 100% 100%, 100% 0);
-}
-
-.cards > div:not(:where(.currentCard, #elapsedTime)):where(.myAppointments, .otherAppointments) {
-	--opacity: 1;
 }

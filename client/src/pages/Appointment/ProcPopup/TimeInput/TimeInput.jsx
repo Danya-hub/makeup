@@ -6,9 +6,9 @@ import GlobalContext from "@/context/global.js";
 import FormatDate from "@/utils/formatDate.js";
 import useOutsideEvent from "@/hooks/useOutsideEvent.js";
 import {
-	actions as userProcActions,
-	asyncActions as userProcAsyncActions,
-} from "@/service/redusers/userProcedures.js";
+	actions as appointmentsActions,
+	asyncActions as appointmentsAsyncActions,
+} from "@/service/redusers/appointments.js";
 import ProcConfig from "@/config/procedures.js";
 
 import Calendar from "@/components/UI/Calendar/Calendar.jsx";
@@ -30,7 +30,7 @@ function TimeInput({
 		currentProcedure,
 		availableDateTime,
 		hourHeightInPx,
-	} = useSelector((state) => state.userProcedures);
+	} = useSelector((state) => state.appointments);
 
 	const [procedure] = currentProcedure;
 	const currentProcDate = FormatDate.minutesToDate(
@@ -56,9 +56,9 @@ function TimeInput({
 	const calendarOptions = useMemo(() => ({
 		year: procedure.year,
 		month: procedure.month,
-		setMonth: (m) => dispatch(userProcActions.switchMonth(m)),
+		setMonth: (m) => dispatch(appointmentsActions.switchMonth(m)),
 		day: procedure.day,
-		setDay: (d) => dispatch(userProcActions.switchDay(d)),
+		setDay: (d) => dispatch(appointmentsActions.switchDay(d)),
 		locale,
 		strictTimeObject,
 	}), [procedure]);
@@ -76,14 +76,14 @@ function TimeInput({
 	function setStartAndFinishTimes(_, finalValue) {
 		const time = FormatDate.numericTimeFromChar(finalValue) - ProcConfig.START_WORK_TIME;
 
-		dispatch(userProcActions.changeHour(time));
+		dispatch(appointmentsActions.changeHour(time));
 
 		const scrollYInPx = time * hourHeightInPx;
 		window.scrollTo(0, scrollYInPx);
 	}
 
 	function handleChangeCalendar(date, onSuccess) {
-		dispatch(userProcAsyncActions.getProcedureByDay(date))
+		dispatch(appointmentsAsyncActions.getProcedureByDay(date))
 			.then(onSuccess);
 		setOpenCalendar(false);
 	}

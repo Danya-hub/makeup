@@ -5,8 +5,8 @@ import { useTranslation } from "react-i18next";
 import { useSearchParams } from "react-router-dom";
 
 import {
-	asyncActions as userProcAsyncActions,
-} from "@/service/redusers/userProcedures.js";
+	asyncActions as appointmentsActions,
+} from "@/service/redusers/appointments.js";
 import PropsContext from "./context/context.js";
 import GlobalContext from "@/context/global.js";
 import popups from "@/pages/Appointment/constants/popups.jsx";
@@ -22,7 +22,7 @@ import style from "./Appointment.module.css";
 function Appointment() {
 	const dispatch = useDispatch();
 	const {
-		userProcedures,
+		appointments,
 	} = useSelector((state) => state);
 	const { t } = useTranslation();
 	const {
@@ -31,6 +31,7 @@ function Appointment() {
 	} = useContext(GlobalContext);
 	const [searchParams] = useSearchParams();
 
+	const [fadeAnimation, setFadeAnimation] = useState(false);
 	const [isMouseDown, setMouseDownState] = useState(false);
 	const [visibledGroups, setVisibledGroup] = useState({});
 
@@ -39,8 +40,8 @@ function Appointment() {
 		const searchParamType = Number.parseInt(searchParams.get("type"), 10);
 		const popupName = searchParams.get("action");
 
-		await dispatch(userProcAsyncActions.getProcedureByDay(userProcedures.locale));
-		const allTypes = await dispatch(userProcAsyncActions.getAllTypes())
+		await dispatch(appointmentsActions.getProcedureByDay(appointments.locale));
+		const allTypes = await dispatch(appointmentsActions.getAllTypes())
 			.then((res) => res.payload.data);
 
 		const foundType = allTypes.find((type) => searchParamType === type.id);
@@ -49,7 +50,7 @@ function Appointment() {
 			body.type = foundType;
 		}
 
-		await dispatch(userProcAsyncActions.getDefaultProcValue(body));
+		await dispatch(appointmentsActions.getDefaultProcValue(body));
 
 		if (popups[popupName]) {
 			setPopup([popupName]);
@@ -67,15 +68,21 @@ function Appointment() {
 		setMouseDownState,
 		visibledGroups,
 		setVisibledGroup,
-	}), [isMouseDown, visibledGroups]);
+		fadeAnimation,
+		setFadeAnimation,
+	}), [
+		isMouseDown,
+		visibledGroups,
+		fadeAnimation,
+	]);
 
 	return (
 		<section id={style.allProcedures}>
 			<Helmet>
-				<title>{t(userProcedures.currentProcedure ? "appointmentTitle" : "loading")}</title>
+				<title>{t(appointments.currentProcedure ? "appointmentTitle" : "loading")}</title>
 			</Helmet>
 			<PropsContext.Provider value={contextValue}>
-				{userProcedures.currentProcedure ? (
+				{appointments.currentProcedure ? (
 					<>
 						<ControlPanel />
 						<Presentation />

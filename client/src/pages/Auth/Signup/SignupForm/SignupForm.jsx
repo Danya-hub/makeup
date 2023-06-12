@@ -1,6 +1,6 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import { useState, useMemo } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
@@ -20,7 +20,6 @@ import style from "@/pages/Auth/Auth.module.css";
 
 function SignupForm({ setFormState, user, setUser }) {
 	const { t } = useTranslation();
-	const navigate = useNavigate();
 	const { state: locationState } = useLocation();
 	const {
 		handleSubmit,
@@ -99,19 +98,6 @@ function SignupForm({ setFormState, user, setUser }) {
 
 		setUser(result);
 		setFormState(true);
-	}
-
-	function toSignin() {
-		navigate("/signin", {
-			state: {
-				purpose,
-			},
-			replace: true,
-		});
-	}
-
-	function handleCancel() {
-		navigate(-1);
 	}
 
 	return (
@@ -304,14 +290,13 @@ function SignupForm({ setFormState, user, setUser }) {
 						{errors.recaptcha && <p className="errorMessage">{t(recaptchaError)}</p>}
 					</div>
 					<div className="navigation">
-						<button
-							type="button"
+						<Link
+							to="/appointment"
 							id={style.cancel}
 							className="button border"
-							onClick={handleCancel}
 						>
 							{t("cancel")}
-						</button>
+						</Link>
 						<button
 							type="submit"
 							id={style.signup}
@@ -323,12 +308,17 @@ function SignupForm({ setFormState, user, setUser }) {
 				</form>
 				<div className="authQuestion">
 					<p>{t("alreadyExistsAccount")}</p>
-					<button
-						type="button"
-						onClick={toSignin}
+					<Link
+						to="/signin"
+						state={{
+							state: {
+								purpose,
+							},
+							replace: true,
+						}}
 					>
 						{t("signIn")}
-					</button>
+					</Link>
 				</div>
 			</div>
 		</section>

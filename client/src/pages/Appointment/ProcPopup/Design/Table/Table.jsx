@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import GlobalContext from "@/context/global.js";
 import FormatDate from "@/utils/formatDate.js";
-import { actions } from "@/service/redusers/userProcedures.js";
+import { actions } from "@/service/redusers/appointments.js";
 
 import DeleteButton from "@/components/UI/Form/DeleteButton/DeleteButton.jsx";
 import EditButton from "@/components/UI/Form/EditButton/EditButton.jsx";
@@ -15,7 +15,7 @@ function Table() {
 	const dispatch = useDispatch();
 	const {
 		newProcedures,
-	} = useSelector((state) => state.userProcedures);
+	} = useSelector((state) => state.appointments);
 	const {
 		setVisiblePopup,
 		currentLang,

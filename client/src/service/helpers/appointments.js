@@ -1,7 +1,7 @@
 import ProcConfig from "@/config/procedures.js";
 import FormatDate from "@/utils/formatDate.js";
 
-const userProceduresHelper = {
+const appointmentsHelper = {
 	setDayRange(state) {
 		const userProcState = state;
 
@@ -22,10 +22,10 @@ const userProceduresHelper = {
 		const userProcState = state;
 
 		if (userProcState.isCurrentTime) {
-			const max = (ProcConfig.FINISH_WORK_TIME - ProcConfig.START_WORK_TIME)
-				* userProcState.hourHeightInPx;
-			const currentTimeHeightInPx = FormatDate.minutesFromDate(date, userProcState.hourHeightInPx)
-				- ProcConfig.START_WORK_TIME * userProcState.hourHeightInPx;
+			const max = (ProcConfig.FINISH_WORK_TIME - ProcConfig.START_WORK_TIME) *
+				userProcState.hourHeightInPx;
+			const currentTimeHeightInPx = FormatDate.minutesFromDate(date, userProcState.hourHeightInPx) -
+				ProcConfig.START_WORK_TIME * userProcState.hourHeightInPx;
 
 			userProcState.locale = date;
 
@@ -44,8 +44,8 @@ const userProceduresHelper = {
 			userProcState.locale = this.getMaxDate(date, {
 				maxHour: ProcConfig.FINISH_WORK_TIME,
 			});
-			userProcState.currentTimeHeightInPx = (ProcConfig.FINISH_WORK_TIME
-				- ProcConfig.START_WORK_TIME) * userProcState.hourHeightInPx;
+			userProcState.currentTimeHeightInPx = (ProcConfig.FINISH_WORK_TIME -
+				ProcConfig.START_WORK_TIME) * userProcState.hourHeightInPx;
 		} else {
 			userProcState.locale = this.getMinDate(date, {
 				minHour: ProcConfig.START_WORK_TIME,
@@ -147,16 +147,16 @@ const userProceduresHelper = {
 		const selectMonth = newView.getMonth();
 		const selectYear = newView.getFullYear();
 
-		const isPrev = strict.year > selectYear
-			|| (strict.year >= selectYear && strict.month > selectMonth)
-			|| (strict.year >= selectYear
-				&& strict.month >= selectMonth
-				&& strict.day > selectDay);
-		const isNext = strict.year < selectYear
-			|| (strict.year <= selectYear && strict.month < selectMonth)
-			|| (strict.year <= selectYear
-				&& strict.month <= selectMonth
-				&& strict.day < selectDay);
+		const isPrev = strict.year > selectYear ||
+			(strict.year >= selectYear && strict.month > selectMonth) ||
+			(strict.year >= selectYear &&
+				strict.month >= selectMonth &&
+				strict.day > selectDay);
+		const isNext = strict.year < selectYear ||
+			(strict.year <= selectYear && strict.month < selectMonth) ||
+			(strict.year <= selectYear &&
+				strict.month <= selectMonth &&
+				strict.day < selectDay);
 		const isCurrentDate = !(isNext || isPrev);
 
 		return {
@@ -197,8 +197,8 @@ const userProceduresHelper = {
 	},
 
 	getDragY(pageY, state) {
-		return Math.ceil(pageY / state.hourHeightInPx / state.dragStep)
-			* state.hourHeightInPx * state.dragStep;
+		return Math.ceil(pageY / state.hourHeightInPx / state.dragStep) *
+			state.hourHeightInPx * state.dragStep;
 	},
 
 	availableTimeByDay({
@@ -315,9 +315,9 @@ const userProceduresHelper = {
 			),
 		});
 
-		const target = userProcState.newProcedures.length && fromOrigin
-			? userProcState.newProcedures[state.lastItemAfterAction][0].hour
-			: currentProcedure.hour;
+		const target = userProcState.newProcedures.length && fromOrigin ?
+			userProcState.newProcedures[state.lastItemAfterAction][0].hour :
+			currentProcedure.hour;
 
 		const availableHour = availableDateTime.hours
 			.reduce((prev, curr) => (Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev), 0);
@@ -344,20 +344,20 @@ const userProceduresHelper = {
 			.filter((card) => currentProcedure.id !== card.id && card.day === currentProcedure.day);
 
 		[...newProcedures, ...proceduresByDay]
-			.forEach((card) => {
-				if (isTouch) {
-					return;
-				}
+		.forEach((card) => {
+			if (isTouch) {
+				return;
+			}
 
-				const startSegment = (card.hour - duration);
-				const finishSegment = card.hour + card.type.duration + duration;
+			const startSegment = (card.hour - duration);
+			const finishSegment = card.hour + card.type.duration + duration;
 
-				isTouch = (startSegment < selectedTime && finishSegment > selectedTime + duration)
-					|| (selectedTime < startSegment && selectedTime + duration > finishSegment);
-			});
+			isTouch = (startSegment < selectedTime && finishSegment > selectedTime + duration) ||
+				(selectedTime < startSegment && selectedTime + duration > finishSegment);
+		});
 
 		return isTouch;
 	},
 };
 
-export default userProceduresHelper;
+export default appointmentsHelper;

@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 import { useForm, Controller } from "react-hook-form";
@@ -45,11 +45,20 @@ function ConfirmForm({ setFormState, user, onSuccess }) {
 	const recaptchaError = errors.recaptcha?.message;
 
 	async function onSubmit(data) {
-		const result = await axios.indPost("/auth/comparePasswordByEmail", {
+		await axios.indPost("/auth/comparePasswordByEmail", {
 			email: user.email,
 			password: data.password,
 			topic: "compareConfirmationCode",
 		})
+			.then((res) => {
+				const avatar = AvatarCanvas.getUrl(user.username, 100);
+
+				onSuccess({
+					...user,
+					password: res.data.password,
+					avatar,
+				});
+			})
 			.catch((res) => {
 				if (res.response.status !== 429) {
 					const args = translate.object(res.response.data.error.args, t);
@@ -67,18 +76,6 @@ function ConfirmForm({ setFormState, user, onSuccess }) {
 
 				return res;
 			});
-
-		if (!result.data) {
-			return;
-		}
-
-		const avatar = AvatarCanvas.getUrl(user.username, 100);
-
-		onSuccess({
-			...user,
-			password: result.data.password,
-			avatar,
-		});
 	}
 
 	function handleCancel() {
@@ -101,7 +98,7 @@ function ConfirmForm({ setFormState, user, onSuccess }) {
 			});
 	}
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		generateNewPassword();
 	}, []);
 

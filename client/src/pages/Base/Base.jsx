@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { useTranslation } from "react-i18next";
 
@@ -17,13 +17,13 @@ function Base() {
 
 	async function init() {
 		const bestProceduresResult = await axios
-			.get(`/procedure/byColumn/best/1`)
+			.get("/procedure/best = 1")
 			.then((res) => res.data.map(Value.toDate));
 
 		setBestWorks(bestProceduresResult);
 	}
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		init();
 	}, []);
 
@@ -35,14 +35,14 @@ function Base() {
 			{bestWorks ? (
 				<>
 					<ScrollTo
-						sectionName="#bestWorks"
+						sectionName="bestWorks"
 					>
 						<ProcedureSlider
 							procedures={bestWorks}
 						/>
 					</ScrollTo>
 					<ScrollTo
-						sectionName="#myServices"
+						sectionName="myServices"
 					>
 						<MyServices />
 					</ScrollTo>

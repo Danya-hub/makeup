@@ -4,9 +4,9 @@ import { useTranslation } from "react-i18next";
 
 import routes from "./constants/routes.js";
 
-import style from "./Navigation.module.css";
+import style from "./TopNavigation.module.css";
 
-function Navigation({
+function TopNavigation({
 	procedure,
 }) {
 	const { t } = useTranslation();
@@ -23,7 +23,7 @@ function Navigation({
 						>
 							<Link
 								to={path}
-								className={path === window.location.pathname ? style.active : ""}
+								className={`${path === window.location.pathname ? style.active : ""} button`}
 							>
 								{t(route.text)}
 							</Link>
@@ -35,8 +35,8 @@ function Navigation({
 	);
 }
 
-Navigation.propTypes = {
+TopNavigation.propTypes = {
 	procedure: types.instanceOf(Object).isRequired,
 };
 
-export default Navigation;
+export default TopNavigation;

@@ -1,0 +1,18 @@
+#empty > * {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#empty > *:not(:last-child) {
+    margin-bottom: 3vh;
+}
+
+#empty i {
+    font-size: var(--step-6);
+    color: rgba(var(--brown), 0.6);
+}
+
+#empty h3 {
+    text-transform: capitalize;
+}

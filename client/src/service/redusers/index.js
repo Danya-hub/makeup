@@ -1,9 +1,13 @@
-import { combineReducers } from "@reduxjs/toolkit";
+import {
+	combineReducers,
+} from "@reduxjs/toolkit";
 
-import userProcedures from "./userProcedures.js";
+import appointments from "./appointments.js";
 import user from "./user.js";
+import userProcedures from "./userProcedures.js";
 
 export default combineReducers({
-	userProcedures,
+	appointments,
 	user,
+	userProcedures,
 });

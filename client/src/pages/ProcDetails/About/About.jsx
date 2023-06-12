@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 
 import Value from "@/utils/value.js";
-import { asyncActions } from "@/service/actions/userProcedures.js";
+import { asyncActions } from "@/service/actions/appointments.js";
 
 import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
 import Info from "./Info/Info.jsx";
 import Description from "./Description/Description.jsx";
-import Navigation from "@/pages/ProcDetails/components/Navigation/Navigation.jsx";
+import TopNavigation from "@/pages/ProcDetails/components/TopNavigation/TopNavigation.jsx";
 
 function ProcDetails() {
 	const navigate = useNavigate();
@@ -34,7 +34,7 @@ function ProcDetails() {
 			})
 			.catch(() => navigate("/notFound"));
 
-		const reviewsById = await dispatch(asyncActions.getReviewsByProcId(`id=${params.id}&limit=6`))
+		const reviewsById = await dispatch(asyncActions.getReviewsByQuery(`id=${params.id}&limit=6`))
 			.then((res) => res.payload)
 			.catch(() => navigate("/notFound"));
 
@@ -42,7 +42,7 @@ function ProcDetails() {
 		setReviews(reviewsById);
 	}
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		init();
 	}, []);
 
@@ -53,7 +53,7 @@ function ProcDetails() {
 			</Helmet>
 			{procedure ? (
 				<>
-					<Navigation
+					<TopNavigation
 						procedure={procedure}
 					/>
 					<Info

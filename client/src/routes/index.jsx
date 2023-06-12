@@ -23,14 +23,6 @@ const routes = [
 		),
 	},
 	{
-		url: "/:section",
-		elem: () => (
-			<HMFLayout>
-				<Base />
-			</HMFLayout>
-		),
-	},
-	{
 		url: "/appointment",
 		elem: () => (
 			<HMLayout>
@@ -55,7 +47,7 @@ const routes = [
 		),
 	},
 	{
-		url: "/myprocedures",
+		url: "/appointment/me",
 		elem: () => (
 			<HMFLayout>
 				<UserProcedures />
@@ -87,7 +79,7 @@ const routes = [
 		),
 	},
 	{
-		url: "/notFound",
+		url: "*", //* /notFound
 		elem: () => (
 			<HMLayout>
 				<NotFound />

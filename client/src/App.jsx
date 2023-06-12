@@ -1,18 +1,20 @@
-import { useEffect, useState, useMemo } from "react";
-import { useDispatch } from "react-redux";
+import { useEffect, useLayoutEffect, useState, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Helmet } from "react-helmet";
 
 import Body from "./components/Body/Body.jsx";
 
 import LogoSrc from "@/assets/image/logo.svg";
 import useLang from "./hooks/useLang.js";
-import { asyncActions } from "./service/redusers/user.js";
+import { asyncActions as userAsyncActions } from "./service/redusers/user.js";
+import { asyncActions as userProceduresAsyncActions } from "./service/redusers/userProcedures.js";
 import GlobalContext from "./context/global.js";
 
 import "@/styles/main.css";
 
 function App() {
 	const dispatch = useDispatch();
+	const { info: userInfo } = useSelector((state) => state.user);
 
 	const [{
 		currentLang,
@@ -24,23 +26,25 @@ function App() {
 	const [isVisiblePopup, setVisiblePopup] = useState(false);
 	const [popup, setPopup] = useState([]);
 
-	async function init() {
-		const refresh = await dispatch(asyncActions.refresh());
-
-		if (refresh.error) {
-			return;
+	function init() {
+		if (isAuth) {
+			dispatch(userProceduresAsyncActions.getFavorites(userInfo.id));
+		} else {
+			dispatch(userAsyncActions.refresh())
+				.then(async (res) => {
+					await dispatch(userProceduresAsyncActions.getFavorites(res.payload.id));
+					setAuthState(true);
+				});
 		}
-
-		setAuthState(true);
 	}
 
 	useEffect(() => {
 		document.body.style.overflowY = isVisiblePopup ? "hidden" : "scroll";
 	}, [isVisiblePopup]);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		init();
-	}, []);
+	}, [isAuth]);
 
 	const contextValue = useMemo(() => ({
 		isAuth,

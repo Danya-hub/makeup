@@ -1,24 +1,30 @@
+import {
+  config,
+} from "dotenv";
+
 import MySQL from "../utils/db.js";
 import errors from "../config/errors.js";
-import {
-  JWT_ACCESS_TOKEN_MAX_AGE,
-  JWT_REFRESH_TOKEN_MAX_AGE,
-} from "../config/auth.js";
 
 import TokenService from "./token.js";
 
 import ApiError from "../utils/apiError.js";
 
+config({
+  path: "./env/.env.auth"
+});
+
 class UserService {
   channels = ["email", "telephone"];
 
   token(value) {
-    const accessToken = TokenService.generateToken(value, process.env.ACCESS_TOKEN_SECRET_KEY, {
-      expiresIn: JWT_ACCESS_TOKEN_MAX_AGE,
-    });
-    const refreshToken = TokenService.generateToken(value, process.env.REFRESH_TOKEN_SECRET_KEY, {
-      expiresIn: JWT_REFRESH_TOKEN_MAX_AGE,
-    });
+    const accessToken = TokenService.generateToken(value,
+      process.env.JWT_AUTH_ACCESS_TOKEN_SECRET_KEY, {
+        expiresIn: process.env.JWT_AUTH_ACCESS_TOKEN_MAX_AGE,
+      });
+    const refreshToken = TokenService.generateToken(value,
+      process.env.JWT_AUTH_REFRESH_TOKEN_SECRET_KEY, {
+        expiresIn: process.env.JWT_AUTH_REFRESH_TOKEN_MAX_AGE,
+      });
 
     return {
       accessToken,
@@ -26,7 +32,7 @@ class UserService {
     };
   }
 
-  findByChannel(req) {
+  findByChannelThrow(req) {
     return new Promise((resolve, reject) => {
       const name = this.channels.find((channelName) => req.body[channelName]);
 
@@ -57,6 +63,40 @@ class UserService {
           });
         }
       ).catch(reject);
+    });
+  }
+
+  findByChannelGet(req) {
+    return new Promise((resolve) => {
+      const name = this.channels.find((channelName) => req.body[channelName]);
+
+      MySQL.createQuery({
+          sql: "SELECT * FROM user WHERE ?? = ?",
+          values: {
+            columns: [name, req.body[name]],
+            formatName: "keyAndValueArray",
+          },
+        },
+        (error, results) => {
+          if (error) {
+            throw error;
+          }
+
+          if (results.length === 0) {
+            throw errors.wrongSignin();
+          }
+
+          const tokenValue = {
+            id: results[0].id,
+          };
+          const tokens = this.token(tokenValue);
+
+          resolve({
+            ...results[0],
+            ...tokens,
+          });
+        }
+      ).catch(() => resolve({}));
     });
   }
 

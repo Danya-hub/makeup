@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect, useMemo } from "react";
+import { useState, useContext, useLayoutEffect, useMemo } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useForm, Controller } from "react-hook-form";
@@ -166,7 +166,7 @@ function Email({
 			});
 	}
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		generateNewConfirmationCode();
 	}, []);
 

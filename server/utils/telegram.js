@@ -3,7 +3,9 @@ import {
     config
 } from "dotenv";
 
-config();
+config({
+    path: "./env/.env.telegram",
+});
 
 class Telegram {
     token = process.env.TELEGRAM_TOKEN;

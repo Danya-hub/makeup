@@ -23,6 +23,7 @@ function Info() {
 	function handleResetPassword() {
 		dispatch(asyncActions.sendLinkForResetingPassword({
 			email: user.info.email,
+			topic: "resetPassword",
 		}));
 		setOpenCabinet(false);
 	}

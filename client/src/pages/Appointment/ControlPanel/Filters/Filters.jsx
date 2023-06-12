@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import CheckboxList from "@/components/UI/Form/CheckboxList/CheckboxList.jsx";
 import Details from "@/components/UI/Details/Details.jsx";
 
+import GlobalContext from "@/context/global.js";
 import PropsContext from "@/pages/Appointment/context/context.js";
 import FilterHelpers from "./helpers/filters.js";
 
@@ -14,21 +15,27 @@ function Filters() {
 	const {
 		setVisibledGroup,
 	} = useContext(PropsContext);
+	const {
+		isAuth,
+	} = useContext(GlobalContext);
 
 	const values = useRef(FilterHelpers.checkboxListOptions);
+
+	const group = isAuth ? "myAppointments" : "otherAppointments";
 
 	const handleClick = useCallback((selectedOptions) => {
 		setVisibledGroup(selectedOptions);
 	}, []);
+
 	const listRender = useCallback(() => (
 		<CheckboxList
 			values={values.current}
 			defaultOptions={{
-				myAppointments: "myAppointments",
+				[group]: group,
 			}}
 			onChange={handleClick}
 		/>
-	), []);
+	), [isAuth]);
 
 	return (
 		<Details

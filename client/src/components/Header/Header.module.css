@@ -5,12 +5,11 @@ header {
 }
 
 header > * {
-	margin: 0 auto;
+	margin: 0 1vw;
 }
 
 header nav {
 	display: flex;
-	align-items: center;
 }
 
 header nav ul {
@@ -18,7 +17,7 @@ header nav ul {
 	height: 100%;
 }
 
-header nav a {
+header nav li a {
 	--o: 0;
 	
 	display: flex;
@@ -31,8 +30,13 @@ header nav a {
 	white-space: nowrap;
 }
 
-header nav a:hover {
+header nav li a:hover {
 	--o: 0.4;
+}
+
+header nav a {
+	display: flex;
+	align-items: center;
 }
 
 header nav > * {
@@ -42,4 +46,30 @@ header nav > * {
 #userInfo {
 	width: 40px;
 	padding: 0;
+}
+
+#favorites {
+	padding: 1vw;
+}
+
+#favorites i {
+	position: relative;
+	font-size: calc(var(--step-5) + 4px);
+}
+
+#favorites span {
+	background: rgb(var(--gray));
+	position: absolute;
+    font-size: var(--step-2);
+    width: calc(var(--step-2) + 3px);
+    height: calc(var(--step-2) + 3px);
+	transform: translate(50%, -50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 100vw;
+    line-height: 0;
+    right: 0;
+    top: 0;
+	pointer-events: none;
 }

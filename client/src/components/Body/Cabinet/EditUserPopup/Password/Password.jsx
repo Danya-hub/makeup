@@ -64,7 +64,7 @@ function Password({
 	const fieldError = editableFieldErrors.current[errors[field]?.message] || errors[field]?.message;
 
 	async function onSubmit(data) {
-		const comparePasswordResult = await axios.indPost("/auth/comparePasswordByUserId", {
+		const comparePasswordResult = await axios.post("/auth/comparePasswordByUserId", {
 			...userInfo,
 			...data,
 		})

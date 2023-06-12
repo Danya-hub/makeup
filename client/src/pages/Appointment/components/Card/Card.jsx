@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import types from "prop-types";
 
 import FormatDate from "@/utils/formatDate.js";
@@ -31,7 +31,6 @@ function Card({
 	const {
 		currentLang,
 	} = useContext(GlobalContext);
-	const navigate = useNavigate();
 
 	const backColor = isExists ? states[procedure.state].color : "lightGray";
 	const border = isSelected ? "inset 0 0 0 2px rgb(var(--black))" : "";
@@ -79,14 +78,14 @@ function Card({
 				</div>
 			)}
 			{isBook && (
-				<button
+				<Link
+					to={`/details/${procedure.id}`}
 					type="button"
 					id={style.more}
 					className="button border"
-					onClick={() => navigate(`/details/${procedure.id}`)}
 				>
 					{t("more")}
-				</button>
+				</Link>
 			)}
 		</div>
 	);

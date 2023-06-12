@@ -5,7 +5,9 @@ import {
 
 import SqlFormat from "./sqlFormat.js";
 
-config();
+config({
+  path: "./env/.env.db",
+});
 
 class MySQL {
   limit = 10;

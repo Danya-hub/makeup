@@ -10,7 +10,7 @@ import style from "./Total.module.css";
 function Total() {
 	const {
 		newProcedures,
-	} = useSelector((state) => state.userProcedures);
+	} = useSelector((state) => state.appointments);
 	const { t } = useTranslation();
 	const {
 		currentLang,

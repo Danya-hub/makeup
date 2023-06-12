@@ -2,6 +2,7 @@ import types from "prop-types";
 import { useTranslation } from "react-i18next";
 
 import Items from "@/pages/ProcDetails/Reviews/Items/Items.jsx";
+import Empty from "@/pages/ProcDetails/components/Empty/Empty.jsx";
 
 import style from "./Description.module.css";
 
@@ -25,9 +26,14 @@ function Description({
 			</div>
 			<div>
 				<h2>{t("reviews")}</h2>
-				<Items
-					reviews={reviews}
-				/>
+				{reviews.length ? (
+					<Items
+						procedure={procedure}
+						reviews={reviews}
+					/>
+				) : (
+					<Empty />
+				)}
 			</div>
 		</div>
 	);

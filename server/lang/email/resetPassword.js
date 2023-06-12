@@ -56,7 +56,7 @@ export function html(text) {
             line-height: 18px;
             letter-spacing: 0.5px;
         ">${text.purpose}</p>
-            <a href="${text.value}" style="
+            <a href="${text.url}" style="
             background: rgb(140, 113, 72);
             color: rgb(255, 255, 255);
             white-space: nowrap;
@@ -88,22 +88,22 @@ export function html(text) {
 }
 
 const content = {
-    ua: (user) => ({
+    ua: (options) => ({
         subject: "Скидання паролю для акаунту",
         html: html({
-            ...user,
-            greetings: `Добрий день <b>${user.username}</b>`,
+            ...options,
+            greetings: `Добрий день <b>${options.username}</b>`,
             title: "Скидання паролю",
             purpose: "Якщо ви втратили свій пароль або бажаєте його змінити, натисніть кнопку нижче, щоб почати",
             textLink: "Скинути мій пароль",
             warning: "Якщо ви не запитували скидання пароля, можете проігнорувати це повідомлення. Тільки користувачі, які мають доступ до вашого облікового запису, можуть знехтувати пароль"
         })
     }),
-    at: (user) => ({
+    at: (options) => ({
         subject: "Reset password for account",
         html: html({
-            ...user,
-            greetings: `Hello <b>${user.username}</b>`,
+            ...options,
+            greetings: `Hello <b>${options.username}</b>`,
             title: "Reset password",
             purpose: "If you have lost your password or want to change it, click the button below to get started",
             textLink: "Reset my password",

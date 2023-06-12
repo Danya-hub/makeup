@@ -15,23 +15,20 @@ function CheckboxList({
 
 	function onCheck(option, isChecked) {
 		setOption((prev) => {
-			let object = prev;
+			const prevState = prev;
 
 			if (isChecked) {
-				object = {
-					...prev,
-					[option]: option,
-				};
+				prevState[option] = option;
 			} else {
-				delete object[option];
+				delete prevState[option];
 			}
 
 			const result = {
-				...object,
+				...prevState,
 			};
 
 			return result;
-		}, []);
+		});
 	}
 
 	useEffect(() => {
@@ -51,7 +48,6 @@ function CheckboxList({
 					text={value}
 					onCheck={(isChecked) => {
 						onCheck(value, isChecked);
-						// onChange(checkedOptions);
 					}}
 				/>
 			))}

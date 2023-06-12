@@ -3,7 +3,9 @@ import {
     config
 } from "dotenv";
 
-config();
+config({
+    path: "./env/.env.firebase",
+});
 
 const app = firebase.initializeApp({
     apiKey: process.env.FIREBASE_API_KEY,

@@ -21,8 +21,7 @@ class UserValidation {
   isExists(value, {
     path
   }) {
-    return MySQL.createQuery(
-      {
+    return MySQL.createQuery({
         sql: "SELECT * FROM user WHERE ?? = ?",
         values: {
           columns: [path, value],
@@ -44,7 +43,7 @@ class UserValidation {
   comparePassword(value, {
     req
   }) {
-    return UserService.findByChannel(req)
+    return UserService.findByChannelThrow(req)
       .then((result) => {
         const isEquil = bcrypt.compareSync(value, result.password);
 

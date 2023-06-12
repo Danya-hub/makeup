@@ -30,8 +30,10 @@ function Navigation({
 	function setPrevMonth() {
 		const m = month - 1;
 
-		onChange(new Date(year, m, day));
-		setMonth(m);
+		onChange(
+			new Date(year, m, day),
+			() => setMonth(m),
+		);
 	}
 
 	function setNextMonth() {

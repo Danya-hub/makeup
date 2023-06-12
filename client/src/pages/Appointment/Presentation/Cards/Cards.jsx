@@ -1,14 +1,15 @@
-import { useContext, useRef } from "react";
+/* eslint-disable react/prop-types */
+
+import { useContext, useRef, forwardRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import types from "prop-types";
 
 import FormatDate from "@/utils/formatDate.js";
 import PropsContext from "@/pages/Appointment/context/context.js";
 import GlobalContext from "@/context/global.js";
-import { actions, asyncActions } from "@/service/redusers/userProcedures.js";
+import { actions, asyncActions } from "@/service/redusers/appointments.js";
 import ProcConfig from "@/config/procedures.js";
-import UserProceduresHelper from "@/service/helpers/userProcedures.js";
+import AppointmentsHelper from "@/service/helpers/appointments.js";
 
 import Card from "@/pages/Appointment/components/Card/Card.jsx";
 
@@ -16,9 +17,9 @@ import style from "./Cards.module.css";
 
 function Cards({
 	widthCharTime,
-}) {
+}, parentRef) {
 	const dispatch = useDispatch();
-	const { userProcedures, user } = useSelector((state) => state);
+	const { appointments, user } = useSelector((state) => state);
 	const {
 		isMouseDown,
 		setMouseDownState,
@@ -33,75 +34,76 @@ function Cards({
 		isAuth,
 	} = useContext(GlobalContext);
 	const navigate = useNavigate();
+	const { current: parentElement } = parentRef;
 
-	const parentRef = useRef(null);
+	const childRef = useRef(null);
 
-	const [currentProcedure] = userProcedures.currentProcedure;
+	const [currentProcedure] = appointments.currentProcedure;
 	const classNameByPresentState = (isVisiblePopup && "noActiveGrabbing") || (isMouseDown && "activeGrabbing") || "";
 	const currentStartProcPositionY = (currentProcedure.hour - ProcConfig.START_WORK_TIME)
-		* userProcedures.hourHeightInPx;
+		* appointments.hourHeightInPx;
 	const currentStartProcPositionYToDate = FormatDate.minutesToDate(
-		currentProcedure.hour * userProcedures.hourHeightInPx,
-		userProcedures.locale,
+		currentProcedure.hour * appointments.hourHeightInPx,
+		appointments.locale,
 	);
 	const availableForOpen = (
 		(popupName === "make" || popupName === "edit")
-		&& ((isVisiblePopup && userProcedures.availableDateTime.length > 0)
+		&& ((isVisiblePopup && appointments.availableDateTime.length > 0)
 			|| isMouseDown));
 	const currentStirngHoursAndMinutes = FormatDate.stringHourAndMin(
-		userProcedures.locale,
+		appointments.locale,
 		currentLang,
 	);
-	const showAvailableCursor = userProcedures.isCurrentTime
-		&& (userProcedures.currentTimeHeightInPx / userProcedures.hourHeightInPx
+	const showAvailableCursor = appointments.isCurrentTime
+		&& (appointments.currentTimeHeightInPx / appointments.hourHeightInPx
 			+ ProcConfig.START_WORK_TIME) < ProcConfig.FINISH_WORK_TIME;
 
 	function setNumericTimeByGrabbing(e, pageY) {
 		const time = (pageY
-			- Math.ceil((parentRef.current.offsetTop + e.currentTarget.parentNode.offsetTop)
-				/ userProcedures.hourHeightInPx) * userProcedures.hourHeightInPx)
-			/ userProcedures.hourHeightInPx;
+			- Math.ceil((childRef.current.offsetTop + parentElement.offsetTop)
+					/ appointments.hourHeightInPx) * appointments.hourHeightInPx)
+			/ appointments.hourHeightInPx;
 
 		dispatch(actions.changeHour(time));
 	}
 
-	function onMouseUp(e) {
+	function handleMouseUp(e) {
 		if (e.target.tagName === "BUTTON") {
 			return;
 		}
 
 		setVisiblePopup(true);
 
-		if (!userProcedures.availableDateTime.length) {
+		if (!appointments.availableDateTime.length) {
 			return;
 		}
 
-		const y = UserProceduresHelper.getDragY(e.pageY, userProcedures);
+		const y = AppointmentsHelper.getDragY(e.pageY, appointments);
 		setNumericTimeByGrabbing(e, y);
 
-		const minutesOnMouseUp = currentProcedure.hour * userProcedures.hourHeightInPx
+		const minutesOnMouseUp = currentProcedure.hour * appointments.hourHeightInPx
 			- ProcConfig.START_WORK_TIME;
 
 		setMouseDownState(false);
 
-		if (minutesOnMouseUp === userProcedures.currentTimeHeightInPx) {
+		if (minutesOnMouseUp === appointments.currentTimeHeightInPx) {
 			window.scrollTo(0, minutesOnMouseUp);
 		}
 	}
 
-	function onMouseMove(e) {
+	function handleMouseMove(e) {
 		if (!isMouseDown
-			|| !userProcedures.availableDateTime.length
+			|| !appointments.availableDateTime.length
 			|| e.target.tagName === "BUTTON") {
 			return;
 		}
 
-		const y = UserProceduresHelper.getDragY(e.pageY, userProcedures);
+		const y = AppointmentsHelper.getDragY(e.pageY, appointments);
 
 		setNumericTimeByGrabbing(e, y);
 	}
 
-	function onMouseDown(e) {
+	function handleMouseDown(e) {
 		if (e.target.tagName === "BUTTON") {
 			return;
 		}
@@ -121,21 +123,21 @@ function Cards({
 			setPopup(["make", null]);
 		}
 
-		if (!userProcedures.availableDateTime.length) {
+		if (!appointments.availableDateTime.length) {
 			return;
 		}
 
-		const y = UserProceduresHelper.getDragY(e.pageY, userProcedures);
+		const y = AppointmentsHelper.getDragY(e.pageY, appointments);
 
 		setNumericTimeByGrabbing(e, y);
-		setMouseDownState(!userProcedures.isPrevTime);
+		setMouseDownState(!appointments.isPrevTime);
 	}
 
 	async function onCloseEditPopup(res, index) {
 		await dispatch(asyncActions.updateProc([res, true]));
 		dispatch(actions.deleteProc(index));
 		dispatch(actions.updateCurrProc([
-			[userProcedures.defaultProcedure, userProcedures.newProcedures.length],
+			[appointments.defaultProcedure, appointments.newProcedures.length],
 			false,
 		]));
 	}
@@ -146,7 +148,7 @@ function Cards({
 
 	function handleEditProc(index) {
 		dispatch(actions.updateCurrProc([
-			[userProcedures.proceduresByDay[index], userProcedures.newProcedures.length],
+			[appointments.proceduresByDay[index], appointments.newProcedures.length],
 			false,
 		]));
 		dispatch(actions.updateAvailableTimeByDate(false));
@@ -161,21 +163,21 @@ function Cards({
 		// The <div> is a parent element which has events for grabbing certain card
 		// eslint-disable-next-line jsx-a11y/no-static-element-interactions
 		<div
-			ref={parentRef}
+			ref={childRef}
 			className={`${style.cards} ${classNameByPresentState}`}
 			style={{
 				height: (ProcConfig.FINISH_WORK_TIME - ProcConfig.START_WORK_TIME)
-					* userProcedures.hourHeightInPx,
+					* appointments.hourHeightInPx,
 				width: `calc(100% - ${widthCharTime}px)`,
 			}}
-			onMouseUp={onMouseUp}
-			onMouseMove={onMouseMove}
-			onMouseDown={onMouseDown}
+			onMouseUp={handleMouseUp}
+			onMouseMove={handleMouseMove}
+			onMouseDown={handleMouseDown}
 		>
 			<div
 				id={style.elapsedTime}
 				style={{
-					height: `${userProcedures.currentTimeHeightInPx}px`,
+					height: `${appointments.currentTimeHeightInPx}px`,
 				}}
 			>
 				{showAvailableCursor && (
@@ -192,19 +194,19 @@ function Cards({
 					className={`${style.newProcedure} ${style.currentCard}`}
 					procedure={currentProcedure}
 					styleAttr={{
-						height: `${currentProcedure.type.duration * userProcedures.hourHeightInPx}px`,
+						height: `${currentProcedure.type.duration * appointments.hourHeightInPx}px`,
 						top: `${currentStartProcPositionY}px`,
 					}}
 				/>
 			)}
 			{
-				userProcedures.newProcedures.map(([card, isSelected], i) => {
-					const top = (card.hour - ProcConfig.START_WORK_TIME) * userProcedures.hourHeightInPx;
+				appointments.newProcedures.map(([card, isSelected], i) => {
+					const top = (card.hour - ProcConfig.START_WORK_TIME) * appointments.hourHeightInPx;
 					let isAvailableRender = false;
 
 					const {
 						isCurrent,
-					} = UserProceduresHelper.dateDirection(card.startProcTime, currentProcedure);
+					} = AppointmentsHelper.dateDirection(card.startProcTime, currentProcedure);
 
 					if (isCurrent) {
 						isAvailableRender = !isSelected && isCurrent;
@@ -220,13 +222,13 @@ function Cards({
 							className={`${style.newProcedure} ${style[visibledGroups.myAppointments]}`}
 							procedure={card}
 							styleAttr={{
-								height: `${card.type.duration * userProcedures.hourHeightInPx}px`,
+								height: `${card.type.duration * appointments.hourHeightInPx}px`,
 								top: `${top}px`,
 							}}
 							onDelete={(index) => {
 								dispatch(actions.deleteProc(index));
 
-								if (userProcedures.newProcedures.length - 1 === 0) {
+								if (appointments.newProcedures.length - 1 === 0) {
 									setPopup(["make", null]);
 								}
 							}}
@@ -239,8 +241,8 @@ function Cards({
 					);
 				})
 			}
-			{userProcedures.proceduresByDay.map((card, i) => {
-				const top = (card.hour - ProcConfig.START_WORK_TIME) * userProcedures.hourHeightInPx;
+			{appointments.proceduresByDay.map((card, i) => {
+				const top = (card.hour - ProcConfig.START_WORK_TIME) * appointments.hourHeightInPx;
 				const isOwn = card.user.id === user.info?.id;
 
 				const isAvailableRender = currentProcedure.id !== card.id;
@@ -257,7 +259,7 @@ function Cards({
 						key={`${card.type.name}/${card.startProcTime}/allProcedures`}
 						procedure={card}
 						styleAttr={{
-							height: `${card.type.duration * userProcedures.hourHeightInPx}px`,
+							height: `${card.type.duration * appointments.hourHeightInPx}px`,
 							top: `${top}px`,
 						}}
 						onDelete={handleDeleteProc}
@@ -269,8 +271,4 @@ function Cards({
 	);
 }
 
-Cards.propTypes = {
-	widthCharTime: types.number.isRequired,
-};
-
-export default Cards;
+export default forwardRef(Cards);
