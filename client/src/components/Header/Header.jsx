@@ -23,6 +23,7 @@ function Header() {
 	return (
 		<header>
 			<CommMethods />
+			<Logo />
 			<nav>
 				<ul>
 					<li>
@@ -47,9 +48,7 @@ function Header() {
 					</li>
 				</ul>
 			</nav>
-			<Logo />
 			<nav>
-				<Lang />
 				<ul>
 					<li>
 						{!isAuth && (
@@ -69,38 +68,41 @@ function Header() {
 					</li>
 				</ul>
 			</nav>
-			{isAuth && (
-				<nav>
-					<Link
-						to="/appointment/me"
-						state={{
-							path: "myFavorites",
-						}}
-						id={style.favorites}
-						title={t("myFavorites")}
-					>
-						<i
-							className="fa fa-heart-o"
-							aria-hidden="true"
+			<nav>
+				<Lang />
+				{isAuth && (
+					<>
+						<Link
+							to="/appointment/me"
+							state={{
+								path: "myFavorites",
+							}}
+							id={style.favorites}
+							title={t("myFavorites")}
 						>
-							<span>{favoriteProcedurs.length}</span>
-						</i>
-					</Link>
-					<button
-						type="button"
-						id={style.userInfo}
-						className="button"
-						onClick={() => {
-							setOpenCabinet(true);
-						}}
-					>
-						<img
-							src={UserSrc}
-							alt="user"
-						/>
-					</button>
-				</nav>
-			)}
+							<i
+								className="fa fa-heart-o"
+								aria-hidden="true"
+							>
+								<span>{favoriteProcedurs.length}</span>
+							</i>
+						</Link>
+						<button
+							type="button"
+							id={style.userInfo}
+							className="button"
+							onClick={() => {
+								setOpenCabinet(true);
+							}}
+						>
+							<img
+								src={UserSrc}
+								alt="user"
+							/>
+						</button>
+					</>
+				)}
+			</nav>
 		</header>
 	);
 }

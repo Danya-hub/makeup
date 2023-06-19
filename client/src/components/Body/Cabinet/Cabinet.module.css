@@ -8,11 +8,14 @@
 	padding-bottom: 0;
 }
 
+#cabinet ul {
+	border-bottom: 1px solid rgb(var(--brown));
+}
+
 #cabinet li :where(a, button),
 #cabinet h3 {
 	padding: 10px var(--space);
 	text-align: left;
-	font-weight: 400;
 }
 
 #cabinet li :where(a, button:not(:disabled)):hover {
@@ -26,4 +29,8 @@
 .bottom {
 	background: rgba(var(--brown), 0.1);
 	margin: 0;
+}
+
+.bottom ul {
+	padding-bottom: 3vh;
 }

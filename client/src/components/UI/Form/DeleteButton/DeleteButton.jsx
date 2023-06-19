@@ -16,6 +16,7 @@ function DeleteButton({
 			type="button"
 			className={`button ${className}`}
 			onClick={() => onClick(index)}
+			data-target="procedureControl"
 		>
 			<i
 				className="fa fa-trash-o"

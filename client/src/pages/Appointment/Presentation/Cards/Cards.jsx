@@ -61,14 +61,14 @@ function Cards({
 	function setNumericTimeByGrabbing(e, pageY) {
 		const time = (pageY
 			- Math.ceil((childRef.current.offsetTop + parentElement.offsetTop)
-					/ appointments.hourHeightInPx) * appointments.hourHeightInPx)
+				/ appointments.hourHeightInPx) * appointments.hourHeightInPx)
 			/ appointments.hourHeightInPx;
 
 		dispatch(actions.changeHour(time));
 	}
 
 	function handleMouseUp(e) {
-		if (e.target.tagName === "BUTTON") {
+		if (e.target.dataset.target === "procedureControl") {
 			return;
 		}
 
@@ -94,7 +94,7 @@ function Cards({
 	function handleMouseMove(e) {
 		if (!isMouseDown
 			|| !appointments.availableDateTime.length
-			|| e.target.tagName === "BUTTON") {
+			|| e.target.dataset.target === "procedureControl") {
 			return;
 		}
 
@@ -104,7 +104,7 @@ function Cards({
 	}
 
 	function handleMouseDown(e) {
-		if (e.target.tagName === "BUTTON") {
+		if (e.target.dataset.target === "procedureControl") {
 			return;
 		}
 
@@ -148,7 +148,7 @@ function Cards({
 
 	function handleEditProc(index) {
 		dispatch(actions.updateCurrProc([
-			[appointments.proceduresByDay[index], appointments.newProcedures.length],
+			[appointments.addedUserProcedures[index], appointments.newProcedures.length],
 			false,
 		]));
 		dispatch(actions.updateAvailableTimeByDate(false));
@@ -241,7 +241,7 @@ function Cards({
 					);
 				})
 			}
-			{appointments.proceduresByDay.map((card, i) => {
+			{appointments.addedUserProcedures.map((card, i) => {
 				const top = (card.hour - ProcConfig.START_WORK_TIME) * appointments.hourHeightInPx;
 				const isOwn = card.user.id === user.info?.id;
 

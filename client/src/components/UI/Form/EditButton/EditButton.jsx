@@ -13,6 +13,7 @@ function EditButton({
 			type="button"
 			className="button"
 			onClick={() => onClick(index)}
+			data-target="procedureControl"
 		>
 			<i
 				className="fa fa-pencil-square-o"

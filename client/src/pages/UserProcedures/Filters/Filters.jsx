@@ -16,7 +16,7 @@ import style from "./Filters.module.css";
 
 function Filters({
 	tempCards,
-	setTempCard,
+	onChange,
 	initialCards,
 	setPlaceholderLoaderState,
 }) {
@@ -72,7 +72,7 @@ function Filters({
 		const filters = FilterActions.apply(initialCards, selectedOptions);
 
 		setRangePrice([filters.minSelectedPrice.type.price, filters.maxSelectedPrice.type.price]);
-		setTempCard(filters.procedures);
+		onChange(filters.procedures);
 	}, [
 		initialCards,
 		selectedOptions.range,
@@ -160,7 +160,7 @@ function Filters({
 
 Filters.propTypes = {
 	tempCards: types.instanceOf(Array).isRequired,
-	setTempCard: types.func.isRequired,
+	onChange: types.func.isRequired,
 	initialCards: types.instanceOf(Array).isRequired,
 	setPlaceholderLoaderState: types.func.isRequired,
 };

@@ -8,7 +8,7 @@ import Value from "@/utils/value.js";
 import { asyncActions } from "@/service/actions/appointments.js";
 
 import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
-import Info from "./Info/Info.jsx";
+import BaseInfo from "./BaseInfo/BaseInfo.jsx";
 import Description from "./Description/Description.jsx";
 import TopNavigation from "@/pages/ProcDetails/components/TopNavigation/TopNavigation.jsx";
 
@@ -56,7 +56,7 @@ function ProcDetails() {
 					<TopNavigation
 						procedure={procedure}
 					/>
-					<Info
+					<BaseInfo
 						procedure={procedure}
 					/>
 					<Description

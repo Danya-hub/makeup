@@ -32,8 +32,8 @@ function initialState(date) {
 	this.minTimeRangeProc = 0;
 	this.maxTimeRangeProc = 0;
 	this.lastItemAfterAction = 0;
+	this.addedUserProcedures = [];
 	this.proceduresByDay = [];
-	this.proceduresByUser = [];
 	this.states = [];
 	this.country = "ua";
 

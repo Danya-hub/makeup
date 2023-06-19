@@ -11,7 +11,7 @@ import TypeService from "../service/type.js";
 
 const router = Router();
 
-router.get("/:query", ProcedureController.getProceduresByQuery);
+router.get("/columns/:query", ProcedureController.getProceduresByQuery);
 router.get("/byDay/:date", ProcedureController.getByDay);
 router.get("/allTypes/:country", TypeService.all);
 router.get("/default/:country", ProcedureController.defaultValue);

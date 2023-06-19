@@ -29,10 +29,6 @@
 	z-index: 1;
 }
 
-.content > * {
-	padding: 1vh 0;
-}
-
 .content button {
 	width: 100%;
 }

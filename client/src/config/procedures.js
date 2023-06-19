@@ -9,14 +9,17 @@ export const states = {
 	pending: {
 		name: "pending",
 		color: "blue",
+		position: 2,
 	},
 	inProcess: {
 		name: "inProcess",
 		color: "red",
+		position: 1,
 	},
 	finished: {
 		name: "finished",
 		color: "green",
+		position: 3,
 	},
 };
 

@@ -15,6 +15,7 @@ function DesignButton({
 			type="button"
 			className={`button border ${style.button}`}
 			onClick={onClick}
+			data-target="procedureControl"
 		>
 			<span
 				className={style.point}

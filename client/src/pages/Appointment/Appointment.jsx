@@ -40,7 +40,6 @@ function Appointment() {
 		const searchParamType = Number.parseInt(searchParams.get("type"), 10);
 		const popupName = searchParams.get("action");
 
-		await dispatch(appointmentsActions.getProcedureByDay(appointments.locale));
 		const allTypes = await dispatch(appointmentsActions.getAllTypes())
 			.then((res) => res.payload.data);
 
@@ -51,6 +50,7 @@ function Appointment() {
 		}
 
 		await dispatch(appointmentsActions.getDefaultProcValue(body));
+		await dispatch(appointmentsActions.getProcedureByDay(appointments.locale));
 
 		if (popups[popupName]) {
 			setPopup([popupName]);

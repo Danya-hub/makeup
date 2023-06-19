@@ -8,9 +8,9 @@ import Content from "./Content/Content.jsx";
 import OptionButton from "@/pages/ProcDetails/components/OptionButton/OptionButton.jsx";
 import { asyncActions } from "@/service/redusers/appointments.js";
 
-import style from "./Info.module.css";
+import style from "./BaseInfo.module.css";
 
-function Info({
+function BaseInfo({
 	procedure,
 }) {
 	const { t } = useTranslation();
@@ -58,12 +58,12 @@ function Info({
 	);
 }
 
-Info.defaultProps = {
+BaseInfo.defaultProps = {
 	procedure: null,
 };
 
-Info.propTypes = {
+BaseInfo.propTypes = {
 	procedure: types.instanceOf(Object),
 };
 
-export default Info;
+export default BaseInfo;

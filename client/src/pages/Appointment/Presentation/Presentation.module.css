@@ -3,7 +3,11 @@
 	--lineSize: 1px;
 
 	width: 100%;
-	margin: 0 4%;
+}
+
+#presentation > * {
+	padding-left: 4%;
+	margin-right: 4%;
 }
 
 .wrapper {

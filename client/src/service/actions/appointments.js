@@ -23,6 +23,7 @@ export const actions = {
 		state.lastItemAfterAction = state.newProcedures.length - 1;
 		state.currentProcedure = [state.defaultProcedure, state.newProcedures.length];
 
+		UserProceduresHelper.setProceduresByDay(state);
 		UserProceduresHelper.defaultAvailableTimeByDate(state, true);
 	},
 
@@ -45,6 +46,7 @@ export const actions = {
 		state.currentProcedure = [state.defaultProcedure, state.newProcedures.length - 1];
 		state.newProcedures = state.newProcedures.filter((_, i) => i !== index);
 
+		UserProceduresHelper.setProceduresByDay(state);
 		UserProceduresHelper.defaultAvailableTimeByDate(state);
 	},
 
@@ -56,7 +58,6 @@ export const actions = {
 		const newDate = UserProceduresHelper.setDirection(state, date);
 
 		UserProceduresHelper.setViewDate(newDate, state);
-		UserProceduresHelper.defaultAvailableTimeByDate(state);
 	},
 
 	switchDay(state, action) {
@@ -108,7 +109,7 @@ export const actions = {
 		UserProceduresHelper.defaultAvailableTimeByDate(state, true);
 	},
 
-	updateAvailableTimeByDate(state, action) {
+	updateAvailableTimeByDate(state, action) { // ?
 		UserProceduresHelper.defaultAvailableTimeByDate(state, action.payload);
 	},
 };
@@ -121,7 +122,7 @@ export const asyncActions = {
 		}) => {
 			try {
 				const appointments = await axios
-					.get(`/procedure/user = ${id}`)
+					.get(`/procedure/columns/id = ${id}`)
 					.then((res) => Value.toDate(res.data[0]));
 
 				return appointments;
@@ -338,16 +339,17 @@ export const extraReducers = {
 			contract: null,
 		};
 		state.currentProcedure = [state.defaultProcedure, 0];
-
-		UserProceduresHelper.defaultAvailableTimeByDate(state);
 	},
 	[asyncActions.getAllTypes.fulfilled]: (state, action) => {
 		state.types = action.payload.data;
 	},
 	[asyncActions.getProcedureByDay.pending]: (state) => {
-		state.proceduresByDay = [];
+		state.addedUserProcedures = [];
 	},
 	[asyncActions.getProcedureByDay.fulfilled]: (state, action) => {
-		state.proceduresByDay = action.payload;
+		state.addedUserProcedures = action.payload;
+
+		UserProceduresHelper.setProceduresByDay(state);
+		UserProceduresHelper.defaultAvailableTimeByDate(state);
 	},
 };

@@ -8,6 +8,7 @@ import { asyncActions as userProcedureAsyncActions } from "@/service/actions/use
 import GlobalContext from "@/context/global.js";
 import UserProceduresContext from "./context/userProcedures.js";
 import routes from "./Presentation/Output/TopNavigation/constants/routes.js";
+import UserProceduresHelpers from "./helpers/procedure.js";
 
 import PlaceholderLoader from "@/components/UI/PlaceholderLoader/PlaceholderLoader.jsx";
 import Filters from "./Filters/Filters.jsx";
@@ -47,6 +48,12 @@ function UserProcedures() {
 		setLoadState(true);
 	}
 
+	function handleChangeFilter(value) {
+		const sortedProcedures = UserProceduresHelpers.sortByState(value);
+
+		setTempCard(sortedProcedures);
+	}
+
 	useLayoutEffect(() => {
 		init();
 	}, []);
@@ -65,8 +72,10 @@ function UserProcedures() {
 			myFavorites: userProcedures.favoriteProcedurs,
 		};
 
-		setTempCard(proceduresByPath[currentPath]);
-		setInitialCards(proceduresByPath[currentPath]);
+		const sortedProcedures = UserProceduresHelpers.sortByState(proceduresByPath[currentPath]);
+
+		setTempCard(sortedProcedures);
+		setInitialCards(sortedProcedures);
 	}, [currentPath, isLoading]);
 
 	const contextValue = useMemo(() => ({
@@ -92,7 +101,7 @@ function UserProcedures() {
 						<Filters
 							setPlaceholderLoaderState={setLoadState}
 							tempCards={tempCards}
-							setTempCard={setTempCard}
+							onChange={handleChangeFilter}
 							initialCards={initialCards}
 						/>
 						<Presentation

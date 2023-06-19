@@ -17,7 +17,7 @@ function Base() {
 
 	async function init() {
 		const bestProceduresResult = await axios
-			.get("/procedure/best = 1")
+			.get("/procedure/columns/best = 1")
 			.then((res) => res.data.map(Value.toDate));
 
 		setBestWorks(bestProceduresResult);
@@ -28,7 +28,7 @@ function Base() {
 	}, []);
 
 	return (
-		<section>
+		<div>
 			<Helmet>
 				<title>{t("mainTitle")}</title>
 			</Helmet>
@@ -48,7 +48,7 @@ function Base() {
 					</ScrollTo>
 				</>
 			) : <SimpleLoader />}
-		</section>
+		</div>
 	);
 }
 

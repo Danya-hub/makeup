@@ -15,7 +15,7 @@ export const asyncActions = {
 	}) => {
 		try {
 			const result = await axios
-				.get(`/procedure/favorite = 1 AND user = ${id}`)
+				.get(`/procedure/columns/favorite = 1 AND user = ${id}`)
 				.then((res) => res.data.map(Value.toDate));
 
 			return result;
@@ -31,7 +31,7 @@ export const asyncActions = {
 		}) => {
 			try {
 				const appointments = await axios
-					.get(`/procedure/user = ${id} AND available = 1`)
+					.get(`/procedure/columns/user = ${id} AND available = 1`)
 					.then((res) => res.data.map(Value.toDate));
 
 				return appointments;

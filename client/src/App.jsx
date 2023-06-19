@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useState, useMemo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Helmet } from "react-helmet";
 
 import Body from "./components/Body/Body.jsx";
@@ -14,7 +15,7 @@ import "@/styles/main.css";
 
 function App() {
 	const dispatch = useDispatch();
-	const { info: userInfo } = useSelector((state) => state.user);
+	const navigate = useNavigate();
 
 	const [{
 		currentLang,
@@ -26,16 +27,13 @@ function App() {
 	const [isVisiblePopup, setVisiblePopup] = useState(false);
 	const [popup, setPopup] = useState([]);
 
-	function init() {
-		if (isAuth) {
-			dispatch(userProceduresAsyncActions.getFavorites(userInfo.id));
-		} else {
-			dispatch(userAsyncActions.refresh())
-				.then(async (res) => {
-					await dispatch(userProceduresAsyncActions.getFavorites(res.payload.id));
-					setAuthState(true);
-				});
-		}
+	async function init() {
+		dispatch(userAsyncActions.refresh())
+			.then(async (res) => {
+				await dispatch(userProceduresAsyncActions.getFavorites(res.payload.id));
+				navigate("/appointment/me");
+				setAuthState(true);
+			});
 	}
 
 	useEffect(() => {

@@ -22,10 +22,10 @@ const appointmentsHelper = {
 		const userProcState = state;
 
 		if (userProcState.isCurrentTime) {
-			const max = (ProcConfig.FINISH_WORK_TIME - ProcConfig.START_WORK_TIME) *
-				userProcState.hourHeightInPx;
-			const currentTimeHeightInPx = FormatDate.minutesFromDate(date, userProcState.hourHeightInPx) -
-				ProcConfig.START_WORK_TIME * userProcState.hourHeightInPx;
+			const max = (ProcConfig.FINISH_WORK_TIME - ProcConfig.START_WORK_TIME)
+				* userProcState.hourHeightInPx;
+			const currentTimeHeightInPx = FormatDate.minutesFromDate(date, userProcState.hourHeightInPx)
+				- ProcConfig.START_WORK_TIME * userProcState.hourHeightInPx;
 
 			userProcState.locale = date;
 
@@ -44,8 +44,8 @@ const appointmentsHelper = {
 			userProcState.locale = this.getMaxDate(date, {
 				maxHour: ProcConfig.FINISH_WORK_TIME,
 			});
-			userProcState.currentTimeHeightInPx = (ProcConfig.FINISH_WORK_TIME -
-				ProcConfig.START_WORK_TIME) * userProcState.hourHeightInPx;
+			userProcState.currentTimeHeightInPx = (ProcConfig.FINISH_WORK_TIME
+				- ProcConfig.START_WORK_TIME) * userProcState.hourHeightInPx;
 		} else {
 			userProcState.locale = this.getMinDate(date, {
 				minHour: ProcConfig.START_WORK_TIME,
@@ -119,6 +119,22 @@ const appointmentsHelper = {
 		currentProcedure.month = localeMonth;
 	},
 
+	setProceduresByDay(state) {
+		const userProcState = state;
+		const [currentProcedure] = userProcState.currentProcedure;
+
+		const newProcedures = userProcState.newProcedures
+			.filter(([card, isSelected]) => !isSelected
+				&& card.day === currentProcedure.day
+				&& card.month === currentProcedure.month
+				&& card.year === currentProcedure.year)
+			.map(([card]) => card);
+		const addedUserProcedures = userProcState.addedUserProcedures
+			.filter((card) => currentProcedure.id !== card.id);
+
+		userProcState.proceduresByDay = [...newProcedures, ...addedUserProcedures];
+	},
+
 	setDay(state, value) {
 		const userProcState = state;
 		const {
@@ -139,7 +155,6 @@ const appointmentsHelper = {
 
 		this.setViewDate(newDate, state);
 		this.setDayRange(state);
-		this.defaultAvailableTimeByDate(state);
 	},
 
 	dateDirection(newView, strict) {
@@ -147,16 +162,16 @@ const appointmentsHelper = {
 		const selectMonth = newView.getMonth();
 		const selectYear = newView.getFullYear();
 
-		const isPrev = strict.year > selectYear ||
-			(strict.year >= selectYear && strict.month > selectMonth) ||
-			(strict.year >= selectYear &&
-				strict.month >= selectMonth &&
-				strict.day > selectDay);
-		const isNext = strict.year < selectYear ||
-			(strict.year <= selectYear && strict.month < selectMonth) ||
-			(strict.year <= selectYear &&
-				strict.month <= selectMonth &&
-				strict.day < selectDay);
+		const isPrev = strict.year > selectYear
+			|| (strict.year >= selectYear && strict.month > selectMonth)
+			|| (strict.year >= selectYear
+				&& strict.month >= selectMonth
+				&& strict.day > selectDay);
+		const isNext = strict.year < selectYear
+			|| (strict.year <= selectYear && strict.month < selectMonth)
+			|| (strict.year <= selectYear
+				&& strict.month <= selectMonth
+				&& strict.day < selectDay);
 		const isCurrentDate = !(isNext || isPrev);
 
 		return {
@@ -197,8 +212,8 @@ const appointmentsHelper = {
 	},
 
 	getDragY(pageY, state) {
-		return Math.ceil(pageY / state.hourHeightInPx / state.dragStep) *
-			state.hourHeightInPx * state.dragStep;
+		return Math.ceil(pageY / state.hourHeightInPx / state.dragStep)
+			* state.hourHeightInPx * state.dragStep;
 	},
 
 	availableTimeByDay({
@@ -239,7 +254,7 @@ const appointmentsHelper = {
 		return availableTime;
 	},
 
-	availableTypesBySpace(state, { //!
+	availableTypesBySpace(state, {
 		minHour = 0,
 		maxHour = 24,
 	}) {
@@ -247,45 +262,36 @@ const appointmentsHelper = {
 			return [];
 		}
 
-		if (!state.newProcedures.length) {
+		if (!state.proceduresByDay.length) {
 			return state.types;
 		}
 
-		// const availableTypes = state.types.filter((type) => {
-		// 	let hasSpace = true;
+		const availableTypes = state.types.filter((type) => {
+			let hasSpace = false;
 
-		// 	for (let i = 0; i < state.newProcedures.length && hasSpace; i += 1) {
-		// 		const a = state.newProcedures[i][0];
+			for (let i = 0; i < state.proceduresByDay.length && !hasSpace; i += 1) {
+				const hasCardTopSegment = ProcConfig.START_WORK_TIME > state.proceduresByDay[i].hour
+					- type.duration
+					|| this.isTouchCardBySelectedTime(
+						state.proceduresByDay[i].hour - type.duration,
+						type.duration,
+						state,
+					);
+				const hasCardBottomSegment = ProcConfig.FINISH_WORK_TIME < state.proceduresByDay[i].hour
+					+ state.proceduresByDay[i].type.duration + type.duration
+					|| this.isTouchCardBySelectedTime(
+						state.proceduresByDay[i].hour + state.proceduresByDay[i].type.duration,
+						type.duration,
+						state,
+					);
 
-		// 		for (let j = 0; j < state.newProcedures.length && hasSpace; j += 1) {
-		// 			const b = state.newProcedures[j][0];
+				hasSpace = !hasCardTopSegment || !hasCardBottomSegment;
+			}
 
-		// 			if (i !== j) {
-		// 				// hasSpace = (a.hour - type.duration <= ProcConfig.START_WORK_TIME ?
-		// 				// 		ProcConfig.START_WORK_TIME : a.hour - type.duration) >
-		// 				// 	b.hour + b.type.duration &&
-		// 				// 	(a.hour + a.type.duration + type.duration >= ProcConfig.FINISH_WORK_TIME ?
-		// 				// 		ProcConfig.FINISH_WORK_TIME : a.hour + a.type.duration + type.duration) <=
-		// 				// 	b.hour;
+			return hasSpace;
+		});
 
-		// 				const startSegment = (a.hour - type.duration);
-		// 				const finishSegment = a.hour + a.type.duration + type.duration;
-
-		// 				hasSpace = !(startSegment < b.hour && finishSegment > b.hour + type.duration)
-		// 					|| !(b.hour < startSegment && b.hour + type.duration > finishSegment);
-		// 			}
-		// 		}
-
-		// 		if (!hasSpace) {
-		// 			console.log(hasSpace);
-		// 		}
-		// 	}
-
-		// 	return hasSpace;
-		// });
-		// console.log(availableTypes);
-
-		return state.types;
+		return availableTypes;
 	},
 
 	defaultAvailableTimeByDate(state, fromOrigin = false) {
@@ -308,16 +314,16 @@ const appointmentsHelper = {
 			step: userProcState.dragStep,
 			minHour: userProcState.minDayTime,
 			maxHour: ProcConfig.FINISH_WORK_TIME - currentProcedure.type.duration,
-			skipCondition: (time) => this.isTouchCardBySelectedTime(
-				time,
+			skipCondition: (originTime) => this.isTouchCardBySelectedTime(
+				originTime,
 				currentProcedure.type.duration,
 				userProcState,
 			),
 		});
 
-		const target = userProcState.newProcedures.length && fromOrigin ?
-			userProcState.newProcedures[state.lastItemAfterAction][0].hour :
-			currentProcedure.hour;
+		const target = userProcState.newProcedures.length && fromOrigin
+			? userProcState.newProcedures[state.lastItemAfterAction][0].hour
+			: currentProcedure.hour;
 
 		const availableHour = availableDateTime.hours
 			.reduce((prev, curr) => (Math.abs(curr - target) < Math.abs(prev - target) ? curr : prev), 0);
@@ -333,28 +339,15 @@ const appointmentsHelper = {
 		userProcState.defaultProcedure.hour = currentProcedure.hour;
 	},
 
-	isTouchCardBySelectedTime(selectedTime, duration, state) {
-		const [currentProcedure] = state.currentProcedure;
-		let isTouch = false;
+	isTouchCardBySelectedTime(time, timeDuration, state) {
+		const isTouch = state.proceduresByDay
+			.some((card) => {
+				const startSegment = (card.hour - timeDuration);
+				const finishSegment = card.hour + card.type.duration + timeDuration;
 
-		const newProcedures = state.newProcedures
-			.filter(([card, isSelected]) => !isSelected && card.day === currentProcedure.day)
-			.map(([card]) => card);
-		const proceduresByDay = state.proceduresByDay
-			.filter((card) => currentProcedure.id !== card.id && card.day === currentProcedure.day);
-
-		[...newProcedures, ...proceduresByDay]
-		.forEach((card) => {
-			if (isTouch) {
-				return;
-			}
-
-			const startSegment = (card.hour - duration);
-			const finishSegment = card.hour + card.type.duration + duration;
-
-			isTouch = (startSegment < selectedTime && finishSegment > selectedTime + duration) ||
-				(selectedTime < startSegment && selectedTime + duration > finishSegment);
-		});
+				return (startSegment < time && finishSegment > time + timeDuration)
+					|| (time < startSegment && time + timeDuration > finishSegment);
+			});
 
 		return isTouch;
 	},

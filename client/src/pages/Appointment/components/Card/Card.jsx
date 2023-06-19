@@ -32,7 +32,6 @@ function Card({
 		currentLang,
 	} = useContext(GlobalContext);
 
-	const backColor = isExists ? states[procedure.state].color : "lightGray";
 	const border = isSelected ? "inset 0 0 0 2px rgb(var(--black))" : "";
 	const formatedTimeCurrProc = FormatDate.stringHourAndMinWithRange(
 		date,
@@ -47,7 +46,6 @@ function Card({
 			id={id}
 			className={`${style.card} ${className}`}
 			style={{
-				background: `rgb(var(--${backColor}))`,
 				boxShadow: border,
 				"--ind": isSelected ? 2 : 1,
 				...styleAttr,
@@ -57,36 +55,55 @@ function Card({
 			<div
 				className={style.wrapper}
 			>
-				<div className="time">
-					<span>{formatedTimeCurrProc}</span>
+				<div>
+					<div className="time">
+						<span>{formatedTimeCurrProc}</span>
+					</div>
+					<div className={style.state}>
+						{isExists && (
+							<span>
+								<i
+									className="fa fa-bookmark color"
+									aria-hidden="true"
+									style={{
+										color: `rgb(var(--${states[procedure.state].color}))`,
+									}}
+								/>
+								{t(procedure.state)}
+							</span>
+						)}
+					</div>
+					<p className="procedureName">{t(procedure.type.name)}</p>
 				</div>
-				<span className="status">{t(procedure.type.state)}</span>
-				<p className="procedureName">{t(procedure.type.name)}</p>
+				{
+					isBook && (
+						<Link
+							id={style.more}
+							to={`/details/${procedure.id}`}
+							className="button border"
+							data-target="procedureControl"
+						>
+							{t("more")}
+						</Link>
+					)
+				}
 			</div>
-			{isOwn && (
-				<div
-					className={style.buttons}
-				>
-					<DeleteButton
-						index={index}
-						onClick={onDelete}
-					/>
-					<EditButton
-						index={index}
-						onClick={onEdit}
-					/>
-				</div>
-			)}
-			{isBook && (
-				<Link
-					to={`/details/${procedure.id}`}
-					type="button"
-					id={style.more}
-					className="button border"
-				>
-					{t("more")}
-				</Link>
-			)}
+			<div
+				className={style.buttons}
+			>
+				{isOwn && (
+					<div>
+						<DeleteButton
+							index={index}
+							onClick={onDelete}
+						/>
+						<EditButton
+							index={index}
+							onClick={onEdit}
+						/>
+					</div>
+				)}
+			</div>
 		</div>
 	);
 }

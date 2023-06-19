@@ -9,6 +9,10 @@
 	top: 0;
 }
 
+#filters > div > div {
+	padding: 1vh 0;
+}
+
 #reset {
 	color: rgba(var(--brown));
 	margin: 3vh 0;

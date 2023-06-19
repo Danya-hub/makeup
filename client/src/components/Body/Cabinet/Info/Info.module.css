@@ -1,4 +1,8 @@
 #info {
+	background: rgba(var(--brown), 0.1);
+}
+
+.wrapper {
 	display: flex;
 	padding: 2vh var(--space);
 }
@@ -61,7 +65,8 @@
 	display: block;
 }
 
-#editProfile {
-	padding: 10px;
-	margin-top: 3vh;
+#logout {
+	color: rgb(var(--brown));
+	text-transform: uppercase;
+	border-top: 1px solid rgb(var(--brown));
 }

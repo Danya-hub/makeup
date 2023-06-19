@@ -53,7 +53,7 @@ function MakeProc() {
 	const [isOpenCalendar, setOpenCalendar] = useState(false);
 
 	function onSubmit() {
-		if (Message.component) {
+		if (Message.status === "error") {
 			return;
 		}
 
