@@ -294,7 +294,7 @@ const appointmentsHelper = {
 		return availableTypes;
 	},
 
-	defaultAvailableTimeByDate(state, fromOrigin = false) {
+	resultConversion(state, fromOrigin = false) {
 		const userProcState = state;
 		const [currentProcedure] = userProcState.currentProcedure;
 

@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm run dev\" \"cross-env NODE_ENV=development\" ",
+    "build": "concurrently \"cd server && npm run build\" \"cd client && npm run build\" \"cross-env NODE_ENV=production\" ",
     "format:client": "cd client && npm run format",
     "format:server": "cd server && npm run format"
   },

@@ -142,21 +142,35 @@ function Cards({
 		]));
 	}
 
-	function handleDeleteProc(id) {
+	function handleDeleteAddedUserProc(id) {
 		dispatch(asyncActions.deleteProc(id));
 	}
 
-	function handleEditProc(index) {
+	function handleEditAddedUserProc(index) {
 		dispatch(actions.updateCurrProc([
 			[appointments.addedUserProcedures[index], appointments.newProcedures.length],
 			false,
 		]));
 		dispatch(actions.updateAvailableTimeByDate(false));
 		setPopup(["edit", {
-			delete: (res) => handleDeleteProc(res.id),
+			delete: (res) => handleDeleteAddedUserProc(res.id),
 			edit: (res) => onCloseEditPopup(res, index),
 		}]);
 		setVisiblePopup(true);
+	}
+
+	function handleDeleteNewProc(index) {
+		dispatch(actions.deleteProc(index));
+
+		if (appointments.newProcedures.length - 1 === 0) {
+			setPopup(["make", null]);
+		}
+	}
+
+	function handleEditNewProc(index) {
+		dispatch(actions.switchCurrentProc(index));
+		setVisiblePopup(true);
+		setPopup(["edit", null]);
 	}
 
 	return (
@@ -225,18 +239,8 @@ function Cards({
 								height: `${card.type.duration * appointments.hourHeightInPx}px`,
 								top: `${top}px`,
 							}}
-							onDelete={(index) => {
-								dispatch(actions.deleteProc(index));
-
-								if (appointments.newProcedures.length - 1 === 0) {
-									setPopup(["make", null]);
-								}
-							}}
-							onEdit={(index) => {
-								dispatch(actions.switchCurrentProc(index));
-								setVisiblePopup(true);
-								setPopup(["edit", null]);
-							}}
+							onDelete={handleDeleteNewProc}
+							onEdit={handleEditNewProc}
 						/>
 					);
 				})
@@ -262,8 +266,8 @@ function Cards({
 							height: `${card.type.duration * appointments.hourHeightInPx}px`,
 							top: `${top}px`,
 						}}
-						onDelete={handleDeleteProc}
-						onEdit={() => handleEditProc(i)}
+						onDelete={handleDeleteAddedUserProc}
+						onEdit={() => handleEditAddedUserProc(i)}
 					/>
 				);
 			})}

@@ -24,7 +24,7 @@ export const actions = {
 		state.currentProcedure = [state.defaultProcedure, state.newProcedures.length];
 
 		UserProceduresHelper.setProceduresByDay(state);
-		UserProceduresHelper.defaultAvailableTimeByDate(state, true);
+		UserProceduresHelper.resultConversion(state, true);
 	},
 
 	switchCurrentProc(state, action) {
@@ -37,7 +37,8 @@ export const actions = {
 
 		state.currentProcedure = [currentProcedure, index];
 
-		UserProceduresHelper.defaultAvailableTimeByDate(state);
+		UserProceduresHelper.setProceduresByDay(state);
+		UserProceduresHelper.resultConversion(state);
 	},
 
 	deleteProc(state, action) {
@@ -47,7 +48,7 @@ export const actions = {
 		state.newProcedures = state.newProcedures.filter((_, i) => i !== index);
 
 		UserProceduresHelper.setProceduresByDay(state);
-		UserProceduresHelper.defaultAvailableTimeByDate(state);
+		UserProceduresHelper.resultConversion(state);
 	},
 
 	switchMonth(state, action) {
@@ -106,11 +107,11 @@ export const actions = {
 			}
 		}
 
-		UserProceduresHelper.defaultAvailableTimeByDate(state, true);
+		UserProceduresHelper.resultConversion(state, true);
 	},
 
-	updateAvailableTimeByDate(state, action) { // ?
-		UserProceduresHelper.defaultAvailableTimeByDate(state, action.payload);
+	updateAvailableTimeByDate(state, action) {
+		UserProceduresHelper.resultConversion(state, action.payload);
 	},
 };
 
@@ -350,6 +351,6 @@ export const extraReducers = {
 		state.addedUserProcedures = action.payload;
 
 		UserProceduresHelper.setProceduresByDay(state);
-		UserProceduresHelper.defaultAvailableTimeByDate(state);
+		UserProceduresHelper.resultConversion(state);
 	},
 };
