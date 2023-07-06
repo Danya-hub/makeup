@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import types from "prop-types";
 
-import FormatDate from "@/utils/formatDate.js";
+import DateFormatter from "@/utils/dateFormatter.js";
 import GlobalContext from "@/context/global.js";
 import { states } from "@/config/procedures.js";
 
@@ -33,7 +33,7 @@ function Card({
 	} = useContext(GlobalContext);
 
 	const border = isSelected ? "inset 0 0 0 2px rgb(var(--black))" : "";
-	const formatedTimeCurrProc = FormatDate.stringHourAndMinWithRange(
+	const formatedTimeCurrProc = DateFormatter.stringHourRange(
 		date,
 		procedure.type.duration,
 		currentLang,

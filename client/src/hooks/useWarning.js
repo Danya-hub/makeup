@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import Value from "@/utils/value.js";
+import DataFormatter from "@/utils/dataFormatter.js";
 
 function useWarning(warnings) {
 	const [_warnings, setWarning] = useState(warnings);
@@ -33,7 +33,7 @@ function useWarning(warnings) {
 		(newValue) => {
 			const [name, value] = newValue;
 
-			Value.changeObject(
+			DataFormatter.changeObject(
 				{
 					[name]: t(value),
 				},

@@ -11,7 +11,7 @@ import TimeInput from "@/pages/Appointment/ProcPopup/TimeInput/TimeInput.jsx";
 import RightArrowSrc from "@/assets/image/rightArrow.svg";
 import MessageHelper from "./helpers/message.js";
 import GlobalContext from "@/context/global.js";
-import FormatDate from "@/utils/formatDate.js";
+import DateFormatter from "@/utils/dateFormatter.js";
 import ProcConfig from "@/config/procedures.js";
 import docs from "@/utils/docs.js";
 import {
@@ -76,7 +76,7 @@ function MakeProc() {
 
 		const newCurrProc = {
 			...currentProcedure,
-			finishProcTime: FormatDate.minutesToDate(
+			finishProcTime: DateFormatter.minutesToDate(
 				finishProcMinutes,
 				currentProcedure.finishProcTime,
 			),

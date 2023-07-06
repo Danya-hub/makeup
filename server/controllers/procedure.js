@@ -1,5 +1,5 @@
 import MySQL from "../utils/db.js";
-import Value from "../utils/value.js";
+import DataFormatter from "../utils/dataFormatter.js";
 import ApiError from "../utils/apiError.js";
 import Firebase from "../utils/firebase.js";
 
@@ -28,7 +28,7 @@ class Procedure {
     const keys = Object.keys(req.body[0]);
 
     const values = await Promise.all(req.body.map(async (object) => {
-      const formatedValues = Value.toSQLDate({
+      const formatedValues = DataFormatter.toSQLDate({
         ...object,
         type: object.type.id,
         user: object.user.id,
@@ -56,7 +56,7 @@ class Procedure {
           formatName: "columnsAndValues",
         },
       },
-      (error) => {
+      async (error) => {
         if (error) {
           throw error;
         }
@@ -154,7 +154,7 @@ class Procedure {
   }
 
   makeReview(req, res, next) {
-    const formated = Value.toSQLDate(req.body);
+    const formated = DataFormatter.toSQLDate(req.body);
 
     MySQL.createQuery({
         sql: "INSERT INTO review **",
@@ -228,7 +228,7 @@ class Procedure {
   }
 
   updateProc(req, res, next) {
-    const columns = Value.toSQLDate({
+    const columns = DataFormatter.toSQLDate({
       ...req.body,
       type: req.body.type.id,
       user: req.body.user.id,
@@ -280,7 +280,7 @@ class Procedure {
   }
 
   updateReview(req, res, next) {
-    const columns = Value.toSQLDate({
+    const columns = DataFormatter.toSQLDate({
       ...req.body,
       user: req.body.user.id,
     });

@@ -1,35 +1,37 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const Dotenv = require("dotenv-webpack");
+import path from "path";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import {
+	CleanWebpackPlugin
+} from "clean-webpack-plugin";
+import DotenvPlugin from "dotenv-webpack";
 
-const commonPaths = require("./common-paths.js");
+import pathsConfig from "./config/paths.js";
 
-module.exports = {
-	entry: {
-		app: path.resolve(commonPaths.src, "index.js"),
-	},
+const commonConfig = {
+	entry: path.resolve(pathsConfig.src, "index.js"),
 	output: {
-		path: commonPaths.build,
-		filename: "static/[name].[contenthash].js",
+		path: pathsConfig.build,
+		filename: "[name].[contenthash].js",
 		publicPath: "/",
 	},
 	module: {
-		rules: [
-			{
-				test: /\.(js|jsx)$/,
+		rules: [{
+				test: /\.jsx?$/,
 				exclude: /node_modules/,
 				use: ["babel-loader"],
 			},
 			{
-				test: /\.(svg|gif|pdf)$/,
-				use: ["file-loader"],
+				test: /\.(svg|png|jpe?g|gif|pdf)$/i,
+				loader: "file-loader",
+				options: {
+					name: "[path][name].[ext]",
+				},
 			},
 		],
 	},
 	resolve: {
 		alias: {
-			"@": commonPaths.src,
+			"@": pathsConfig.src,
 		},
 	},
 	optimization: {
@@ -53,11 +55,13 @@ module.exports = {
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
-			template: path.resolve(commonPaths.public, "index.html"),
+			template: path.resolve(pathsConfig.publicPath, "index.html"),
 		}),
 		new CleanWebpackPlugin(),
-		new Dotenv({
-			path: path.resolve(commonPaths.src, ".env")
-		}),
+		new DotenvPlugin({
+			path: path.resolve(pathsConfig.src, ".env")
+		})
 	],
 };
+
+export default commonConfig;

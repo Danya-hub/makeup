@@ -7,7 +7,7 @@ import { Helmet } from "react-helmet";
 import { asyncActions } from "@/service/actions/appointments.js";
 import GlobalContext from "@/context/global.js";
 import ReviewContext from "@/pages/ProcDetails/context/reviews.js";
-import Value from "@/utils/value.js";
+import DataFormatter from "@/utils/dataFormatter.js";
 
 import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
 import TopNavigation from "@/pages/ProcDetails/components/TopNavigation/TopNavigation.jsx";
@@ -37,7 +37,7 @@ function Reviews() {
 	async function init() {
 		const procedureById = await dispatch(asyncActions.getProcedureById(params.id))
 			.then((res) => {
-				const isEmpty = Value.isEmptyObject(res.payload);
+				const isEmpty = DataFormatter.isEmptyObject(res.payload);
 
 				if (isEmpty) {
 					return navigate("/notFound");

@@ -1,14 +1,16 @@
-const commonPaths = require("./common-paths.js");
-const commonConfig = require("./webpack.common.js");
-const {
+import webpack from "webpack";
+import {
 	merge
-} = require("webpack-merge");
+} from "webpack-merge";
 
-const PORT = process.env.PORT || 3000;
+import pathsConfig from "./config/paths.js";
+import serverConfig from "./config/server.js";
+import common from "./webpack.common.js";
 
 const devConfig = {
 	mode: "development",
 	devtool: "inline-source-map",
+	plugins: [new webpack.HotModuleReplacementPlugin()],
 	module: {
 		rules: [{
 			test: /\.css$/,
@@ -17,15 +19,15 @@ const devConfig = {
 	},
 	devServer: {
 		static: {
-			directory: commonPaths.public,
+			directory: pathsConfig.publicPath,
 		},
 		historyApiFallback: {
 			disableDotRule: true,
 		},
-		port: PORT,
+		port: serverConfig.port,
 		open: true,
 		hot: true,
 	},
 };
 
-module.exports = merge(commonConfig, devConfig);
+export default merge(common, devConfig);

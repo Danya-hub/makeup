@@ -7,7 +7,7 @@ import ProcedureSlider from "./ProcedureSlider/ProcedureSlider.jsx";
 import MyServices from "./MyServices/MyServices.jsx";
 import ScrollTo from "@/components/ScrollTo/ScrollTo.jsx";
 
-import Value from "@/utils/value.js";
+import DataFormatter from "@/utils/dataFormatter.js";
 import axios from "@/http/axios.js";
 
 function Base() {
@@ -18,7 +18,7 @@ function Base() {
 	async function init() {
 		const bestProceduresResult = await axios
 			.get("/procedure/columns/best = 1")
-			.then((res) => res.data.map(Value.toDate));
+			.then((res) => res.data.map(DataFormatter.toDate));
 
 		setBestWorks(bestProceduresResult);
 	}

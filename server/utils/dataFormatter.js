@@ -1,6 +1,6 @@
 import Check from "./check.js";
 
-class Value {
+class DataFormatter {
   toJSDate(object) {
     const rez = {
       ...object,
@@ -45,4 +45,4 @@ class Value {
   }
 }
 
-export default new Value();
+export default new DataFormatter();

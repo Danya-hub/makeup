@@ -1,39 +1,37 @@
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
-const { merge } = require("webpack-merge");
+import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import TerserWebpackPlugin from "terser-webpack-plugin";
+import {
+	merge
+} from "webpack-merge";
 
-const commonConfig = require("./webpack.common.js");
+import common from "./webpack.common.js";
 
 const prodConfig = {
 	mode: "production",
 	devtool: "source-map",
 	module: {
-		rules: [
-			{
-				test: /\.css$/,
-				use: [
-					{
-						loader: MiniCssExtractPlugin.loader,
+		rules: [{
+			test: /\.css$/,
+			use: [
+				MiniCssExtractPlugin.loader,
+				{
+					loader: "css-loader",
+					options: {
+						modules: true,
+						sourceMap: true,
+						importLoaders: 1,
+						esModule: true,
 					},
-					{
-						loader: "css-loader",
-						options: {
-							modules: true,
-							sourceMap: true,
-							importLoaders: 1,
-							esModule: true,
-						},
-					},
-					{
-						loader: "postcss-loader",
-					},
-				],
-			},
-		],
+				},
+				"postcss-loader",
+			],
+		}, ],
 	},
 	optimization: {
 		minimizer: [
-			new TerserPlugin({
+			new CssMinimizerPlugin(),
+			new TerserWebpackPlugin({
 				test: /\.js$/,
 				extractComments: false,
 				terserOptions: {
@@ -50,9 +48,9 @@ const prodConfig = {
 	},
 	plugins: [
 		new MiniCssExtractPlugin({
-			filename: "styles/style.[hash].css",
+			filename: "style.[hash].css",
 		}),
 	],
 };
 
-module.exports = merge(commonConfig, prodConfig);
+export default merge(common, prodConfig);

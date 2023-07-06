@@ -4,7 +4,7 @@ import types from "prop-types";
 
 import Check from "@/utils/check.js";
 
-import FormatDate from "@/utils/formatDate.js";
+import DateFormatter from "@/utils/dateFormatter.js";
 import Select from "@/components/UI/Form/Select/Select.jsx";
 import GlobalContext from "@/context/global.js";
 
@@ -26,9 +26,9 @@ function BirthSelctor({
 	const currentMonth = currentDate.getMonth();
 
 	const [time, setTime] = useState(() => {
-		const availableYears = FormatDate.allYears(currentYear, 100).reverse();
-		const availableMonths = FormatDate.allMonthsInYear(currentYear, currentLang);
-		const availableDays = FormatDate.allDaysInMonth(
+		const availableYears = DateFormatter.allYears(currentYear, 100).reverse();
+		const availableMonths = DateFormatter.allMonthsInYear(currentYear, currentLang);
+		const availableDays = DateFormatter.allDaysInMonth(
 			currentYear,
 			currentMonth + 1,
 		).filter(Check.isStrictNumber);
@@ -68,7 +68,7 @@ function BirthSelctor({
 			setTime((prev) => {
 				const prevState = prev;
 
-				prevState.day.available = FormatDate.allDaysInMonth(
+				prevState.day.available = DateFormatter.allDaysInMonth(
 					prevState.year.selected,
 					ind + 1,
 				).filter(Check.isStrictNumber);
@@ -87,7 +87,7 @@ function BirthSelctor({
 			setTime((prev) => {
 				const prevState = prev;
 
-				prevState.day.available = FormatDate.allDaysInMonth(
+				prevState.day.available = DateFormatter.allDaysInMonth(
 					time.year.available[ind],
 					prevState.month.selected,
 				).filter(Check.isStrictNumber);

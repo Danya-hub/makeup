@@ -4,13 +4,13 @@ import {
 	createAsyncThunk,
 } from "@reduxjs/toolkit";
 
-import Value from "@/utils/value.js";
+import DataFormatter from "@/utils/dataFormatter.js";
 import axios from "@/http/axios.js";
 import format from "@/components/UI/Form/ChannelInput/constants/format.js";
 
 export const actions = {
 	setUser(state, action) {
-		state.info = Value.toDate(action.payload);
+		state.info = DataFormatter.toDate(action.payload);
 
 		if (action.payload) {
 			state.info.fullTel = format.telephone[state.info.country].code + state.info.telephone;

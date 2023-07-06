@@ -9,7 +9,7 @@ import DeleteButton from "@/components/UI/Form/DeleteButton/DeleteButton.jsx";
 
 import ProcConfig from "@/config/procedures.js";
 import GlobalContext from "@/context/global.js";
-import FormatDate from "@/utils/formatDate.js";
+import DateFormatter from "@/utils/dateFormatter.js";
 import { actions as appointmentsActions } from "@/service/redusers/appointments.js";
 
 import style from "./Edit.module.css";
@@ -83,7 +83,7 @@ function EditProc() {
 
 		const newProc = {
 			...currentProcedure,
-			finishProcTime: FormatDate.minutesToDate(
+			finishProcTime: DateFormatter.minutesToDate(
 				finishProcMinutes,
 				currentProcedure.finishProcTime,
 			),

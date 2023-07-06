@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 
 import GlobalContext from "@/context/global.js";
-import FormatDate from "@/utils/formatDate.js";
+import DateFormatter from "@/utils/dateFormatter.js";
 
 import style from "./Total.module.css";
 
@@ -22,8 +22,8 @@ function Total() {
 
 	const hours = newProcedures.map(([proc]) => proc.type.duration)
 		.reduce((prev, curr) => prev + curr, 0);
-	const date = FormatDate.minutesToDate(hours * 60);
-	const formatedStringDate = FormatDate.stringHourAndMin(date, currentLang);
+	const date = DateFormatter.minutesToDate(hours * 60);
+	const formatedStringDate = DateFormatter.stringHourAndMin(date, currentLang);
 
 	return (
 		<div className={style.total}>

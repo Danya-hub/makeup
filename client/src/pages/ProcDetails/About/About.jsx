@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 
-import Value from "@/utils/value.js";
+import DataFormatter from "@/utils/dataFormatter.js";
 import { asyncActions } from "@/service/actions/appointments.js";
 
 import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
@@ -24,7 +24,7 @@ function ProcDetails() {
 	async function init() {
 		const procedureById = await dispatch(asyncActions.getProcedureById(params.id))
 			.then((res) => {
-				const isEmpty = Value.isEmptyObject(res.payload);
+				const isEmpty = DataFormatter.isEmptyObject(res.payload);
 
 				if (isEmpty) {
 					return navigate("/notFound");

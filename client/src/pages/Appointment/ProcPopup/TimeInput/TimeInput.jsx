@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import types from "prop-types";
 
 import GlobalContext from "@/context/global.js";
-import FormatDate from "@/utils/formatDate.js";
+import DateFormatter from "@/utils/dateFormatter.js";
 import useOutsideEvent from "@/hooks/useOutsideEvent.js";
 import {
 	actions as appointmentsActions,
@@ -33,21 +33,21 @@ function TimeInput({
 	} = useSelector((state) => state.appointments);
 
 	const [procedure] = currentProcedure;
-	const currentProcDate = FormatDate.minutesToDate(
+	const currentProcDate = DateFormatter.minutesToDate(
 		procedure.hour * hourHeightInPx,
 		locale,
 	);
-	const formatedTimeCurrProc = FormatDate.stringHourAndMinWithRange(
+	const formatedTimeCurrProc = DateFormatter.stringHourRange(
 		currentProcDate,
 		procedure.type.duration,
 		currentLang,
 	);
-	const weekdayAndMonth = FormatDate.weekdayAndMonth(
+	const weekdayAndMonth = DateFormatter.weekdayAndMonth(
 		currentProcDate,
 		currentLang,
 	);
 	const formatedAvailableTime = availableDateTime.map(
-		(date) => FormatDate.stringHourAndMin(
+		(date) => DateFormatter.stringHourAndMin(
 			date,
 			currentLang,
 		),
@@ -74,7 +74,7 @@ function TimeInput({
 	}
 
 	function setStartAndFinishTimes(_, finalValue) {
-		const time = FormatDate.numericTimeFromChar(finalValue) - ProcConfig.START_WORK_TIME;
+		const time = DateFormatter.numericTimeFromChar(finalValue) - ProcConfig.START_WORK_TIME;
 
 		dispatch(appointmentsActions.changeHour(time));
 

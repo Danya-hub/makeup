@@ -5,11 +5,13 @@ import {
 } from "@reduxjs/toolkit";
 
 import UserProceduresHelper from "@/service/helpers/appointments.js";
-import ProcConfig from "@/config/procedures.js";
-import FormatDate from "@/utils/formatDate.js";
-import Value from "@/utils/value.js";
-import axios from "@/http/axios.js";
+import TelegramBotHelper from "@/service/helpers/bot.js";
 import GlobalHelper from "@/utils/global.js";
+import DateFormatter from "@/utils/dateFormatter.js";
+import DataFormatter from "@/utils/dataFormatter.js";
+
+import ProcConfig from "@/config/procedures.js";
+import axios from "@/http/axios.js";
 
 export const actions = {
 	addProc(state) {
@@ -113,6 +115,10 @@ export const actions = {
 	updateAvailableTimeByDate(state, action) {
 		UserProceduresHelper.resultConversion(state, action.payload);
 	},
+
+	clearProcedures(state) {
+		state.newProcedures = [];
+	},
 };
 
 export const asyncActions = {
@@ -124,7 +130,7 @@ export const asyncActions = {
 			try {
 				const appointments = await axios
 					.get(`/procedure/columns/id = ${id}`)
-					.then((res) => Value.toDate(res.data[0]));
+					.then((res) => DataFormatter.toDate(res.data[0]));
 
 				return appointments;
 			} catch (error) {
@@ -141,7 +147,7 @@ export const asyncActions = {
 			try {
 				const appointments = await axios
 					.get(`/procedure/reviews?${query}`)
-					.then((res) => res.data.map(Value.toDate));
+					.then((res) => res.data.map(DataFormatter.toDate));
 
 				return appointments;
 			} catch (error) {
@@ -177,7 +183,7 @@ export const asyncActions = {
 			try {
 				const appointments = await axios
 					.indGet(`/procedure/byDay/${date}`)
-					.then((res) => res.data.map(Value.toDate));
+					.then((res) => res.data.map(DataFormatter.toDate));
 
 				return appointments;
 			} catch (error) {
@@ -195,7 +201,7 @@ export const asyncActions = {
 			try {
 				const state = getState();
 
-				const newProcedures = value.map(([object]) => {
+				const newProcedures = value.newProcedures.map(([object]) => {
 					object = {
 						...object,
 						user: state.user.info,
@@ -218,6 +224,10 @@ export const asyncActions = {
 
 				await axios.post("/procedure/createProcedure", newProcedures);
 
+				newProcedures.forEach((object) => TelegramBotHelper.createMessage(
+					value.telegramNotificationTemplate(object),
+				));
+
 				return newProcedures;
 			} catch (error) {
 				return rejectWithValue(error.message);
@@ -238,7 +248,7 @@ export const asyncActions = {
 
 				const object = {
 					startProcTime: new Date(),
-					finishProcTime: FormatDate.minutesToDate(
+					finishProcTime: DateFormatter.minutesToDate(
 						defaultValue.type.duration * states.appointments.hourHeightInPx,
 						null,
 						true,
@@ -352,5 +362,8 @@ export const extraReducers = {
 
 		UserProceduresHelper.setProceduresByDay(state);
 		UserProceduresHelper.resultConversion(state);
+	},
+	[asyncActions.createNewProcedures.fulfilled]: (state) => {
+		actions.clearProcedures(state);
 	},
 };

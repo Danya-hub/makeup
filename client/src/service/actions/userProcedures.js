@@ -5,7 +5,7 @@ import {
 } from "@reduxjs/toolkit";
 
 import axios from "@/http/axios.js";
-import Value from "@/utils/value.js";
+import DataFormatter from "@/utils/dataFormatter.js";
 
 export const actions = {};
 
@@ -16,7 +16,7 @@ export const asyncActions = {
 		try {
 			const result = await axios
 				.get(`/procedure/columns/favorite = 1 AND user = ${id}`)
-				.then((res) => res.data.map(Value.toDate));
+				.then((res) => res.data.map(DataFormatter.toDate));
 
 			return result;
 		} catch (error) {
@@ -32,7 +32,7 @@ export const asyncActions = {
 			try {
 				const appointments = await axios
 					.get(`/procedure/columns/user = ${id} AND available = 1`)
-					.then((res) => res.data.map(Value.toDate));
+					.then((res) => res.data.map(DataFormatter.toDate));
 
 				return appointments;
 			} catch (error) {

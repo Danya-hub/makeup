@@ -4,7 +4,7 @@ import { useContext, useRef, forwardRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import FormatDate from "@/utils/formatDate.js";
+import DateFormatter from "@/utils/dateFormatter.js";
 import PropsContext from "@/pages/Appointment/context/context.js";
 import GlobalContext from "@/context/global.js";
 import { actions, asyncActions } from "@/service/redusers/appointments.js";
@@ -42,7 +42,7 @@ function Cards({
 	const classNameByPresentState = (isVisiblePopup && "noActiveGrabbing") || (isMouseDown && "activeGrabbing") || "";
 	const currentStartProcPositionY = (currentProcedure.hour - ProcConfig.START_WORK_TIME)
 		* appointments.hourHeightInPx;
-	const currentStartProcPositionYToDate = FormatDate.minutesToDate(
+	const currentStartProcPositionYToDate = DateFormatter.minutesToDate(
 		currentProcedure.hour * appointments.hourHeightInPx,
 		appointments.locale,
 	);
@@ -50,7 +50,7 @@ function Cards({
 		(popupName === "make" || popupName === "edit")
 		&& ((isVisiblePopup && appointments.availableDateTime.length > 0)
 			|| isMouseDown));
-	const currentStirngHoursAndMinutes = FormatDate.stringHourAndMin(
+	const currentStirngHoursAndMinutes = DateFormatter.stringHourAndMin(
 		appointments.locale,
 		currentLang,
 	);

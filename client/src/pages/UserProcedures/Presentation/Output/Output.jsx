@@ -16,12 +16,10 @@ function Output({
 
 	const [numberPage, setNumberPage] = useState(countPages - 1);
 
-	const remainder = MAX_COUNT_CARDS_ON_PAGE < cards.length
-		? cards.length - MAX_COUNT_CARDS_ON_PAGE * (numberPage + 1)
-		: cards.length;
-	const countCardsOnPage = remainder >= 0 && MAX_COUNT_CARDS_ON_PAGE < cards.length
-		? MAX_COUNT_CARDS_ON_PAGE
-		: Math.abs(remainder);
+	const countCardsOnPage = Math.min(
+		MAX_COUNT_CARDS_ON_PAGE,
+		cards.length - numberPage * MAX_COUNT_CARDS_ON_PAGE,
+	);
 
 	function handleSwitchPage(i) {
 		setNumberPage(i);

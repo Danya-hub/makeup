@@ -1,5 +1,5 @@
 import ProcConfig from "@/config/procedures.js";
-import FormatDate from "@/utils/formatDate.js";
+import DateFormatter from "@/utils/dateFormatter.js";
 
 const appointmentsHelper = {
 	setDayRange(state) {
@@ -24,8 +24,10 @@ const appointmentsHelper = {
 		if (userProcState.isCurrentTime) {
 			const max = (ProcConfig.FINISH_WORK_TIME - ProcConfig.START_WORK_TIME)
 				* userProcState.hourHeightInPx;
-			const currentTimeHeightInPx = FormatDate.minutesFromDate(date, userProcState.hourHeightInPx)
-				- ProcConfig.START_WORK_TIME * userProcState.hourHeightInPx;
+			const currentTimeHeightInPx = DateFormatter.minutesFromDate(
+				date,
+				userProcState.hourHeightInPx,
+			) - ProcConfig.START_WORK_TIME * userProcState.hourHeightInPx;
 
 			userProcState.locale = date;
 
@@ -59,11 +61,11 @@ const appointmentsHelper = {
 
 		const startProcMinutes = currentProcedure.hour * state.hourHeightInPx;
 		const finishProcMinutes = startProcMinutes + procedure.type.duration * state.hourHeightInPx;
-		const startProcTime = FormatDate.minutesToDate(
+		const startProcTime = DateFormatter.minutesToDate(
 			startProcMinutes,
 			state.locale,
 		);
-		const finishProcTime = FormatDate.minutesToDate(
+		const finishProcTime = DateFormatter.minutesToDate(
 			finishProcMinutes,
 			state.locale,
 		);
@@ -185,13 +187,13 @@ const appointmentsHelper = {
 	getMinDate(date, {
 		minHour,
 	}) {
-		return FormatDate.minutesToDate(minHour * 60, date);
+		return DateFormatter.minutesToDate(minHour * 60, date);
 	},
 
 	getMaxDate(date, {
 		maxHour,
 	}) {
-		return FormatDate.minutesToDate(maxHour * 60 - 1, date);
+		return DateFormatter.minutesToDate(maxHour * 60 - 1, date);
 	},
 
 	isElapsedDay(maxHour, minutes) {

@@ -12,6 +12,7 @@ import SimpleLoader from "@/components/UI/SimpleLoader/SimpleLoader.jsx";
 import Empty from "./Empty/Empty.jsx";
 
 import { asyncActions } from "@/service/redusers/appointments.js";
+import DateFormatter from "@/utils/dateFormatter.js";
 import ProcConfig from "@/config/procedures.js";
 import GlobalContext from "@/context/global.js";
 
@@ -43,7 +44,14 @@ function DesignProc() {
 	const recaptchaError = errors.recaptcha?.message;
 
 	async function onSubmit() {
-		await dispatch(asyncActions.createNewProcedures(newProcedures));
+		const createdProceduresResult = await dispatch(asyncActions.createNewProcedures({
+			newProcedures,
+			telegramNotificationTemplate: (object) => `Пользователь <b>${object.user.username}</b> записался на "${t(object.type.name)}" <u>${object.type.price}${object.type.currency}</u>. Время работы <b>${DateFormatter.stringHourRange(object.startProcTime, object.type.duration)}</b>`,
+		}));
+
+		if (createdProceduresResult.error) {
+			return;
+		}
 
 		setVisiblePopup(false);
 		setPopup(["", null]);

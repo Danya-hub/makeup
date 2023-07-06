@@ -4,7 +4,7 @@ import {
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 
-import Value from "../utils/value.js";
+import DataFormatter from "../utils/dataFormatter.js";
 import MySQL from "../utils/db.js";
 import errors from "../config/errors.js";
 import {
@@ -49,7 +49,7 @@ class User {
   }
 
   createUser(req, res, next) {
-    const formated = Value.toSQLDate(req.body);
+    const formated = DataFormatter.toSQLDate(req.body);
 
     const accessKey = crypto.randomBytes(COUNT_BYTES).toString("hex");
     const columns = {

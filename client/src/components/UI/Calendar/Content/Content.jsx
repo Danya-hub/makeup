@@ -1,6 +1,6 @@
 import types from "prop-types";
 
-import FormatDate, { MAX_COUNT_WEEKDAYS, MAX_COUNT_WEEKS_IN_CALENDAR } from "@/utils/formatDate.js";
+import DateFormatter, { MAX_COUNT_WEEKDAYS, MAX_COUNT_WEEKS_IN_CALENDAR } from "@/utils/dateFormatter.js";
 
 import style from "./Content.module.css";
 
@@ -13,7 +13,7 @@ function Content({ options, onChange }) {
 		locale,
 		strictTimeObject,
 	} = options;
-	const daysOfMonth = FormatDate.allDaysInMonth(locale.getYear(), locale.getMonth() - 1);
+	const daysOfMonth = DateFormatter.allDaysInMonth(locale.getYear(), locale.getMonth() - 1);
 
 	function handleClick(d) {
 		if (!d) {

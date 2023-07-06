@@ -37,7 +37,7 @@ const formatDate = {
 		}).format(date);
 	},
 
-	stringHourAndMinWithRange(date, hourRange, locale = "default") {
+	stringHourRange(date, hourRange, locale = "default") {
 		const startDate = date;
 		const numericStart = this.numericHoursFromDate(startDate);
 		const finishDate = this.minutesToDate(numericStart * 60 + hourRange * 60, startDate);

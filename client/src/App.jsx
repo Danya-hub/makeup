@@ -28,12 +28,15 @@ function App() {
 	const [popup, setPopup] = useState([]);
 
 	async function init() {
-		dispatch(userAsyncActions.refresh())
-			.then(async (res) => {
-				await dispatch(userProceduresAsyncActions.getFavorites(res.payload.id));
-				navigate("/appointment/me");
-				setAuthState(true);
-			});
+		const refreshResult = await dispatch(userAsyncActions.refresh());
+
+		if (refreshResult.error) {
+			return;
+		}
+
+		await dispatch(userProceduresAsyncActions.getFavorites(refreshResult.payload.id));
+		navigate("/appointment/me");
+		setAuthState(true);
 	}
 
 	useEffect(() => {

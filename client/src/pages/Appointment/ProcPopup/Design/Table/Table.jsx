@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 
 import GlobalContext from "@/context/global.js";
-import FormatDate from "@/utils/formatDate.js";
+import DateFormatter from "@/utils/dateFormatter.js";
 import { actions } from "@/service/redusers/appointments.js";
 
 import DeleteButton from "@/components/UI/Form/DeleteButton/DeleteButton.jsx";
@@ -42,8 +42,14 @@ function Table() {
 						</th>
 					</tr>
 					{newProcedures.map(([proc, , order], i) => {
-						const stringStartTime = FormatDate.stringHourAndMin(proc.startProcTime, currentLang);
-						const stringFinishTime = FormatDate.stringHourAndMin(proc.finishProcTime, currentLang);
+						const stringStartTime = DateFormatter.stringHourAndMin(
+							proc.startProcTime,
+							currentLang,
+						);
+						const stringFinishTime = DateFormatter.stringHourAndMin(
+							proc.finishProcTime,
+							currentLang,
+						);
 
 						return (
 							<tr

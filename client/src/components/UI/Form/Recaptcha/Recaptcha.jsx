@@ -1,6 +1,6 @@
 import { useRef, useContext } from "react";
-import types from "prop-types";
 import Component from "react-google-recaptcha";
+import types from "prop-types";
 
 import GlobalContext from "@/context/global.js";
 

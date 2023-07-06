@@ -2,9 +2,9 @@ import { useRef, useLayoutEffect, useEffect, useContext, useMemo, useCallback } 
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 
-import FormatDate from "@/utils/formatDate.js";
+import DateFormatter from "@/utils/dateFormatter.js";
 import GlobalContext from "@/context/global.js";
-import Value from "@/utils/value.js";
+import DataFormatter from "@/utils/dataFormatter.js";
 import userProcedureHelpers from "@/service/helpers/appointments.js";
 import {
 	actions as appointmentsActions,
@@ -36,7 +36,7 @@ function Presentation() {
 
 	const parentRef = useRef(null);
 
-	const weekdayAndMonth = useMemo(() => FormatDate.weekdayAndMonth(
+	const weekdayAndMonth = useMemo(() => DateFormatter.weekdayAndMonth(
 		appointments.locale,
 		currentLang,
 		{
@@ -48,13 +48,13 @@ function Presentation() {
 		maxHour: ProcConfig.FINISH_WORK_TIME - 1,
 	}).dates);
 	const formatedTimes = useMemo(() => times.current.map((date) => (
-		FormatDate.stringHourAndMin(
+		DateFormatter.stringHourAndMin(
 			date,
 			currentLang,
 		)
 	)), [currentLang]);
 	const widthCharTime = useMemo(
-		() => Value.charWidthInPixels(
+		() => DataFormatter.charWidthInPixels(
 			formatedTimes[formatedTimes.length - 1],
 		),
 		[formatedTimes],

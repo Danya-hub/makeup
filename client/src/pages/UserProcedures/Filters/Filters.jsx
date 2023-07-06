@@ -2,7 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import types from "prop-types";
 
-import Value from "@/utils/value.js";
+import DataFormatter from "@/utils/dataFormatter.js";
 
 import Aside from "@/components/Aside/Aside.jsx";
 import Select from "@/components/UI/Form/Select/Select.jsx";
@@ -55,7 +55,7 @@ function Filters({
 				}
 			});
 
-		Value.changeObject(
+		DataFormatter.changeObject(
 			{
 				types: result,
 			},
@@ -103,7 +103,7 @@ function Filters({
 								values={typeProcNames}
 								onSearch={handleSearch}
 								onSelectOption={(typeNames) => {
-									Value.changeObject(
+									DataFormatter.changeObject(
 										{
 											types: typeNames,
 										},
@@ -122,7 +122,7 @@ function Filters({
 						onChange={(i) => {
 							const key = FilterActions.sortKeys[i];
 
-							Value.changeObject(
+							DataFormatter.changeObject(
 								{
 									sortBy: key,
 								},
@@ -142,7 +142,7 @@ function Filters({
 								onChange={(_options) => {
 									const { min, max } = _options;
 
-									Value.changeObject(
+									DataFormatter.changeObject(
 										{
 											range: [min.number, max.number],
 										},
